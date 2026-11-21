@@ -59,15 +59,24 @@ const ERROR_MESSAGES: Record<string, string> = {
   bad_model_output: 'The model returned unusable output. Try again.',
   invalid_config: 'The transcript service is misconfigured.',
   unauthorized: "The transcript service rejected this bot's service token.",
+  invalid_request: 'The transcript service rejected the request.',
+  not_found: 'The transcript service did not recognize that request.',
   api_unreachable: 'The transcript service is unreachable. Try again later.',
   job_lost: 'The transcript service restarted and lost the job. Try again.',
   job_timeout: 'Timed out waiting for the transcript. Try again.',
   internal_error: 'Something went wrong inside the transcript service. Try again.',
 };
 
-function errorMessage(err: unknown): string {
+// A code is logged or shown only when it maps to a fixed local message;
+// anything else, including arbitrary remote text in an ApiError, folds
+// into internal_error.
+function errorCode(err: unknown): string {
   const code = err instanceof ApiError ? err.code : 'internal_error';
-  return ERROR_MESSAGES[code] ?? `Transcription failed (${code}).`;
+  return Object.hasOwn(ERROR_MESSAGES, code) ? code : 'internal_error';
+}
+
+function errorMessage(err: unknown): string {
+  return ERROR_MESSAGES[errorCode(err)];
 }
 
 export function createBot(deps: BotDeps): BotCore {
@@ -155,8 +164,7 @@ export function createBot(deps: BotDeps): BotCore {
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
         ]);
       } catch (err) {
-        const code = err instanceof ApiError ? err.code : 'internal_error';
-        log(`job failed guild=${msg.guildId} channel=${msg.channelId} code=${code}`);
+        log(`job failed guild=${msg.guildId} channel=${msg.channelId} code=${errorCode(err)}`);
         await sink.reply(errorMessage(err), []);
       }
     },

@@ -9,7 +9,10 @@ import { createService, type ServiceOptions } from '../src/service.js';
 import { TranscriptError } from '../src/errors.js';
 import type { GeminiCaller } from '../src/gemini.js';
 import { createApiClient, type TranscriptApi } from '../src/bot/api.js';
+import type { BotConfig } from '../src/bot/config.js';
 import { createBot, type AttachmentFile, type BotMessage, type MessageSink } from '../src/bot/core.js';
+import { startDiscordBot } from '../src/bot/discord.js';
+import { Client, Events } from 'discord.js';
 import { deriveEncryptionKey, decryptSecret, type KeyRecord } from '../src/bot/crypto.js';
 import { GuildStore } from '../src/bot/store.js';
 import { transcriptToSrt, formatDuration } from '../src/bot/format.js';
@@ -346,6 +349,173 @@ test('D7: a video_unavailable failure is mapped and posted in the same thread', 
     assert.equal(discord.replies[0].files.length, 0);
   } finally {
     await api.close();
+  }
+});
+
+// --- F1: untrusted remote error codes ---------------------------------------
+
+test('F1: a remote error code outside the contract never reaches logs or Discord replies', async () => {
+  const CANARY = 'FAKE-REMOTE-CODE-DO-NOT-EXPOSE';
+  const api = createApiClient({
+    baseUrl: 'http://offline.invalid',
+    fetchImpl: async () =>
+      new Response(JSON.stringify({ error: { code: CANARY, message: CANARY } }), { status: 400 }),
+  });
+  const { store } = makeStore();
+  store.setKey(GUILD, GUILD_KEY);
+  store.enableChannel(GUILD, CHANNEL);
+  const logs: string[] = [];
+  const core = createBot({ api, store, log: (l) => logs.push(l) });
+  const discord = fakeDiscord(CHANNEL);
+
+  await core.handleMessage(
+    threadMessage({ channelId: CHANNEL, parentChannelId: undefined }),
+    discord.sink,
+  );
+
+  assert.equal(discord.replies.length, 1);
+  for (const line of logs) assert.ok(!line.includes(CANARY), `log leaked remote text: ${line}`);
+  for (const reply of discord.replies) {
+    assert.ok(!reply.content.includes(CANARY), `reply leaked remote text: ${reply.content}`);
+  }
+});
+
+test('F1b: a failed job maps contract codes and folds unknown ones to the fixed error', async () => {
+  const failingJob = (code: string) => {
+    let submitted = false;
+    return createApiClient({
+      baseUrl: 'http://offline.invalid',
+      fetchImpl: async () => {
+        if (!submitted) {
+          submitted = true;
+          return new Response(JSON.stringify({ job_id: 'job-1' }), { status: 202 });
+        }
+        return new Response(
+          JSON.stringify({ job_id: 'job-1', status: 'failed', error: { code, message: 'remote text' } }),
+          { status: 200 },
+        );
+      },
+    });
+  };
+  const { store } = makeStore();
+  store.setKey(GUILD, GUILD_KEY);
+  store.enableChannel(GUILD, CHANNEL);
+  const msg = () => threadMessage({ channelId: CHANNEL, parentChannelId: undefined });
+
+  const CANARY = 'FAKE-TOKEN-TEXT-DO-NOT-EXPOSE';
+  const logs: string[] = [];
+  const unknown = fakeDiscord(CHANNEL);
+  await createBot({ api: failingJob(CANARY), store, log: (l) => logs.push(l) }).handleMessage(
+    msg(),
+    unknown.sink,
+  );
+  assert.match(unknown.replies[0].content, /something went wrong/i);
+  for (const line of logs) assert.ok(!line.includes(CANARY), `log leaked remote text: ${line}`);
+  assert.ok(!unknown.replies[0].content.includes(CANARY));
+
+  const known = fakeDiscord(CHANNEL);
+  await createBot({ api: failingJob('video_unavailable'), store }).handleMessage(msg(), known.sink);
+  assert.match(known.replies[0].content, /unavailable/i);
+});
+
+// --- F2: the adapter never reads content in a disabled channel --------------
+
+test('F2: the adapter does not read message content until the channel allowlist passes', async () => {
+  const api = await startApiDouble();
+  const originalLogin = Client.prototype.login;
+  Client.prototype.login = async function () {
+    return 'offline';
+  };
+  try {
+    const { file, store } = makeStore();
+    store.setKey(GUILD, GUILD_KEY);
+    store.enableChannel(GUILD, CHANNEL);
+    const core = createBot({ api: apiClient(api), store });
+    const config: BotConfig = {
+      discordToken: 'FAKE-NOT-LIVE',
+      encryptionSecret: 'unused',
+      apiBaseUrl: api.base,
+      dataFile: file,
+      pollIntervalMs: 5,
+      jobTimeoutMs: 10_000,
+    };
+    const client = await startDiscordBot(config, core, () => {});
+
+    let reads = 0;
+    let sends = 0;
+    const fakeMessage = (channelId: string, parentId?: string) => ({
+      guildId: GUILD,
+      channelId,
+      channel: {
+        isThread: () => parentId !== undefined,
+        parentId,
+        send: async () => {
+          sends += 1;
+        },
+      },
+      author: { bot: false },
+      get content() {
+        reads += 1;
+        return `private text ${VIDEO_URL}`;
+      },
+    });
+
+    // A disabled channel and a thread under a disabled channel: the core
+    // must return before any content access.
+    client.emit(Events.MessageCreate, fakeMessage(OTHER_CHANNEL));
+    client.emit(Events.MessageCreate, fakeMessage('thread-9', OTHER_CHANNEL));
+    await new Promise((r) => setImmediate(r));
+
+    assert.equal(reads, 0);
+    assert.equal(sends, 0);
+    assert.equal(api.calls, 0);
+
+    // In an enabled channel the lazy content is read once and the transcript
+    // reply is sent through the originating channel.
+    const sent: { content?: string; files?: { name: string }[] }[] = [];
+    client.emit(Events.MessageCreate, {
+      ...fakeMessage(CHANNEL),
+      channel: {
+        isThread: () => false,
+        send: async (payload: { content?: string; files?: { name: string }[] }) => {
+          sent.push(payload);
+        },
+      },
+      react: async () => {},
+    });
+    const deadline = Date.now() + 10_000;
+    while (sent.length === 0 && Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 5));
+    }
+
+    assert.equal(reads, 1);
+    assert.equal(sent.length, 1);
+    assert.deepEqual(
+      sent[0].files?.map((f) => f.name.split('.').pop()),
+      ['txt', 'srt'],
+    );
+    await client.destroy();
+  } finally {
+    Client.prototype.login = originalLogin;
+    await api.close();
+  }
+});
+
+// --- D8: documented invite permissions ---------------------------------------
+
+test('D8: the documented invite permissions cover every action the bot takes', () => {
+  const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+  const line = readme.split('\n').find((l) => l.includes('bot permissions'));
+  assert.ok(line, 'README must document the invite bot permissions');
+  for (const permission of [
+    'View Channel',
+    'Send Messages',
+    'Send Messages in Threads',
+    'Attach Files',
+    'Add Reactions',
+    'Read Message History',
+  ]) {
+    assert.ok(line.includes(permission), `invite permissions must include ${permission}`);
   }
 });
 

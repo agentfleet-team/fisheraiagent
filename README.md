@@ -58,7 +58,7 @@ A plain Discord bot (no LLM inside it) as its own process. A user posts a YouTub
 
 1. In the [Discord Developer Portal](https://discord.com/developers/applications) create an application, then open **Bot** → **Add Bot** and copy the bot token (`DISCORD_TOKEN`).
 2. On the same **Bot** page, under **Privileged Gateway Intents**, turn on **Message Content Intent**. (The bot also uses the standard Guilds and Guild Messages intents.)
-3. Invite the bot: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`, bot permissions **View Channel**, **Send Messages**, **Send Messages in Threads**, **Add Reactions**. Open the generated URL and pick your server.
+3. Invite the bot: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`, bot permissions **View Channel**, **Send Messages**, **Send Messages in Threads**, **Attach Files**, **Add Reactions**, **Read Message History**. Open the generated URL and pick your server. The effective channel and thread permission overwrites where the bot is enabled must allow these too: it needs **Attach Files** to upload the transcripts and **Read Message History** plus **Add Reactions** for the progress reaction.
 
 ### 2. Run it
 

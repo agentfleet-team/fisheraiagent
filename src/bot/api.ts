@@ -31,13 +31,38 @@ interface RemoteError {
   message: string;
 }
 
+// The service contract (openapi.yaml) defines this finite set of error
+// codes. Anything else a remote server returns is untrusted text: it folds
+// into the fallback code before it can reach a log line or a Discord reply.
+const REMOTE_ERROR_CODES = new Set([
+  'invalid_url',
+  'video_unavailable',
+  'missing_key',
+  'key_rejected',
+  'quota_exceeded',
+  'upstream_timeout',
+  'bad_model_output',
+  'invalid_config',
+  'invalid_request',
+  'unauthorized',
+  'not_found',
+  'internal_error',
+]);
+
+function remoteCode(value: unknown, fallback: string): string {
+  return typeof value === 'string' && REMOTE_ERROR_CODES.has(value) ? value : fallback;
+}
+
 async function readError(res: Response, fallbackCode: string): Promise<RemoteError> {
   const body = (await res.json().catch(() => null)) as {
     error?: { code?: unknown; message?: unknown };
   } | null;
-  const code = typeof body?.error?.code === 'string' ? body.error.code : fallbackCode;
+  const code = remoteCode(body?.error?.code, fallbackCode);
+  // The service's message travels only with a code the contract recognizes.
   const message =
-    typeof body?.error?.message === 'string' ? body.error.message : `service returned HTTP ${res.status}`;
+    code === body?.error?.code && typeof body?.error?.message === 'string'
+      ? body.error.message
+      : `service returned HTTP ${res.status}`;
   return { code, message };
 }
 
@@ -101,10 +126,12 @@ export function createApiClient(options: ApiClientOptions): TranscriptApi {
         };
         if (job.status === 'done' && job.result) return job.result;
         if (job.status === 'failed') {
-          throw new ApiError(
-            job.error?.code ?? 'internal_error',
-            job.error?.message ?? 'transcription job failed',
-          );
+          const code = remoteCode(job.error?.code, 'internal_error');
+          const message =
+            code === job.error?.code && typeof job.error?.message === 'string'
+              ? job.error.message
+              : 'transcription job failed';
+          throw new ApiError(code, message);
         }
         if (Date.now() > deadline) {
           throw new ApiError('job_timeout', 'timed out waiting for the transcript');

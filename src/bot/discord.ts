@@ -77,7 +77,12 @@ export async function startDiscordBot(
         ? (message.channel.parentId ?? undefined)
         : undefined,
       authorIsBot: message.author.bot,
-      content: message.content,
+      // Lazy on purpose: the core reads content only after the channel
+      // allowlist check, so the bot never reads text in channels that are
+      // not enabled.
+      get content() {
+        return message.content;
+      },
     };
     void core
       .handleMessage(msg, {
