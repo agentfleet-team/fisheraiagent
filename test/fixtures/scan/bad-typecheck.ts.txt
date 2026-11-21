@@ -1,0 +1,6 @@
+import { log } from '../../../src/log.js';
+log('job_failed', new Error('boom'));
+log('job_failed', { error: new Error('boom') });
+log('job_failed', { code: 'some free text' });
+log('free text event');
+log('job_failed', { guild: 'some free text' });

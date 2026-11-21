@@ -1,10 +1,14 @@
-import { ApiError, type TranscriptApi } from './api.js';
+import { ApiError, type SavedLink, type TranscriptApi } from './api.js';
 import { findYouTubeUrl } from './find-url.js';
-import { summaryLine, transcriptToSrt, transcriptToTxt } from './format.js';
+import { transcriptToSrt, transcriptToTxt } from './format.js';
+import { loggerFor, type LogCode } from '../log.js';
+import { parseChannelId, parseGuildId, parseVideoId } from '../ids.js';
+import { hasMessage, safeText, type MessageCode, type SafeText } from '../safe-text.js';
 import type { GuildStore } from './store.js';
 
 // Discord-free core: the adapter in discord.js land translates events into
-// these plain shapes, and the tests drive the same shapes with fakes.
+// these plain shapes, and the tests drive the same shapes with fakes. Ids
+// are re-validated by the parse functions where they are logged.
 
 export interface BotMessage {
   guildId: string;
@@ -19,12 +23,23 @@ export interface AttachmentFile {
   data: string;
 }
 
+// Text sent to a person takes only SafeText: an entry of the fixed
+// code-to-message table. A plain `string` — caught text, a remote field,
+// anything computed — does not fit, and no function turns one into
+// SafeText. `link` is structured data like the attachments: a saved-file
+// link that passed the API client's shape check, rendered by the adapter.
 export interface MessageSink {
-  react(emoji: string): Promise<void>;
-  reply(content: string, files: AttachmentFile[]): Promise<void>;
+  react(emoji: SafeText): Promise<void>;
+  reply(content: SafeText, files: AttachmentFile[], link?: SavedLink): Promise<void>;
 }
 
 export type BotSubcommand = 'set-key' | 'remove-key' | 'enable' | 'disable';
+
+const BOT_SUBCOMMANDS: readonly BotSubcommand[] = ['set-key', 'remove-key', 'enable', 'disable'];
+
+export function isBotSubcommand(value: string): value is BotSubcommand {
+  return BOT_SUBCOMMANDS.some((s) => s === value);
+}
 
 export interface BotCommand {
   guildId: string;
@@ -35,7 +50,7 @@ export interface BotCommand {
 }
 
 export interface CommandSink {
-  replyEphemeral(content: string): Promise<void>;
+  replyEphemeral(content: SafeText): Promise<void>;
 }
 
 export interface BotDeps {
@@ -49,80 +64,65 @@ export interface BotCore {
   handleCommand(cmd: BotCommand, sink: CommandSink): Promise<void>;
 }
 
-const ERROR_MESSAGES: Record<string, string> = {
-  invalid_url: "That doesn't look like a usable YouTube link.",
-  video_unavailable: 'This video is unavailable — it may be private, deleted, or blocked for transcription.',
-  missing_key: 'The service received no Gemini key. An admin can set one with `/transcript set-key`.',
-  key_rejected: 'The Gemini key set for this server was rejected. An admin can replace it with `/transcript set-key`.',
-  quota_exceeded: "This server's Gemini key is out of quota. Try again later or set a different key.",
-  upstream_timeout: 'Transcription timed out upstream. Try again.',
-  bad_model_output: 'The model returned unusable output. Try again.',
-  invalid_config: 'The transcript service is misconfigured.',
-  unauthorized: "The transcript service rejected this bot's service token.",
-  invalid_request: 'The transcript service rejected the request.',
-  not_found: 'The transcript service did not recognize that request.',
-  api_unreachable: 'The transcript service is unreachable. Try again later.',
-  job_lost: 'The transcript service restarted and lost the job. Try again.',
-  job_timeout: 'Timed out waiting for the transcript. Try again.',
-  internal_error: 'Something went wrong inside the transcript service. Try again.',
-};
+// Only a LogCode with a 'bot.error.<code>' entry in the messages table can
+// become an error reply; 'usage' and save-path codes have no such entry.
+type WithBotError<Code> = Code extends string
+  ? `bot.error.${Code}` extends MessageCode
+    ? Code
+    : never
+  : never;
+type ErrorKey = WithBotError<Exclude<LogCode, 'usage'>>;
 
-// A code is logged or shown only when it maps to a fixed local message;
-// anything else, including arbitrary remote text in an ApiError, folds
-// into internal_error.
-function errorCode(err: unknown): string {
+// A code is logged or shown only when it maps to a fixed table entry (the
+// 'bot.error.<code>' messages); anything else, including arbitrary remote
+// text in an ApiError, folds into internal_error.
+function errorCode(err: unknown): ErrorKey {
   const code = err instanceof ApiError ? err.code : 'internal_error';
-  return Object.hasOwn(ERROR_MESSAGES, code) ? code : 'internal_error';
+  return isErrorKey(code) ? code : 'internal_error';
 }
 
-function errorMessage(err: unknown): string {
-  return ERROR_MESSAGES[errorCode(err)];
+function isErrorKey(code: string): code is ErrorKey {
+  return hasMessage(`bot.error.${code}`);
 }
 
 export function createBot(deps: BotDeps): BotCore {
-  const log = deps.log ?? (() => {});
+  const log = loggerFor(deps.log);
   const { api, store } = deps;
 
   return {
     async handleCommand(cmd, sink) {
       if (!cmd.memberCanManageGuild) {
-        await sink.replyEphemeral(
-          'You need the **Manage Server** permission to set up the transcript bot.',
-        );
+        await sink.replyEphemeral(safeText('bot.need_manage_server'));
         return;
       }
       switch (cmd.subcommand) {
         case 'set-key': {
           const key = cmd.key?.trim();
           if (!key) {
-            await sink.replyEphemeral('Provide the Gemini API key: `/transcript set-key`.');
+            await sink.replyEphemeral(safeText('bot.key_prompt'));
             return;
           }
           store.setKey(cmd.guildId, key);
-          log(`key set guild=${cmd.guildId}`);
-          await sink.replyEphemeral(
-            'Gemini key saved for this server. Enable a channel with `/transcript enable`.',
-          );
+          log('key_set', { guild: parseGuildId(cmd.guildId) });
+          await sink.replyEphemeral(safeText('bot.key_saved'));
           return;
         }
         case 'remove-key': {
           store.removeKey(cmd.guildId);
-          log(`key removed guild=${cmd.guildId}`);
-          await sink.replyEphemeral('Gemini key removed for this server.');
+          log('key_removed', { guild: parseGuildId(cmd.guildId) });
+          await sink.replyEphemeral(safeText('bot.key_removed'));
           return;
         }
         case 'enable': {
           store.enableChannel(cmd.guildId, cmd.channelId);
-          log(`enabled guild=${cmd.guildId} channel=${cmd.channelId}`);
-          await sink.replyEphemeral(
-            'Transcript bot enabled here. Post a YouTube link and the transcript lands in this channel or thread.',
-          );
+          log('channel_enabled', { guild: parseGuildId(cmd.guildId), channel: parseChannelId(cmd.channelId) });
+          await sink.replyEphemeral(safeText('bot.enabled'));
           return;
         }
         case 'disable': {
           store.disableChannel(cmd.guildId, cmd.channelId);
-          log(`disabled guild=${cmd.guildId} channel=${cmd.channelId}`);
-          await sink.replyEphemeral('Transcript bot disabled here.');
+          log('channel_disabled', { guild: parseGuildId(cmd.guildId), channel: parseChannelId(cmd.channelId) });
+          await sink.replyEphemeral(safeText('bot.disabled'));
           return;
         }
       }
@@ -142,20 +142,17 @@ export function createBot(deps: BotDeps): BotCore {
 
       const apiKey = store.getKey(msg.guildId);
       if (!apiKey) {
-        await sink.reply(
-          'No Gemini key is set for this server. A server admin can add one with `/transcript set-key`.',
-          [],
-        );
+        await sink.reply(safeText('bot.no_key'), []);
         return;
       }
 
       try {
-        await sink.react('⏳');
+        await sink.react(safeText('bot.react_pending'));
       } catch {
         // The progress reaction is best-effort; missing permission must not stop the job.
       }
 
-      log(`job submitted guild=${msg.guildId} channel=${msg.channelId}`);
+      log('job_submitted', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId) });
       try {
         const outcome = await api.transcribe(url, apiKey, {
           kind: 'discord',
@@ -163,23 +160,28 @@ export function createBot(deps: BotDeps): BotCore {
           channel_id: msg.parentChannelId ?? msg.channelId,
         });
         const transcript = outcome.transcript;
-        log(
-          `job done guild=${msg.guildId} channel=${msg.channelId} video=${transcript.video_id}` +
-            (outcome.saved ? ' saved' : '') +
-            (outcome.saveErrorCode ? ' save_failed' : ''),
-        );
-        let content = summaryLine(transcript);
-        if (outcome.saved) content += `\nSaved to Drive: ${outcome.saved.url}`;
-        if (outcome.saveErrorCode) {
-          content += `\nCouldn't save this to the configured destination — the transcript is attached here.`;
-        }
-        await sink.reply(content, [
+        // transcript.video_id is remote data: validate before it logs as an id.
+        log('job_done', {
+          guild: parseGuildId(msg.guildId),
+          channel: parseChannelId(msg.channelId),
+          video: parseVideoId(transcript.video_id),
+        });
+        // The reply text is fixed; the transcript itself rides in the two
+        // attachments (its id is in the file names, url and language in the
+        // .txt). A saved-file link rides as validated structured data.
+        const files = [
           { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
-        ]);
+        ];
+        if (outcome.saveErrorCode !== undefined) {
+          await sink.reply(safeText('bot.transcript_save_failed'), files);
+        } else {
+          await sink.reply(safeText('bot.transcript_ready'), files, outcome.saved);
+        }
       } catch (err) {
-        log(`job failed guild=${msg.guildId} channel=${msg.channelId} code=${errorCode(err)}`);
-        await sink.reply(errorMessage(err), []);
+        const code = errorCode(err);
+        log('job_failed', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId), code });
+        await sink.reply(safeText(`bot.error.${code}`), []);
       }
     },
   };

@@ -1,16 +1,22 @@
 import { randomUUID } from 'node:crypto';
-import { TranscriptError } from './errors.js';
+import { codeOf, messageForCode, TranscriptError, type FixedErrorCode } from './errors.js';
 import type { GeminiCaller } from './gemini.js';
 import { SaveFailedError, type SavedFile } from './save.js';
+import type { SafeText } from './safe-text.js';
 import type { JobOrigin } from './tenants.js';
 import { transcribeYouTube } from './transcribe.js';
 import type { Transcript } from './transcript.js';
 
 export type JobStatus = 'queued' | 'running' | 'done' | 'failed';
 
+// The failed-job HTTP body carries the same branded message as ErrorBody:
+// only a fixed table entry, never caught text. `status` is a numeric
+// diagnostic — the upstream HTTP status when the failure came from a
+// remote service (for example a Drive 403), never free text.
 export interface JobError {
-  code: string;
-  message: string;
+  code: FixedErrorCode;
+  message: SafeText;
+  status?: number;
 }
 
 export interface JobView {
@@ -27,7 +33,7 @@ export interface JobRunnerDeps {
   model: string;
   maxBlockSeconds: number;
   cacheDir: string;
-  log?: (line: string) => void;
+  log?: (line: string) => void; // sink for allowlisted log lines
   // After a transcript exists, persist it wherever the job's origin resolved
   // to. Returns the saved file, undefined when nothing should be saved, and
   // throws on failure — the transcript is still returned either way.
@@ -88,13 +94,13 @@ export class JobStore {
           const saved = await this.deps.saveTranscript(origin, record.result);
           if (saved) record.saved = saved;
         } catch (err) {
-          record.save_error = toJobError(err, apiKey);
+          record.save_error = toJobError(err);
         }
       }
       record.status = 'done';
     } catch (err) {
       record.status = 'failed';
-      record.error = toJobError(err, apiKey);
+      record.error = toJobError(err);
     }
   }
 
@@ -109,14 +115,18 @@ export class JobStore {
   }
 }
 
-function toJobError(err: unknown, apiKey: string): JobError {
-  const code =
+// A job error view is a fixed code, its branded table message and an
+// optional numeric status — never caught text, so the caller's API key and
+// upstream error strings cannot reach the wire through this path.
+function toJobError(err: unknown): JobError {
+  const code = err instanceof SaveFailedError ? err.code : codeOf(err);
+  const view: JobError = { code, message: messageForCode(code) };
+  const status =
     err instanceof SaveFailedError
-      ? err.code
+      ? err.status
       : err instanceof TranscriptError
-        ? err.code
-        : 'internal_error';
-  const raw = err instanceof Error ? err.message : String(err);
-  // Belt and braces: an upstream message must never echo the caller key back.
-  return { code, message: raw.split(apiKey).join('[redacted]').slice(0, 500) };
+        ? err.httpStatus
+        : undefined;
+  if (status !== undefined) view.status = status;
+  return view;
 }

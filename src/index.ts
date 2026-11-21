@@ -10,6 +10,14 @@ export { JobStore, type JobError, type JobRunnerDeps, type JobStatus, type JobVi
 export { createService, type ServiceOptions } from './service.js';
 export { createDriveStore, DriveError, type DriveStore, type StoredFile } from './drive.js';
 export {
+  parseTenantId,
+  parseDriveFolderId,
+  parseDriveFileId,
+  type TenantId,
+  type DriveFolderId,
+  type DriveFileId,
+} from './ids.js';
+export {
   createTranscriptSaver,
   createVideoMetadata,
   englishSlug,

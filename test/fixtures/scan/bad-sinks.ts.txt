@@ -1,0 +1,32 @@
+import type { CommandSink, MessageSink } from '../../../src/bot/core.js';
+import type { ErrorBody } from '../../../src/errors.js';
+import type { JobView } from '../../../src/jobs.js';
+import { safeText, type SafeText } from '../../../src/safe-text.js';
+declare const command: CommandSink;
+declare const message: MessageSink;
+declare const err: Error;
+const accepted1 = command.replyEphemeral(safeText('bot.enabled'));
+const accepted2 = message.reply(safeText('bot.transcript_ready'), []);
+void accepted1;
+void accepted2;
+command.replyEphemeral(err.message);
+const alias = err.message;
+command.replyEphemeral(alias);
+const { message: destructured } = err;
+command.replyEphemeral(destructured);
+message.reply(err.message, []);
+message.react(err.message);
+command.replyEphemeral('a bare literal is not SafeText');
+command.replyEphemeral(safeText(`Failure: ${err.message}`));
+function fromArbitrary(text: string): SafeText {
+  return safeText(`Failure: ${text}`);
+}
+void fromArbitrary;
+const body: ErrorBody = { error: { code: 'internal_error', message: err.message } };
+const job: JobView = { job_id: 'j', status: 'failed', error: { code: 'internal_error', message: err.message } };
+async function reportFailure(problem: Error, target: MessageSink): Promise<void> {
+  await target.reply(problem.message, []);
+}
+void reportFailure;
+void body;
+void job;

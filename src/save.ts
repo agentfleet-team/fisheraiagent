@@ -1,5 +1,7 @@
 import { DriveError, type DriveStore } from './drive.js';
 import { TranscriptError } from './errors.js';
+import { parseDriveFileId, parseVideoId } from './ids.js';
+import { loggerFor, type LogSink } from './log.js';
 import { loadTenantsFile, resolveTenant, type FileExtension, type JobOrigin } from './tenants.js';
 import type { Transcript } from './transcript.js';
 import { canonicalVideoUrl } from './youtube-url.js';
@@ -16,11 +18,13 @@ export interface VideoMetadata {
 }
 
 export class SaveFailedError extends Error {
-  readonly code = 'save_failed' as const;
+  readonly code: 'save_failed' = 'save_failed';
+  readonly status?: number;
 
-  constructor(message: string) {
+  constructor(message: string, status?: number) {
     super(message);
     this.name = 'SaveFailedError';
+    this.status = status;
   }
 }
 
@@ -113,10 +117,13 @@ export function createVideoMetadata(
       const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(canonicalVideoUrl(videoId))}&format=json`;
       const res = await fetchImpl(url);
       if (!res.ok) return {};
-      const body = (await res.json()) as { title?: unknown; author_name?: unknown };
+      const body: unknown = await res.json();
+      const record = typeof body === 'object' && body !== null ? body : {};
+      const title = 'title' in record ? Reflect.get(record, 'title') : undefined;
+      const channel = 'author_name' in record ? Reflect.get(record, 'author_name') : undefined;
       return {
-        title: typeof body.title === 'string' ? body.title : undefined,
-        channel: typeof body.author_name === 'string' ? body.author_name : undefined,
+        title: typeof title === 'string' ? title : undefined,
+        channel: typeof channel === 'string' ? channel : undefined,
       };
     } catch {
       return {};
@@ -129,7 +136,7 @@ export interface SaverDeps {
   drive?: DriveStore;
   metadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
-  log?: (line: string) => void;
+  log?: LogSink;
 }
 
 // Returns the after-job hook the job runner calls once a transcript exists.
@@ -140,13 +147,20 @@ export function createTranscriptSaver(
   deps: SaverDeps,
 ): (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined> {
   const metadata = deps.metadata ?? createVideoMetadata();
+  const log = loggerFor(deps.log);
   return async (origin, transcript) => {
     const tenants = loadTenantsFile(deps.tenantsFile);
     const tenant = resolveTenant(tenants, origin);
     const destination = tenant?.destination;
     if (!tenant || !destination || destination.type === 'none') return undefined;
 
+    const fields = {
+      tenant: tenant.id,
+      video: parseVideoId(transcript.video_id),
+      folder: destination.folder_id,
+    };
     if (!deps.drive) {
+      log('file_save_failed', { ...fields, code: 'invalid_config' });
       throw new TranscriptError(
         'invalid_config',
         `tenant ${tenant.id}: a google-drive destination needs GOOGLE_APPLICATION_CREDENTIALS`,
@@ -160,15 +174,16 @@ export function createTranscriptSaver(
     const content = renderTranscriptFile(transcript, meta, extension, now);
 
     try {
-      const existing = await deps.drive.findFile(destination.folder_id ?? '', name);
+      const existing = await deps.drive.findFile(destination.folder_id, name);
       const stored = existing
         ? await deps.drive.updateFile(existing.id, content, MIME_TYPES[extension])
-        : await deps.drive.createFile(destination.folder_id ?? '', name, content, MIME_TYPES[extension]);
-      deps.log?.(`saved ${transcript.video_id} tenant=${tenant.id} file=${stored.name}`);
+        : await deps.drive.createFile(destination.folder_id, name, content, MIME_TYPES[extension]);
+      log('file_saved', { ...fields, file: parseDriveFileId(stored.id) });
       return { type: 'google-drive', name: stored.name, url: stored.url };
     } catch (err) {
-      const detail = err instanceof DriveError ? err.message : err instanceof Error ? err.message : String(err);
-      throw new SaveFailedError(`could not save ${transcript.video_id} for tenant ${tenant.id}: ${detail}`);
+      log('file_save_failed', { ...fields, code: 'save_failed' });
+      const status = err instanceof DriveError ? err.status : undefined;
+      throw new SaveFailedError('the destination write failed', status);
     }
   };
 }

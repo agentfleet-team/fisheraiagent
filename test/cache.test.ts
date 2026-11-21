@@ -33,7 +33,7 @@ test('a second request for the same video and settings makes zero Gemini calls a
   const second = await transcribeYouTube('hWe-j78vNpc', deps);
   assert.equal(calls.length, 1, 'cache hit must not call Gemini');
   assert.deepEqual(second, first);
-  assert.ok(logs.includes('cache hit hWe-j78vNpc'));
+  assert.ok(logs.includes('cache_hit video=hWe-j78vNpc'));
 });
 
 test('different settings produce a different cache entry', async () => {

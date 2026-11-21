@@ -32,6 +32,14 @@ interface ServiceAccount {
   private_key: string;
 }
 
+// Remote and file JSON is unknown until checked; this narrows fields by name
+// so no unchecked `as` stands between the wire and the code.
+function field(value: unknown, key: string): unknown {
+  return typeof value === 'object' && value !== null && key in value
+    ? Reflect.get(value, key)
+    : undefined;
+}
+
 function loadServiceAccount(credentialsPath: string): ServiceAccount {
   let parsed: unknown;
   try {
@@ -42,14 +50,15 @@ function loadServiceAccount(credentialsPath: string): ServiceAccount {
       `cannot read GOOGLE_APPLICATION_CREDENTIALS file ${credentialsPath}: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
-  const account = parsed as Partial<ServiceAccount>;
-  if (typeof account?.client_email !== 'string' || typeof account?.private_key !== 'string') {
+  const email = field(parsed, 'client_email');
+  const key = field(parsed, 'private_key');
+  if (typeof email !== 'string' || typeof key !== 'string') {
     throw new TranscriptError(
       'invalid_config',
       `${credentialsPath}: not a service account key file (needs client_email and private_key)`,
     );
   }
-  return { client_email: account.client_email, private_key: account.private_key };
+  return { client_email: email, private_key: key };
 }
 
 function base64url(input: string | Buffer): string {
@@ -80,26 +89,25 @@ const DRIVE_UPLOAD = 'https://www.googleapis.com/upload/drive/v3';
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const FILE_FIELDS = 'id,name,webViewLink';
 
-function driveUrl(file: { id?: string; name?: string; webViewLink?: string }): StoredFile {
-  const id = typeof file.id === 'string' ? file.id : '';
+function driveUrl(file: unknown): StoredFile {
+  const idValue = field(file, 'id');
+  const id = typeof idValue === 'string' ? idValue : '';
+  const name = field(file, 'name');
+  const link = field(file, 'webViewLink');
   return {
     id,
-    name: typeof file.name === 'string' ? file.name : '',
+    name: typeof name === 'string' ? name : '',
     url:
-      typeof file.webViewLink === 'string' && file.webViewLink !== ''
-        ? file.webViewLink
+      typeof link === 'string' && link !== ''
+        ? link
         : `https://drive.google.com/file/d/${id}/view`,
   };
 }
 
 async function readApiError(res: Response): Promise<DriveError> {
-  const body = (await res.json().catch(() => null)) as {
-    error?: { message?: unknown };
-  } | null;
-  const detail = typeof body?.error?.message === 'string' ? ` ${body.error.message}` : '';
   const shareHint =
     res.status === 403 ? ' — is the folder shared with the service account email?' : '';
-  return new DriveError(`Drive API error ${res.status}:${detail}${shareHint}`, res.status);
+  return new DriveError(`Drive API error ${res.status}${shareHint}`, res.status);
 }
 
 export interface DriveStoreOptions {
@@ -128,12 +136,14 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
       }).toString(),
     });
     if (!res.ok) throw await readApiError(res);
-    const body = (await res.json()) as { access_token?: unknown; expires_in?: unknown };
-    if (typeof body.access_token !== 'string' || body.access_token === '') {
+    const body: unknown = await res.json();
+    const accessToken = field(body, 'access_token');
+    if (typeof accessToken !== 'string' || accessToken === '') {
       throw new DriveError('token endpoint returned no access_token');
     }
-    const ttl = typeof body.expires_in === 'number' ? body.expires_in : 3600;
-    token = { value: body.access_token, expiresAt: Date.now() + ttl * 1000 };
+    const expiresIn = field(body, 'expires_in');
+    const ttl = typeof expiresIn === 'number' ? expiresIn : 3600;
+    token = { value: accessToken, expiresAt: Date.now() + ttl * 1000 };
     return token.value;
   }
 
@@ -153,9 +163,10 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
       const res = await api(
         `${DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=${encodeURIComponent(`files(${FILE_FIELDS})`)}&supportsAllDrives=true&includeItemsFromAllDrives=true&spaces=drive`,
       );
-      const body = (await res.json()) as { files?: { id?: string; name?: string; webViewLink?: string }[] };
-      const found = body.files?.[0];
-      return found ? driveUrl(found) : null;
+      const body: unknown = await res.json();
+      const files = field(body, 'files');
+      const found = Array.isArray(files) ? files[0] : undefined;
+      return found === undefined ? null : driveUrl(found);
     },
 
     async createFile(folderId, name, content, mimeType) {
@@ -181,7 +192,7 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
           body,
         },
       );
-      return driveUrl((await res.json()) as { id?: string; name?: string; webViewLink?: string });
+      return driveUrl(await res.json());
     },
 
     async updateFile(fileId, content, mimeType) {
@@ -189,7 +200,7 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
         `${DRIVE_UPLOAD}/files/${encodeURIComponent(fileId)}?uploadType=media&supportsAllDrives=true&fields=${encodeURIComponent(FILE_FIELDS)}`,
         { method: 'PATCH', headers: { 'content-type': mimeType }, body: content },
       );
-      return driveUrl((await res.json()) as { id?: string; name?: string; webViewLink?: string });
+      return driveUrl(await res.json());
     },
   };
 }

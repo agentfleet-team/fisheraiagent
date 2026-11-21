@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { TranscriptError } from './errors.js';
+import { codeOf } from './errors.js';
+import { consoleSink, log } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { loadConfig } from './config.js';
 import { createGeminiCaller } from './gemini.js';
@@ -8,7 +9,7 @@ import { transcribeYouTube } from './transcribe.js';
 async function main(): Promise<number> {
   const input = process.argv[2];
   if (!input) {
-    console.error('usage: transcribe <youtube-url-or-video-id>');
+    log('startup_failed', { code: 'usage' });
     return 2;
   }
 
@@ -21,17 +22,14 @@ async function main(): Promise<number> {
       model: config.model,
       maxBlockSeconds: config.maxBlockSeconds,
       cacheDir: config.cacheDir,
-      log: (line) => console.error(line),
+      log: consoleSink,
     });
     process.stdout.write(JSON.stringify(transcript, null, 2) + '\n');
     return 0;
   } catch (err) {
-    if (err instanceof TranscriptError) {
-      console.error(`${err.code}: ${err.message}`);
-      return 1;
-    }
-    console.error(`error: ${err instanceof Error ? err.message : String(err)}`);
-    return 2;
+    const code = codeOf(err);
+    log('startup_failed', { code });
+    return code === 'internal_error' ? 2 : 1;
   }
 }
 

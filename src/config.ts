@@ -23,9 +23,9 @@ const DEFAULT_CACHE_DIR = './transcript-cache';
 const DEFAULT_PORT = 8080;
 
 function defaultModel(): string {
-  const pkg = JSON.parse(
+  const pkg: { config?: { geminiModel?: string } } = JSON.parse(
     readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
-  ) as { config?: { geminiModel?: string } };
+  );
   const model = pkg.config?.geminiModel;
   if (!model) throw new TranscriptError('invalid_config', 'no default model in package.json config.geminiModel');
   return model;

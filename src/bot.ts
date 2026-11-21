@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { TranscriptError } from './errors.js';
+import { codeOf } from './errors.js';
+import { consoleSink, log } from './log.js';
 import { createApiClient } from './bot/api.js';
 import { loadBotConfig } from './bot/config.js';
 import { createBot } from './bot/core.js';
@@ -16,13 +17,9 @@ try {
     pollIntervalMs: config.pollIntervalMs,
     timeoutMs: config.jobTimeoutMs,
   });
-  const core = createBot({ api, store, log: (line) => console.log(line) });
-  await startDiscordBot(config, core, (line) => console.log(line));
+  const core = createBot({ api, store, log: consoleSink });
+  await startDiscordBot(config, core, consoleSink);
 } catch (err) {
-  if (err instanceof TranscriptError) {
-    console.error(`${err.code}: ${err.message}`);
-  } else {
-    console.error(`error: ${err instanceof Error ? err.message : String(err)}`);
-  }
+  log('startup_failed', { code: codeOf(err) });
   process.exitCode = 1;
 }

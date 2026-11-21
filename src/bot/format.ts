@@ -39,12 +39,4 @@ export function transcriptToSrt(transcript: Transcript): string {
     .concat('\n');
 }
 
-function transcriptLengthSeconds(transcript: Transcript): number {
-  return transcript.blocks.reduce((max, b) => Math.max(max, b.end), 0);
-}
 
-// The API returns no video title; the video id linked to its watch page is
-// the closest honest label, plus the covered length.
-export function summaryLine(transcript: Transcript): string {
-  return `Transcript: [${transcript.video_id}](${transcript.source_url}) · ${transcript.language} · ${formatDuration(transcriptLengthSeconds(transcript))}`;
-}

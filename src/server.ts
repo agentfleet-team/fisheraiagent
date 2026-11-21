@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { loadServiceConfig } from './config.js';
 import { createDriveStore } from './drive.js';
-import { TranscriptError } from './errors.js';
+import { codeOf } from './errors.js';
+import { consoleSink, log } from './log.js';
 import { createGeminiCaller } from './gemini.js';
 import { createService } from './service.js';
 
@@ -17,16 +18,12 @@ try {
     drive: config.googleCredentials
       ? createDriveStore({ credentialsPath: config.googleCredentials })
       : undefined,
-    log: (line) => console.log(line),
+    log: consoleSink,
   });
   server.listen(config.port, () => {
-    console.log(`transcript service listening on :${config.port}`);
+    log('service_listening', { port: config.port });
   });
 } catch (err) {
-  if (err instanceof TranscriptError) {
-    console.error(`${err.code}: ${err.message}`);
-  } else {
-    console.error(`error: ${err instanceof Error ? err.message : String(err)}`);
-  }
+  log('startup_failed', { code: codeOf(err) });
   process.exitCode = 1;
 }

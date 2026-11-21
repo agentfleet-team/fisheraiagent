@@ -12,7 +12,7 @@ import { DriveError, type DriveStore } from '../src/drive.js';
 import { englishSlug, renderTranscriptFile } from '../src/save.js';
 import { loadTenantsFile, resolveTenant, type JobOrigin } from '../src/tenants.js';
 import { TranscriptError } from '../src/errors.js';
-import { createApiClient } from '../src/bot/api.js';
+import { createApiClient, type SavedLink } from '../src/bot/api.js';
 import { createBot, type AttachmentFile } from '../src/bot/core.js';
 import { deriveEncryptionKey } from '../src/bot/crypto.js';
 import { GuildStore } from '../src/bot/store.js';
@@ -234,7 +234,7 @@ test('E2: a web job result and a Discord thread reply both carry the file link',
     store.enableChannel(GUILD, CHANNEL);
     const api = createApiClient({ baseUrl: svc.base, pollIntervalMs: 5, timeoutMs: 10_000 });
     const core = createBot({ api, store });
-    const replies: { content: string; files: AttachmentFile[] }[] = [];
+    const replies: { content: string; files: AttachmentFile[]; link?: SavedLink }[] = [];
     await core.handleMessage(
       {
         guildId: GUILD,
@@ -245,16 +245,18 @@ test('E2: a web job result and a Discord thread reply both carry the file link',
       },
       {
         react: async () => {},
-        reply: async (content, files) => {
-          replies.push({ content, files });
+        reply: async (content, files, link) => {
+          replies.push({ content, files, link });
         },
       },
     );
 
     assert.equal(replies.length, 1);
-    assert.match(
-      replies[0].content,
-      /Saved to Drive: https:\/\/drive\.example\.test\/folder-guild\//,
+    // The link reaches the reply sink as validated structured data; the
+    // Discord adapter renders it as "Saved to Drive: <url>" under the text.
+    assert.equal(
+      replies[0].link?.url,
+      'https://drive.example.test/folder-guild/my-great-video_20261122.txt',
     );
     assert.equal(replies[0].files.length, 2);
     assert.equal(drive.filesIn('folder-guild').length, 1);
@@ -287,7 +289,8 @@ test('E3: a 403 from Drive reports save_failed at the origin and still returns t
     assert.ok(job.result.blocks.length > 0, 'transcript must still be returned');
     assert.equal(job.saved, undefined);
     assert.equal(job.save_error.code, 'save_failed');
-    assert.match(job.save_error.message, /403/);
+    assert.equal(job.save_error.status, 403);
+    assert.match(job.save_error.message, /shared with the service account/);
 
     // The Discord reply shows the failure and still attaches the transcript.
     const dir = mkdtempSync(join(tmpdir(), 'fa-save-bot-'));

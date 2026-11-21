@@ -26,7 +26,7 @@ export class GuildStore {
 
   private load(): BotData {
     try {
-      const parsed = JSON.parse(readFileSync(this.filePath, 'utf8')) as BotData;
+      const parsed: BotData = JSON.parse(readFileSync(this.filePath, 'utf8'));
       if (parsed && typeof parsed === 'object' && parsed.guilds) return parsed;
     } catch {
       // Missing or corrupt file starts empty.

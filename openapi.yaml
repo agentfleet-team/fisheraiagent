@@ -198,6 +198,12 @@ components:
             - internal_error
         message:
           type: string
+          description: A fixed message looked up by `code` from the service's message table.
+        status:
+          type: integer
+          description: >
+            Optional upstream HTTP status when the failure came from a remote
+            service (for example 403 from the Drive API).
     Transcript:
       type: object
       required: [video_id, source_url, language, blocks]

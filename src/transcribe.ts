@@ -1,4 +1,6 @@
 import { TranscriptError } from './errors.js';
+import { parseVideoId } from './ids.js';
+import { loggerFor, type LogSink } from './log.js';
 import type { GeminiCaller } from './gemini.js';
 import { ModelOutputError, parseModelOutput, type ParsedModelOutput } from './model-output.js';
 import { initialPrompt, rangePrompt, STRICT_RETRY_SUFFIX } from './prompts.js';
@@ -11,7 +13,7 @@ export interface TranscribeDeps {
   model: string;
   maxBlockSeconds: number;
   cacheDir: string;
-  log?: (line: string) => void;
+  log?: LogSink;
 }
 
 interface RoundResult extends ParsedModelOutput {
@@ -56,8 +58,7 @@ async function callRound(
         try {
           return { ...parseModelOutput(res.text, deps.maxBlockSeconds), status: res.status };
         } catch (second) {
-          const detail = second instanceof Error ? second.message : String(second);
-          throw new TranscriptError('bad_model_output', `model output not in expected format: ${detail}`);
+          throw new TranscriptError('bad_model_output', 'model output not in expected format', { cause: second });
         }
       }
       throw err;
@@ -157,7 +158,7 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
 export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
   const cached = await readCachedTranscript(deps.cacheDir, videoId, deps.model, deps.maxBlockSeconds);
   if (cached) {
-    deps.log?.(`cache hit ${videoId}`);
+    loggerFor(deps.log)('cache_hit', { video: parseVideoId(videoId) });
     return cached;
   }
   const transcript = await transcribeVideo(videoId, deps);

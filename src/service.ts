@@ -1,7 +1,8 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
 import type { DriveStore } from './drive.js';
-import { TranscriptError } from './errors.js';
+import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
+import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
 import { createTranscriptSaver, createVideoMetadata, type VideoMetadata } from './save.js';
@@ -17,6 +18,12 @@ export interface ServiceOptions extends JobRunnerDeps {
   now?: () => Date;
 }
 
+// Remote JSON is unknown until checked; this narrows fields by name so no
+// unchecked `as` stands between the request body and the code.
+function field(value: object, key: string): unknown {
+  return key in value ? Reflect.get(value, key) : undefined;
+}
+
 // The submit body's optional "origin": where the job came from, used to
 // resolve the tenant whose destination the transcript is saved to.
 //   {"kind": "discord", "guild_id": "...", "channel_id": "..."}
@@ -26,16 +33,16 @@ function parseOrigin(value: unknown): JobOrigin | undefined {
   if (typeof value !== 'object') {
     throw new TranscriptError('invalid_request', 'origin must be an object');
   }
-  const raw = value as Record<string, unknown>;
   const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() !== '' ? v.trim() : undefined);
-  if (raw.kind === 'discord') {
-    const guild_id = str(raw.guild_id);
-    const channel_id = str(raw.channel_id);
+  const kind = field(value, 'kind');
+  if (kind === 'discord') {
+    const guild_id = str(field(value, 'guild_id'));
+    const channel_id = str(field(value, 'channel_id'));
     if (guild_id && channel_id) return { kind: 'discord', guild_id, channel_id };
     throw new TranscriptError('invalid_request', 'a discord origin needs guild_id and channel_id strings');
   }
-  if (raw.kind === 'web') {
-    const identity = str(raw.identity);
+  if (kind === 'web') {
+    const identity = str(field(value, 'identity'));
     if (identity) return { kind: 'web', identity };
     throw new TranscriptError('invalid_request', 'a web origin needs an identity string');
   }
@@ -54,14 +61,17 @@ export function createService(options: ServiceOptions): Server {
     });
   }
   const jobs = new JobStore(deps);
-  const log = options.log ?? (() => {});
+  const log = loggerFor(options.log);
 
   const send = (res: ServerResponse, status: number, body: unknown): void => {
     res.writeHead(status, { 'content-type': 'application/json' });
     res.end(JSON.stringify(body));
   };
-  const sendError = (res: ServerResponse, status: number, code: string, message: string): void =>
-    send(res, status, { error: { code, message } });
+  // Error bodies carry only a code and its fixed SafeText message.
+  const sendError = (res: ServerResponse, status: number, code: FixedErrorCode): void => {
+    const body: ErrorBody = { error: { code, message: messageForCode(code) } };
+    send(res, status, body);
+  };
 
   const authorized = (req: IncomingMessage): boolean => {
     if (!options.serviceToken) return true;
@@ -75,7 +85,7 @@ export function createService(options: ServiceOptions): Server {
     const method = req.method ?? 'GET';
     // Path only: query strings are never logged or inspected.
     const path = new URL(req.url ?? '/', 'http://service.local').pathname;
-    log(`${method} ${path}`);
+    log('http_request', { route: routeTemplate(method, path) });
 
     if (method === 'GET' && path === '/healthz') {
       send(res, 200, { status: 'ok' });
@@ -83,11 +93,11 @@ export function createService(options: ServiceOptions): Server {
     }
 
     if (!path.startsWith('/v1/')) {
-      sendError(res, 404, 'not_found', 'unknown route');
+      sendError(res, 404, 'not_found');
       return;
     }
     if (!authorized(req)) {
-      sendError(res, 401, 'unauthorized', 'Authorization: Bearer <SERVICE_TOKEN> is required');
+      sendError(res, 401, 'unauthorized');
       return;
     }
 
@@ -99,30 +109,29 @@ export function createService(options: ServiceOptions): Server {
     if (method === 'GET' && jobMatch) {
       const view = jobs.get(decodeURIComponent(jobMatch[1]));
       if (view) send(res, 200, view);
-      else sendError(res, 404, 'not_found', 'unknown job_id');
+      else sendError(res, 404, 'not_found');
       return;
     }
-    sendError(res, 404, 'not_found', 'unknown route');
+    sendError(res, 404, 'not_found');
   }
 
   async function submitJob(req: IncomingMessage, res: ServerResponse): Promise<void> {
     let body: unknown;
     try {
       body = await readJsonBody(req);
-    } catch (err) {
-      sendError(res, 400, 'invalid_request', err instanceof Error ? err.message : 'invalid request body');
+    } catch {
+      sendError(res, 400, 'invalid_request');
       return;
     }
-    const url =
-      typeof body === 'object' && body !== null ? (body as Record<string, unknown>).url : undefined;
+    const url = typeof body === 'object' && body !== null ? field(body, 'url') : undefined;
     if (typeof url !== 'string' || url.trim() === '') {
-      sendError(res, 400, 'invalid_request', 'request body must be JSON with a "url" string');
+      sendError(res, 400, 'invalid_request');
       return;
     }
     const keyHeader = req.headers['x-gemini-key'];
     const apiKey = (Array.isArray(keyHeader) ? keyHeader[0] : keyHeader)?.trim() ?? '';
     if (!apiKey) {
-      sendError(res, 400, 'missing_key', 'X-Gemini-Key header is required');
+      sendError(res, 400, 'missing_key');
       return;
     }
     let videoId: string;
@@ -130,17 +139,17 @@ export function createService(options: ServiceOptions): Server {
       videoId = parseYouTubeVideoId(url);
     } catch (err) {
       if (err instanceof TranscriptError) {
-        sendError(res, 400, err.code, err.message);
+        sendError(res, 400, codeOf(err));
         return;
       }
       throw err;
     }
     let origin: JobOrigin | undefined;
     try {
-      origin = parseOrigin((body as Record<string, unknown>).origin);
+      origin = parseOrigin(typeof body === 'object' && body !== null ? field(body, 'origin') : undefined);
     } catch (err) {
       if (err instanceof TranscriptError) {
-        sendError(res, 400, err.code, err.message);
+        sendError(res, 400, codeOf(err));
         return;
       }
       throw err;
@@ -149,12 +158,19 @@ export function createService(options: ServiceOptions): Server {
   }
 
   return createServer((req, res) => {
-    handle(req, res).catch((err: unknown) => {
-      log(`unhandled error: ${err instanceof Error ? err.message : String(err)}`);
-      if (!res.headersSent) sendError(res, 500, 'internal_error', 'unexpected server error');
+    handle(req, res).catch(() => {
+      log('http_unhandled_error');
+      if (!res.headersSent) sendError(res, 500, 'internal_error');
       else res.end();
     });
   });
+}
+
+function routeTemplate(method: string, path: string): LogRoute {
+  if (method === 'GET' && path === '/healthz') return 'GET /healthz';
+  if (method === 'POST' && path === '/v1/jobs') return 'POST /v1/jobs';
+  if (method === 'GET' && /^\/v1\/jobs\/[^/]+$/.test(path)) return 'GET /v1/jobs/:id';
+  return 'other';
 }
 
 function readJsonBody(req: IncomingMessage): Promise<unknown> {

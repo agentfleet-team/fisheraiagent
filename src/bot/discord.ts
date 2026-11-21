@@ -8,8 +8,11 @@ import {
   Routes,
   SlashCommandBuilder,
 } from 'discord.js';
+import { createLogger, type LogSink } from '../log.js';
+import { parseChannelId, parseGuildId } from '../ids.js';
+import { safeText } from '../safe-text.js';
 import type { BotConfig } from './config.js';
-import type { BotCommand, BotCore, BotMessage, BotSubcommand } from './core.js';
+import { isBotSubcommand, type BotCommand, type BotCore, type BotMessage } from './core.js';
 
 export const transcriptCommand = new SlashCommandBuilder()
   .setName('transcript')
@@ -39,8 +42,9 @@ export const transcriptCommand = new SlashCommandBuilder()
 export async function startDiscordBot(
   config: BotConfig,
   core: BotCore,
-  log: (line: string) => void,
+  sink: LogSink,
 ): Promise<Client> {
+  const log = createLogger(sink);
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -56,14 +60,14 @@ export async function startDiscordBot(
       await rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
         body: [transcriptCommand],
       });
-      log(`commands registered guild=${guildId}`);
-    } catch (err) {
-      log(`command registration failed guild=${guildId}: ${err instanceof Error ? err.message : String(err)}`);
+      log('commands_registered', { guild: parseGuildId(guildId) });
+    } catch {
+      log('command_registration_failed', { guild: parseGuildId(guildId) });
     }
   };
 
   client.once(Events.ClientReady, (ready) => {
-    log(`discord bot ready as ${ready.user.tag}`);
+    log('discord_ready', { count: ready.guilds.cache.size });
     for (const guild of ready.guilds.cache.values()) void register(guild.id);
   });
   client.on(Events.GuildCreate, (guild) => void register(guild.id));
@@ -89,15 +93,18 @@ export async function startDiscordBot(
         react: async (emoji) => {
           await message.react(emoji);
         },
-        reply: async (content, files) => {
+        reply: async (content, files, link) => {
           await message.channel.send({
-            content,
+            content: link ? `${content}\nSaved to Drive: ${link.url}` : content,
             files: files.map((f) => ({ attachment: Buffer.from(f.data, 'utf8'), name: f.name })),
           });
         },
       })
-      .catch((err: unknown) =>
-        log(`message handler error: ${err instanceof Error ? err.message : String(err)}`),
+      .catch(() =>
+        log('message_handler_failed', {
+          guild: parseGuildId(msg.guildId),
+          channel: parseChannelId(msg.channelId),
+        }),
       );
   });
 
@@ -106,7 +113,15 @@ export async function startDiscordBot(
     const guildId = interaction.guildId;
     if (!guildId) {
       void interaction.reply({
-        content: 'The transcript bot is set up per server, not in DMs.',
+        content: safeText('bot.dm_unsupported'),
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+    const subcommand = interaction.options.getSubcommand();
+    if (!isBotSubcommand(subcommand)) {
+      void interaction.reply({
+        content: safeText('bot.unknown_subcommand'),
         flags: MessageFlags.Ephemeral,
       });
       return;
@@ -119,7 +134,7 @@ export async function startDiscordBot(
         perms !== null && typeof perms === 'object'
           ? perms.has(PermissionFlagsBits.ManageGuild)
           : false,
-      subcommand: interaction.options.getSubcommand() as BotSubcommand,
+      subcommand,
       key: interaction.options.getString('key') ?? undefined,
     };
     void core
@@ -128,8 +143,11 @@ export async function startDiscordBot(
           await interaction.reply({ content, flags: MessageFlags.Ephemeral });
         },
       })
-      .catch((err: unknown) =>
-        log(`command handler error: ${err instanceof Error ? err.message : String(err)}`),
+      .catch(() =>
+        log('command_handler_failed', {
+          guild: parseGuildId(guildId),
+          channel: parseChannelId(interaction.channelId),
+        }),
       );
   });
 
