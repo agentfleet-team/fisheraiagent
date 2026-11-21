@@ -2,13 +2,13 @@
 
 Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host them for free, or use them through AgentFleet.
 
-> Status: the YouTube transcript CLI and HTTP job API work. Web, Discord and hosted surfaces follow.
+> Status: the YouTube transcript CLI, HTTP job API and Discord bot work. Web and hosted surfaces follow.
 
 ## Tools
 
 | Tool | What it does | Status |
 |---|---|---|
-| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API ready |
+| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot ready |
 
 ## Self-host quick start (HTTP service)
 
@@ -49,6 +49,57 @@ Notes:
 - **Callers bring their own key.** `GEMINI_API_KEY` is not used by the service; each request's `X-Gemini-Key` lives in memory only for that job and is never logged, stored or returned.
 - **Jobs are in-process.** The job store is memory only — a service restart loses every job (`GET /v1/jobs/{id}` then returns 404). The transcript cache on disk survives.
 - The API is described in [openapi.yaml](openapi.yaml).
+
+## Self-host the Discord bot
+
+A plain Discord bot (no LLM inside it) as its own process. A user posts a YouTube URL in an enabled channel or thread, the bot forwards only the URL to the HTTP API above, and the transcript comes back in the same channel or thread: a short reply (video, language, length) with the transcript as `.txt` and `.srt` attachments. Each Discord server brings its own Gemini key.
+
+### 1. Create the Discord application
+
+1. In the [Discord Developer Portal](https://discord.com/developers/applications) create an application, then open **Bot** → **Add Bot** and copy the bot token (`DISCORD_TOKEN`).
+2. On the same **Bot** page, under **Privileged Gateway Intents**, turn on **Message Content Intent**. (The bot also uses the standard Guilds and Guild Messages intents.)
+3. Invite the bot: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`, bot permissions **View Channel**, **Send Messages**, **Send Messages in Threads**, **Add Reactions**. Open the generated URL and pick your server.
+
+### 2. Run it
+
+The `bot` compose service runs next to `api` and reaches it at `http://api:8080`:
+
+```bash
+export DISCORD_TOKEN=<bot token>
+export BOT_ENCRYPTION_KEY=<any secret string>   # encrypts guild keys at rest
+export SERVICE_TOKEN=<same token as the api service, if you set one>
+docker compose up -d
+```
+
+Bot environment variables:
+
+| Variable | Required | Default | What it does |
+|---|---|---|---|
+| `DISCORD_TOKEN` | yes | — | Bot token from the Developer Portal. |
+| `BOT_ENCRYPTION_KEY` | yes | — | Secret that encrypts every guild's Gemini key at rest (AES-256-GCM). Losing it makes stored keys unreadable. |
+| `API_BASE_URL` | no | `http://localhost:8080` | Where the bot reaches the HTTP API. Under compose it is `http://api:8080`. |
+| `SERVICE_TOKEN` | no | — | Must match the API's `SERVICE_TOKEN` when the API requires one. |
+| `BOT_DATA_FILE` | no | `./bot-data/bot-data.json` | Local JSON file holding per-guild settings (encrypted keys, enabled channels). Under compose it lives in the `bot-data` volume. |
+| `BOT_POLL_INTERVAL_MS` | no | `2000` | How often the bot polls a job. |
+| `BOT_JOB_TIMEOUT_MS` | no | `1800000` | How long the bot waits for a transcript before giving up. |
+
+### 3. Set up a server
+
+Slash commands (all replies are ephemeral, only members with **Manage Server** may run them):
+
+| Command | What it does |
+|---|---|
+| `/transcript set-key key:<key>` | Save this server's Gemini API key (encrypted at rest). |
+| `/transcript remove-key` | Delete this server's key. |
+| `/transcript enable` | Enable the bot in the channel where you run it (covers its threads). |
+| `/transcript disable` | Disable it there. |
+
+Then post a YouTube URL in an enabled channel or thread: the bot adds an hourglass reaction, then replies in the same channel and thread with the transcript attachments. Messages elsewhere, or without a YouTube link, are ignored.
+
+Notes:
+
+- **Guild keys are encrypted at rest** and decrypted only in memory for the duration of one job; they are never logged. The bot sends only the video URL to the service — message text never leaves Discord.
+- The API returns no video title, so the reply links the video id to its watch page and reports the covered length.
 
 ## Self-host quick start (CLI)
 

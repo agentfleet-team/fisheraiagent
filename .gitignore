@@ -3,3 +3,4 @@ dist/
 transcript-cache/
 .env
 *.log
+bot-data/
