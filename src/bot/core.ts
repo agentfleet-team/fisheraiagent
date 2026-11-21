@@ -3,7 +3,7 @@ import { findYouTubeUrl } from './find-url.js';
 import { transcriptToSrt, transcriptToTxt } from './format.js';
 import { loggerFor, type LogCode } from '../log.js';
 import { parseChannelId, parseGuildId, parseVideoId } from '../ids.js';
-import { safeText, type SafeText } from '../safe-text.js';
+import { hasMessage, safeText, type SafeText } from '../safe-text.js';
 import type { GuildStore } from './store.js';
 
 // Discord-free core: the adapter in discord.js land translates events into
@@ -23,9 +23,10 @@ export interface AttachmentFile {
   data: string;
 }
 
-// Text sent to a person takes only SafeText: a literal wrapped at its
-// definition or an entry of the fixed error table. A plain `string` —
-// caught text, a remote field, anything computed — does not fit.
+// Text sent to a person takes only SafeText: an entry of the fixed
+// code-to-message table. A plain `string` — caught text, a remote field,
+// anything computed — does not fit, and no function turns one into
+// SafeText.
 export interface MessageSink {
   react(emoji: SafeText): Promise<void>;
   reply(content: SafeText, files: AttachmentFile[]): Promise<void>;
@@ -64,34 +65,16 @@ export interface BotCore {
 
 type ErrorKey = Exclude<LogCode, 'usage'>;
 
-const ERROR_MESSAGES: Record<ErrorKey, SafeText> = {
-  invalid_url: safeText("That doesn't look like a usable YouTube link."),
-  video_unavailable: safeText('This video is unavailable — it may be private, deleted, or blocked for transcription.'),
-  missing_key: safeText('The service received no Gemini key. An admin can set one with `/transcript set-key`.'),
-  key_rejected: safeText('The Gemini key set for this server was rejected. An admin can replace it with `/transcript set-key`.'),
-  quota_exceeded: safeText("This server's Gemini key is out of quota. Try again later or set a different key."),
-  upstream_timeout: safeText('Transcription timed out upstream. Try again.'),
-  bad_model_output: safeText('The model returned unusable output. Try again.'),
-  invalid_config: safeText('The transcript service is misconfigured.'),
-  unauthorized: safeText("The transcript service rejected this bot's service token."),
-  invalid_request: safeText('The transcript service rejected the request.'),
-  not_found: safeText('The transcript service did not recognize that request.'),
-  api_unreachable: safeText('The transcript service is unreachable. Try again later.'),
-  job_lost: safeText('The transcript service restarted and lost the job. Try again.'),
-  job_timeout: safeText('Timed out waiting for the transcript. Try again.'),
-  internal_error: safeText('Something went wrong inside the transcript service. Try again.'),
-};
-
-// A code is logged or shown only when it maps to a fixed local message;
-// anything else, including arbitrary remote text in an ApiError, folds
-// into internal_error.
+// A code is logged or shown only when it maps to a fixed table entry (the
+// 'bot.error.<code>' messages); anything else, including arbitrary remote
+// text in an ApiError, folds into internal_error.
 function errorCode(err: unknown): ErrorKey {
   const code = err instanceof ApiError ? err.code : 'internal_error';
   return isErrorKey(code) ? code : 'internal_error';
 }
 
 function isErrorKey(code: string): code is ErrorKey {
-  return Object.hasOwn(ERROR_MESSAGES, code);
+  return hasMessage(`bot.error.${code}`);
 }
 
 export function createBot(deps: BotDeps): BotCore {
@@ -101,43 +84,37 @@ export function createBot(deps: BotDeps): BotCore {
   return {
     async handleCommand(cmd, sink) {
       if (!cmd.memberCanManageGuild) {
-        await sink.replyEphemeral(
-          safeText('You need the **Manage Server** permission to set up the transcript bot.'),
-        );
+        await sink.replyEphemeral(safeText('bot.need_manage_server'));
         return;
       }
       switch (cmd.subcommand) {
         case 'set-key': {
           const key = cmd.key?.trim();
           if (!key) {
-            await sink.replyEphemeral(safeText('Provide the Gemini API key: `/transcript set-key`.'));
+            await sink.replyEphemeral(safeText('bot.key_prompt'));
             return;
           }
           store.setKey(cmd.guildId, key);
           log('key_set', { guild: parseGuildId(cmd.guildId) });
-          await sink.replyEphemeral(
-            safeText('Gemini key saved for this server. Enable a channel with `/transcript enable`.'),
-          );
+          await sink.replyEphemeral(safeText('bot.key_saved'));
           return;
         }
         case 'remove-key': {
           store.removeKey(cmd.guildId);
           log('key_removed', { guild: parseGuildId(cmd.guildId) });
-          await sink.replyEphemeral(safeText('Gemini key removed for this server.'));
+          await sink.replyEphemeral(safeText('bot.key_removed'));
           return;
         }
         case 'enable': {
           store.enableChannel(cmd.guildId, cmd.channelId);
           log('channel_enabled', { guild: parseGuildId(cmd.guildId), channel: parseChannelId(cmd.channelId) });
-          await sink.replyEphemeral(
-            safeText('Transcript bot enabled here. Post a YouTube link and the transcript lands in this channel or thread.'),
-          );
+          await sink.replyEphemeral(safeText('bot.enabled'));
           return;
         }
         case 'disable': {
           store.disableChannel(cmd.guildId, cmd.channelId);
           log('channel_disabled', { guild: parseGuildId(cmd.guildId), channel: parseChannelId(cmd.channelId) });
-          await sink.replyEphemeral(safeText('Transcript bot disabled here.'));
+          await sink.replyEphemeral(safeText('bot.disabled'));
           return;
         }
       }
@@ -157,15 +134,12 @@ export function createBot(deps: BotDeps): BotCore {
 
       const apiKey = store.getKey(msg.guildId);
       if (!apiKey) {
-        await sink.reply(
-          safeText('No Gemini key is set for this server. A server admin can add one with `/transcript set-key`.'),
-          [],
-        );
+        await sink.reply(safeText('bot.no_key'), []);
         return;
       }
 
       try {
-        await sink.react(safeText('⏳'));
+        await sink.react(safeText('bot.react_pending'));
       } catch {
         // The progress reaction is best-effort; missing permission must not stop the job.
       }
@@ -181,14 +155,14 @@ export function createBot(deps: BotDeps): BotCore {
         });
         // The reply text is fixed; the transcript itself rides in the two
         // attachments (its id is in the file names, url and language in the .txt).
-        await sink.reply(safeText('Transcript ready — the .txt and .srt files are attached.'), [
+        await sink.reply(safeText('bot.transcript_ready'), [
           { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
         ]);
       } catch (err) {
         const code = errorCode(err);
         log('job_failed', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId), code });
-        await sink.reply(ERROR_MESSAGES[code], []);
+        await sink.reply(safeText(`bot.error.${code}`), []);
       }
     },
   };

@@ -1,14 +1,17 @@
 import { randomUUID } from 'node:crypto';
 import { codeOf, messageForCode } from './errors.js';
 import type { GeminiCaller } from './gemini.js';
+import type { SafeText } from './safe-text.js';
 import { transcribeYouTube } from './transcribe.js';
 import type { Transcript } from './transcript.js';
 
 export type JobStatus = 'queued' | 'running' | 'done' | 'failed';
 
+// The failed-job HTTP body carries the same branded message as ErrorBody:
+// only a fixed table entry, never caught text.
 export interface JobError {
   code: string;
-  message: string;
+  message: SafeText;
 }
 
 export interface JobView {

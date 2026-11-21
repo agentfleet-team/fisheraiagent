@@ -243,13 +243,14 @@ test('R-14: every reply and HTTP error-body sink rejects plain string at compile
       .filter((d) => d.file?.fileName === virtual)
       .map((d) => d.file!.getLineAndCharacterOfPosition(d.start!).line + 1),
   );
-  // The fixture wraps literals for the two accepted calls, then on these
-  // lines passes `err.message` directly, via a local alias, via
-  // destructuring, via a helper parameter, into reply, replyEphemeral and
-  // react, plus a bare literal, `safeText(err.message)` and an ErrorBody
-  // message — every one must be a compile error.
+  // The fixture looks up two table entries for the accepted calls, then on
+  // these lines passes `err.message` directly, via a local alias, via
+  // destructuring and via a helper parameter into reply, replyEphemeral and
+  // react — plus a bare literal, a dynamic template through the code
+  // lookup, a helper turning `string` into SafeText, an ErrorBody message
+  // and a failed JobView message — every one must be a compile error.
   assert.deepEqual(
     [...errorLines].sort((a, b) => a - b),
-    [11, 13, 15, 16, 17, 18, 19, 20, 22],
+    [12, 14, 16, 17, 18, 19, 20, 22, 25, 26, 28],
   );
 });

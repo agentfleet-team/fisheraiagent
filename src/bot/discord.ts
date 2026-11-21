@@ -113,7 +113,7 @@ export async function startDiscordBot(
     const guildId = interaction.guildId;
     if (!guildId) {
       void interaction.reply({
-        content: safeText('The transcript bot is set up per server, not in DMs.'),
+        content: safeText('bot.dm_unsupported'),
         flags: MessageFlags.Ephemeral,
       });
       return;
@@ -121,7 +121,7 @@ export async function startDiscordBot(
     const subcommand = interaction.options.getSubcommand();
     if (!isBotSubcommand(subcommand)) {
       void interaction.reply({
-        content: safeText('Unknown transcript subcommand.'),
+        content: safeText('bot.unknown_subcommand'),
         flags: MessageFlags.Ephemeral,
       });
       return;
