@@ -21,6 +21,12 @@ interface RoundResult extends ParsedModelOutput {
 
 const MAX_CONTINUATION_ROUNDS = 8;
 const EPS = 1e-3;
+// A declared video duration is trusted to this tolerance; a shorter gap is
+// not worth another request.
+const TAIL_TOLERANCE_SECONDS = 1;
+// Only a 400 that specifically reports a start offset past the video end
+// means "nothing left"; any other 400 is a real failure.
+const PAST_END_OFFSET_MESSAGE = /offset|past (the )?end|beyond (the )?(video |end|duration|length)|exceeds? (the )?(video )?(duration|length)/i;
 
 async function callRound(
   videoUrl: string,
@@ -61,20 +67,29 @@ async function callRound(
   try {
     return await run();
   } catch (err) {
-    // A range request past the end of the video is rejected with 400; that
-    // means there is nothing left to transcribe.
-    if (fromSeconds !== undefined && err instanceof TranscriptError && err.httpStatus === 400) {
+    if (fromSeconds !== undefined && isPastEndOffsetError(err)) {
       return { language: 'unknown', blocks: [], status: 'completed', noMoreContent: true };
     }
     throw err;
   }
 }
 
+function isPastEndOffsetError(err: unknown): boolean {
+  return (
+    err instanceof TranscriptError &&
+    err.code === 'video_unavailable' &&
+    err.httpStatus === 400 &&
+    PAST_END_OFFSET_MESSAGE.test(err.message)
+  );
+}
+
 function appendNewBlocks(blocks: TranscriptBlock[], incoming: TranscriptBlock[]): number {
   let added = 0;
   for (const b of incoming) {
-    const lastStart = blocks.length > 0 ? blocks[blocks.length - 1].start : -Infinity;
-    if (b.start > lastStart + EPS) {
+    const lastEnd = blocks.length > 0 ? blocks[blocks.length - 1].end : -Infinity;
+    // Drop repeated or overlapping continuation blocks: new content must
+    // start at or after the end of what is already merged.
+    if (b.start >= lastEnd - EPS) {
       blocks.push(b);
       added += 1;
     }
@@ -82,17 +97,31 @@ function appendNewBlocks(blocks: TranscriptBlock[], incoming: TranscriptBlock[])
   return added;
 }
 
+function assertOrderedEnds(blocks: TranscriptBlock[]): void {
+  for (let i = 1; i < blocks.length; i++) {
+    if (blocks[i].end < blocks[i - 1].end - EPS) {
+      throw new TranscriptError(
+        'bad_model_output',
+        `merged transcript is out of order: block ${i + 1} ends before the previous block`,
+      );
+    }
+  }
+}
+
 export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
   const videoUrl = canonicalVideoUrl(videoId);
   const blocks: TranscriptBlock[] = [];
   let language = 'unknown';
 
-  const result = (): Transcript => ({
-    video_id: videoId,
-    source_url: videoUrl,
-    language,
-    blocks,
-  });
+  const result = (): Transcript => {
+    assertOrderedEnds(blocks);
+    return {
+      video_id: videoId,
+      source_url: videoUrl,
+      language,
+      blocks,
+    };
+  };
 
   for (let round = 0; round <= MAX_CONTINUATION_ROUNDS; round++) {
     const fromSeconds = round === 0 ? undefined : blocks[blocks.length - 1].end;
@@ -114,7 +143,7 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
     const lastEnd = blocks[blocks.length - 1].end;
     const truncated = out.status === 'incomplete' || out.status === 'requires_continuation';
     const missingTail =
-      out.durationSeconds !== undefined && lastEnd < out.durationSeconds - deps.maxBlockSeconds;
+      out.durationSeconds !== undefined && lastEnd < out.durationSeconds - TAIL_TOLERANCE_SECONDS;
 
     if (!truncated && !missingTail) return result();
   }

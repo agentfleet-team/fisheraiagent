@@ -101,6 +101,45 @@ test('a range request rejected with 400 ends the video instead of failing', asyn
   assert.equal(t.blocks.at(-1)?.end, 40);
 });
 
+test('a known missing tail shorter than the block limit is still requested', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'DURATION: 20\nLANGUAGE: en\n[0 - 8] a\n[8 - 16] b' },
+    { text: 'DURATION: 20\nLANGUAGE: en\n[16 - 20] final spoken words' },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].startOffsetSeconds, 16);
+  assert.equal(t.blocks.at(-1)?.end, 20);
+});
+
+test('a key_rejected 400 during continuation propagates instead of ending the video', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'DURATION: 100\nLANGUAGE: en\n[0 - 8] first words' },
+    { error: new TranscriptError('key_rejected', 'API key not valid', { httpStatus: 400 }) },
+  ]);
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'key_rejected',
+  );
+  assert.equal(calls.length, 2);
+});
+
+test('repeated or overlapping continuation blocks are dropped, keeping ends monotonic', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'DURATION: 30\nLANGUAGE: en\n[0 - 8] a\n[8 - 16] b' },
+    { text: 'DURATION: 30\nLANGUAGE: en\n[9 - 10] repeated\n[16 - 24] c\n[24 - 30] d' },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.deepEqual(
+    t.blocks.map((b) => b.start),
+    [0, 8, 16, 24],
+  );
+  for (let i = 1; i < t.blocks.length; i++) {
+    assert.ok(t.blocks[i].end >= t.blocks[i - 1].end, 'block end must not go backwards');
+  }
+});
+
 test('permanent errors are not retried', async () => {
   const { calls, caller } = geminiDouble([
     { error: new TranscriptError('quota_exceeded', 'RESOURCE_EXHAUSTED', { httpStatus: 429 }) },
