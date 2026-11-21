@@ -4,3 +4,11 @@ try {
 } catch (err) {
   log(`failed: ${err instanceof Error ? err.message : String(err)}`);
 }
+try {
+  JSON.parse('{');
+} catch (err) {
+  if (err instanceof Error) {
+    const detail = err.message;
+    log(`failed: ${detail}`);
+  }
+}

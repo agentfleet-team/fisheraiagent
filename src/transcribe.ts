@@ -1,4 +1,5 @@
 import { TranscriptError } from './errors.js';
+import { parseVideoId } from './ids.js';
 import { loggerFor, type LogSink } from './log.js';
 import type { GeminiCaller } from './gemini.js';
 import { ModelOutputError, parseModelOutput, type ParsedModelOutput } from './model-output.js';
@@ -157,7 +158,7 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
 export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
   const cached = await readCachedTranscript(deps.cacheDir, videoId, deps.model, deps.maxBlockSeconds);
   if (cached) {
-    loggerFor(deps.log)('cache_hit', { video: videoId });
+    loggerFor(deps.log)('cache_hit', { video: parseVideoId(videoId) });
     return cached;
   }
   const transcript = await transcribeVideo(videoId, deps);

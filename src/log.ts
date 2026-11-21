@@ -1,7 +1,12 @@
 // The only way code in src/ writes a log line. `event` is one of a fixed set
 // of names and `fields` is a closed allowlist of ids, codes, counts and route
 // templates. Nothing here accepts an Error or free text, so a boundary cannot
-// put caught or request-derived text into a log line.
+// put caught or request-derived text into a log line. Id fields take branded
+// types from ids.ts: they exist only after a parse function has checked the
+// id format, and the emit loop re-checks that format, so caught text cannot
+// reach a log line through an id field even behind a cast.
+
+import { ID_FORMATS, type ChannelId, type GuildId, type JobId, type VideoId } from './ids.js';
 
 export type LogEvent =
   | 'http_request'
@@ -43,9 +48,10 @@ export type LogCode =
   | 'usage';
 
 export interface LogFields {
-  guild?: string;
-  channel?: string;
-  video?: string;
+  guild?: GuildId;
+  channel?: ChannelId;
+  video?: VideoId;
+  job?: JobId;
   route?: LogRoute;
   code?: LogCode;
   port?: number;
@@ -56,7 +62,9 @@ export interface LogFields {
 export type LogSink = (line: string) => void;
 export type Logger = (event: LogEvent, fields?: LogFields) => void;
 
-const FIELD_ORDER = ['guild', 'channel', 'video', 'route', 'code', 'port', 'count', 'durationMs'] as const;
+const FIELD_ORDER = ['guild', 'channel', 'video', 'job', 'route', 'code', 'port', 'count', 'durationMs'] as const;
+
+const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = ID_FORMATS;
 
 export const consoleSink: LogSink = (line) => console.log(line);
 
@@ -65,7 +73,12 @@ export function createLogger(sink: LogSink): Logger {
     const parts: string[] = [event];
     for (const key of FIELD_ORDER) {
       const value = fields[key];
-      if (value !== undefined) parts.push(`${key}=${value}`);
+      if (value === undefined) continue;
+      // Id fields are re-checked at emit time: a value that bypassed the type
+      // check (a cast or a non-TS caller) is dropped rather than written out.
+      const format = ID_FIELD_FORMATS[key];
+      if (format && !format.test(String(value))) continue;
+      parts.push(`${key}=${value}`);
     }
     sink(parts.join(' '));
   };

@@ -2,10 +2,12 @@ import { ApiError, type TranscriptApi } from './api.js';
 import { findYouTubeUrl } from './find-url.js';
 import { summaryLine, transcriptToSrt, transcriptToTxt } from './format.js';
 import { loggerFor, type LogCode } from '../log.js';
+import { parseChannelId, parseGuildId, parseVideoId } from '../ids.js';
 import type { GuildStore } from './store.js';
 
 // Discord-free core: the adapter in discord.js land translates events into
-// these plain shapes, and the tests drive the same shapes with fakes.
+// these plain shapes, and the tests drive the same shapes with fakes. Ids
+// are re-validated by the parse functions where they are logged.
 
 export interface BotMessage {
   guildId: string;
@@ -102,7 +104,7 @@ export function createBot(deps: BotDeps): BotCore {
             return;
           }
           store.setKey(cmd.guildId, key);
-          log('key_set', { guild: cmd.guildId });
+          log('key_set', { guild: parseGuildId(cmd.guildId) });
           await sink.replyEphemeral(
             'Gemini key saved for this server. Enable a channel with `/transcript enable`.',
           );
@@ -110,13 +112,13 @@ export function createBot(deps: BotDeps): BotCore {
         }
         case 'remove-key': {
           store.removeKey(cmd.guildId);
-          log('key_removed', { guild: cmd.guildId });
+          log('key_removed', { guild: parseGuildId(cmd.guildId) });
           await sink.replyEphemeral('Gemini key removed for this server.');
           return;
         }
         case 'enable': {
           store.enableChannel(cmd.guildId, cmd.channelId);
-          log('channel_enabled', { guild: cmd.guildId, channel: cmd.channelId });
+          log('channel_enabled', { guild: parseGuildId(cmd.guildId), channel: parseChannelId(cmd.channelId) });
           await sink.replyEphemeral(
             'Transcript bot enabled here. Post a YouTube link and the transcript lands in this channel or thread.',
           );
@@ -124,7 +126,7 @@ export function createBot(deps: BotDeps): BotCore {
         }
         case 'disable': {
           store.disableChannel(cmd.guildId, cmd.channelId);
-          log('channel_disabled', { guild: cmd.guildId, channel: cmd.channelId });
+          log('channel_disabled', { guild: parseGuildId(cmd.guildId), channel: parseChannelId(cmd.channelId) });
           await sink.replyEphemeral('Transcript bot disabled here.');
           return;
         }
@@ -158,17 +160,22 @@ export function createBot(deps: BotDeps): BotCore {
         // The progress reaction is best-effort; missing permission must not stop the job.
       }
 
-      log('job_submitted', { guild: msg.guildId, channel: msg.channelId });
+      log('job_submitted', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId) });
       try {
         const transcript = await api.transcribe(url, apiKey);
-        log('job_done', { guild: msg.guildId, channel: msg.channelId, video: transcript.video_id });
+        // transcript.video_id is remote data: validate before it logs as an id.
+        log('job_done', {
+          guild: parseGuildId(msg.guildId),
+          channel: parseChannelId(msg.channelId),
+          video: parseVideoId(transcript.video_id),
+        });
         await sink.reply(summaryLine(transcript), [
           { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
         ]);
       } catch (err) {
         const code = errorCode(err);
-        log('job_failed', { guild: msg.guildId, channel: msg.channelId, code });
+        log('job_failed', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId), code });
         await sink.reply(ERROR_MESSAGES[code], []);
       }
     },

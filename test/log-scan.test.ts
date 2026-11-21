@@ -46,28 +46,48 @@ export function scanSource(fileName: string, text: string): string[] {
   };
   const isLogModule = fileName.endsWith(join('src', 'log.ts'));
 
-  // Names bound by catch clauses and .catch((e) => ...) callbacks.
-  const caught = new Set<string>();
-  const collect = (n: ts.Node): void => {
-    if (ts.isCatchClause(n) && n.variableDeclaration && ts.isIdentifier(n.variableDeclaration.name)) {
-      caught.add(n.variableDeclaration.name.text);
-    }
-    if (
-      ts.isCallExpression(n) &&
-      ts.isPropertyAccessExpression(n.expression) &&
-      n.expression.name.text === 'catch'
-    ) {
-      for (const a of n.arguments) {
-        if ((ts.isArrowFunction(a) || ts.isFunctionExpression(a)) && a.parameters[0] && ts.isIdentifier(a.parameters[0].name)) {
-          caught.add(a.parameters[0].name.text);
-        }
-      }
-    }
-    ts.forEachChild(n, collect);
-  };
-  collect(sf);
+  // Names bound to a caught value or to another alias of one: the scan must
+  // follow `const detail = err.message` so the alias cannot carry caught
+  // text into a sink under a fresh name. File-global on purpose — an alias
+  // may be assigned in one scope and used in another.
+  const aliased = new Set<string>();
 
-  const checkArg = (arg: ts.Node, sink: string): void => {
+  // Whether a subtree mentions a name that holds caught text. `caught` is
+  // scoped: a catch binding applies only inside its own clause, so a
+  // parameter named `err` elsewhere is not treated as the caught value.
+  const holdsCaughtText = (n: ts.Node, caught: ReadonlySet<string>): boolean => {
+    let found = false;
+    const walk = (node: ts.Node): void => {
+      if (found) return;
+      // A mapper that returns only a fixed code union produces clean output.
+      if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && CODE_MAPPERS.has(node.expression.text)) return;
+      if (ts.isIdentifier(node) && (caught.has(node.text) || aliased.has(node.text))) {
+        found = true;
+        return;
+      }
+      ts.forEachChild(node, walk);
+    };
+    walk(n);
+    return found;
+  };
+
+  // A function used as a .catch((e) => ...) callback binds e like a catch.
+  const catchCallbackParam = (n: ts.Node): string | undefined => {
+    if (!ts.isArrowFunction(n) && !ts.isFunctionExpression(n)) return undefined;
+    const p = n.parent;
+    if (
+      !ts.isCallExpression(p) ||
+      !ts.isPropertyAccessExpression(p.expression) ||
+      p.expression.name.text !== 'catch' ||
+      !p.arguments.some((a) => a === n)
+    ) {
+      return undefined;
+    }
+    const param = n.parameters[0];
+    return param && ts.isIdentifier(param.name) ? param.name.text : undefined;
+  };
+
+  const checkArg = (arg: ts.Node, sink: string, caught: ReadonlySet<string>): void => {
     const walk = (n: ts.Node): void => {
       // A mapper that returns only a fixed code union may take the caught value.
       if (ts.isCallExpression(n) && ts.isIdentifier(n.expression) && CODE_MAPPERS.has(n.expression.text)) return;
@@ -79,21 +99,45 @@ export function scanSource(fileName: string, text: string): string[] {
       }
       if (ts.isIdentifier(n) && caught.has(n.text)) {
         at(n, `caught value "${n.text}" passed to ${sink}()`);
+      } else if (ts.isIdentifier(n) && aliased.has(n.text)) {
+        at(n, `alias "${n.text}" of caught text passed to ${sink}()`);
       }
       ts.forEachChild(n, walk);
     };
     walk(arg);
   };
 
-  const visit = (n: ts.Node): void => {
+  const visit = (n: ts.Node, caught: ReadonlySet<string>): void => {
+    let inner = caught;
+    if (ts.isCatchClause(n) && n.variableDeclaration && ts.isIdentifier(n.variableDeclaration.name)) {
+      inner = new Set(inner).add(n.variableDeclaration.name.text);
+    }
+    const bound = catchCallbackParam(n);
+    if (bound !== undefined) inner = new Set(inner).add(bound);
+
+    if (ts.isVariableDeclaration(n) && n.initializer && ts.isIdentifier(n.name) && holdsCaughtText(n.initializer, inner)) {
+      aliased.add(n.name.text);
+    }
+    if (
+      ts.isBinaryExpression(n) &&
+      n.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+      ts.isIdentifier(n.left) &&
+      holdsCaughtText(n.right, inner)
+    ) {
+      aliased.add(n.left.text);
+    }
+    if ((ts.isForOfStatement(n) || ts.isForInStatement(n)) && holdsCaughtText(n.expression, inner)) {
+      const decl = ts.isVariableDeclarationList(n.initializer) ? n.initializer.declarations[0] : undefined;
+      if (decl && ts.isIdentifier(decl.name)) aliased.add(decl.name.text);
+    }
     if (ts.isCallExpression(n)) {
       if (isConsole(n.expression) && !isLogModule) at(n, 'console output outside src/log.ts');
       const name = calleeName(n.expression);
-      if (name && SINK_NAMES.has(name)) for (const a of n.arguments) checkArg(a, name);
+      if (name && SINK_NAMES.has(name)) for (const a of n.arguments) checkArg(a, name, inner);
     }
-    ts.forEachChild(n, visit);
+    ts.forEachChild(n, (c) => visit(c, inner));
   };
-  visit(sf);
+  visit(sf, new Set());
   return problems;
 }
 
@@ -106,6 +150,7 @@ test('R-13: the scan rejects deliberately bad fixtures', () => {
   const log = scanSource('bad-log.ts', readFileSync(join(FIXTURES, 'bad-log.ts.txt'), 'utf8'));
   assert.ok(log.some((p) => p.includes('.message')), log.join('\n'));
   assert.ok(log.some((p) => p.includes('String(')), log.join('\n'));
+  assert.ok(log.some((p) => p.includes('alias "detail"')), log.join('\n'));
     const reply = scanSource('bad-reply.ts', readFileSync(join(FIXTURES, 'bad-reply.ts.txt'), 'utf8'));
   assert.ok(reply.some((p) => p.includes('caught value')), reply.join('\n'));
   assert.ok(reply.some((p) => p.includes('console output')), reply.join('\n'));
@@ -136,6 +181,6 @@ test('R-13: the logger type rejects an Error, free-text fields and free-text eve
       .filter((d) => d.file?.fileName === virtual)
       .map((d) => d.file!.getLineAndCharacterOfPosition(d.start!).line + 1),
   );
-  // Lines 2-5 each pass something the logger must refuse.
-  assert.deepEqual([...errorLines].sort(), [2, 3, 4, 5]);
+  // Lines 2-6 each pass something the logger must refuse.
+  assert.deepEqual([...errorLines].sort(), [2, 3, 4, 5, 6]);
 });

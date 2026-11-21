@@ -9,6 +9,7 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import { createLogger, type LogSink } from '../log.js';
+import { parseChannelId, parseGuildId } from '../ids.js';
 import type { BotConfig } from './config.js';
 import type { BotCommand, BotCore, BotMessage, BotSubcommand } from './core.js';
 
@@ -58,9 +59,9 @@ export async function startDiscordBot(
       await rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
         body: [transcriptCommand],
       });
-      log('commands_registered', { guild: guildId });
+      log('commands_registered', { guild: parseGuildId(guildId) });
     } catch {
-      log('command_registration_failed', { guild: guildId });
+      log('command_registration_failed', { guild: parseGuildId(guildId) });
     }
   };
 
@@ -98,7 +99,12 @@ export async function startDiscordBot(
           });
         },
       })
-      .catch(() => log('message_handler_failed', { guild: msg.guildId, channel: msg.channelId }));
+      .catch(() =>
+        log('message_handler_failed', {
+          guild: parseGuildId(msg.guildId),
+          channel: parseChannelId(msg.channelId),
+        }),
+      );
   });
 
   client.on(Events.InteractionCreate, (interaction) => {
@@ -128,7 +134,12 @@ export async function startDiscordBot(
           await interaction.reply({ content, flags: MessageFlags.Ephemeral });
         },
       })
-      .catch(() => log('command_handler_failed', { guild: guildId, channel: interaction.channelId }));
+      .catch(() =>
+        log('command_handler_failed', {
+          guild: parseGuildId(guildId),
+          channel: parseChannelId(interaction.channelId),
+        }),
+      );
   });
 
   await client.login(config.discordToken);
