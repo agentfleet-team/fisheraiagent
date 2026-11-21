@@ -51,12 +51,6 @@ class FakeDrive implements DriveStore {
     return this.files.filter((f) => f.folder === folder);
   }
 
-  async findFile(folderId: string, name: string) {
-    this.calls.push(`find:${folderId}:${name}`);
-    if (this.failWith) throw this.failWith;
-    return this.filesIn(folderId).find((f) => f.name === name) ?? null;
-  }
-
   async findFileByVideoId(folderId: string, videoId: string) {
     this.calls.push(`find-video:${folderId}:${videoId}`);
     if (this.failWith) throw this.failWith;

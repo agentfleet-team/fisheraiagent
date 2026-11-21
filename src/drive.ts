@@ -2,9 +2,9 @@ import { createSign } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { TranscriptError } from './errors.js';
 
-// The Drive surface the saver needs: find a file inside one folder — by the
-// stored video id first, by name as a fallback — create it, or replace its
-// contents. Keeping it this small is what lets the tests run a full fake
+// The Drive surface the saver needs: find a file inside one folder by the
+// video id stored on it, create it, or replace its contents. A file's name
+// never identifies it. Keeping it this small is what lets the tests run a full fake
 // Drive offline.
 export interface StoredFile {
   id: string;
@@ -13,11 +13,8 @@ export interface StoredFile {
 }
 
 export interface DriveStore {
-  findFile(folderId: string, name: string): Promise<StoredFile | null>;
-  // Finds the file whose appProperties.videoId matches. Stores that cannot
-  // query file properties may leave it unimplemented; the saver falls back
-  // to the name lookup.
-  findFileByVideoId?(folderId: string, videoId: string): Promise<StoredFile | null>;
+  // Finds the file whose appProperties.videoId matches.
+  findFileByVideoId(folderId: string, videoId: string): Promise<StoredFile | null>;
   createFile(
     folderId: string,
     name: string,
@@ -201,10 +198,6 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
   }
 
   return {
-    async findFile(folderId, name) {
-      return search(`name='${escape(name)}' and '${escape(folderId)}' in parents and trashed=false`);
-    },
-
     // The repeat-video lookup: the video id rides on the file's
     // appProperties, so a new title or a new capture day still lands on the
     // same file.

@@ -70,12 +70,12 @@ const TOKEN_ROUTE = (req: CapturedRequest) => {
   return json({ access_token: 'tok-1', expires_in: 3600 });
 };
 
-test('findFile miss then createFile: token exchange, query, multipart create', async () => {
+test('findFileByVideoId miss then createFile: token exchange, query, multipart create', async () => {
   const { impl, requests } = fakeFetch((req) => {
     if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
     if (req.url.startsWith('https://www.googleapis.com/drive/v3/files')) {
       const q = new URL(req.url).searchParams.get('q') ?? '';
-      assert.match(q, /name='clip_20261122\.txt'/);
+      assert.match(q, /appProperties has \{key='videoId' and value='hWe-j78vNpc'\}/);
       assert.match(q, /'folder-1' in parents/);
       assert.match(q, /trashed=false/);
       return json({ files: [] });
@@ -99,7 +99,7 @@ test('findFile miss then createFile: token exchange, query, multipart create', a
   });
   const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
 
-  assert.equal(await drive.findFile('folder-1', 'clip_20261122.txt'), null);
+  assert.equal(await drive.findFileByVideoId('folder-1', 'hWe-j78vNpc'), null);
   const stored = await drive.createFile(
     'folder-1',
     'clip_20261122.txt',
@@ -131,11 +131,11 @@ test('findFileByVideoId queries the stored appProperties video id inside the fol
   });
   const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
 
-  const found = await drive.findFileByVideoId?.('folder-1', 'hWe-j78vNpc');
+  const found = await drive.findFileByVideoId('folder-1', 'hWe-j78vNpc');
   assert.equal(found?.id, 'drv-7');
 });
 
-test('findFile hit then updateFile patches media on the same file id', async () => {
+test('findFileByVideoId hit then updateFile patches media on the same file id', async () => {
   const { impl, requests } = fakeFetch((req) => {
     if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
     if (req.url.startsWith('https://www.googleapis.com/drive/v3/files')) {
@@ -154,7 +154,7 @@ test('findFile hit then updateFile patches media on the same file id', async () 
   });
   const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
 
-  const found = await drive.findFile('folder-1', 'clip_20261122.txt');
+  const found = await drive.findFileByVideoId('folder-1', 'hWe-j78vNpc');
   assert.equal(found?.id, 'drv-9');
   const updated = await drive.updateFile('drv-9', 'new contents', 'text/plain');
   assert.equal(updated.url, 'https://x/drv-9');
@@ -167,7 +167,7 @@ test('a 403 from the API becomes a DriveError with the folder-sharing hint', asy
     return json({ error: { message: 'insufficient permissions' } }, 403);
   });
   const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
-  const err = await drive.findFile('folder-1', 'x.txt').then(
+  const err = await drive.findFileByVideoId('folder-1', 'hWe-j78vNpc').then(
     () => assert.fail('should throw'),
     (e: unknown) => e,
   );
@@ -180,11 +180,11 @@ test('a 403 from the API becomes a DriveError with the folder-sharing hint', asy
 test('a missing or malformed credentials file is invalid_config', async () => {
   const { impl } = fakeFetch(() => json({}));
   const drive = createDriveStore({ credentialsPath: '/nonexistent/sa.json', fetchImpl: impl });
-  await assert.rejects(() => drive.findFile('f', 'n'), TranscriptError);
+  await assert.rejects(() => drive.findFileByVideoId('f', 'n'), TranscriptError);
 
   const dir = mkdtempSync(join(tmpdir(), 'fa-drive-creds-'));
   const bad = join(dir, 'bad.json');
   writeFileSync(bad, JSON.stringify({ type: 'service_account' }));
   const drive2 = createDriveStore({ credentialsPath: bad, fetchImpl: impl });
-  await assert.rejects(() => drive2.findFile('f', 'n'), /client_email/);
+  await assert.rejects(() => drive2.findFileByVideoId('f', 'n'), /client_email/);
 });

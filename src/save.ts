@@ -203,8 +203,7 @@ export function createTranscriptSaver(
       try {
         let stored =
           known.get(key) ??
-          (await drive.findFileByVideoId?.(destination.folder_id, transcript.video_id)) ??
-          (await drive.findFile(destination.folder_id, name));
+          (await drive.findFileByVideoId(destination.folder_id, transcript.video_id));
         stored = stored
           ? await drive.updateFile(stored.id, content, MIME_TYPES[extension])
           : await drive.createFile(destination.folder_id, name, content, MIME_TYPES[extension], {
