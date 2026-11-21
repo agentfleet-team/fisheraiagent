@@ -49,9 +49,37 @@ function remoteCode(value: unknown, fallback: string): string {
   return typeof value === 'string' && REMOTE_ERROR_CODES.has(value) ? value : fallback;
 }
 
+// Remote JSON is unknown until checked. Each accessor narrows the fields it
+// reads so no unchecked `as` stands between the wire and the code.
+type RemoteKey =
+  | 'status'
+  | 'result'
+  | 'error'
+  | 'code'
+  | 'job_id'
+  | 'video_id'
+  | 'source_url'
+  | 'language'
+  | 'blocks';
+
+function prop(value: unknown, key: RemoteKey): unknown {
+  return typeof value === 'object' && value !== null && key in value
+    ? Reflect.get(value, key)
+    : undefined;
+}
+
+function isTranscript(value: unknown): value is Transcript {
+  return (
+    typeof prop(value, 'video_id') === 'string' &&
+    typeof prop(value, 'source_url') === 'string' &&
+    typeof prop(value, 'language') === 'string' &&
+    Array.isArray(prop(value, 'blocks'))
+  );
+}
+
 async function readErrorCode(res: Response, fallbackCode: string): Promise<string> {
-  const body = (await res.json().catch(() => null)) as { error?: { code?: unknown } } | null;
-  return remoteCode(body?.error?.code, fallbackCode);
+  const body: unknown = await res.json().catch(() => null);
+  return remoteCode(prop(prop(body, 'error'), 'code'), fallbackCode);
 }
 
 export function createApiClient(options: ApiClientOptions): TranscriptApi {
@@ -81,7 +109,9 @@ export function createApiClient(options: ApiClientOptions): TranscriptApi {
       if (submitRes.status !== 202) {
         throw new ApiError(await readErrorCode(submitRes, 'internal_error'));
       }
-      const { job_id: jobId } = (await submitRes.json()) as { job_id: string };
+      const submitBody: unknown = await submitRes.json();
+      const jobIdValue = prop(submitBody, 'job_id');
+      const jobId = typeof jobIdValue === 'string' ? jobIdValue : '';
 
       const deadline = Date.now() + timeoutMs;
       for (;;) {
@@ -97,14 +127,12 @@ export function createApiClient(options: ApiClientOptions): TranscriptApi {
         if (!pollRes.ok) {
           throw new ApiError(await readErrorCode(pollRes, 'internal_error'));
         }
-        const job = (await pollRes.json()) as {
-          status: string;
-          result?: Transcript;
-          error?: { code?: unknown };
-        };
-        if (job.status === 'done' && job.result) return job.result;
-        if (job.status === 'failed') {
-          throw new ApiError(remoteCode(job.error?.code, 'internal_error'));
+        const job: unknown = await pollRes.json();
+        const status = prop(job, 'status');
+        const result = prop(job, 'result');
+        if (status === 'done' && isTranscript(result)) return result;
+        if (status === 'failed') {
+          throw new ApiError(remoteCode(prop(prop(job, 'error'), 'code'), 'internal_error'));
         }
         if (Date.now() > deadline) throw new ApiError('job_timeout');
         await sleep(pollIntervalMs);

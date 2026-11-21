@@ -18,9 +18,8 @@ const REQUEST_TIMEOUT_MS = 15 * 60 * 1000;
 
 function httpStatusOf(err: unknown): number | undefined {
   if (err && typeof err === 'object') {
-    const e = err as { status?: unknown; statusCode?: unknown };
-    if (typeof e.status === 'number') return e.status;
-    if (typeof e.statusCode === 'number') return e.statusCode;
+    if ('status' in err && typeof err.status === 'number') return err.status;
+    if ('statusCode' in err && typeof err.statusCode === 'number') return err.statusCode;
   }
   return undefined;
 }
@@ -74,17 +73,21 @@ export function createGeminiCaller(options: { apiKey: string; model: string }): 
   const ai = new GoogleGenAI({ apiKey: options.apiKey });
 
   return async (request) => {
-    const video =
+    const video: {
+      type: 'video';
+      uri: string;
+      processing?: { type: 'static'; start_offset: string };
+    } =
       request.startOffsetSeconds !== undefined && request.startOffsetSeconds > 0
         ? {
-            type: 'video' as const,
+            type: 'video',
             uri: request.videoUrl,
             processing: {
-              type: 'static' as const,
+              type: 'static',
               start_offset: `${Number(request.startOffsetSeconds.toFixed(3))}s`,
             },
           }
-        : { type: 'video' as const, uri: request.videoUrl };
+        : { type: 'video', uri: request.videoUrl };
 
     try {
       const interaction = await ai.interactions.create(

@@ -7,6 +7,11 @@ import ts from 'typescript';
 // Structural guard for R-13: no boundary may put caught or request-derived
 // text into a log line or a reply. src/log.ts is the only place that writes
 // logs; replies come only from fixed code-to-message tables.
+// The scan is advisory coverage under the round-4 amendment: the compile-time
+// guarantee is that every reply/HTTP error sink accepts only branded text
+// (SafeText) and every id field a branded id, so a scan miss alone is not a
+// failure — but a scan hit still flags a real problem the compiler cannot
+// see (for example free text inside an `unknown` response body).
 
 const SRC = join(import.meta.dirname, '..', 'src');
 const FIXTURES = join(import.meta.dirname, 'fixtures', 'scan');
@@ -141,6 +146,34 @@ export function scanSource(fileName: string, text: string): string[] {
   return problems;
 }
 
+// The type-level guarantee (SafeText sinks, branded ids) holds only for code
+// that compiles without casts: an `as` cast or a @ts- suppression could turn
+// an arbitrary string into a brand. Any type assertion in src/ is a failure.
+export function scanCasts(fileName: string, text: string): string[] {
+  const sf = ts.createSourceFile(fileName, text, ts.ScriptTarget.ES2022, true);
+  const problems: string[] = [];
+  const visit = (n: ts.Node): void => {
+    if (
+      ts.isAsExpression(n) ||
+      n.kind === ts.SyntaxKind.TypeAssertionExpression ||
+      ts.isNonNullExpression(n)
+    ) {
+      const { line } = sf.getLineAndCharacterOfPosition(n.getStart());
+      problems.push(`${fileName}:${line + 1}: type assertion — compile without casts`);
+    }
+    ts.forEachChild(n, visit);
+  };
+  visit(sf);
+  const suppression = /@ts-(ignore|expect-error|nocheck)/.exec(text);
+  if (suppression) problems.push(`${fileName}: @ts- suppression comment`);
+  return problems;
+}
+
+test('R-14: no `as` casts, type assertions or @ts- suppressions in src/', () => {
+  const problems = listTs(SRC).flatMap((f) => scanCasts(f, readFileSync(f, 'utf8')));
+  assert.deepEqual(problems, []);
+});
+
 test('R-13: no file in src/ passes caught or free text into a log or reply call', () => {
   const problems = listTs(SRC).flatMap((f) => scanSource(f, readFileSync(f, 'utf8')));
   assert.deepEqual(problems, []);
@@ -183,4 +216,40 @@ test('R-13: the logger type rejects an Error, free-text fields and free-text eve
   );
   // Lines 2-6 each pass something the logger must refuse.
   assert.deepEqual([...errorLines].sort(), [2, 3, 4, 5, 6]);
+});
+
+test('R-14: every reply and HTTP error-body sink rejects plain string at compile time', () => {
+  const file = join(FIXTURES, 'bad-sinks.ts.txt');
+  const text = readFileSync(file, 'utf8');
+  const virtual = join(import.meta.dirname, 'fixtures', 'scan', 'bad-sinks.ts');
+  const options: ts.CompilerOptions = {
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.NodeNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    strict: true,
+    noEmit: true,
+    skipLibCheck: true,
+    types: ['node'],
+  };
+  const host = ts.createCompilerHost(options);
+  const readFile = host.readFile.bind(host);
+  host.readFile = (f) => (f === virtual ? text : readFile(f));
+  const fileExists = host.fileExists.bind(host);
+  host.fileExists = (f) => f === virtual || fileExists(f);
+  const program = ts.createProgram([virtual], options, host);
+  const errorLines = new Set(
+    ts
+      .getPreEmitDiagnostics(program)
+      .filter((d) => d.file?.fileName === virtual)
+      .map((d) => d.file!.getLineAndCharacterOfPosition(d.start!).line + 1),
+  );
+  // The fixture wraps literals for the two accepted calls, then on these
+  // lines passes `err.message` directly, via a local alias, via
+  // destructuring, via a helper parameter, into reply, replyEphemeral and
+  // react, plus a bare literal, `safeText(err.message)` and an ErrorBody
+  // message — every one must be a compile error.
+  assert.deepEqual(
+    [...errorLines].sort((a, b) => a - b),
+    [11, 13, 15, 16, 17, 18, 19, 20, 22],
+  );
 });

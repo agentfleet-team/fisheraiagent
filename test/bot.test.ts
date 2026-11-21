@@ -135,7 +135,9 @@ test('D1: a URL posted in a thread of an enabled channel gets the reply and two 
     assert.equal(discord.replies.length, 1);
     const reply = discord.replies[0];
     assert.equal(reply.targetId, THREAD);
-    assert.match(reply.content, new RegExp(VIDEO_ID));
+    // The reply text is fixed; the video id reaches the user through the
+    // attachment file names and the .txt header.
+    assert.match(reply.files[0].name, new RegExp(VIDEO_ID));
     assert.equal(reply.files.length, 2);
     assert.match(reply.files[0].name, /\.txt$/);
     assert.match(reply.files[1].name, /\.srt$/);

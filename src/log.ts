@@ -62,7 +62,17 @@ export interface LogFields {
 export type LogSink = (line: string) => void;
 export type Logger = (event: LogEvent, fields?: LogFields) => void;
 
-const FIELD_ORDER = ['guild', 'channel', 'video', 'job', 'route', 'code', 'port', 'count', 'durationMs'] as const;
+const FIELD_ORDER: readonly (keyof LogFields)[] = [
+  'guild',
+  'channel',
+  'video',
+  'job',
+  'route',
+  'code',
+  'port',
+  'count',
+  'durationMs',
+];
 
 const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = ID_FORMATS;
 

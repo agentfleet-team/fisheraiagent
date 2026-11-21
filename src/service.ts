@@ -1,6 +1,6 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
-import { TranscriptError, codeOf, messageForCode, type FixedErrorCode } from './errors.js';
+import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
 import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
@@ -19,9 +19,11 @@ export function createService(options: ServiceOptions): Server {
     res.writeHead(status, { 'content-type': 'application/json' });
     res.end(JSON.stringify(body));
   };
-  // Error bodies carry only a code and its fixed message.
-  const sendError = (res: ServerResponse, status: number, code: FixedErrorCode): void =>
-    send(res, status, { error: { code, message: messageForCode(code) } });
+  // Error bodies carry only a code and its fixed SafeText message.
+  const sendError = (res: ServerResponse, status: number, code: FixedErrorCode): void => {
+    const body: ErrorBody = { error: { code, message: messageForCode(code) } };
+    send(res, status, body);
+  };
 
   const authorized = (req: IncomingMessage): boolean => {
     if (!options.serviceToken) return true;
@@ -74,7 +76,7 @@ export function createService(options: ServiceOptions): Server {
       return;
     }
     const url =
-      typeof body === 'object' && body !== null ? (body as Record<string, unknown>).url : undefined;
+      typeof body === 'object' && body !== null && 'url' in body ? body.url : undefined;
     if (typeof url !== 'string' || url.trim() === '') {
       sendError(res, 400, 'invalid_request');
       return;

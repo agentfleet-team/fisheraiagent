@@ -10,8 +10,9 @@ import {
 } from 'discord.js';
 import { createLogger, type LogSink } from '../log.js';
 import { parseChannelId, parseGuildId } from '../ids.js';
+import { safeText } from '../safe-text.js';
 import type { BotConfig } from './config.js';
-import type { BotCommand, BotCore, BotMessage, BotSubcommand } from './core.js';
+import { isBotSubcommand, type BotCommand, type BotCore, type BotMessage } from './core.js';
 
 export const transcriptCommand = new SlashCommandBuilder()
   .setName('transcript')
@@ -112,7 +113,15 @@ export async function startDiscordBot(
     const guildId = interaction.guildId;
     if (!guildId) {
       void interaction.reply({
-        content: 'The transcript bot is set up per server, not in DMs.',
+        content: safeText('The transcript bot is set up per server, not in DMs.'),
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+    const subcommand = interaction.options.getSubcommand();
+    if (!isBotSubcommand(subcommand)) {
+      void interaction.reply({
+        content: safeText('Unknown transcript subcommand.'),
         flags: MessageFlags.Ephemeral,
       });
       return;
@@ -125,7 +134,7 @@ export async function startDiscordBot(
         perms !== null && typeof perms === 'object'
           ? perms.has(PermissionFlagsBits.ManageGuild)
           : false,
-      subcommand: interaction.options.getSubcommand() as BotSubcommand,
+      subcommand,
       key: interaction.options.getString('key') ?? undefined,
     };
     void core

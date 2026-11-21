@@ -25,16 +25,18 @@ export const ID_FORMATS = {
   channel: SNOWFLAKE_FORMAT,
   video: VIDEO_ID_FORMAT,
   job: JOB_ID_FORMAT,
-} as const;
+};
 
-type IdKind = keyof typeof ID_FORMATS;
+const isGuildId = (value: string): value is GuildId => SNOWFLAKE_FORMAT.test(value);
+const isChannelId = (value: string): value is ChannelId => SNOWFLAKE_FORMAT.test(value);
+const isVideoId = (value: string): value is VideoId => VIDEO_ID_FORMAT.test(value);
+const isJobId = (value: string): value is JobId => JOB_ID_FORMAT.test(value);
 
-function parseId<Id>(kind: IdKind, value: string): Id | undefined {
-  return ID_FORMATS[kind].test(value) ? (value as Id) : undefined;
-}
-
-export const parseGuildId = (value: string): GuildId | undefined => parseId<GuildId>('guild', value);
+export const parseGuildId = (value: string): GuildId | undefined =>
+  isGuildId(value) ? value : undefined;
 export const parseChannelId = (value: string): ChannelId | undefined =>
-  parseId<ChannelId>('channel', value);
-export const parseVideoId = (value: string): VideoId | undefined => parseId<VideoId>('video', value);
-export const parseJobId = (value: string): JobId | undefined => parseId<JobId>('job', value);
+  isChannelId(value) ? value : undefined;
+export const parseVideoId = (value: string): VideoId | undefined =>
+  isVideoId(value) ? value : undefined;
+export const parseJobId = (value: string): JobId | undefined =>
+  isJobId(value) ? value : undefined;

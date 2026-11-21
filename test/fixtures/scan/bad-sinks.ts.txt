@@ -1,0 +1,25 @@
+import type { CommandSink, MessageSink } from '../../../src/bot/core.js';
+import type { ErrorBody } from '../../../src/errors.js';
+import { safeText } from '../../../src/safe-text.js';
+declare const command: CommandSink;
+declare const message: MessageSink;
+declare const err: Error;
+const accepted1 = command.replyEphemeral(safeText('literal wrapped at its definition'));
+const accepted2 = message.reply(safeText('fixed text'), []);
+void accepted1;
+void accepted2;
+command.replyEphemeral(err.message);
+const alias = err.message;
+command.replyEphemeral(alias);
+const { message: destructured } = err;
+command.replyEphemeral(destructured);
+message.reply(err.message, []);
+message.react(err.message);
+command.replyEphemeral('a bare literal is not SafeText');
+safeText(err.message);
+const body: ErrorBody = { error: { code: 'internal_error', message: err.message } };
+async function reportFailure(problem: Error, target: MessageSink): Promise<void> {
+  await target.reply(problem.message, []);
+}
+void reportFailure;
+void body;
