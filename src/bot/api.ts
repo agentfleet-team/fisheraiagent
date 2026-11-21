@@ -1,3 +1,4 @@
+import { parseDriveLink, type DriveLink } from '../drive.js';
 import type { JobOrigin } from '../tenants.js';
 import type { Transcript } from '../transcript.js';
 
@@ -12,10 +13,13 @@ export class ApiError extends Error {
   }
 }
 
+// The link a Discord reply may carry. `url` is branded DriveLink: raw wire
+// text becomes one only through parseDriveLink, so no string — caught text,
+// a remote field, a literal with a newline — can reach a reply through it.
 export interface SavedLink {
-  type: string;
+  type: 'google-drive';
   name: string;
-  url: string;
+  url: DriveLink;
 }
 
 export interface TranscriptOutcome {
@@ -60,7 +64,7 @@ const REMOTE_ERROR_CODES = new Set([
 
 // save_error codes the service contract defines; anything else folds to
 // save_failed before it can reach a log line or a Discord reply.
-const SAVE_ERROR_CODES = new Set(['save_failed', 'invalid_config']);
+const SAVE_ERROR_CODES = new Set(['save_failed', 'save_unauthorized', 'invalid_config']);
 
 function remoteCode(value: unknown, fallback: string): string {
   return typeof value === 'string' && REMOTE_ERROR_CODES.has(value) ? value : fallback;
@@ -99,16 +103,16 @@ function isTranscript(value: unknown): value is Transcript {
   );
 }
 
-// A saved link is echoed into a Discord message, so it is trusted only after
-// a shape check: an https URL and a bounded file name.
+// A saved link is echoed into a Discord message, so it is trusted only
+// after the strictest check the boundary can make: the url must parse to a
+// branded canonical Drive link (another host, a newline or any trailing
+// text drops the whole link) and the name must be bounded.
 function parseSavedLink(value: unknown): SavedLink | undefined {
-  const url = prop(value, 'url');
+  const url = parseDriveLink(prop(value, 'url'));
   const name = prop(value, 'name');
   if (
     prop(value, 'type') === 'google-drive' &&
-    typeof url === 'string' &&
-    url.startsWith('https://') &&
-    url.length <= 500 &&
+    url !== undefined &&
     typeof name === 'string' &&
     name.length <= 300
   ) {

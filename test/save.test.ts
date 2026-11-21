@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
@@ -27,6 +28,8 @@ const GUILD = 'guild-1';
 const CHANNEL = 'channel-1';
 const THREAD = 'thread-1';
 
+const sha256 = (token: string): string => createHash('sha256').update(token).digest('hex');
+
 // --- Drive API test double ---------------------------------------------------
 
 interface FakeStored {
@@ -35,6 +38,7 @@ interface FakeStored {
   name: string;
   content: string;
   url: string;
+  props: Record<string, string>;
 }
 
 class FakeDrive implements DriveStore {
@@ -53,7 +57,19 @@ class FakeDrive implements DriveStore {
     return this.filesIn(folderId).find((f) => f.name === name) ?? null;
   }
 
-  async createFile(folderId: string, name: string, content: string) {
+  async findFileByVideoId(folderId: string, videoId: string) {
+    this.calls.push(`find-video:${folderId}:${videoId}`);
+    if (this.failWith) throw this.failWith;
+    return this.filesIn(folderId).find((f) => f.props.videoId === videoId) ?? null;
+  }
+
+  async createFile(
+    folderId: string,
+    name: string,
+    content: string,
+    _mimeType?: string,
+    appProperties: Record<string, string> = {},
+  ) {
     this.calls.push(`create:${folderId}:${name}`);
     if (this.failWith) throw this.failWith;
     const file: FakeStored = {
@@ -61,7 +77,8 @@ class FakeDrive implements DriveStore {
       folder: folderId,
       name,
       content,
-      url: `https://drive.example.test/${folderId}/${name}`,
+      url: `https://drive.google.com/file/d/fake-drive-${this.seq}/view`,
+      props: appProperties,
     };
     this.files.push(file);
     return { id: file.id, name, url: file.url };
@@ -96,6 +113,7 @@ function writeTenantsFile(dir: string, tenants: unknown): string {
 async function startService(
   drive: FakeDrive,
   tenants: unknown,
+  opts: { now?: () => Date; metadata?: () => Promise<typeof META> } = {},
 ): Promise<RunningService> {
   const dir = mkdtempSync(join(tmpdir(), 'fa-save-'));
   const tenantsFile = writeTenantsFile(dir, tenants);
@@ -108,8 +126,8 @@ async function startService(
     cacheDir: mkdtempSync(join(tmpdir(), 'fa-save-cache-')),
     tenantsFile,
     drive,
-    videoMetadata: async () => META,
-    now: () => FIXED_NOW,
+    videoMetadata: opts.metadata ?? (async () => META),
+    now: opts.now ?? (() => FIXED_NOW),
     log: (line) => logs.push(line),
   });
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -130,11 +148,13 @@ interface HttpResult {
 
 async function submitJob(
   base: string,
-  opts: { url?: string; origin?: unknown } = {},
+  opts: { url?: string; origin?: unknown; token?: string } = {},
 ): Promise<HttpResult> {
+  const headers: Record<string, string> = { 'content-type': 'application/json', 'x-gemini-key': KEY };
+  if (opts.token !== undefined) headers['authorization'] = `Bearer ${opts.token}`;
   const res = await fetch(`${base}/v1/jobs`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-gemini-key': KEY },
+    headers,
     body: JSON.stringify({
       url: opts.url ?? `https://youtu.be/${VIDEO_A}`,
       ...(opts.origin !== undefined ? { origin: opts.origin } : {}),
@@ -158,15 +178,21 @@ function discordOrigin(guildId: string, channelId: string): JobOrigin {
   return { kind: 'discord', guild_id: guildId, channel_id: channelId };
 }
 
+const TOKEN_A = 'test-caller-token-a';
+const TOKEN_B = 'test-caller-token-b';
+const TOKEN_GUILD = 'test-caller-token-guild';
+
 const TENANTS_TWO = [
   {
     id: 'tenant-a',
     discord_guild_id: 'guild-a',
+    caller: { token_sha256: sha256(TOKEN_A) },
     destination: { type: 'google-drive', folder_id: 'folder-a' },
   },
   {
     id: 'tenant-b',
     discord_guild_id: 'guild-b',
+    caller: { token_sha256: sha256(TOKEN_B) },
     destination: { type: 'google-drive', folder_id: 'folder-b', extension: '.md' },
   },
 ];
@@ -177,25 +203,29 @@ test('E1: each tenant writes only into its own folder', async () => {
   const drive = new FakeDrive();
   const svc = await startService(drive, TENANTS_TWO);
   try {
-    const resA = await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1') });
+    const resA = await submitJob(svc.base, {
+      origin: discordOrigin('guild-a', 'chan-1'),
+      token: TOKEN_A,
+    });
     assert.equal(resA.status, 202);
     const jobA = await pollJob(svc.base, resA.body.job_id);
     assert.equal(jobA.status, 'done');
     assert.equal(jobA.saved.type, 'google-drive');
-    assert.equal(jobA.saved.url, `https://drive.example.test/folder-a/my-great-video_20261122.txt`);
+    assert.equal(jobA.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
 
     const resB = await submitJob(svc.base, {
       url: `https://youtu.be/${VIDEO_B}`,
       origin: discordOrigin('guild-b', 'chan-2'),
+      token: TOKEN_B,
     });
     const jobB = await pollJob(svc.base, resB.body.job_id);
     assert.equal(jobB.status, 'done');
-    assert.equal(jobB.saved.url, `https://drive.example.test/folder-b/my-great-video_20261122.md`);
+    assert.equal(jobB.saved.url, 'https://drive.google.com/file/d/fake-drive-2/view');
 
     assert.equal(drive.filesIn('folder-a').length, 1);
     assert.equal(drive.filesIn('folder-b').length, 1);
-    assert.equal(drive.filesIn('folder-a')[0].name, 'my-great-video_20261122.txt');
-    assert.equal(drive.filesIn('folder-b')[0].name, 'my-great-video_20261122.md');
+    assert.equal(drive.filesIn('folder-a')[0].name, `my-great-video_${VIDEO_A}_20261122.txt`);
+    assert.equal(drive.filesIn('folder-b')[0].name, `my-great-video_${VIDEO_B}_20261122.md`);
     // Nothing ever wrote outside the two configured folders.
     assert.equal(drive.files.length, 2);
   } finally {
@@ -203,36 +233,69 @@ test('E1: each tenant writes only into its own folder', async () => {
   }
 });
 
+// The claim in the request body is not authority: only the bearer token the
+// tenant entry names can unlock its destination.
+test('F1: a claim without the tenant caller credential saves nothing and reports save_unauthorized', async () => {
+  const drive = new FakeDrive();
+  const svc = await startService(drive, TENANTS_TWO);
+  try {
+    for (const token of [undefined, 'wrong-token', TOKEN_B]) {
+      const res = await submitJob(svc.base, {
+        origin: discordOrigin('guild-a', 'chan-1'),
+        ...(token === undefined ? {} : { token }),
+      });
+      assert.equal(res.status, 202);
+      const job = await pollJob(svc.base, res.body.job_id);
+      assert.equal(job.status, 'done');
+      assert.ok(job.result, 'the transcript is still returned');
+      assert.equal(job.saved, undefined);
+      assert.equal(job.save_error.code, 'save_unauthorized');
+      assert.equal(typeof job.save_error.message, 'string');
+    }
+    // Tenant B's token cannot claim tenant A's origin either (covered above);
+    // no request wrote anywhere.
+    assert.equal(drive.files.length, 0);
+  } finally {
+    await svc.close();
+  }
+});
+
 // --- E2: the link reaches the web result and the Discord reply ----------------
 
-test('E2: a web job result and a Discord thread reply both carry the file link', async () => {
+test('E2: an unauthenticated web result carries no link; a verified Discord reply does', async () => {
   const drive = new FakeDrive();
   const svc = await startService(drive, [
-    {
-      id: 'web-allen',
-      web_identities: ['allen'],
-      destination: { type: 'google-drive', folder_id: 'folder-web' },
-    },
     {
       id: 'tenant-guild',
       discord_guild_id: GUILD,
       discord_channel_ids: [CHANNEL],
+      caller: { token_sha256: sha256(TOKEN_GUILD) },
       destination: { type: 'google-drive', folder_id: 'folder-guild' },
     },
   ]);
   try {
-    // The web result: the job payload a page polls carries saved.url.
+    // A web caller is anonymous until sign-in (#6): the job still returns
+    // the transcript, but there is no save and no link.
     const res = await submitJob(svc.base, { origin: { kind: 'web', identity: 'allen' } });
     const job = await pollJob(svc.base, res.body.job_id);
     assert.equal(job.status, 'done');
-    assert.equal(job.saved.url, `https://drive.example.test/folder-web/my-great-video_20261122.txt`);
+    assert.ok(job.result, 'the transcript is still returned');
+    assert.equal(job.saved, undefined);
+    assert.equal(job.save_error, undefined);
+    assert.equal(drive.files.length, 0);
 
-    // The Discord reply goes through the real bot api client and core.
+    // The Discord reply goes through the real bot api client and core; the
+    // bot's service token is the caller credential the tenant entry names.
     const dir = mkdtempSync(join(tmpdir(), 'fa-save-bot-'));
     const store = new GuildStore(join(dir, 'bot-data.json'), deriveEncryptionKey('test-secret'));
     store.setKey(GUILD, KEY);
     store.enableChannel(GUILD, CHANNEL);
-    const api = createApiClient({ baseUrl: svc.base, pollIntervalMs: 5, timeoutMs: 10_000 });
+    const api = createApiClient({
+      baseUrl: svc.base,
+      serviceToken: TOKEN_GUILD,
+      pollIntervalMs: 5,
+      timeoutMs: 10_000,
+    });
     const core = createBot({ api, store });
     const replies: { content: string; files: AttachmentFile[]; link?: SavedLink }[] = [];
     await core.handleMessage(
@@ -252,12 +315,9 @@ test('E2: a web job result and a Discord thread reply both carry the file link',
     );
 
     assert.equal(replies.length, 1);
-    // The link reaches the reply sink as validated structured data; the
+    // The link reaches the reply sink as a branded canonical Drive link; the
     // Discord adapter renders it as "Saved to Drive: <url>" under the text.
-    assert.equal(
-      replies[0].link?.url,
-      'https://drive.example.test/folder-guild/my-great-video_20261122.txt',
-    );
+    assert.equal(replies[0].link?.url, 'https://drive.google.com/file/d/fake-drive-1/view');
     assert.equal(replies[0].files.length, 2);
     assert.equal(drive.filesIn('folder-guild').length, 1);
   } finally {
@@ -278,12 +338,16 @@ test('E3: a 403 from Drive reports save_failed at the origin and still returns t
       id: 'tenant-guild',
       discord_guild_id: GUILD,
       discord_channel_ids: [CHANNEL],
+      caller: { token_sha256: sha256(TOKEN_GUILD) },
       destination: { type: 'google-drive', folder_id: 'folder-unshared' },
     },
   ]);
   try {
-    // The web result carries the error; the transcript still came back.
-    const res = await submitJob(svc.base, { origin: discordOrigin(GUILD, CHANNEL) });
+    // The job result carries the error; the transcript still came back.
+    const res = await submitJob(svc.base, {
+      origin: discordOrigin(GUILD, CHANNEL),
+      token: TOKEN_GUILD,
+    });
     const job = await pollJob(svc.base, res.body.job_id);
     assert.equal(job.status, 'done');
     assert.ok(job.result.blocks.length > 0, 'transcript must still be returned');
@@ -297,7 +361,12 @@ test('E3: a 403 from Drive reports save_failed at the origin and still returns t
     const store = new GuildStore(join(dir, 'bot-data.json'), deriveEncryptionKey('test-secret'));
     store.setKey(GUILD, KEY);
     store.enableChannel(GUILD, CHANNEL);
-    const api = createApiClient({ baseUrl: svc.base, pollIntervalMs: 5, timeoutMs: 10_000 });
+    const api = createApiClient({
+      baseUrl: svc.base,
+      serviceToken: TOKEN_GUILD,
+      pollIntervalMs: 5,
+      timeoutMs: 10_000,
+    });
     const core = createBot({ api, store });
     const replies: { content: string; files: AttachmentFile[] }[] = [];
     await core.handleMessage(
@@ -332,10 +401,13 @@ test('E4: running the same video twice for one tenant updates the file in place'
   const svc = await startService(drive, TENANTS_TWO);
   try {
     for (let i = 0; i < 2; i++) {
-      const res = await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1') });
+      const res = await submitJob(svc.base, {
+        origin: discordOrigin('guild-a', 'chan-1'),
+        token: TOKEN_A,
+      });
       const job = await pollJob(svc.base, res.body.job_id);
       assert.equal(job.status, 'done');
-      assert.equal(job.saved.url, `https://drive.example.test/folder-a/my-great-video_20261122.txt`);
+      assert.equal(job.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
     }
     const files = drive.filesIn('folder-a');
     assert.equal(files.length, 1, 'no duplicate file');
@@ -348,48 +420,172 @@ test('E4: running the same video twice for one tenant updates the file in place'
   }
 });
 
+// File identity is the video id, not the mutable title/date filename: a new
+// day or a new title still lands on the same stored file.
+test('E4b: the same video on another day and with another title still updates one file', async () => {
+  const drive = new FakeDrive();
+  let now = new Date('2026-11-22T00:00:00Z');
+  let title = 'First Title';
+  const svc = await startService(drive, TENANTS_TWO, {
+    now: () => now,
+    metadata: async () => ({ title, channel: 'Test Channel' }),
+  });
+  try {
+    const first = await pollJob(
+      svc.base,
+      (
+        await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1'), token: TOKEN_A })
+      ).body.job_id,
+    );
+    assert.equal(first.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
+    assert.equal(drive.filesIn('folder-a')[0].name, `first-title_${VIDEO_A}_20261122.txt`);
+
+    now = new Date('2026-11-23T00:00:00Z');
+    title = 'Renamed Video';
+    const second = await pollJob(
+      svc.base,
+      (
+        await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1'), token: TOKEN_A })
+      ).body.job_id,
+    );
+    assert.equal(second.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
+
+    const files = drive.filesIn('folder-a');
+    assert.equal(files.length, 1, 'same video across days and titles stays one file');
+    assert.ok(drive.calls.includes(`update:${files[0].id}`));
+    assert.match(files[0].content, /^Title: Renamed Video\n/);
+  } finally {
+    await svc.close();
+  }
+});
+
+// A fresh saver (as after a service restart) has no in-memory record, so it
+// must find the stored file through the persisted video id, not the name.
+test('E4c: a restarted saver finds the file by the video id stored on it', async () => {
+  const drive = new FakeDrive();
+  const first = await startService(drive, TENANTS_TWO, {
+    now: () => new Date('2026-11-22T00:00:00Z'),
+  });
+  try {
+    const job = await pollJob(
+      first.base,
+      (
+        await submitJob(first.base, {
+          origin: discordOrigin('guild-a', 'chan-1'),
+          token: TOKEN_A,
+        })
+      ).body.job_id,
+    );
+    assert.equal(job.status, 'done');
+    assert.equal(drive.filesIn('folder-a')[0].props.videoId, VIDEO_A);
+  } finally {
+    await first.close();
+  }
+
+  const second = await startService(drive, TENANTS_TWO, {
+    now: () => new Date('2026-11-23T00:00:00Z'),
+  });
+  try {
+    const job = await pollJob(
+      second.base,
+      (
+        await submitJob(second.base, {
+          origin: discordOrigin('guild-a', 'chan-1'),
+          token: TOKEN_A,
+        })
+      ).body.job_id,
+    );
+    assert.equal(job.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
+    const files = drive.filesIn('folder-a');
+    assert.equal(files.length, 1, 'a restart must not duplicate the stored file');
+    assert.ok(drive.calls.includes(`find-video:folder-a:${VIDEO_A}`));
+  } finally {
+    await second.close();
+  }
+});
+
+// Concurrent jobs for the same tenant and video serialize: they converge on
+// one file instead of racing find/create into a duplicate.
+test('E4d: two concurrent saves of the same video converge to one file', async () => {
+  const drive = new FakeDrive();
+  const svc = await startService(drive, TENANTS_TWO);
+  try {
+    const [a, b] = await Promise.all([
+      submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1'), token: TOKEN_A }),
+      submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1'), token: TOKEN_A }),
+    ]);
+    assert.equal(a.status, 202);
+    assert.equal(b.status, 202);
+    const [jobA, jobB] = await Promise.all([
+      pollJob(svc.base, a.body.job_id),
+      pollJob(svc.base, b.body.job_id),
+    ]);
+    assert.equal(jobA.status, 'done');
+    assert.equal(jobB.status, 'done');
+    const files = drive.filesIn('folder-a');
+    assert.equal(files.length, 1, 'concurrent jobs must not duplicate the file');
+  } finally {
+    await svc.close();
+  }
+});
+
 // --- E5: a new tenant is configuration, not code -------------------------------
 
 test('E5: adding a third tenant by editing only the tenants file works', async () => {
   const drive = new FakeDrive();
   const svc = await startService(drive, TENANTS_TWO);
+  const TOKEN_C = 'test-caller-token-c';
   try {
-    const before = await submitJob(svc.base, { origin: discordOrigin('guild-c', 'chan-9') });
+    const before = await submitJob(svc.base, {
+      origin: discordOrigin('guild-c', 'chan-9'),
+      token: TOKEN_C,
+    });
     const jobBefore = await pollJob(svc.base, before.body.job_id);
     assert.equal(jobBefore.status, 'done');
     assert.equal(jobBefore.saved, undefined, 'unmatched origin saves nothing');
     assert.equal(drive.files.length, 0);
 
-    // Edit only the file: the next job resolves the new tenant.
+    // Edit only the file: the next job resolves the new tenant. The env
+    // reference form of caller credential covers the second variant.
+    process.env.FA_TEST_TENANT_C_TOKEN = TOKEN_C;
     writeTenantsFile(svc.dir, [
       ...TENANTS_TWO,
       {
         id: 'tenant-c',
         discord_guild_id: 'guild-c',
+        caller: { token_env: 'FA_TEST_TENANT_C_TOKEN' },
         destination: { type: 'google-drive', folder_id: 'folder-c', extension: '.srt' },
       },
     ]);
-    const after = await submitJob(svc.base, { origin: discordOrigin('guild-c', 'chan-9') });
+    const after = await submitJob(svc.base, {
+      origin: discordOrigin('guild-c', 'chan-9'),
+      token: TOKEN_C,
+    });
     const jobAfter = await pollJob(svc.base, after.body.job_id);
     assert.equal(jobAfter.status, 'done');
-    assert.equal(jobAfter.saved.url, `https://drive.example.test/folder-c/my-great-video_20261122.srt`);
+    assert.equal(jobAfter.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
     assert.equal(drive.filesIn('folder-c').length, 1);
+    assert.equal(drive.filesIn('folder-c')[0].name, `my-great-video_${VIDEO_A}_20261122.srt`);
   } finally {
+    delete process.env.FA_TEST_TENANT_C_TOKEN;
     await svc.close();
   }
 });
 
 // --- E6: file name and format --------------------------------------------------
 
-test('E6: the written file is named by slug and date, with the header then timestamped text', async () => {
+test('E6: the written file is named by slug, video id and date, with the header then timestamped text', async () => {
   const drive = new FakeDrive();
   const svc = await startService(drive, TENANTS_TWO);
   try {
-    const res = await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1') });
+    const res = await submitJob(svc.base, {
+      origin: discordOrigin('guild-a', 'chan-1'),
+      token: TOKEN_A,
+    });
     await pollJob(svc.base, res.body.job_id);
 
     const file = drive.filesIn('folder-a')[0];
-    assert.equal(file.name, 'my-great-video_20261122.txt');
+    assert.equal(file.name, `my-great-video_${VIDEO_A}_20261122.txt`);
     const head = file.content.split('\n\n')[0];
     assert.match(head, /^Title: My Great Video!\n/);
     assert.match(head, /Channel: Test Channel\n/);
@@ -441,10 +637,12 @@ test('a job with no origin, or an origin matching no tenant, saves nothing', asy
 
     const unmatched = await pollJob(
       svc.base,
-      (await submitJob(svc.base, { origin: discordOrigin('stranger', 'chan') })).body.job_id,
+      (await submitJob(svc.base, { origin: discordOrigin('stranger', 'chan'), token: TOKEN_A }))
+        .body.job_id,
     );
     assert.equal(unmatched.status, 'done');
     assert.equal(unmatched.saved, undefined);
+    assert.equal(unmatched.save_error, undefined, 'an unmatched claim is silent, not denied');
     assert.equal(drive.files.length, 0);
   } finally {
     await svc.close();
@@ -452,17 +650,21 @@ test('a job with no origin, or an origin matching no tenant, saves nothing', asy
 });
 
 test('a none destination and a channel-scoped tenant resolve as configured', async () => {
+  const TOKEN_X = 'test-caller-token-x';
+  const TOKEN_NONE = 'test-caller-token-none';
   const drive = new FakeDrive();
   const svc = await startService(drive, [
     {
       id: 'channel-only',
       discord_guild_id: 'guild-x',
       discord_channel_ids: ['chan-yes'],
+      caller: { token_sha256: sha256(TOKEN_X) },
       destination: { type: 'google-drive', folder_id: 'folder-x' },
     },
     {
       id: 'loud-no',
-      web_identities: ['nobody'],
+      discord_guild_id: 'guild-none',
+      caller: { token_sha256: sha256(TOKEN_NONE) },
       destination: { type: 'none' },
     },
   ]);
@@ -470,23 +672,75 @@ test('a none destination and a channel-scoped tenant resolve as configured', asy
     // A channel outside the tenant's list resolves to nothing, not to it.
     const wrong = await pollJob(
       svc.base,
-      (await submitJob(svc.base, { origin: discordOrigin('guild-x', 'chan-no') })).body.job_id,
+      (
+        await submitJob(svc.base, {
+          origin: discordOrigin('guild-x', 'chan-no'),
+          token: TOKEN_X,
+        })
+      ).body.job_id,
     );
     assert.equal(wrong.saved, undefined);
 
     const right = await pollJob(
       svc.base,
-      (await submitJob(svc.base, { origin: discordOrigin('guild-x', 'chan-yes') })).body.job_id,
+      (
+        await submitJob(svc.base, {
+          origin: discordOrigin('guild-x', 'chan-yes'),
+          token: TOKEN_X,
+        })
+      ).body.job_id,
     );
-    assert.equal(right.saved.url, `https://drive.example.test/folder-x/my-great-video_20261122.txt`);
+    assert.equal(right.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
 
+    // A verified claim on a "none" destination saves nothing and is no error.
     const none = await pollJob(
       svc.base,
-      (await submitJob(svc.base, { origin: { kind: 'web', identity: 'nobody' } })).body.job_id,
+      (
+        await submitJob(svc.base, {
+          origin: discordOrigin('guild-none', 'chan-1'),
+          token: TOKEN_NONE,
+        })
+      ).body.job_id,
     );
     assert.equal(none.saved, undefined);
+    assert.equal(none.save_error, undefined);
     assert.equal(drive.filesIn('folder-x').length, 1);
     assert.equal(drive.files.length, 1);
+  } finally {
+    await svc.close();
+  }
+});
+
+// --- F3: file preservation ---------------------------------------------------
+
+// Two different videos whose titles slug to the same file name used to
+// overwrite one another; identity is the video id, so both transcripts live.
+test('F3: different videos with the same title keep both transcripts', async () => {
+  const drive = new FakeDrive();
+  const svc = await startService(drive, TENANTS_TWO, {
+    metadata: async () => ({ title: 'Same title', channel: 'Test Channel' }),
+  });
+  try {
+    for (const videoId of [VIDEO_A, VIDEO_B]) {
+      const job = await pollJob(
+        svc.base,
+        (
+          await submitJob(svc.base, {
+            url: `https://youtu.be/${videoId}`,
+            origin: discordOrigin('guild-a', 'chan-1'),
+            token: TOKEN_A,
+          })
+        ).body.job_id,
+      );
+      assert.equal(job.status, 'done');
+    }
+    const files = drive.filesIn('folder-a');
+    assert.equal(files.length, 2, 'both videos must be preserved');
+    const byVideo = new Map(files.map((f) => [f.props.videoId, f]));
+    assert.equal(byVideo.get(VIDEO_A)?.name, `same-title_${VIDEO_A}_20261122.txt`);
+    assert.equal(byVideo.get(VIDEO_B)?.name, `same-title_${VIDEO_B}_20261122.txt`);
+    assert.match(byVideo.get(VIDEO_A)?.content ?? '', new RegExp(`v=${VIDEO_A}`));
+    assert.match(byVideo.get(VIDEO_B)?.content ?? '', new RegExp(`v=${VIDEO_B}`));
   } finally {
     await svc.close();
   }
@@ -542,7 +796,7 @@ test('renderTranscriptFile: .srt carries the header then cues', () => {
   assert.match(out, /2\n00:00:01,500 --> 00:00:03,000\nworld/);
 });
 
-test('resolveTenant: channel-scoped beats guild-wide; web matches by identity', () => {
+test('resolveTenant: channel-scoped beats guild-wide; web origins never resolve', () => {
   const tenants = [
     { id: 'guild-wide', discord_guild_id: 'g', destination: { type: 'none' as const } },
     {
@@ -551,7 +805,6 @@ test('resolveTenant: channel-scoped beats guild-wide; web matches by identity', 
       discord_channel_ids: ['c1'],
       destination: { type: 'none' as const },
     },
-    { id: 'webby', web_identities: ['w1'], destination: { type: 'none' as const } },
   ];
   assert.equal(
     resolveTenant(tenants, { kind: 'discord', guild_id: 'g', channel_id: 'c1' })?.id,
@@ -561,7 +814,7 @@ test('resolveTenant: channel-scoped beats guild-wide; web matches by identity', 
     resolveTenant(tenants, { kind: 'discord', guild_id: 'g', channel_id: 'c9' })?.id,
     'guild-wide',
   );
-  assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'w1' })?.id, 'webby');
+  assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'w1' }), undefined);
   assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'w2' }), undefined);
 });
 

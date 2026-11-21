@@ -35,8 +35,10 @@ export interface JobRunnerDeps {
   cacheDir: string;
   log?: (line: string) => void; // sink for allowlisted log lines
   // After a transcript exists, persist it wherever the job's origin resolved
-  // to. Returns the saved file, undefined when nothing should be saved, and
-  // throws on failure — the transcript is still returned either way.
+  // to. The origin here is a caller claim the HTTP boundary already
+  // authenticated. Returns the saved file, undefined when nothing should be
+  // saved, and throws on failure — the transcript is still returned either
+  // way.
   saveTranscript?: (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined>;
 }
 
@@ -58,11 +60,15 @@ export class JobStore {
 
   constructor(private readonly deps: JobRunnerDeps) {}
 
-  submit(videoId: string, apiKey: string, origin?: JobOrigin): string {
+  // `saveDenied` marks a claim that resolved to a tenant but failed the
+  // tenant's caller-credential check: the job still runs and returns the
+  // transcript, and the fixed save_unauthorized error is what the origin
+  // sees.
+  submit(videoId: string, apiKey: string, origin?: JobOrigin, saveDenied = false): string {
     const id = randomUUID();
     this.records.set(id, { status: 'queued' });
     this.prune();
-    setImmediate(() => void this.run(id, videoId, apiKey, origin));
+    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveDenied));
     return id;
   }
 
@@ -77,7 +83,13 @@ export class JobStore {
     return view;
   }
 
-  private async run(id: string, videoId: string, apiKey: string, origin?: JobOrigin): Promise<void> {
+  private async run(
+    id: string,
+    videoId: string,
+    apiKey: string,
+    origin?: JobOrigin,
+    saveDenied = false,
+  ): Promise<void> {
     const record = this.records.get(id);
     if (!record) return;
     record.status = 'running';
@@ -96,6 +108,8 @@ export class JobStore {
         } catch (err) {
           record.save_error = toJobError(err);
         }
+      } else if (saveDenied) {
+        record.save_error = { code: 'save_unauthorized', message: messageForCode('save_unauthorized') };
       }
       record.status = 'done';
     } catch (err) {

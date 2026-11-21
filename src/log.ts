@@ -56,6 +56,7 @@ export type LogCode =
   | 'job_lost'
   | 'job_timeout'
   | 'save_failed'
+  | 'save_unauthorized'
   | 'internal_error'
   | 'usage';
 

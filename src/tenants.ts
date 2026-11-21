@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { TranscriptError } from './errors.js';
 import {
@@ -8,8 +9,10 @@ import {
 } from './ids.js';
 
 // Where a job came from. Discord origins carry the guild and the configured
-// channel (never a thread id); web origins carry an identity string the
-// operator chose for that web surface.
+// channel (never a thread id); web origins carry an identity string. The
+// origin is a claim, not proof: the service trusts a claim only when the
+// caller presents the credential the resolved tenant names, and a web
+// claim never resolves — web callers have no tenant until sign-in (#6).
 export type JobOrigin =
   | { kind: 'discord'; guild_id: string; channel_id: string }
   | { kind: 'web'; identity: string };
@@ -20,11 +23,20 @@ export type TenantDestination =
   | { type: 'none' }
   | { type: 'google-drive'; folder_id: DriveFolderId; extension?: FileExtension };
 
+// The credential a caller must present before the service trusts its
+// origin claim for this tenant: either the hex SHA-256 of the caller's
+// bearer token, or the name of an environment variable that holds the
+// token itself. Exactly one of the two fields is set.
+export interface TenantCaller {
+  token_sha256?: string;
+  token_env?: string;
+}
+
 export interface Tenant {
   id: TenantId;
   discord_guild_id?: string;
   discord_channel_ids?: string[];
-  web_identities?: string[];
+  caller?: TenantCaller;
   destination?: TenantDestination;
 }
 
@@ -90,6 +102,35 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
   return destination;
 }
 
+function parseCaller(value: unknown, path: string): TenantCaller | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object' || value === null) {
+    throw new TranscriptError('invalid_config', `${path}: caller must be an object`);
+  }
+  const caller: TenantCaller = {};
+  const sha = field(value, 'token_sha256');
+  if (sha !== undefined) {
+    if (typeof sha !== 'string' || !/^[0-9a-f]{64}$/.test(sha)) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: caller.token_sha256 must be the lowercase hex SHA-256 of the caller's bearer token`,
+      );
+    }
+    caller.token_sha256 = sha;
+  }
+  const env = field(value, 'token_env');
+  if (env !== undefined) {
+    if (!isNonEmptyString(env)) {
+      throw new TranscriptError('invalid_config', `${path}: caller.token_env must be a non-empty env var name`);
+    }
+    caller.token_env = env.trim();
+  }
+  if (caller.token_sha256 === undefined && caller.token_env === undefined) {
+    throw new TranscriptError('invalid_config', `${path}: caller needs token_sha256 or token_env`);
+  }
+  return caller;
+}
+
 // The tenants file is JSON read fresh on every job submit, so adding a tenant
 // is an edit to one file — never a code change or a restart:
 // {
@@ -98,7 +139,7 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
 //       "id": "family",
 //       "discord_guild_id": "111",
 //       "discord_channel_ids": ["222", "333"],
-//       "web_identities": ["allen"],
+//       "caller": { "token_env": "BOT_SERVICE_TOKEN" },
 //       "destination": { "type": "google-drive", "folder_id": "0AbC...", "extension": ".md" }
 //     }
 //   ]
@@ -139,24 +180,44 @@ export function loadTenantsFile(path: string): Tenant[] {
       tenant.discord_guild_id = guildId.trim();
     }
     tenant.discord_channel_ids = stringList(field(entry, 'discord_channel_ids'), 'discord_channel_ids', path);
-    tenant.web_identities = stringList(field(entry, 'web_identities'), 'web_identities', path);
+    tenant.caller = parseCaller(field(entry, 'caller'), path);
     tenant.destination = parseDestination(field(entry, 'destination'), path);
     return tenant;
   });
 }
 
-// A channel-scoped entry (guild + channel list) claims only the listed
-// channels; a guild-wide entry (guild only) claims every channel that no
-// channel-scoped entry took. First matching entry wins.
-export function resolveTenant(tenants: Tenant[], origin: JobOrigin): Tenant | undefined {
-  if (origin.kind === 'discord') {
-    const scoped = tenants.find(
-      (t) => t.discord_guild_id === origin.guild_id && t.discord_channel_ids?.includes(origin.channel_id),
-    );
-    if (scoped) return scoped;
-    return tenants.find(
-      (t) => t.discord_guild_id === origin.guild_id && (t.discord_channel_ids ?? []).length === 0,
+// Whether the bearer token a caller presented is the credential the tenant
+// entry names. A tenant without a caller credential cannot be claimed.
+export function callerAuthorized(tenant: Tenant, presentedToken: string | undefined): boolean {
+  const caller = tenant.caller;
+  if (!caller || presentedToken === undefined) return false;
+  if (caller.token_sha256 !== undefined) {
+    const digest = createHash('sha256').update(presentedToken).digest('hex');
+    return timingSafeEqual(Buffer.from(digest), Buffer.from(caller.token_sha256));
+  }
+  if (caller.token_env !== undefined) {
+    const expected = (process.env[caller.token_env] ?? '').trim();
+    return (
+      expected !== '' &&
+      expected.length === presentedToken.length &&
+      timingSafeEqual(Buffer.from(expected), Buffer.from(presentedToken))
     );
   }
-  return tenants.find((t) => t.web_identities?.includes(origin.identity));
+  return false;
+}
+
+// A channel-scoped entry (guild + channel list) claims only the listed
+// channels; a guild-wide entry (guild only) claims every channel that no
+// channel-scoped entry took. First matching entry wins. A web origin never
+// resolves: a web caller is anonymous until sign-in (#6), so it has no
+// tenant and saves nothing.
+export function resolveTenant(tenants: Tenant[], origin: JobOrigin): Tenant | undefined {
+  if (origin.kind === 'web') return undefined;
+  const scoped = tenants.find(
+    (t) => t.discord_guild_id === origin.guild_id && t.discord_channel_ids?.includes(origin.channel_id),
+  );
+  if (scoped) return scoped;
+  return tenants.find(
+    (t) => t.discord_guild_id === origin.guild_id && (t.discord_channel_ids ?? []).length === 0,
+  );
 }

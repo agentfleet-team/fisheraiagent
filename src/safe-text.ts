@@ -40,6 +40,7 @@ const MESSAGES = Object.freeze({
   save_failed: brand(
     'the transcript could not be saved to the configured destination — for a Drive folder, check it is shared with the service account email',
   ),
+  save_unauthorized: brand('the caller is not allowed to save to that destination'),
   // Discord replies: the 'bot.error.<LogCode>' entries answer a failed
   // transcript job, the rest are the fixed setup and progress texts.
   'bot.error.invalid_url': brand("That doesn't look like a usable YouTube link."),

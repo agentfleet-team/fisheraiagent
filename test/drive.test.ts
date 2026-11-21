@@ -86,6 +86,7 @@ test('findFile miss then createFile: token exchange, query, multipart create', a
       assert.match(req.headers['content-type'], /^multipart\/related; boundary=/);
       assert.match(req.body ?? '', /"parents":\["folder-1"\]/);
       assert.match(req.body ?? '', /"name":"clip_20261122\.txt"/);
+      assert.match(req.body ?? '', /"appProperties":\{"videoId":"hWe-j78vNpc"\}/);
       assert.match(req.body ?? '', /file contents here/);
       assert.equal(req.headers.authorization, 'Bearer tok-1');
       return json({
@@ -99,13 +100,39 @@ test('findFile miss then createFile: token exchange, query, multipart create', a
   const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
 
   assert.equal(await drive.findFile('folder-1', 'clip_20261122.txt'), null);
-  const stored = await drive.createFile('folder-1', 'clip_20261122.txt', 'file contents here', 'text/plain');
+  const stored = await drive.createFile(
+    'folder-1',
+    'clip_20261122.txt',
+    'file contents here',
+    'text/plain',
+    { videoId: 'hWe-j78vNpc' },
+  );
   assert.equal(stored.id, 'drv-1');
   assert.equal(stored.url, 'https://drive.google.com/file/d/drv-1/view');
 
   // Token fetched once, then cached.
   assert.equal(requests.filter((r) => r.url.includes('oauth2')).length, 1);
   assert.equal(requests.filter((r) => r.headers.authorization === 'Bearer tok-1').length, 2);
+});
+
+test('findFileByVideoId queries the stored appProperties video id inside the folder', async () => {
+  const { impl } = fakeFetch((req) => {
+    if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
+    if (req.url.startsWith('https://www.googleapis.com/drive/v3/files')) {
+      const q = new URL(req.url).searchParams.get('q') ?? '';
+      assert.match(q, /appProperties has \{key='videoId' and value='hWe-j78vNpc'\}/);
+      assert.match(q, /'folder-1' in parents/);
+      assert.match(q, /trashed=false/);
+      return json({
+        files: [{ id: 'drv-7', name: 'clip_hWe-j78vNpc_20261122.txt', webViewLink: 'https://x/drv-7' }],
+      });
+    }
+    throw new Error(`unexpected request ${req.method} ${req.url}`);
+  });
+  const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
+
+  const found = await drive.findFileByVideoId?.('folder-1', 'hWe-j78vNpc');
+  assert.equal(found?.id, 'drv-7');
 });
 
 test('findFile hit then updateFile patches media on the same file id', async () => {

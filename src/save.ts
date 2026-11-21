@@ -1,4 +1,4 @@
-import { DriveError, type DriveStore } from './drive.js';
+import { DriveError, parseDriveLink, type DriveLink, type DriveStore, type StoredFile } from './drive.js';
 import { TranscriptError } from './errors.js';
 import { parseDriveFileId, parseVideoId } from './ids.js';
 import { loggerFor, type LogSink } from './log.js';
@@ -6,10 +6,14 @@ import { loadTenantsFile, resolveTenant, type FileExtension, type JobOrigin } fr
 import type { Transcript } from './transcript.js';
 import { canonicalVideoUrl } from './youtube-url.js';
 
+// The saved-file link a job view and a reply may carry: the url is branded
+// DriveLink — raw Drive response text only after parseDriveLink has
+// rendered it canonical — so it can be shown to a person without becoming
+// a channel for arbitrary remote text.
 export interface SavedFile {
   type: 'google-drive';
   name: string;
-  url: string;
+  url: DriveLink;
 }
 
 export interface VideoMetadata {
@@ -70,8 +74,9 @@ function srtStamp(seconds: number): string {
   return `${pad(h)}:${pad(m)}:${pad(s)},${pad(ms, 3)}`;
 }
 
-// The file name is <english-slug>_<YYYYMMDD>.<ext>: the slug from the video
-// title, the capture date in UTC, and the tenant's chosen extension.
+// The file name is <english-slug>_<videoId>_<YYYYMMDD>.<ext>: the slug
+// from the video title, the video id (file identity is the video, not the
+// title), the capture date in UTC, and the tenant's chosen extension.
 export function transcriptFileName(
   title: string,
   videoId: string,
@@ -79,7 +84,7 @@ export function transcriptFileName(
   now: Date,
 ): string {
   const day = now.toISOString().slice(0, 10).replace(/-/g, '');
-  return `${englishSlug(title, videoId)}_${day}${extension}`;
+  return `${englishSlug(title, videoId)}_${videoId}_${day}${extension}`;
 }
 
 // Header first — title, channel, source URL, capture date — then the
@@ -142,12 +147,31 @@ export interface SaverDeps {
 // Returns the after-job hook the job runner calls once a transcript exists.
 // Resolving to no tenant, or to a "none" destination, saves nothing and is not
 // an error. Real failures throw; the job records them as save_error and the
-// transcript is still returned.
+// transcript is still returned. The origin here is an already-verified claim:
+// the HTTP boundary is what authenticates the caller against the tenant's
+// caller credential before a claim is allowed to reach this hook.
 export function createTranscriptSaver(
   deps: SaverDeps,
 ): (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined> {
   const metadata = deps.metadata ?? createVideoMetadata();
   const log = loggerFor(deps.log);
+  // File identity is tenant + video id, held in memory here and persisted on
+  // the Drive file's appProperties. Writes for one identity serialize on a
+  // promise chain so concurrent jobs converge on one file instead of racing
+  // a find/create pair into a duplicate.
+  const locks = new Map<string, Promise<unknown>>();
+  const known = new Map<string, StoredFile>();
+  const enqueue = <T>(key: string, fn: () => Promise<T>): Promise<T> => {
+    const next = (locks.get(key) ?? Promise.resolve()).then(fn, fn);
+    locks.set(
+      key,
+      next.then(
+        () => undefined,
+        () => undefined,
+      ),
+    );
+    return next;
+  };
   return async (origin, transcript) => {
     const tenants = loadTenantsFile(deps.tenantsFile);
     const tenant = resolveTenant(tenants, origin);
@@ -166,24 +190,37 @@ export function createTranscriptSaver(
         `tenant ${tenant.id}: a google-drive destination needs GOOGLE_APPLICATION_CREDENTIALS`,
       );
     }
-    const meta = await metadata(transcript.video_id);
-    const now = deps.now?.() ?? new Date();
-    const extension = destination.extension ?? '.txt';
-    const title = meta.title?.trim() || transcript.video_id;
-    const name = transcriptFileName(title, transcript.video_id, extension, now);
-    const content = renderTranscriptFile(transcript, meta, extension, now);
+    const drive = deps.drive;
+    const key = `${tenant.id}:${transcript.video_id}`;
+    return enqueue(key, async () => {
+      const meta = await metadata(transcript.video_id);
+      const now = deps.now?.() ?? new Date();
+      const extension = destination.extension ?? '.txt';
+      const title = meta.title?.trim() || transcript.video_id;
+      const name = transcriptFileName(title, transcript.video_id, extension, now);
+      const content = renderTranscriptFile(transcript, meta, extension, now);
 
-    try {
-      const existing = await deps.drive.findFile(destination.folder_id, name);
-      const stored = existing
-        ? await deps.drive.updateFile(existing.id, content, MIME_TYPES[extension])
-        : await deps.drive.createFile(destination.folder_id, name, content, MIME_TYPES[extension]);
-      log('file_saved', { ...fields, file: parseDriveFileId(stored.id) });
-      return { type: 'google-drive', name: stored.name, url: stored.url };
-    } catch (err) {
-      log('file_save_failed', { ...fields, code: 'save_failed' });
-      const status = err instanceof DriveError ? err.status : undefined;
-      throw new SaveFailedError('the destination write failed', status);
-    }
+      try {
+        let stored =
+          known.get(key) ??
+          (await drive.findFileByVideoId?.(destination.folder_id, transcript.video_id)) ??
+          (await drive.findFile(destination.folder_id, name));
+        stored = stored
+          ? await drive.updateFile(stored.id, content, MIME_TYPES[extension])
+          : await drive.createFile(destination.folder_id, name, content, MIME_TYPES[extension], {
+              videoId: transcript.video_id,
+            });
+        const url = parseDriveLink(stored.url);
+        if (!url) throw new DriveError('the Drive response carried no usable file link');
+        known.set(key, stored);
+        log('file_saved', { ...fields, file: parseDriveFileId(stored.id) });
+        return { type: 'google-drive', name: stored.name, url };
+      } catch (err) {
+        known.delete(key);
+        log('file_save_failed', { ...fields, code: 'save_failed' });
+        const status = err instanceof DriveError ? err.status : undefined;
+        throw new SaveFailedError('the destination write failed', status);
+      }
+    });
   };
 }

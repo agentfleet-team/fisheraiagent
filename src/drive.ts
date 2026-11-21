@@ -2,9 +2,10 @@ import { createSign } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { TranscriptError } from './errors.js';
 
-// The Drive surface the saver needs: find a file by name inside one folder,
-// create it, or replace its contents. Keeping it this small is what lets the
-// tests run a full fake Drive offline.
+// The Drive surface the saver needs: find a file inside one folder — by the
+// stored video id first, by name as a fallback — create it, or replace its
+// contents. Keeping it this small is what lets the tests run a full fake
+// Drive offline.
 export interface StoredFile {
   id: string;
   name: string;
@@ -13,8 +14,38 @@ export interface StoredFile {
 
 export interface DriveStore {
   findFile(folderId: string, name: string): Promise<StoredFile | null>;
-  createFile(folderId: string, name: string, content: string, mimeType: string): Promise<StoredFile>;
+  // Finds the file whose appProperties.videoId matches. Stores that cannot
+  // query file properties may leave it unimplemented; the saver falls back
+  // to the name lookup.
+  findFileByVideoId?(folderId: string, videoId: string): Promise<StoredFile | null>;
+  createFile(
+    folderId: string,
+    name: string,
+    content: string,
+    mimeType: string,
+    appProperties?: Record<string, string>,
+  ): Promise<StoredFile>;
   updateFile(fileId: string, content: string, mimeType: string): Promise<StoredFile>;
+}
+
+declare const driveLinkBrand: unique symbol;
+
+// A branded canonical Drive file link. Raw remote text reaches this type
+// only through parseDriveLink, which accepts an https drive.google.com
+// /file/d/<id>/view URL and renders it in canonical form. A caught error
+// message, an embedded newline or another host can never wear the brand,
+// so a reply sink that takes DriveLink cannot be handed arbitrary text.
+export type DriveLink = string & { readonly [driveLinkBrand]: 'drive_link' };
+
+const DRIVE_LINK_FORMAT = /^https:\/\/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{1,128})\/view(?:\?\S*)?$/;
+const isDriveLink = (value: string): value is DriveLink => DRIVE_LINK_FORMAT.test(value);
+
+export function parseDriveLink(value: unknown): DriveLink | undefined {
+  if (typeof value !== 'string') return undefined;
+  const id = DRIVE_LINK_FORMAT.exec(value)?.[1];
+  if (id === undefined) return undefined;
+  const canonical = `https://drive.google.com/file/d/${id}/view`;
+  return isDriveLink(canonical) ? canonical : undefined;
 }
 
 export class DriveError extends Error {
@@ -157,21 +188,39 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
     return res;
   }
 
+  const escape = (value: string): string => value.replaceAll("'", "\\'");
+
+  async function search(q: string): Promise<StoredFile | null> {
+    const res = await api(
+      `${DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=${encodeURIComponent(`files(${FILE_FIELDS})`)}&supportsAllDrives=true&includeItemsFromAllDrives=true&spaces=drive`,
+    );
+    const body: unknown = await res.json();
+    const files = field(body, 'files');
+    const found = Array.isArray(files) ? files[0] : undefined;
+    return found === undefined ? null : driveUrl(found);
+  }
+
   return {
     async findFile(folderId, name) {
-      const q = `name='${name.replaceAll("'", "\\'")}' and '${folderId.replaceAll("'", "\\'")}' in parents and trashed=false`;
-      const res = await api(
-        `${DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=${encodeURIComponent(`files(${FILE_FIELDS})`)}&supportsAllDrives=true&includeItemsFromAllDrives=true&spaces=drive`,
-      );
-      const body: unknown = await res.json();
-      const files = field(body, 'files');
-      const found = Array.isArray(files) ? files[0] : undefined;
-      return found === undefined ? null : driveUrl(found);
+      return search(`name='${escape(name)}' and '${escape(folderId)}' in parents and trashed=false`);
     },
 
-    async createFile(folderId, name, content, mimeType) {
+    // The repeat-video lookup: the video id rides on the file's
+    // appProperties, so a new title or a new capture day still lands on the
+    // same file.
+    async findFileByVideoId(folderId, videoId) {
+      return search(
+        `appProperties has {key='videoId' and value='${escape(videoId)}'} and '${escape(folderId)}' in parents and trashed=false`,
+      );
+    },
+
+    async createFile(folderId, name, content, mimeType, appProperties) {
       const boundary = 'fa_transcript_boundary';
-      const metadata = JSON.stringify({ name, parents: [folderId] });
+      const metadata = JSON.stringify({
+        name,
+        parents: [folderId],
+        ...(appProperties === undefined ? {} : { appProperties }),
+      });
       const body = [
         `--${boundary}`,
         'content-type: application/json; charset=UTF-8',

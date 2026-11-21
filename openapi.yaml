@@ -140,10 +140,12 @@ components:
           $ref: '#/components/schemas/JobError'
     JobOrigin:
       description: >
-        Where the job came from. The service resolves it against the tenants
-        file (TENANTS_FILE) to pick the destination the transcript is saved
-        to. Absent origin, or an origin that resolves to no tenant, saves
-        nothing.
+        Where the job claims to come from. The claim is trusted only when
+        the request's bearer token is the caller credential the resolved
+        tenant entry names (TENANTS_FILE); a claim that resolves to a tenant
+        but fails that check saves nothing and reports `save_unauthorized`.
+        A `web` origin never resolves — web callers are anonymous until
+        sign-in — and an origin matching no tenant saves nothing.
       oneOf:
         - type: object
           required: [kind, guild_id, channel_id]
@@ -165,7 +167,7 @@ components:
               enum: [web]
             identity:
               type: string
-              description: A web identity string from the tenants file.
+              description: A web identity string. Never resolves to a tenant today.
     SavedFile:
       type: object
       required: [type, name, url]
@@ -175,7 +177,7 @@ components:
           enum: [google-drive]
         name:
           type: string
-          description: The written file name, <english-slug>_<YYYYMMDD>.<ext>.
+          description: The written file name, <english-slug>_<videoId>_<YYYYMMDD>.<ext>.
         url:
           type: string
           description: Link that opens the file (Drive webViewLink).
@@ -195,6 +197,7 @@ components:
             - bad_model_output
             - invalid_config
             - save_failed
+            - save_unauthorized
             - internal_error
         message:
           type: string

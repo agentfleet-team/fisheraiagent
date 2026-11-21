@@ -6,7 +6,13 @@ import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
 import { createTranscriptSaver, createVideoMetadata, type VideoMetadata } from './save.js';
-import type { JobOrigin } from './tenants.js';
+import {
+  callerAuthorized,
+  loadTenantsFile,
+  resolveTenant,
+  type JobOrigin,
+  type Tenant,
+} from './tenants.js';
 
 const MAX_BODY_BYTES = 16 * 1024;
 
@@ -81,6 +87,32 @@ export function createService(options: ServiceOptions): Server {
     return timingSafeEqual(Buffer.from(header), Buffer.from(expected));
   };
 
+  const bearerToken = (req: IncomingMessage): string | undefined => {
+    const raw = req.headers.authorization;
+    const header = (Array.isArray(raw) ? raw[0] : raw) ?? '';
+    return header.startsWith('Bearer ') ? header.slice(7).trim() || undefined : undefined;
+  };
+
+  // An origin in the request body is a claim, not proof. It is trusted only
+  // when the bearer token the caller presented is the credential the
+  // resolved tenant entry names (the token's SHA-256, or an env reference);
+  // anything else is untrusted caller-controlled text. A claim that names a
+  // real tenant but fails the credential check is denied — the job still
+  // runs and reports the fixed save_unauthorized error — while a claim that
+  // matches no tenant is dropped silently, exactly like no origin at all.
+  const verifyClaim = (req: IncomingMessage, claimed: JobOrigin): 'verified' | 'denied' | 'none' => {
+    if (!options.tenantsFile) return 'none';
+    let tenants: Tenant[];
+    try {
+      tenants = loadTenantsFile(options.tenantsFile);
+    } catch {
+      return 'none';
+    }
+    const tenant = resolveTenant(tenants, claimed);
+    if (!tenant) return 'none';
+    return callerAuthorized(tenant, bearerToken(req)) ? 'verified' : 'denied';
+  };
+
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const method = req.method ?? 'GET';
     // Path only: query strings are never logged or inspected.
@@ -144,9 +176,9 @@ export function createService(options: ServiceOptions): Server {
       }
       throw err;
     }
-    let origin: JobOrigin | undefined;
+    let claimed: JobOrigin | undefined;
     try {
-      origin = parseOrigin(typeof body === 'object' && body !== null ? field(body, 'origin') : undefined);
+      claimed = parseOrigin(typeof body === 'object' && body !== null ? field(body, 'origin') : undefined);
     } catch (err) {
       if (err instanceof TranscriptError) {
         sendError(res, 400, codeOf(err));
@@ -154,7 +186,17 @@ export function createService(options: ServiceOptions): Server {
       }
       throw err;
     }
-    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin) });
+    // Web callers are anonymous until sign-in (#6): their origin shows the
+    // transcript only and saves nothing. Discord claims are verified here;
+    // only a verified claim reaches the job's save hook.
+    let origin: JobOrigin | undefined;
+    let saveDenied = false;
+    if (claimed?.kind === 'discord') {
+      const verdict = verifyClaim(req, claimed);
+      if (verdict === 'verified') origin = claimed;
+      else if (verdict === 'denied') saveDenied = true;
+    }
+    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin, saveDenied) });
   }
 
   return createServer((req, res) => {
