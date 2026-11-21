@@ -46,6 +46,10 @@ export async function serveWebAsset(
     res.end();
     return true;
   }
-  createReadStream(file).pipe(res);
+  // A stream that fails mid-send destroys the response; no error text ever
+  // leaves this path — a miss fell through to the caller's fixed 404 above.
+  createReadStream(file)
+    .on('error', () => res.destroy())
+    .pipe(res);
   return true;
 }

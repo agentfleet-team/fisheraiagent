@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Transcript } from './transcript.js';
@@ -19,7 +19,7 @@ export async function readCachedTranscript(
 ): Promise<Transcript | null> {
   try {
     const raw = await readFile(join(cacheDir, cacheFileName(videoId, model, maxBlockSeconds)), 'utf8');
-    const parsed = JSON.parse(raw) as Transcript;
+    const parsed: Transcript = JSON.parse(raw);
     if (parsed.video_id !== videoId || !Array.isArray(parsed.blocks)) return null;
     return parsed;
   } catch {
@@ -35,7 +35,7 @@ export async function writeCachedTranscript(
 ): Promise<void> {
   await mkdir(cacheDir, { recursive: true });
   const target = join(cacheDir, cacheFileName(transcript.video_id, model, maxBlockSeconds));
-  const tmp = `${target}.tmp-${process.pid}`;
+  const tmp = `${target}.tmp-${process.pid}-${randomUUID()}`;
   await writeFile(tmp, JSON.stringify(transcript, null, 2) + '\n', 'utf8');
   await rename(tmp, target);
 }

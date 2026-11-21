@@ -1,0 +1,4 @@
+declare const reply: (text: string) => void;
+declare function handler(): Promise<void>;
+handler().catch((e) => reply(e));
+console.error('x');

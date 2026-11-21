@@ -18,10 +18,12 @@
     "start": "tsx src/cli.ts",
     "transcribe": "tsx src/cli.ts",
     "serve": "tsx src/server.ts",
+    "bot": "tsx src/bot.ts",
     "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
-    "@google/genai": "3.3.0"
+    "@google/genai": "3.3.0",
+    "discord.js": "^14.28.1"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

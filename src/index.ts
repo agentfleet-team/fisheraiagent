@@ -8,3 +8,40 @@ export { loadConfig, loadServiceConfig, type Config, type ServiceConfig } from '
 export type { Transcript, TranscriptBlock } from './transcript.js';
 export { JobStore, type JobError, type JobRunnerDeps, type JobStatus, type JobView } from './jobs.js';
 export { createService, type ServiceOptions } from './service.js';
+export {
+  createDriveStore,
+  DriveError,
+  parseDriveLink,
+  type DriveLink,
+  type DriveStore,
+  type StoredFile,
+} from './drive.js';
+export {
+  parseTenantId,
+  parseDriveFolderId,
+  parseDriveFileId,
+  type TenantId,
+  type DriveFolderId,
+  type DriveFileId,
+} from './ids.js';
+export {
+  createTranscriptSaver,
+  createVideoMetadata,
+  englishSlug,
+  renderTranscriptFile,
+  transcriptFileName,
+  SaveFailedError,
+  type SavedFile,
+  type SaverDeps,
+  type VideoMetadata,
+} from './save.js';
+export {
+  callerAuthorized,
+  loadTenantsFile,
+  resolveTenant,
+  type FileExtension,
+  type JobOrigin,
+  type Tenant,
+  type TenantCaller,
+  type TenantDestination,
+} from './tenants.js';

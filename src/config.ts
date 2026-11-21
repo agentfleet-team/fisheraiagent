@@ -14,6 +14,8 @@ export interface ServiceConfig {
   maxBlockSeconds: number;
   cacheDir: string;
   serviceToken?: string;
+  tenantsFile?: string;
+  googleCredentials?: string;
 }
 
 const DEFAULT_MAX_BLOCK_SECONDS = 8;
@@ -21,9 +23,9 @@ const DEFAULT_CACHE_DIR = './transcript-cache';
 const DEFAULT_PORT = 8080;
 
 function defaultModel(): string {
-  const pkg = JSON.parse(
+  const pkg: { config?: { geminiModel?: string } } = JSON.parse(
     readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
-  ) as { config?: { geminiModel?: string } };
+  );
   const model = pkg.config?.geminiModel;
   if (!model) throw new TranscriptError('invalid_config', 'no default model in package.json config.geminiModel');
   return model;
@@ -77,5 +79,8 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
 
   const serviceToken = (env.SERVICE_TOKEN ?? '').trim() || undefined;
 
-  return { port, model, maxBlockSeconds, cacheDir, serviceToken };
+  const tenantsFile = (env.TENANTS_FILE ?? '').trim() || undefined;
+  const googleCredentials = (env.GOOGLE_APPLICATION_CREDENTIALS ?? '').trim() || undefined;
+
+  return { port, model, maxBlockSeconds, cacheDir, serviceToken, tenantsFile, googleCredentials };
 }

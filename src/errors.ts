@@ -1,3 +1,5 @@
+import { safeText, type MessageCode, type SafeText } from './safe-text.js';
+
 export type ErrorCode =
   | 'invalid_url'
   | 'video_unavailable'
@@ -6,7 +8,8 @@ export type ErrorCode =
   | 'quota_exceeded'
   | 'upstream_timeout'
   | 'bad_model_output'
-  | 'invalid_config';
+  | 'invalid_config'
+  | 'invalid_request';
 
 export class TranscriptError extends Error {
   readonly code: ErrorCode;
@@ -18,4 +21,22 @@ export class TranscriptError extends Error {
     this.code = code;
     this.httpStatus = options?.httpStatus;
   }
+}
+
+// Every code an HTTP error body may carry: the non-bot entries of the fixed
+// messages table. The body text a boundary may show comes only from that
+// table, looked up by code — never from the caught error.
+export type FixedErrorCode = Exclude<MessageCode, `bot.${string}`>;
+
+// The shape of every HTTP error body: a fixed code and its branded message.
+export interface ErrorBody {
+  error: { code: FixedErrorCode; message: SafeText };
+}
+
+export function messageForCode(code: FixedErrorCode): SafeText {
+  return safeText(code);
+}
+
+export function codeOf(err: unknown): FixedErrorCode {
+  return err instanceof TranscriptError ? err.code : 'internal_error';
 }
