@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { TranscriptError } from './errors.js';
+import { codeOf, messageForCode } from './errors.js';
 import type { GeminiCaller } from './gemini.js';
 import { transcribeYouTube } from './transcribe.js';
 import type { Transcript } from './transcript.js';
@@ -23,7 +23,7 @@ export interface JobRunnerDeps {
   model: string;
   maxBlockSeconds: number;
   cacheDir: string;
-  log?: (line: string) => void;
+  log?: (line: string) => void; // sink for allowlisted log lines
 }
 
 const MAX_JOBS = 1000;
@@ -74,7 +74,8 @@ export class JobStore {
       record.status = 'done';
     } catch (err) {
       record.status = 'failed';
-      record.error = toJobError(err, apiKey);
+      const code = codeOf(err);
+      record.error = { code, message: messageForCode(code) };
     }
   }
 
@@ -87,11 +88,4 @@ export class JobStore {
       }
     }
   }
-}
-
-function toJobError(err: unknown, apiKey: string): JobError {
-  const code = err instanceof TranscriptError ? err.code : 'internal_error';
-  const raw = err instanceof Error ? err.message : String(err);
-  // Belt and braces: an upstream message must never echo the caller key back.
-  return { code, message: raw.split(apiKey).join('[redacted]') };
 }

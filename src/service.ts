@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
-import { TranscriptError } from './errors.js';
+import { TranscriptError, codeOf, messageForCode, type FixedErrorCode } from './errors.js';
+import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
 
@@ -12,14 +13,15 @@ export interface ServiceOptions extends JobRunnerDeps {
 
 export function createService(options: ServiceOptions): Server {
   const jobs = new JobStore(options);
-  const log = options.log ?? (() => {});
+  const log = loggerFor(options.log);
 
   const send = (res: ServerResponse, status: number, body: unknown): void => {
     res.writeHead(status, { 'content-type': 'application/json' });
     res.end(JSON.stringify(body));
   };
-  const sendError = (res: ServerResponse, status: number, code: string, message: string): void =>
-    send(res, status, { error: { code, message } });
+  // Error bodies carry only a code and its fixed message.
+  const sendError = (res: ServerResponse, status: number, code: FixedErrorCode): void =>
+    send(res, status, { error: { code, message: messageForCode(code) } });
 
   const authorized = (req: IncomingMessage): boolean => {
     if (!options.serviceToken) return true;
@@ -33,7 +35,7 @@ export function createService(options: ServiceOptions): Server {
     const method = req.method ?? 'GET';
     // Path only: query strings are never logged or inspected.
     const path = new URL(req.url ?? '/', 'http://service.local').pathname;
-    log(`${method} ${path}`);
+    log('http_request', { route: routeTemplate(method, path) });
 
     if (method === 'GET' && path === '/healthz') {
       send(res, 200, { status: 'ok' });
@@ -41,11 +43,11 @@ export function createService(options: ServiceOptions): Server {
     }
 
     if (!path.startsWith('/v1/')) {
-      sendError(res, 404, 'not_found', 'unknown route');
+      sendError(res, 404, 'not_found');
       return;
     }
     if (!authorized(req)) {
-      sendError(res, 401, 'unauthorized', 'Authorization: Bearer <SERVICE_TOKEN> is required');
+      sendError(res, 401, 'unauthorized');
       return;
     }
 
@@ -57,30 +59,30 @@ export function createService(options: ServiceOptions): Server {
     if (method === 'GET' && jobMatch) {
       const view = jobs.get(decodeURIComponent(jobMatch[1]));
       if (view) send(res, 200, view);
-      else sendError(res, 404, 'not_found', 'unknown job_id');
+      else sendError(res, 404, 'not_found');
       return;
     }
-    sendError(res, 404, 'not_found', 'unknown route');
+    sendError(res, 404, 'not_found');
   }
 
   async function submitJob(req: IncomingMessage, res: ServerResponse): Promise<void> {
     let body: unknown;
     try {
       body = await readJsonBody(req);
-    } catch (err) {
-      sendError(res, 400, 'invalid_request', err instanceof Error ? err.message : 'invalid request body');
+    } catch {
+      sendError(res, 400, 'invalid_request');
       return;
     }
     const url =
       typeof body === 'object' && body !== null ? (body as Record<string, unknown>).url : undefined;
     if (typeof url !== 'string' || url.trim() === '') {
-      sendError(res, 400, 'invalid_request', 'request body must be JSON with a "url" string');
+      sendError(res, 400, 'invalid_request');
       return;
     }
     const keyHeader = req.headers['x-gemini-key'];
     const apiKey = (Array.isArray(keyHeader) ? keyHeader[0] : keyHeader)?.trim() ?? '';
     if (!apiKey) {
-      sendError(res, 400, 'missing_key', 'X-Gemini-Key header is required');
+      sendError(res, 400, 'missing_key');
       return;
     }
     let videoId: string;
@@ -88,7 +90,7 @@ export function createService(options: ServiceOptions): Server {
       videoId = parseYouTubeVideoId(url);
     } catch (err) {
       if (err instanceof TranscriptError) {
-        sendError(res, 400, err.code, err.message);
+        sendError(res, 400, codeOf(err));
         return;
       }
       throw err;
@@ -97,12 +99,19 @@ export function createService(options: ServiceOptions): Server {
   }
 
   return createServer((req, res) => {
-    handle(req, res).catch((err: unknown) => {
-      log(`unhandled error: ${err instanceof Error ? err.message : String(err)}`);
-      if (!res.headersSent) sendError(res, 500, 'internal_error', 'unexpected server error');
+    handle(req, res).catch(() => {
+      log('http_unhandled_error');
+      if (!res.headersSent) sendError(res, 500, 'internal_error');
       else res.end();
     });
   });
+}
+
+function routeTemplate(method: string, path: string): LogRoute {
+  if (method === 'GET' && path === '/healthz') return 'GET /healthz';
+  if (method === 'POST' && path === '/v1/jobs') return 'POST /v1/jobs';
+  if (method === 'GET' && /^\/v1\/jobs\/[^/]+$/.test(path)) return 'GET /v1/jobs/:id';
+  return 'other';
 }
 
 function readJsonBody(req: IncomingMessage): Promise<unknown> {

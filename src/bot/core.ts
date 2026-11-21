@@ -1,6 +1,7 @@
 import { ApiError, type TranscriptApi } from './api.js';
 import { findYouTubeUrl } from './find-url.js';
 import { summaryLine, transcriptToSrt, transcriptToTxt } from './format.js';
+import { loggerFor, type LogCode } from '../log.js';
 import type { GuildStore } from './store.js';
 
 // Discord-free core: the adapter in discord.js land translates events into
@@ -49,7 +50,7 @@ export interface BotCore {
   handleCommand(cmd: BotCommand, sink: CommandSink): Promise<void>;
 }
 
-const ERROR_MESSAGES: Record<string, string> = {
+const ERROR_MESSAGES = {
   invalid_url: "That doesn't look like a usable YouTube link.",
   video_unavailable: 'This video is unavailable — it may be private, deleted, or blocked for transcription.',
   missing_key: 'The service received no Gemini key. An admin can set one with `/transcript set-key`.',
@@ -65,22 +66,24 @@ const ERROR_MESSAGES: Record<string, string> = {
   job_lost: 'The transcript service restarted and lost the job. Try again.',
   job_timeout: 'Timed out waiting for the transcript. Try again.',
   internal_error: 'Something went wrong inside the transcript service. Try again.',
-};
+} as const satisfies Partial<Record<LogCode, string>>;
+
+type ErrorKey = keyof typeof ERROR_MESSAGES;
 
 // A code is logged or shown only when it maps to a fixed local message;
 // anything else, including arbitrary remote text in an ApiError, folds
 // into internal_error.
-function errorCode(err: unknown): string {
+function errorCode(err: unknown): ErrorKey {
   const code = err instanceof ApiError ? err.code : 'internal_error';
-  return Object.hasOwn(ERROR_MESSAGES, code) ? code : 'internal_error';
+  return isErrorKey(code) ? code : 'internal_error';
 }
 
-function errorMessage(err: unknown): string {
-  return ERROR_MESSAGES[errorCode(err)];
+function isErrorKey(code: string): code is ErrorKey {
+  return Object.hasOwn(ERROR_MESSAGES, code);
 }
 
 export function createBot(deps: BotDeps): BotCore {
-  const log = deps.log ?? (() => {});
+  const log = loggerFor(deps.log);
   const { api, store } = deps;
 
   return {
@@ -99,7 +102,7 @@ export function createBot(deps: BotDeps): BotCore {
             return;
           }
           store.setKey(cmd.guildId, key);
-          log(`key set guild=${cmd.guildId}`);
+          log('key_set', { guild: cmd.guildId });
           await sink.replyEphemeral(
             'Gemini key saved for this server. Enable a channel with `/transcript enable`.',
           );
@@ -107,13 +110,13 @@ export function createBot(deps: BotDeps): BotCore {
         }
         case 'remove-key': {
           store.removeKey(cmd.guildId);
-          log(`key removed guild=${cmd.guildId}`);
+          log('key_removed', { guild: cmd.guildId });
           await sink.replyEphemeral('Gemini key removed for this server.');
           return;
         }
         case 'enable': {
           store.enableChannel(cmd.guildId, cmd.channelId);
-          log(`enabled guild=${cmd.guildId} channel=${cmd.channelId}`);
+          log('channel_enabled', { guild: cmd.guildId, channel: cmd.channelId });
           await sink.replyEphemeral(
             'Transcript bot enabled here. Post a YouTube link and the transcript lands in this channel or thread.',
           );
@@ -121,7 +124,7 @@ export function createBot(deps: BotDeps): BotCore {
         }
         case 'disable': {
           store.disableChannel(cmd.guildId, cmd.channelId);
-          log(`disabled guild=${cmd.guildId} channel=${cmd.channelId}`);
+          log('channel_disabled', { guild: cmd.guildId, channel: cmd.channelId });
           await sink.replyEphemeral('Transcript bot disabled here.');
           return;
         }
@@ -155,17 +158,18 @@ export function createBot(deps: BotDeps): BotCore {
         // The progress reaction is best-effort; missing permission must not stop the job.
       }
 
-      log(`job submitted guild=${msg.guildId} channel=${msg.channelId}`);
+      log('job_submitted', { guild: msg.guildId, channel: msg.channelId });
       try {
         const transcript = await api.transcribe(url, apiKey);
-        log(`job done guild=${msg.guildId} channel=${msg.channelId} video=${transcript.video_id}`);
+        log('job_done', { guild: msg.guildId, channel: msg.channelId, video: transcript.video_id });
         await sink.reply(summaryLine(transcript), [
           { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
         ]);
       } catch (err) {
-        log(`job failed guild=${msg.guildId} channel=${msg.channelId} code=${errorCode(err)}`);
-        await sink.reply(errorMessage(err), []);
+        const code = errorCode(err);
+        log('job_failed', { guild: msg.guildId, channel: msg.channelId, code });
+        await sink.reply(ERROR_MESSAGES[code], []);
       }
     },
   };

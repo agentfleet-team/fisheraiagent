@@ -1,0 +1,6 @@
+declare const log: (line: string) => void;
+try {
+  JSON.parse('{');
+} catch (err) {
+  log(`failed: ${err instanceof Error ? err.message : String(err)}`);
+}

@@ -8,6 +8,7 @@ import {
   Routes,
   SlashCommandBuilder,
 } from 'discord.js';
+import { createLogger, type LogSink } from '../log.js';
 import type { BotConfig } from './config.js';
 import type { BotCommand, BotCore, BotMessage, BotSubcommand } from './core.js';
 
@@ -39,8 +40,9 @@ export const transcriptCommand = new SlashCommandBuilder()
 export async function startDiscordBot(
   config: BotConfig,
   core: BotCore,
-  log: (line: string) => void,
+  sink: LogSink,
 ): Promise<Client> {
+  const log = createLogger(sink);
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -56,14 +58,14 @@ export async function startDiscordBot(
       await rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
         body: [transcriptCommand],
       });
-      log(`commands registered guild=${guildId}`);
-    } catch (err) {
-      log(`command registration failed guild=${guildId}: ${err instanceof Error ? err.message : String(err)}`);
+      log('commands_registered', { guild: guildId });
+    } catch {
+      log('command_registration_failed', { guild: guildId });
     }
   };
 
   client.once(Events.ClientReady, (ready) => {
-    log(`discord bot ready as ${ready.user.tag}`);
+    log('discord_ready', { count: ready.guilds.cache.size });
     for (const guild of ready.guilds.cache.values()) void register(guild.id);
   });
   client.on(Events.GuildCreate, (guild) => void register(guild.id));
@@ -96,9 +98,7 @@ export async function startDiscordBot(
           });
         },
       })
-      .catch((err: unknown) =>
-        log(`message handler error: ${err instanceof Error ? err.message : String(err)}`),
-      );
+      .catch(() => log('message_handler_failed', { guild: msg.guildId, channel: msg.channelId }));
   });
 
   client.on(Events.InteractionCreate, (interaction) => {
@@ -128,9 +128,7 @@ export async function startDiscordBot(
           await interaction.reply({ content, flags: MessageFlags.Ephemeral });
         },
       })
-      .catch((err: unknown) =>
-        log(`command handler error: ${err instanceof Error ? err.message : String(err)}`),
-      );
+      .catch(() => log('command_handler_failed', { guild: guildId, channel: interaction.channelId }));
   });
 
   await client.login(config.discordToken);
