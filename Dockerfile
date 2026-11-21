@@ -12,4 +12,5 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
-ENTRYPOINT ["node", "dist/cli.js"]
+ENTRYPOINT ["node"]
+CMD ["dist/server.js"]

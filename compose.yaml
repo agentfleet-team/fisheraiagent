@@ -1,6 +1,21 @@
 services:
+  api:
+    build: .
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      MAX_BLOCK_SECONDS: ${MAX_BLOCK_SECONDS:-8}
+      CACHE_DIR: /data/cache
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-}
+    volumes:
+      - ${CACHE_DIR:-./transcript-cache}:/data/cache
+
+  # One-off CLI runs: docker compose run --rm transcribe dist/cli.js <youtube-url>
   transcribe:
     build: .
+    profiles: ['cli']
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-}

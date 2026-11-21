@@ -15,7 +15,9 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
     "start": "tsx src/cli.ts",
-    "transcribe": "tsx src/cli.ts"
+    "transcribe": "tsx src/cli.ts",
+    "serve": "tsx src/server.ts",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@google/genai": "3.3.0"
