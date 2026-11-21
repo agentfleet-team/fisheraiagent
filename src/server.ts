@@ -15,9 +15,15 @@ try {
     cacheDir: config.cacheDir,
     serviceToken: config.serviceToken,
     tenantsFile: config.tenantsFile,
-    drive: config.googleCredentials
-      ? createDriveStore({ credentialsPath: config.googleCredentials })
-      : undefined,
+    tenantsJson: config.tenantsJson,
+    drive:
+      config.googleCredentials !== undefined || config.googleCredentialsJson !== undefined
+        ? createDriveStore({
+            credentialsPath: config.googleCredentials,
+            credentialsJson: config.googleCredentialsJson,
+          })
+        : undefined,
+    oidc: config.oidc,
     log: consoleSink,
   });
   server.listen(config.port, () => {

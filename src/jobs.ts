@@ -3,7 +3,7 @@ import { codeOf, messageForCode, TranscriptError, type FixedErrorCode } from './
 import type { GeminiCaller } from './gemini.js';
 import { SaveFailedError, type SavedFile } from './save.js';
 import type { SafeText } from './safe-text.js';
-import type { JobOrigin } from './tenants.js';
+import type { JobOrigin, TenantLimits } from './tenants.js';
 import { transcribeYouTube } from './transcribe.js';
 import type { Transcript } from './transcript.js';
 
@@ -40,7 +40,18 @@ export interface JobRunnerDeps {
   // saved, and throws on failure — the transcript is still returned either
   // way.
   saveTranscript?: (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined>;
+  // A length known before any Gemini call (local metadata such as the
+  // transcript cache); used by the per-tenant max_video_seconds limit to
+  // reject an over-length video without spending a call.
+  knownDurationSeconds?: (videoId: string) => Promise<number | undefined>;
 }
+
+// Why a job's transcript must not be saved even though it completed:
+// 'unauthorized' — the origin claim resolved to a tenant but failed the
+// caller-credential check; 'no_tenant' — a verified sign-in session whose
+// email no tenant's web_emails allowlists. Either way the job still runs
+// and returns the transcript; the fixed message reports it.
+export type SaveBlock = 'unauthorized' | 'no_tenant';
 
 const MAX_JOBS = 1000;
 
@@ -60,15 +71,21 @@ export class JobStore {
 
   constructor(private readonly deps: JobRunnerDeps) {}
 
-  // `saveDenied` marks a claim that resolved to a tenant but failed the
-  // tenant's caller-credential check: the job still runs and returns the
-  // transcript, and the fixed save_unauthorized error is what the origin
-  // sees.
-  submit(videoId: string, apiKey: string, origin?: JobOrigin, saveDenied = false): string {
+  // `saveBlocked` marks a job whose transcript must not be saved (see
+  // SaveBlock): the job still runs and returns the transcript, and the
+  // matching fixed error is what the origin sees. `limits` is the resolved
+  // tenant's limits, applied only to the job it came with.
+  submit(
+    videoId: string,
+    apiKey: string,
+    origin?: JobOrigin,
+    saveBlocked?: SaveBlock,
+    limits?: TenantLimits,
+  ): string {
     const id = randomUUID();
     this.records.set(id, { status: 'queued' });
     this.prune();
-    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveDenied));
+    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveBlocked, limits));
     return id;
   }
 
@@ -88,18 +105,26 @@ export class JobStore {
     videoId: string,
     apiKey: string,
     origin?: JobOrigin,
-    saveDenied = false,
+    saveBlocked?: SaveBlock,
+    limits?: TenantLimits,
   ): Promise<void> {
     const record = this.records.get(id);
     if (!record) return;
     record.status = 'running';
     try {
+      if (limits?.max_video_seconds !== undefined && this.deps.knownDurationSeconds) {
+        const known = await this.deps.knownDurationSeconds(videoId);
+        if (known !== undefined && known > limits.max_video_seconds) {
+          throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+        }
+      }
       record.result = await transcribeYouTube(videoId, {
         caller: this.deps.callerFactory(apiKey),
         model: this.deps.model,
         maxBlockSeconds: this.deps.maxBlockSeconds,
         cacheDir: this.deps.cacheDir,
         log: this.deps.log,
+        maxVideoSeconds: limits?.max_video_seconds,
       });
       if (this.deps.saveTranscript && origin) {
         try {
@@ -108,8 +133,9 @@ export class JobStore {
         } catch (err) {
           record.save_error = toJobError(err);
         }
-      } else if (saveDenied) {
-        record.save_error = { code: 'save_unauthorized', message: messageForCode('save_unauthorized') };
+      } else if (saveBlocked !== undefined) {
+        const code = saveBlocked === 'unauthorized' ? 'save_unauthorized' : 'no_tenant';
+        record.save_error = { code, message: messageForCode(code) };
       }
       record.status = 'done';
     } catch (err) {

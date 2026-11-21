@@ -9,7 +9,8 @@ export type ErrorCode =
   | 'upstream_timeout'
   | 'bad_model_output'
   | 'invalid_config'
-  | 'invalid_request';
+  | 'invalid_request'
+  | 'video_too_long';
 
 export class TranscriptError extends Error {
   readonly code: ErrorCode;

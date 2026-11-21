@@ -78,6 +78,95 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '429':
+          description: >
+            The resolved tenant is over its `jobs_per_hour` limit
+            (`rate_limited`). Applies only to authenticated callers whose
+            tenant names the limit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/login:
+    get:
+      summary: Begin web sign-in (only when OIDC is configured)
+      operationId: authLogin
+      security: []
+      description: >
+        302 redirect to the OpenID provider's authorization endpoint with a
+        fresh state, nonce and PKCE S256 challenge (authorization code flow).
+        Present only when OIDC_CLIENT_ID, OIDC_CLIENT_SECRET,
+        OIDC_REDIRECT_URI and SESSION_SECRET are all configured.
+      responses:
+        '302':
+          description: Redirect to the provider's authorization URL.
+  /auth/callback:
+    get:
+      summary: OpenID Connect redirect target
+      operationId: authCallback
+      security: []
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: >
+            Sign-in verified: the `af_session` cookie is set (HttpOnly,
+            Secure, SameSite=Lax, HMAC-signed) and the browser is redirected
+            to `/`. The cookie carries only the verified email and expiry.
+        '400':
+          description: Unknown or consumed state, or the provider rejected the code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/logout:
+    get:
+      summary: End the sign-in session
+      operationId: authLogout
+      security: []
+      responses:
+        '302':
+          description: The session cookie is expired and the browser is redirected to `/`.
+  /auth/me:
+    get:
+      summary: Current sign-in state for the page
+      operationId: authMe
+      security: []
+      responses:
+        '200':
+          description: >
+            `enabled` reports sign-in is configured; `signed_in` whether the
+            request carried a valid session; `email` the session email and
+            `tenant` the tenant whose web_emails allowlists it, when one does.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [enabled, signed_in]
+                properties:
+                  enabled:
+                    type: boolean
+                  signed_in:
+                    type: boolean
+                  email:
+                    type: string
+                  tenant:
+                    type: string
+        '404':
+          description: Sign-in is not configured (anonymous instance).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /v1/jobs/{job_id}:
     get:
       summary: Poll a transcription job
@@ -167,7 +256,10 @@ components:
               enum: [web]
             identity:
               type: string
-              description: A web identity string. Never resolves to a tenant today.
+              description: >
+                A web identity string. A request's own web claim still never
+                resolves — a signed-in web caller's origin is built by the
+                service from its verified session email, not from this field.
     SavedFile:
       type: object
       required: [type, name, url]
@@ -198,6 +290,9 @@ components:
             - invalid_config
             - save_failed
             - save_unauthorized
+            - no_tenant
+            - rate_limited
+            - video_too_long
             - internal_error
         message:
           type: string

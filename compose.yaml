@@ -14,7 +14,15 @@ services:
       # paths (e.g. - ./tenants.json:/data/tenants.json:ro and
       # TENANTS_FILE=/data/tenants.json). See README "Per-tenant destinations".
       TENANTS_FILE: ${TENANTS_FILE:-}
+      TENANTS_JSON: ${TENANTS_JSON:-}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+      GOOGLE_CREDENTIALS_JSON: ${GOOGLE_CREDENTIALS_JSON:-}
+      # Web sign-in: set all four together (see README "Web sign-in").
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+      OIDC_ISSUER: ${OIDC_ISSUER:-}
+      OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache
 

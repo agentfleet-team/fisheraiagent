@@ -41,6 +41,9 @@ const MESSAGES = Object.freeze({
     'the transcript could not be saved to the configured destination — for a Drive folder, check it is shared with the service account email',
   ),
   save_unauthorized: brand('the caller is not allowed to save to that destination'),
+  no_tenant: brand('this sign-in is not allowlisted for any tenant, so nothing was saved'),
+  rate_limited: brand('too many jobs in the last hour — try again later'),
+  video_too_long: brand('the video is longer than the limit for this destination'),
   // Discord replies: the 'bot.error.<LogCode>' entries answer a failed
   // transcript job, the rest are the fixed setup and progress texts.
   'bot.error.invalid_url': brand("That doesn't look like a usable YouTube link."),
@@ -58,6 +61,8 @@ const MESSAGES = Object.freeze({
   'bot.error.job_lost': brand('The transcript service restarted and lost the job. Try again.'),
   'bot.error.job_timeout': brand('Timed out waiting for the transcript. Try again.'),
   'bot.error.internal_error': brand('Something went wrong inside the transcript service. Try again.'),
+  'bot.error.rate_limited': brand('This channel has hit its hourly job limit. Try again later.'),
+  'bot.error.video_too_long': brand('This video is longer than the limit set for this channel.'),
   'bot.need_manage_server': brand('You need the **Manage Server** permission to set up the transcript bot.'),
   'bot.key_prompt': brand('Provide the Gemini API key: `/transcript set-key`.'),
   'bot.key_saved': brand('Gemini key saved for this server. Enable a channel with `/transcript enable`.'),

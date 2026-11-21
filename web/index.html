@@ -7,7 +7,16 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <button id="settings-btn" type="button" aria-haspopup="dialog">⚙ <span data-i18n="settings">Settings</span></button>
+  <div id="topbar">
+    <span id="auth-box" hidden>
+      <a id="signin-link" href="/auth/login" data-i18n="signIn">Sign in</a>
+      <span id="signed-in" hidden>
+        <span id="user-label"></span>
+        <a id="signout-link" href="/auth/logout" data-i18n="signOut">Sign out</a>
+      </span>
+    </span>
+    <button id="settings-btn" type="button" aria-haspopup="dialog">⚙ <span data-i18n="settings">Settings</span></button>
+  </div>
 
   <div id="drawer-backdrop" hidden></div>
   <aside id="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
@@ -35,6 +44,7 @@
       <span id="status-text"></span>
     </div>
     <section id="result" hidden>
+      <p id="saved-line" hidden><a id="saved-link" target="_blank" rel="noopener"></a><span id="save-note"></span></p>
       <div class="result-actions">
         <button id="copy-btn" type="button" data-i18n="copy">Copy</button>
         <button id="download-txt" type="button" data-i18n="downloadTxt">Download .txt</button>

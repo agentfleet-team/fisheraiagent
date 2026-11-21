@@ -57,6 +57,9 @@ export type LogCode =
   | 'job_timeout'
   | 'save_failed'
   | 'save_unauthorized'
+  | 'no_tenant'
+  | 'rate_limited'
+  | 'video_too_long'
   | 'internal_error'
   | 'usage';
 
