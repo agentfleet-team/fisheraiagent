@@ -1,6 +1,7 @@
 import { parseDriveLink, type DriveLink } from '../drive.js';
 import type { JobOrigin } from '../tenants.js';
 import type { Transcript } from '../transcript.js';
+import { parseWebdavPath, type WebdavPath } from '../webdav.js';
 
 export class ApiError extends Error {
   readonly code: string;
@@ -13,14 +14,13 @@ export class ApiError extends Error {
   }
 }
 
-// The link a Discord reply may carry. `url` is branded DriveLink: raw wire
-// text becomes one only through parseDriveLink, so no string — caught text,
-// a remote field, a literal with a newline — can reach a reply through it.
-export interface SavedLink {
-  type: 'google-drive';
-  name: string;
-  url: DriveLink;
-}
+// The link a Discord reply may carry. `url` is branded DriveLink and `path`
+// is branded WebdavPath: raw wire text becomes one only through the matching
+// parse function, so no string — caught text, a remote field, a literal with
+// a newline — can reach a reply through it.
+export type SavedLink =
+  | { type: 'google-drive'; name: string; url: DriveLink }
+  | { type: 'webdav'; name: string; path: WebdavPath };
 
 export interface TranscriptOutcome {
   transcript: Transcript;
@@ -86,7 +86,8 @@ type RemoteKey =
   | 'save_error'
   | 'type'
   | 'url'
-  | 'name';
+  | 'name'
+  | 'path';
 
 function prop(value: unknown, key: RemoteKey): unknown {
   return typeof value === 'object' && value !== null && key in value
@@ -104,19 +105,20 @@ function isTranscript(value: unknown): value is Transcript {
 }
 
 // A saved link is echoed into a Discord message, so it is trusted only
-// after the strictest check the boundary can make: the url must parse to a
-// branded canonical Drive link (another host, a newline or any trailing
-// text drops the whole link) and the name must be bounded.
+// after the strictest check the boundary can make: a Drive url must parse
+// to a branded canonical link (another host, a newline or any trailing text
+// drops the whole link), a WebDAV path must parse to a branded WebdavPath,
+// and the name must be bounded.
 function parseSavedLink(value: unknown): SavedLink | undefined {
-  const url = parseDriveLink(prop(value, 'url'));
   const name = prop(value, 'name');
-  if (
-    prop(value, 'type') === 'google-drive' &&
-    url !== undefined &&
-    typeof name === 'string' &&
-    name.length <= 300
-  ) {
-    return { type: 'google-drive', url, name };
+  if (typeof name !== 'string' || name.length > 300) return undefined;
+  if (prop(value, 'type') === 'google-drive') {
+    const url = parseDriveLink(prop(value, 'url'));
+    return url === undefined ? undefined : { type: 'google-drive', name, url };
+  }
+  if (prop(value, 'type') === 'webdav') {
+    const path = parseWebdavPath(prop(value, 'path'));
+    return path === undefined ? undefined : { type: 'webdav', name, path };
   }
   return undefined;
 }

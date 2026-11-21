@@ -21,6 +21,7 @@ export interface ServiceOptions extends JobRunnerDeps {
   serviceToken?: string;
   tenantsFile?: string;
   drive?: DriveStore;
+  webdavFetch?: typeof fetch;
   videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
 }
@@ -62,6 +63,7 @@ export function createService(options: ServiceOptions): Server {
     deps.saveTranscript = createTranscriptSaver({
       tenantsFile: options.tenantsFile,
       drive: options.drive,
+      webdavFetch: options.webdavFetch,
       metadata: options.videoMetadata ?? createVideoMetadata(),
       now: options.now,
       log: options.log,

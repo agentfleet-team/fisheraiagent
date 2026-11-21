@@ -25,6 +25,20 @@ export {
   type DriveFileId,
 } from './ids.js';
 export {
+  createWebdavStore,
+  nameMatchesVideoId,
+  parseWebdavBaseUrl,
+  parseWebdavFolder,
+  parseWebdavPath,
+  webdavPassword,
+  WebdavError,
+  type WebdavBaseUrl,
+  type WebdavOptions,
+  type WebdavPath,
+  type WebdavStore,
+  type WebdavStoredFile,
+} from './webdav.js';
+export {
   createTranscriptSaver,
   createVideoMetadata,
   englishSlug,

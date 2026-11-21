@@ -68,6 +68,7 @@ export interface LogFields {
   job?: JobId;
   folder?: DriveFolderId;
   file?: DriveFileId;
+  dest?: 'google-drive' | 'webdav';
   route?: LogRoute;
   code?: LogCode;
   port?: number;
@@ -86,6 +87,7 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'job',
   'folder',
   'file',
+  'dest',
   'route',
   'code',
   'port',
@@ -93,7 +95,10 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'durationMs',
 ];
 
-const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = ID_FORMATS;
+const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
+  ...ID_FORMATS,
+  dest: /^(google-drive|webdav)$/,
+};
 
 export const consoleSink: LogSink = (line) => console.log(line);
 

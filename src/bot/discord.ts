@@ -94,8 +94,14 @@ export async function startDiscordBot(
           await message.react(emoji);
         },
         reply: async (content, files, link) => {
+          const saved =
+            link === undefined
+              ? content
+              : link.type === 'webdav'
+                ? `${content}\nSaved to NAS: ${link.path}`
+                : `${content}\nSaved to Drive: ${link.url}`;
           await message.channel.send({
-            content: link ? `${content}\nSaved to Drive: ${link.url}` : content,
+            content: saved,
             files: files.map((f) => ({ attachment: Buffer.from(f.data, 'utf8'), name: f.name })),
           });
         },
