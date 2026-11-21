@@ -9,6 +9,12 @@ services:
       MAX_BLOCK_SECONDS: ${MAX_BLOCK_SECONDS:-8}
       CACHE_DIR: /data/cache
       SERVICE_TOKEN: ${SERVICE_TOKEN:-}
+      # Per-tenant destinations: mount your tenants JSON and the service
+      # account key into the container, then point these at the in-container
+      # paths (e.g. - ./tenants.json:/data/tenants.json:ro and
+      # TENANTS_FILE=/data/tenants.json). See README "Per-tenant destinations".
+      TENANTS_FILE: ${TENANTS_FILE:-}
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache
 

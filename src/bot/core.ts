@@ -157,9 +157,23 @@ export function createBot(deps: BotDeps): BotCore {
 
       log(`job submitted guild=${msg.guildId} channel=${msg.channelId}`);
       try {
-        const transcript = await api.transcribe(url, apiKey);
-        log(`job done guild=${msg.guildId} channel=${msg.channelId} video=${transcript.video_id}`);
-        await sink.reply(summaryLine(transcript), [
+        const outcome = await api.transcribe(url, apiKey, {
+          kind: 'discord',
+          guild_id: msg.guildId,
+          channel_id: msg.parentChannelId ?? msg.channelId,
+        });
+        const transcript = outcome.transcript;
+        log(
+          `job done guild=${msg.guildId} channel=${msg.channelId} video=${transcript.video_id}` +
+            (outcome.saved ? ' saved' : '') +
+            (outcome.saveErrorCode ? ' save_failed' : ''),
+        );
+        let content = summaryLine(transcript);
+        if (outcome.saved) content += `\nSaved to Drive: ${outcome.saved.url}`;
+        if (outcome.saveErrorCode) {
+          content += `\nCouldn't save this to the configured destination — the transcript is attached here.`;
+        }
+        await sink.reply(content, [
           { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
         ]);

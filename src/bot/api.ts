@@ -1,3 +1,4 @@
+import type { JobOrigin } from '../tenants.js';
 import type { Transcript } from '../transcript.js';
 
 export class ApiError extends Error {
@@ -10,11 +11,23 @@ export class ApiError extends Error {
   }
 }
 
+export interface SavedLink {
+  type: string;
+  name: string;
+  url: string;
+}
+
+export interface TranscriptOutcome {
+  transcript: Transcript;
+  saved?: SavedLink;
+  saveErrorCode?: string;
+}
+
 // The bot's only view of the transcript service: submit a URL, wait for the
 // transcript or a coded failure. The guild's Gemini key goes out once, in the
 // submit request header, and is never part of an error or a log line.
 export interface TranscriptApi {
-  transcribe(youtubeUrl: string, apiKey: string): Promise<Transcript>;
+  transcribe(youtubeUrl: string, apiKey: string, origin?: JobOrigin): Promise<TranscriptOutcome>;
 }
 
 export interface ApiClientOptions {
@@ -49,6 +62,28 @@ const REMOTE_ERROR_CODES = new Set([
   'internal_error',
 ]);
 
+// save_error codes the service contract defines; anything else folds to
+// save_failed before it can reach a log line or a Discord reply.
+const SAVE_ERROR_CODES = new Set(['save_failed', 'invalid_config']);
+
+// A saved link is echoed into a Discord message, so it is trusted only after
+// a shape check: an https URL and a bounded file name.
+function sanitizeSaved(value: unknown): SavedLink | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const raw = value as Record<string, unknown>;
+  if (
+    raw.type === 'google-drive' &&
+    typeof raw.url === 'string' &&
+    raw.url.startsWith('https://') &&
+    raw.url.length <= 500 &&
+    typeof raw.name === 'string' &&
+    raw.name.length <= 300
+  ) {
+    return { type: 'google-drive', url: raw.url, name: raw.name };
+  }
+  return undefined;
+}
+
 function remoteCode(value: unknown, fallback: string): string {
   return typeof value === 'string' && REMOTE_ERROR_CODES.has(value) ? value : fallback;
 }
@@ -79,13 +114,13 @@ export function createApiClient(options: ApiClientOptions): TranscriptApi {
   });
 
   return {
-    async transcribe(youtubeUrl, apiKey) {
+    async transcribe(youtubeUrl, apiKey, origin) {
       let submitRes: Response;
       try {
         submitRes = await doFetch(`${base}/v1/jobs`, {
           method: 'POST',
           headers: { ...headers(), 'x-gemini-key': apiKey },
-          body: JSON.stringify({ url: youtubeUrl }),
+          body: JSON.stringify({ url: youtubeUrl, ...(origin ? { origin } : {}) }),
         });
       } catch (err) {
         throw new ApiError(
@@ -123,8 +158,20 @@ export function createApiClient(options: ApiClientOptions): TranscriptApi {
           status: string;
           result?: Transcript;
           error?: { code?: string; message?: string };
+          saved?: unknown;
+          save_error?: { code?: unknown };
         };
-        if (job.status === 'done' && job.result) return job.result;
+        if (job.status === 'done' && job.result) {
+          const outcome: TranscriptOutcome = { transcript: job.result };
+          const saved = sanitizeSaved(job.saved);
+          if (saved) outcome.saved = saved;
+          if (job.save_error && typeof job.save_error === 'object') {
+            outcome.saveErrorCode = SAVE_ERROR_CODES.has(job.save_error.code as string)
+              ? (job.save_error.code as string)
+              : 'save_failed';
+          }
+          return outcome;
+        }
         if (job.status === 'failed') {
           const code = remoteCode(job.error?.code, 'internal_error');
           const message =

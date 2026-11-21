@@ -6,7 +6,8 @@ export type ErrorCode =
   | 'quota_exceeded'
   | 'upstream_timeout'
   | 'bad_model_output'
-  | 'invalid_config';
+  | 'invalid_config'
+  | 'invalid_request';
 
 export class TranscriptError extends Error {
   readonly code: ErrorCode;

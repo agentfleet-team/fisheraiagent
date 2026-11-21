@@ -1,17 +1,59 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
+import type { DriveStore } from './drive.js';
 import { TranscriptError } from './errors.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
+import { createTranscriptSaver, createVideoMetadata, type VideoMetadata } from './save.js';
+import type { JobOrigin } from './tenants.js';
 
 const MAX_BODY_BYTES = 16 * 1024;
 
 export interface ServiceOptions extends JobRunnerDeps {
   serviceToken?: string;
+  tenantsFile?: string;
+  drive?: DriveStore;
+  videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
+  now?: () => Date;
+}
+
+// The submit body's optional "origin": where the job came from, used to
+// resolve the tenant whose destination the transcript is saved to.
+//   {"kind": "discord", "guild_id": "...", "channel_id": "..."}
+//   {"kind": "web", "identity": "..."}
+function parseOrigin(value: unknown): JobOrigin | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== 'object') {
+    throw new TranscriptError('invalid_request', 'origin must be an object');
+  }
+  const raw = value as Record<string, unknown>;
+  const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() !== '' ? v.trim() : undefined);
+  if (raw.kind === 'discord') {
+    const guild_id = str(raw.guild_id);
+    const channel_id = str(raw.channel_id);
+    if (guild_id && channel_id) return { kind: 'discord', guild_id, channel_id };
+    throw new TranscriptError('invalid_request', 'a discord origin needs guild_id and channel_id strings');
+  }
+  if (raw.kind === 'web') {
+    const identity = str(raw.identity);
+    if (identity) return { kind: 'web', identity };
+    throw new TranscriptError('invalid_request', 'a web origin needs an identity string');
+  }
+  throw new TranscriptError('invalid_request', 'origin.kind must be "discord" or "web"');
 }
 
 export function createService(options: ServiceOptions): Server {
-  const jobs = new JobStore(options);
+  const deps: JobRunnerDeps = { ...options };
+  if (!deps.saveTranscript && options.tenantsFile) {
+    deps.saveTranscript = createTranscriptSaver({
+      tenantsFile: options.tenantsFile,
+      drive: options.drive,
+      metadata: options.videoMetadata ?? createVideoMetadata(),
+      now: options.now,
+      log: options.log,
+    });
+  }
+  const jobs = new JobStore(deps);
   const log = options.log ?? (() => {});
 
   const send = (res: ServerResponse, status: number, body: unknown): void => {
@@ -93,7 +135,17 @@ export function createService(options: ServiceOptions): Server {
       }
       throw err;
     }
-    send(res, 202, { job_id: jobs.submit(videoId, apiKey) });
+    let origin: JobOrigin | undefined;
+    try {
+      origin = parseOrigin((body as Record<string, unknown>).origin);
+    } catch (err) {
+      if (err instanceof TranscriptError) {
+        sendError(res, 400, err.code, err.message);
+        return;
+      }
+      throw err;
+    }
+    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin) });
   }
 
   return createServer((req, res) => {

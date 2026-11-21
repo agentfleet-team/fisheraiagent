@@ -43,6 +43,43 @@ Service environment variables:
 | `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
 | `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
+| `TENANTS_FILE` | no | — | Path to a JSON file of per-tenant save destinations (below). When unset, jobs still return transcripts; nothing is written to any destination. |
+| `GOOGLE_APPLICATION_CREDENTIALS` | no | — | Path to a Google service-account key JSON, needed only when a tenant uses a `google-drive` destination. |
+
+### Per-tenant destinations (Google Drive)
+
+Each Discord server/channel or web identity can pick where its transcripts are saved. Adding a user is an edit to the tenants file — no code change, no restart (the file is read fresh on every job).
+
+```json
+{
+  "tenants": [
+    {
+      "id": "family",
+      "discord_guild_id": "111111111111111111",
+      "destination": { "type": "google-drive", "folder_id": "0BabcYourFolderId", "extension": ".md" }
+    },
+    {
+      "id": "team-channel",
+      "discord_guild_id": "111111111111111111",
+      "discord_channel_ids": ["222222222222222222"],
+      "destination": { "type": "google-drive", "folder_id": "0CdefAnotherFolderId" }
+    },
+    {
+      "id": "web-allen",
+      "web_identities": ["allen"],
+      "destination": { "type": "none" }
+    }
+  ]
+}
+```
+
+- **Matching.** A job carries its `origin` (the Discord bot sends the guild and configured channel automatically). A tenant with `discord_channel_ids` claims only those channels; a tenant with just `discord_guild_id` claims every channel no channel entry took; `web_identities` match a web caller's identity string. First match wins; no match means nothing is saved.
+- **Destinations.** `"type": "google-drive"` writes into that `folder_id`; `"type": "none"` saves nothing. `extension` is `.txt` (default), `.md` or `.srt`.
+- **Google Drive setup.** Create a service account in Google Cloud, download its key JSON, and set `GOOGLE_APPLICATION_CREDENTIALS` to the file's path. Then share each `folder_id` with the service account's `client_email` (right-click folder → Share → paste the email → Editor). The service account can only reach folders you share with it. Under `docker compose`, bind-mount both files into the container and point the variables at the in-container paths (e.g. `- ./tenants.json:/data/tenants.json:ro` with `TENANTS_FILE=/data/tenants.json`).
+- **The file.** Name: `<english-slug>_<YYYYMMDD>.<ext>` — a lowercase slug of the video title plus the capture date. Contents: a header with title, channel, source URL and capture date, then the timestamped transcript. Saving the same video again updates the existing file instead of making a duplicate.
+- **Failures.** If the write fails (for example the folder is not shared with the service account), the job still completes and returns the transcript, and the Discord reply or web result shows the save failure. The Discord bot replies with the file link when the write succeeds.
+
+The callers keep working exactly as before: the Discord reply gains a `Saved to Drive:` link, and the job result the web page reads gains a `saved.url` field (plus a `save_error` on failure). See [openapi.yaml](openapi.yaml) for the `origin` and `saved` contract.
 
 Notes:
 
