@@ -5,6 +5,7 @@ import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
 
 const MAX_BODY_BYTES = 16 * 1024;
+const JOB_PATH = /^\/v1\/jobs\/([^/]+)$/;
 
 export interface ServiceOptions extends JobRunnerDeps {
   serviceToken?: string;
@@ -23,17 +24,24 @@ export function createService(options: ServiceOptions): Server {
 
   const authorized = (req: IncomingMessage): boolean => {
     if (!options.serviceToken) return true;
-    const header = req.headers.authorization ?? '';
-    const expected = `Bearer ${options.serviceToken}`;
+    const header = Buffer.from(req.headers.authorization ?? '', 'utf8');
+    const expected = Buffer.from(`Bearer ${options.serviceToken}`, 'utf8');
     if (header.length !== expected.length) return false;
-    return timingSafeEqual(Buffer.from(header), Buffer.from(expected));
+    return timingSafeEqual(header, expected);
   };
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const method = req.method ?? 'GET';
     // Path only: query strings are never logged or inspected.
     const path = new URL(req.url ?? '/', 'http://service.local').pathname;
-    log(`${method} ${path}`);
+    // Path segments are caller input and can carry secrets: log route templates.
+    const route =
+      path === '/healthz' || path === '/v1/jobs'
+        ? path
+        : JOB_PATH.test(path)
+          ? '/v1/jobs/{job_id}'
+          : '(unmatched)';
+    log(`${method} ${route}`);
 
     if (method === 'GET' && path === '/healthz') {
       send(res, 200, { status: 'ok' });
@@ -53,7 +61,7 @@ export function createService(options: ServiceOptions): Server {
       await submitJob(req, res);
       return;
     }
-    const jobMatch = /^\/v1\/jobs\/([^/]+)$/.exec(path);
+    const jobMatch = JOB_PATH.exec(path);
     if (method === 'GET' && jobMatch) {
       const view = jobs.get(decodeURIComponent(jobMatch[1]));
       if (view) send(res, 200, view);
@@ -88,7 +96,8 @@ export function createService(options: ServiceOptions): Server {
       videoId = parseYouTubeVideoId(url);
     } catch (err) {
       if (err instanceof TranscriptError) {
-        sendError(res, 400, err.code, err.message);
+        // The parser message echoes the raw input, which can embed caller secrets.
+        sendError(res, 400, err.code, 'url is not a YouTube URL or video id');
         return;
       }
       throw err;
