@@ -3,6 +3,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { TranscriptError } from './errors.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
+import { serveWebAsset } from './web-static.js';
 
 const MAX_BODY_BYTES = 16 * 1024;
 
@@ -41,6 +42,7 @@ export function createService(options: ServiceOptions): Server {
     }
 
     if (!path.startsWith('/v1/')) {
+      if (await serveWebAsset(method, path, res)) return;
       sendError(res, 404, 'not_found', 'unknown route');
       return;
     }

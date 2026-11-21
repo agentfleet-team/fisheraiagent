@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YouTube Transcript</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <button id="settings-btn" type="button" aria-haspopup="dialog">⚙ <span data-i18n="settings">Settings</span></button>
+
+  <div id="drawer-backdrop" hidden></div>
+  <aside id="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+    <h2 id="drawer-title" data-i18n="settings">Settings</h2>
+    <label for="key-input" data-i18n="keyLabel">Gemini API key</label>
+    <input id="key-input" type="password" autocomplete="off" spellcheck="false">
+    <p class="hint" data-i18n="keyHint">Your key is kept only in this browser (localStorage) and is sent to the service only when you submit a URL.</p>
+    <p id="key-state" class="hint"></p>
+    <div class="drawer-actions">
+      <button id="save-key" type="button" data-i18n="save">Save</button>
+      <button id="remove-key" type="button" data-i18n="remove">Remove</button>
+      <button id="close-drawer" type="button" data-i18n="close">Close</button>
+    </div>
+  </aside>
+
+  <main class="home">
+    <h1 data-i18n="title">YouTube Transcript</h1>
+    <p class="tagline" data-i18n="tagline">Paste a YouTube link. Get the full timed transcript.</p>
+    <form id="job-form">
+      <input id="url-input" type="text" inputmode="url" autocomplete="off" spellcheck="false" required>
+      <button id="submit-btn" type="submit" data-i18n="submit">Transcribe</button>
+    </form>
+    <div id="status" role="status" aria-live="polite" hidden>
+      <span id="spinner" class="spinner" hidden></span>
+      <span id="status-text"></span>
+    </div>
+    <section id="result" hidden>
+      <div class="result-actions">
+        <button id="copy-btn" type="button" data-i18n="copy">Copy</button>
+        <button id="download-txt" type="button" data-i18n="downloadTxt">Download .txt</button>
+        <button id="download-srt" type="button" data-i18n="downloadSrt">Download .srt</button>
+      </div>
+      <ol id="blocks"></ol>
+    </section>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>

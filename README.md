@@ -2,7 +2,7 @@
 
 Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host them for free, or use them through AgentFleet.
 
-> Status: the YouTube transcript CLI and HTTP job API work. Web, Discord and hosted surfaces follow.
+> Status: the YouTube transcript CLI, HTTP job API and web page work. Discord and hosted surfaces follow.
 
 ## Tools
 
@@ -18,6 +18,8 @@ One service, many callers: every client sends its own Gemini API key per request
 docker compose up -d          # serves on http://localhost:8080
 npm run smoke                 # prints 200 for /healthz and 400 missing_key for a keyless POST
 ```
+
+Open http://localhost:8080 in a browser for the web page: one box, one button, the transcript below. Open Settings (top right) to add your Gemini API key — it is kept only in your browser's localStorage and is sent to the service, as `X-Gemini-Key`, only when you submit a URL.
 
 Submit a job, then poll it:
 
@@ -83,7 +85,7 @@ GEMINI_API_KEY=<your Gemini API key> npm start -- https://youtu.be/hWe-j78vNpc
 
 Error codes (stderr, non-zero exit): `invalid_url`, `video_unavailable`, `missing_key`, `key_rejected`, `quota_exceeded`, `upstream_timeout`, `bad_model_output`.
 
-Develop: `npm test` runs the offline unit tests (no key, no network). `.github/workflows/ci.yml` runs them on every push.
+Develop: `npm test` runs the offline unit tests (no key, no network). `npm run test:web` runs the browser test (`npx playwright-core install chromium` once first). `.github/workflows/ci.yml` runs both on every push.
 
 ## How the YouTube transcript tool works
 
