@@ -1,0 +1,14 @@
+import type { MessageSink } from '../../../src/bot/core.js';
+import { parseWebdavPath, webdavPath } from '../../../src/webdav.js';
+import { safeText } from '../../../src/safe-text.js';
+declare const err: Error;
+const alias = err.message;
+const accepted = webdavPath('/transcripts', 'ok_name_20261122.txt');
+export async function run(sink: MessageSink): Promise<void> {
+  if (accepted) await sink.reply(safeText('bot.transcript_ready'), [], { type: 'webdav', name: 'ok_name_20261122.txt', path: accepted });
+  const branded = parseWebdavPath(alias);
+  if (branded) await sink.reply(safeText('bot.transcript_ready'), [], { type: 'webdav', name: 'ok.txt', path: branded });
+  await sink.reply(safeText('bot.transcript_ready'), [], { type: 'webdav', name: 'ok.txt', path: err.message });
+  await sink.reply(safeText('bot.transcript_ready'), [], { type: 'webdav', name: 'ok.txt', path: alias });
+  await sink.reply(safeText('bot.transcript_ready'), [], { type: 'webdav', name: 'ok.txt', path: '/a/literal.txt' });
+}

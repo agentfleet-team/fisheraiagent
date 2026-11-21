@@ -184,6 +184,9 @@ components:
         path:
           type: string
           description: The saved path under the tenant's configured WebDAV folder (webdav only).
+        folder:
+          type: string
+          description: The tenant's configured WebDAV folder, so a client can re-render and re-check `path` from folder plus name instead of trusting a wire string (webdav only).
     JobError:
       type: object
       required: [code, message]

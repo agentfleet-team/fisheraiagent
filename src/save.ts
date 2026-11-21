@@ -16,11 +16,13 @@ import { canonicalVideoUrl } from './youtube-url.js';
 // The saved-file link a job view and a reply may carry: for Drive the url is
 // branded DriveLink — raw Drive response text only after parseDriveLink has
 // rendered it canonical — and for WebDAV the path is branded WebdavPath,
-// only ever the configured folder plus a safe file name. Neither can be a
-// channel for arbitrary remote text.
+// only ever the canonical rendering of the configured folder plus a safe
+// file name; folder travels with it so a client can re-render and re-check
+// the path instead of trusting a wire string. Neither can be a channel for
+// arbitrary remote text.
 export type SavedFile =
   | { type: 'google-drive'; name: string; url: DriveLink }
-  | { type: 'webdav'; name: string; path: WebdavPath };
+  | { type: 'webdav'; name: string; folder: string; path: WebdavPath };
 
 export interface VideoMetadata {
   title?: string;
@@ -222,7 +224,7 @@ export function createTranscriptSaver(
             : await store.createFile(name, content, MIME_TYPES[extension]);
           knownWebdav.set(key, stored);
           log('file_saved', fields);
-          return { type: 'webdav', name: stored.name, path: stored.path };
+          return { type: 'webdav', name: stored.name, folder: destination.path, path: stored.path };
         } catch (err) {
           knownWebdav.delete(key);
           log('file_save_failed', { ...fields, code: 'save_failed' });

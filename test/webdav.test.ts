@@ -13,7 +13,7 @@ import {
   nameMatchesVideoId,
   parseWebdavBaseUrl,
   parseWebdavFolder,
-  parseWebdavPath,
+  webdavPath,
   WebdavError,
 } from '../src/webdav.js';
 import { createTranscriptSaver, SaveFailedError } from '../src/save.js';
@@ -537,6 +537,59 @@ test(
   }),
 );
 
+test(
+  'G3: a restarted saver still finds the file by the video id when the base URL has a pathname',
+  withNasPassword(async () => {
+    const nas = await startNas(['/dav', '/dav/transcripts']);
+    const davTenants = NAS_TENANTS.map((t) => ({
+      ...t,
+      destination: { ...t.destination, base_url: 'https://nas.test/dav' },
+    }));
+    const first = await startService(nas, davTenants, {
+      now: () => new Date('2026-11-22T00:00:00Z'),
+      metadata: async () => ({ title: 'First Title' }),
+    });
+    try {
+      const job = await pollJob(
+        first.base,
+        (await submitJob(first.base, { origin: discordOrigin(GUILD, CHANNEL), token: NAS_TOKEN })).body.job_id,
+      );
+      // The reply path shows the configured folder, not the endpoint prefix.
+      assert.equal(job.saved.path, `/transcripts/first-title_${VIDEO_A}_20261122.md`);
+      assert.equal(job.saved.folder, '/transcripts');
+    } finally {
+      await first.close();
+    }
+    // A fresh service has no memory of the file: another day and another
+    // title still land on the stored file even though every href the server
+    // returns starts with the /dav endpoint prefix.
+    const second = await startService(nas, davTenants, {
+      now: () => new Date('2026-11-23T00:00:00Z'),
+      metadata: async () => ({ title: 'Renamed Video' }),
+    });
+    try {
+      const job = await pollJob(
+        second.base,
+        (await submitJob(second.base, { origin: discordOrigin(GUILD, CHANNEL), token: NAS_TOKEN })).body.job_id,
+      );
+      assert.equal(job.saved.path, `/transcripts/first-title_${VIDEO_A}_20261122.md`);
+      assert.equal(nas.files.size, 1, 'the existing file is updated, not duplicated');
+      assert.match(
+        nas.files.get(`/dav/transcripts/first-title_${VIDEO_A}_20261122.md`) ?? '',
+        /^Title: Renamed Video/,
+      );
+      assert.ok(nas.requests.includes('PROPFIND /dav/transcripts'));
+      assert.ok(
+        nas.requests.filter((r) => r === `PUT /dav/transcripts/first-title_${VIDEO_A}_20261122.md`)
+          .length === 2,
+      );
+    } finally {
+      await second.close();
+      await nas.close();
+    }
+  }),
+);
+
 // --- G4: failure reporting ----------------------------------------------------
 
 test(
@@ -658,6 +711,193 @@ test('a webdav destination needs username and password_env, not the password its
   assert.ok(!JSON.stringify(tenants).includes('literal-secret'));
 });
 
+// --- redirect confinement ------------------------------------------------------
+
+test(
+  'a redirect answer is a fixed failure for every method — no hop is followed, nothing is resent',
+  async () => {
+    const victimHits: string[] = [];
+    const victim = createServer((req, res) => {
+      victimHits.push(`${req.method} ${req.url}`);
+      res.writeHead(201);
+      res.end();
+    });
+    await new Promise<void>((resolve) => victim.listen(0, '127.0.0.1', resolve));
+    const victimPort = (victim.address() as AddressInfo).port;
+    try {
+      const redirectCodes = [301, 302, 303, 307, 308];
+      const redirecterHits: string[] = [];
+      let n = 0;
+      const redirecter = createServer((req, res) => {
+        redirecterHits.push(`${req.method} ${req.url}`);
+        const code = redirectCodes[n++ % redirectCodes.length];
+        res.writeHead(code, { location: `http://127.0.0.1:${victimPort}/outside/victim.txt` });
+        res.end();
+      });
+      await new Promise<void>((resolve) => redirecter.listen(0, '127.0.0.1', resolve));
+      const port = (redirecter.address() as AddressInfo).port;
+      try {
+        const seenInits: (RequestInit | undefined)[] = [];
+        const mapped = nasFetch(port);
+        const spyFetch = ((input: string | URL | Request, init?: RequestInit) => {
+          seenInits.push(init);
+          return mapped(input, init);
+        }) as typeof fetch;
+        const base = parseWebdavBaseUrl(NAS_BASE);
+        assert.ok(base);
+        const store = createWebdavStore({
+          baseUrl: base,
+          path: '/transcripts',
+          username: NAS_USER,
+          password: NAS_PASSWORD,
+          fetchImpl: spyFetch,
+        });
+        await assert.rejects(() => store.findFileByVideoId(VIDEO_A), WebdavError);
+        await assert.rejects(
+          () => store.createFile('ok_name.txt', 'private transcript', 'text/plain'),
+          WebdavError,
+        );
+        await assert.rejects(
+          () => store.updateFile('/transcripts/ok_name.txt', 'private transcript', 'text/plain'),
+          WebdavError,
+        );
+        assert.deepEqual(redirecterHits, [
+          'PROPFIND /transcripts',
+          'PUT /transcripts/ok_name.txt',
+          'PUT /transcripts/ok_name.txt',
+        ]);
+        assert.deepEqual(victimHits, [], 'no request followed a redirect');
+        assert.ok(seenInits.length > 0);
+        assert.ok(
+          seenInits.every((i) => i?.redirect === 'manual'),
+          'every WebDAV request opts out of redirect following',
+        );
+      } finally {
+        await new Promise<void>((resolve) => redirecter.close(() => resolve()));
+      }
+    } finally {
+      await new Promise<void>((resolve) => victim.close(() => resolve()));
+    }
+  },
+);
+
+test('a redirect on the MKCOL retry fails closed too', async () => {
+  const victimHits: string[] = [];
+  const victim = createServer((req, res) => {
+    victimHits.push(`${req.method} ${req.url}`);
+    res.writeHead(201);
+    res.end();
+  });
+  await new Promise<void>((resolve) => victim.listen(0, '127.0.0.1', resolve));
+  const victimPort = (victim.address() as AddressInfo).port;
+  try {
+    const hits: string[] = [];
+    const server = createServer((req, res) => {
+      hits.push(`${req.method} ${req.url}`);
+      if (req.method === 'PUT') {
+        // A missing folder takes the MKCOL path; the MKCOL answer redirects.
+        res.writeHead(404);
+      } else {
+        res.writeHead(307, { location: `http://127.0.0.1:${victimPort}/outside/mkcol` });
+      }
+      res.end();
+    });
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = (server.address() as AddressInfo).port;
+    try {
+      const base = parseWebdavBaseUrl(NAS_BASE);
+      assert.ok(base);
+      const store = createWebdavStore({
+        baseUrl: base,
+        path: '/transcripts',
+        username: NAS_USER,
+        password: NAS_PASSWORD,
+        fetchImpl: nasFetch(port),
+      });
+      await assert.rejects(
+        () => store.createFile('ok_name.txt', 'private transcript', 'text/plain'),
+        WebdavError,
+      );
+      assert.deepEqual(hits, ['PUT /transcripts/ok_name.txt', 'MKCOL /transcripts']);
+      assert.deepEqual(victimHits, []);
+    } finally {
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+  } finally {
+    await new Promise<void>((resolve) => victim.close(() => resolve()));
+  }
+});
+
+// --- reply path boundary -------------------------------------------------------
+
+test('the API client renders a webdav saved link only from folder + name, never a wire path string', async () => {
+  const savedJob = (saved: unknown) => ({
+    status: 'done',
+    result: {
+      video_id: VIDEO_A,
+      source_url: `https://youtu.be/${VIDEO_A}`,
+      language: 'en',
+      blocks: [],
+    },
+    saved,
+  });
+  const clientFor = (saved: unknown) => {
+    let n = 0;
+    return createApiClient({
+      baseUrl: 'http://test',
+      fetchImpl: (async () =>
+        ++n === 1
+          ? Response.json({ job_id: 'j' }, { status: 202 })
+          : Response.json(savedJob(saved))) as typeof fetch,
+    });
+  };
+
+  const legit = await clientFor({
+    type: 'webdav',
+    name: 'ok_name.txt',
+    folder: '/transcripts',
+    path: '/transcripts/ok_name.txt',
+  }).transcribe('url', 'key');
+  assert.equal(legit.saved?.type, 'webdav');
+  if (legit.saved?.type === 'webdav') {
+    assert.equal(legit.saved.path, '/transcripts/ok_name.txt');
+  }
+
+  // A ready-made wire `path` is never trusted: without a valid folder + name
+  // structure the whole saved value is dropped, marker text and all.
+  const marker = '/UPSTREAM_ERROR password=secret-token @everyone';
+  const marked = await clientFor({ type: 'webdav', name: 'ok.txt', path: marker }).transcribe(
+    'url',
+    'key',
+  );
+  assert.equal(marked.saved, undefined);
+
+  for (const saved of [
+    { type: 'webdav', name: 'ok.txt', folder: '/a/../b', path: '/a/../b/ok.txt' },
+    { type: 'webdav', name: 'ok.txt', folder: '/a\\b', path: '/a\\b/ok.txt' },
+    { type: 'webdav', name: 'ok.txt', folder: '/a\nb', path: '/a\nb/ok.txt' },
+    { type: 'webdav', name: '@everyone', folder: '/transcripts' },
+    { type: 'webdav', name: 'a/b.txt', folder: '/transcripts' },
+    { type: 'webdav', name: 'a%2Fb.txt', folder: '/transcripts' },
+    { type: 'webdav', name: 'free text.txt', folder: '/transcripts' },
+  ]) {
+    const outcome = await clientFor(saved).transcribe('url', 'key');
+    assert.equal(outcome.saved, undefined, JSON.stringify(saved));
+  }
+
+  // A legitimate configured folder with a space keeps working through
+  // explicit encoding in the canonical reply path.
+  const spaced = await clientFor({
+    type: 'webdav',
+    name: 'ok.txt',
+    folder: '/folder with space',
+  }).transcribe('url', 'key');
+  if (spaced.saved?.type !== 'webdav') {
+    assert.fail('a configured folder with a space must still produce a reply path');
+  }
+  assert.equal(spaced.saved.path, '/folder%20with%20space/ok.txt');
+});
+
 // --- units --------------------------------------------------------------------
 
 test('parse helpers: base URL, folder and display path', () => {
@@ -674,11 +914,15 @@ test('parse helpers: base URL, folder and display path', () => {
   assert.equal(parseWebdavFolder('/a\\b'), undefined);
   assert.equal(parseWebdavFolder('/'), undefined);
 
-  assert.equal(parseWebdavPath('/t/f.txt'), '/t/f.txt');
-  assert.equal(parseWebdavPath('t/f.txt'), undefined);
-  assert.equal(parseWebdavPath('/a/../b'), undefined);
-  assert.equal(parseWebdavPath('/a\\b'), undefined);
-  assert.equal(parseWebdavPath('/a\nb'), undefined);
+  assert.equal(webdavPath('/t', 'f.txt'), '/t/f.txt');
+  assert.equal(webdavPath('/a/b', 'f.txt'), '/a/b/f.txt');
+  assert.equal(webdavPath('/folder with space', 'f.txt'), '/folder%20with%20space/f.txt');
+  assert.equal(webdavPath('/a/../b', 'f.txt'), undefined);
+  assert.equal(webdavPath('/a\\b', 'f.txt'), undefined);
+  assert.equal(webdavPath('/a\nb', 'f.txt'), undefined);
+  assert.equal(webdavPath('/t', 'bad name.txt'), undefined);
+  assert.equal(webdavPath('/t', 'a%2Fb.txt'), undefined);
+  assert.equal(webdavPath(42, 'f.txt'), undefined);
 });
 
 test('nameMatchesVideoId: the video id in the name is the identity, anchored exactly', () => {

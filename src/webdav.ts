@@ -3,10 +3,12 @@ import { TranscriptError } from './errors.js';
 // The NAS destination: an HTTPS WebDAV folder the tenant names in its
 // destination entry. Three branded/validated surfaces keep this safe:
 // WebdavBaseUrl exists only for an https:// URL with no embedded credential,
-// WebdavPath is the only shape of path a reply may show, and every file name
-// or update target is confined under the configured folder before a request
-// is built. Passwords arrive only through the env var the config names;
-// upstream response text is never read into an error or a log.
+// WebdavPath exists only as the canonical rendering of the configured folder
+// plus a writer-grammar file name, and every file name or update target is
+// confined under the configured folder before a request is built. Passwords
+// arrive only through the env var the config names; upstream response text is
+// never read into an error or a log, and a redirect is never followed — the
+// body and the credential are sent exactly once, to the URL we built.
 
 declare const webdavBaseUrlBrand: unique symbol;
 
@@ -34,20 +36,13 @@ export function parseWebdavBaseUrl(value: unknown): WebdavBaseUrl | undefined {
 
 declare const webdavPathBrand: unique symbol;
 
-// A path a reply may show: it comes only from parseWebdavPath, which rejects
-// control characters, backslashes and ".." segments, so remote or caught
-// text cannot reach a person through it.
+// A path a reply may show: it exists only as webdavPath's canonical rendering
+// of a configured folder plus a writer-grammar file name. There is no
+// function that turns a string into one, so remote or caught text cannot
+// reach a person through it.
 export type WebdavPath = string & { readonly [webdavPathBrand]: 'webdav_path' };
 
 const isWebdavPath = (value: string): value is WebdavPath => value.startsWith('/');
-
-export function parseWebdavPath(value: unknown): WebdavPath | undefined {
-  if (typeof value !== 'string') return undefined;
-  if (!value.startsWith('/') || value.length > 1000) return undefined;
-  if (/[\u0000-\u001f\u007f\\]/.test(value)) return undefined;
-  if (value.split('/').some((s) => s === '..')) return undefined;
-  return isWebdavPath(value) ? value : undefined;
-}
 
 // The tenant's configured folder, as checked segments: no "." or "..", no
 // backslash, no control characters. Returned as the decoded segments; each
@@ -67,6 +62,22 @@ export function parseWebdavFolder(value: unknown): string[] | undefined {
   return segments;
 }
 
+// The only producer of WebdavPath: the configured folder and a file name in
+// the writer grammar, rendered canonically — every segment is
+// percent-encoded, so a configured folder whose name carries spaces or other
+// characters still shows as one exact, bounded path and nothing else can
+// ever wear the brand. The store and the wire boundary both build the path
+// this way; neither accepts a ready-made path string.
+export function webdavPath(folder: unknown, name: unknown): WebdavPath | undefined {
+  const segments = parseWebdavFolder(folder);
+  if (segments === undefined || typeof name !== 'string' || !FILE_NAME_FORMAT.test(name)) {
+    return undefined;
+  }
+  const canonical = `/${[...segments, name].map((segment) => encodeURIComponent(segment)).join('/')}`;
+  if (canonical.length > 1000) return undefined;
+  return isWebdavPath(canonical) ? canonical : undefined;
+}
+
 export class WebdavError extends Error {
   readonly status?: number;
 
@@ -78,9 +89,9 @@ export class WebdavError extends Error {
 }
 
 export interface WebdavStoredFile {
-  id: string; // decoded path under the configured folder; the update target
+  id: string; // decoded endpoint path under the configured folder; the update target
   name: string; // safe-charset basename
-  path: WebdavPath; // the path a reply may show
+  path: WebdavPath; // the canonical path a reply may show
 }
 
 export interface WebdavStore {
@@ -121,29 +132,45 @@ export function createWebdavStore(options: WebdavOptions): WebdavStore {
   const basic = Buffer.from(`${options.username}:${options.password}`, 'utf8').toString('base64');
   const authorization = `Basic ${basic}`;
   const folderSegments = options.path.split('/').filter((s) => s !== '');
-  const folderPrefix = `${options.path}/`;
+  const base = new URL(options.baseUrl);
+  // A file's wire identity is its decoded path under the endpoint plus the
+  // configured folder: for base URL https://host/dav and folder /t it is
+  // /dav/t/. A base URL pathname is part of that identity, not an error.
+  const folderPrefix = `${decodeURIComponent(base.pathname).replace(/\/+$/, '')}${options.path}/`;
 
   const url = (segments: string[]): string =>
     `${options.baseUrl}/${segments.map(encodeURIComponent).join('/')}`;
   const folderUrl = (): string => url(folderSegments);
   const fileUrl = (name: string): string => url([...folderSegments, name]);
 
-  const request = async (method: string, target: string, init: RequestInit = {}): Promise<Response> =>
-    doFetch(target, {
+  // redirect: 'manual' plus the 3xx check: a redirect is a fixed failure at
+  // this boundary, never a hop — the request body and the credential are
+  // sent exactly once, to the URL we built, so a redirect cannot move a
+  // write outside the configured folder or downgrade it to plain HTTP.
+  const request = async (method: string, target: string, init: RequestInit = {}): Promise<Response> => {
+    const res = await doFetch(target, {
       ...init,
       method,
+      redirect: 'manual',
       headers: { authorization, ...(init.headers ?? {}) },
     });
+    if (res.type === 'opaqueredirect' || (res.status >= 300 && res.status < 400)) {
+      throw new WebdavError('the WebDAV server answered a redirect', res.status === 0 ? undefined : res.status);
+    }
+    return res;
+  };
 
-  const shown = (decodedPath: string, name: string): WebdavStoredFile => {
-    const path = parseWebdavPath(decodedPath);
+  // The reply path is rendered from the configured folder and the file name
+  // only — never from a listing href or any other server text.
+  const shown = (id: string, name: string): WebdavStoredFile => {
+    const path = webdavPath(options.path, name);
     if (path === undefined) throw new WebdavError('the configured folder path cannot be shown');
-    return { id: decodedPath, name, path };
+    return { id, name, path };
   };
 
   // The update target must be a file directly under the configured folder:
   // an id from a directory listing or memory is trusted only after it
-  // resolves to <configured>/<safe basename>.
+  // resolves to <endpoint+configured>/<safe basename>.
   const targetName = (id: string): string => {
     if (!id.startsWith(folderPrefix)) {
       throw new WebdavError('the update target is outside the configured folder');
@@ -155,17 +182,30 @@ export function createWebdavStore(options: WebdavOptions): WebdavStore {
     return name;
   };
 
-  // Decoded paths of the direct children in a PROPFIND body. Only entries
-  // strictly under the configured folder with a safe basename survive; an
-  // href that decodes elsewhere, carries a query, or is malformed is skipped.
+  // Decoded paths of the direct children in a PROPFIND body. Each href is
+  // resolved against the collection URL like any client-side link: only
+  // same-origin entries whose decoded pathname sits strictly under the
+  // endpoint-plus-configured prefix and ends in a safe basename survive. An
+  // href that resolves to another origin, decodes elsewhere, carries a query
+  // or fragment, or is malformed is skipped.
   const listedNames = (body: string): { decoded: string; name: string }[] => {
     const out: { decoded: string; name: string }[] = [];
+    const collection = `${folderUrl()}/`;
     for (const match of body.matchAll(/<(?:[A-Za-z0-9_]+:)?href\b[^>]*>([^<]*)<\//g)) {
       const raw = match[1]?.trim();
       if (raw === undefined || raw === '') continue;
+      let resolved: URL;
+      try {
+        resolved = new URL(raw, collection);
+      } catch {
+        continue;
+      }
+      if (resolved.origin !== base.origin || resolved.search !== '' || resolved.hash !== '') {
+        continue;
+      }
       let decoded: string;
       try {
-        decoded = decodeURIComponent(raw.startsWith('http') ? new URL(raw).pathname : raw);
+        decoded = decodeURIComponent(resolved.pathname);
       } catch {
         continue;
       }
