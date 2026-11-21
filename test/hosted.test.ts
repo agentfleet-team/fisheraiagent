@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import type { Server } from 'node:http';
 import { createService, type ServiceOptions } from '../src/service.js';
 import type { GeminiCaller, GeminiVideoRequest } from '../src/gemini.js';
+import { generateKeyPairSync, createSign } from 'node:crypto';
 import { cookiePair, FakeDrive, FakeOidcProvider, freePort, signInFlow } from './fakes.js';
 
 const GOOD = readFileSync(new URL('./fixtures/model-good.txt', import.meta.url), 'utf8');
@@ -267,15 +268,203 @@ test('H4: cookie flags, a tampered cookie and a bad state are all rejected', asy
     // A used state cannot be replayed: the first callback succeeds, the
     // second with the same URL is rejected (the pending login is consumed).
     const login = await fetch(`${svc.base}/auth/login`, { redirect: 'manual' });
+    const loginCookie = login.headers.get('set-cookie');
+    assert.ok(loginCookie);
     const authorizeUrl = login.headers.get('location');
     assert.ok(authorizeUrl);
     const authorize = await fetch(authorizeUrl, { redirect: 'manual' });
     const callbackUrl = authorize.headers.get('location');
     assert.ok(callbackUrl);
-    const first = await fetch(callbackUrl, { redirect: 'manual' });
+    const first = await fetch(callbackUrl, {
+      redirect: 'manual',
+      headers: { cookie: cookiePair(loginCookie) },
+    });
     assert.equal(first.status, 302);
-    const again = await fetch(callbackUrl, { redirect: 'manual' });
+    const again = await fetch(callbackUrl, {
+      redirect: 'manual',
+      headers: { cookie: cookiePair(loginCookie) },
+    });
     assert.equal(again.status, 400);
+  } finally {
+    await svc.close();
+    await provider.stop();
+  }
+});
+
+// --- H4b: the pending login is bound to the browser that started it ---------
+
+test('H4b: a callback without the browser that started the login is rejected', async () => {
+  const provider = new FakeOidcProvider();
+  await provider.start();
+  const calls: GeminiCall[] = [];
+  const svc = await startHosted(calls, { provider, tenants: TENANTS_WEB });
+  try {
+    // /auth/login sets the af_login cookie that binds the pending login.
+    const login = await fetch(`${svc.base}/auth/login`, { redirect: 'manual' });
+    const loginCookie = login.headers.get('set-cookie');
+    assert.ok(loginCookie);
+    assert.match(loginCookie, /^af_login=/);
+    assert.match(loginCookie, /HttpOnly/i);
+    assert.match(loginCookie, /Secure/i);
+    assert.match(loginCookie, /SameSite=Lax/i);
+    const authorizeUrl = login.headers.get('location');
+    assert.ok(authorizeUrl);
+    const authorize = await fetch(authorizeUrl, { redirect: 'manual' });
+    const callbackUrl = authorize.headers.get('location');
+    assert.ok(callbackUrl);
+
+    // A different browser has no af_login cookie: the callback is rejected
+    // and no session is issued.
+    const victim = await fetch(callbackUrl, { redirect: 'manual' });
+    assert.equal(victim.status, 400);
+    assert.equal(victim.headers.get('set-cookie'), null);
+
+    // A wrong af_login cookie is rejected too.
+    const wrong = await fetch(callbackUrl, {
+      redirect: 'manual',
+      headers: { cookie: 'af_login=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.BBBB' },
+    });
+    assert.equal(wrong.status, 400);
+    const swapped = await fetch(callbackUrl, {
+      redirect: 'manual',
+      headers: { cookie: `${cookiePair(loginCookie).split('.')[0]}.AAAA` },
+    });
+    assert.equal(swapped.status, 400);
+
+    // The browser that started the login completes it.
+    const legit = await fetch(callbackUrl, {
+      redirect: 'manual',
+      headers: { cookie: cookiePair(loginCookie) },
+    });
+    assert.equal(legit.status, 302);
+    const setCookies = legit.headers.getSetCookie();
+    assert.ok(
+      setCookies.some((c) => c.startsWith('af_session=')),
+      'no session cookie issued',
+    );
+    assert.ok(
+      setCookies.some((c) => /^af_login=;.*Max-Age=0/.test(c)),
+      'the login cookie was not cleared',
+    );
+  } finally {
+    await svc.close();
+    await provider.stop();
+  }
+});
+
+// --- H4c: email_verified must be exactly true --------------------------------
+
+test('H4c: an id_token without email_verified === true is rejected', async (t) => {
+  for (const [label, mutate] of [
+    ['absent', (o: Record<string, unknown>) => { delete o.email_verified; }],
+    ['string', (o: Record<string, unknown>) => { o.email_verified = 'false'; }],
+  ] as const) {
+    await t.test(`email_verified ${label}`, async () => {
+      const provider: any = new FakeOidcProvider();
+      await provider.start();
+      const calls: GeminiCall[] = [];
+      const drive = new FakeDrive();
+      const svc = await startHosted(calls, {
+        provider,
+        tenants: TENANTS_WEB,
+        overrides: { drive },
+      });
+      try {
+        const orig = provider.idToken.bind(provider);
+        provider.idToken = function () {
+          const token = orig();
+          const [h, pl] = token.split('.');
+          const obj = JSON.parse(Buffer.from(pl, 'base64url').toString());
+          mutate(obj);
+          const np = Buffer.from(JSON.stringify(obj)).toString('base64url');
+          const sig = createSign('RSA-SHA256').update(`${h}.${np}`).sign(this.privateKey);
+          return `${h}.${np}.${Buffer.from(sig).toString('base64url')}`;
+        };
+        const login = await fetch(`${svc.base}/auth/login`, { redirect: 'manual' });
+        const loginCookie = login.headers.get('set-cookie');
+        assert.ok(loginCookie);
+        const authorize = await fetch(login.headers.get('location')!, { redirect: 'manual' });
+        const callbackUrl = authorize.headers.get('location');
+        assert.ok(callbackUrl);
+        const callback = await fetch(callbackUrl, {
+          redirect: 'manual',
+          headers: { cookie: cookiePair(loginCookie) },
+        });
+        assert.equal(callback.status, 400);
+        assert.equal(drive.files.length, 0);
+      } finally {
+        await svc.close();
+        await provider.stop();
+      }
+    });
+  }
+});
+
+// --- H4d: provider key rotation ----------------------------------------------
+
+test('H4d: a new kid published after a login still verifies via one JWKS refetch', async () => {
+  const provider: any = new FakeOidcProvider();
+  await provider.start();
+  const calls: GeminiCall[] = [];
+  const svc = await startHosted(calls, { provider, tenants: TENANTS_WEB });
+  try {
+    // A normal sign-in works and caches the first key set.
+    await signInFlow(svc.base);
+
+    // Rotate: sign id_tokens with a new key the service has not fetched.
+    const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const j: any = publicKey.export({ format: 'jwk' });
+    provider.privateKey = privateKey.export({ format: 'pem', type: 'pkcs8' }).toString();
+    provider.jwk = { kty: 'RSA', n: j.n, e: j.e, kid: 'fake-key-2' };
+    provider.idToken = function () {
+      const now = Math.floor(Date.now() / 1000);
+      const h = Buffer.from(JSON.stringify({ alg: 'RS256', kid: 'fake-key-2' })).toString('base64url');
+      const pl = Buffer.from(
+        JSON.stringify({
+          iss: this.issuer,
+          aud: this.clientId,
+          email: this.email,
+          email_verified: true,
+          nonce: this.seenNonce,
+          iat: now,
+          exp: now + 300,
+        }),
+      ).toString('base64url');
+      const sig = createSign('RSA-SHA256').update(`${h}.${pl}`).sign(this.privateKey);
+      return `${h}.${pl}.${Buffer.from(sig).toString('base64url')}`;
+    };
+    // The unknown kid triggers a single JWKS refetch and the sign-in completes.
+    const setCookie = await signInFlow(svc.base);
+    const me = await fetch(`${svc.base}/auth/me`, { headers: { cookie: cookiePair(setCookie) } });
+    assert.equal((await me.json()).signed_in, true);
+
+    // A still-unknown kid inside the refresh window is rejected without
+    // another fetch storm.
+    provider.idToken = function () {
+      const now = Math.floor(Date.now() / 1000);
+      const h = Buffer.from(JSON.stringify({ alg: 'RS256', kid: 'fake-key-3' })).toString('base64url');
+      const pl = Buffer.from(
+        JSON.stringify({
+          iss: this.issuer,
+          aud: this.clientId,
+          email: this.email,
+          email_verified: true,
+          nonce: this.seenNonce,
+          iat: now,
+          exp: now + 300,
+        }),
+      ).toString('base64url');
+      const sig = createSign('RSA-SHA256').update(`${h}.${pl}`).sign(this.privateKey);
+      return `${h}.${pl}.${Buffer.from(sig).toString('base64url')}`;
+    };
+    const login = await fetch(`${svc.base}/auth/login`, { redirect: 'manual' });
+    const loginCookie = login.headers.get('set-cookie');
+    const authorize = await fetch(login.headers.get('location')!, { redirect: 'manual' });
+    const badCallback = await fetch(authorize.headers.get('location')!, {
+      redirect: 'manual',
+      headers: { cookie: cookiePair(loginCookie!) },
+    });
+    assert.equal(badCallback.status, 400);
   } finally {
     await svc.close();
     await provider.stop();

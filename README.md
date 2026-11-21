@@ -60,7 +60,10 @@ Service environment variables:
 When `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_REDIRECT_URI` and
 `SESSION_SECRET` are all set, the page gains a **Sign in** link
 (`/auth/login`) running the OpenID Connect authorization code flow with
-PKCE against `OIDC_ISSUER` (Google by default). A completed sign-in leaves
+PKCE against `OIDC_ISSUER` (Google by default). `/auth/login` also sets a
+short-lived `af_login` cookie — HttpOnly, Secure, SameSite=Lax, HMAC-signed —
+binding the pending login's state and PKCE verifier to the browser that
+started it; the callback is rejected without it. A completed sign-in leaves
 an `af_session` cookie — HttpOnly, Secure, SameSite=Lax, HMAC-signed — that
 carries only the verified email. Setting only some of the four variables
 fails startup; setting none keeps today's anonymous page, so self-hosters

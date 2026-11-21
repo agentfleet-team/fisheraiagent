@@ -186,20 +186,27 @@ export class FakeOidcProvider {
 }
 
 // Runs the browser-side of the sign-in flow against a service: hit
-// /auth/login, follow the provider's redirect back to /auth/callback, and
-// return the Set-Cookie value. Rejects when any step is not a 302.
+// /auth/login, carry the af_login login cookie like a browser's cookie jar
+// would, follow the provider's redirect back to /auth/callback, and return
+// the Set-Cookie value. Rejects when any step is not a 302.
 export async function signInFlow(serviceBase: string): Promise<string> {
   const login = await fetch(`${serviceBase}/auth/login`, { redirect: 'manual' });
   if (login.status !== 302) throw new Error(`login: expected 302, got ${login.status}`);
+  const loginCookie = login.headers.get('set-cookie');
+  if (!loginCookie) throw new Error('login: no set-cookie');
   const authorizeUrl = login.headers.get('location');
   if (!authorizeUrl) throw new Error('login: no location');
   const authorize = await fetch(authorizeUrl, { redirect: 'manual' });
   if (authorize.status !== 302) throw new Error(`authorize: expected 302, got ${authorize.status}`);
   const callbackUrl = authorize.headers.get('location');
   if (!callbackUrl) throw new Error('authorize: no location');
-  const callback = await fetch(callbackUrl, { redirect: 'manual' });
+  const callback = await fetch(callbackUrl, {
+    redirect: 'manual',
+    headers: { cookie: cookiePair(loginCookie) },
+  });
   if (callback.status !== 302) throw new Error(`callback: expected 302, got ${callback.status}`);
-  const cookie = callback.headers.get('set-cookie');
+  const setCookies = callback.headers.getSetCookie();
+  const cookie = setCookies.find((c) => c.startsWith('af_session='));
   if (!cookie) throw new Error('callback: no set-cookie');
   return cookie;
 }

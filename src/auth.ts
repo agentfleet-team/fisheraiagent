@@ -70,6 +70,10 @@ export function createOidcClient(config: OidcClientConfig): OidcClient {
   })();
   let endpointsPromise: Promise<OidcEndpoints> | undefined;
   let jwksPromise: Promise<Map<string, JsonWebKey>> | undefined;
+  // Provider signing keys rotate: an unknown kid triggers one forced
+  // refetch, rate-limited so it can't become a fetch loop.
+  let jwksRefreshedAt = 0;
+  const JWKS_REFRESH_MIN_MS = 60_000;
 
   const endpoints = (): Promise<OidcEndpoints> => {
     endpointsPromise ??= (async () => {
@@ -110,10 +114,7 @@ export function createOidcClient(config: OidcClientConfig): OidcClient {
     return endpointsPromise;
   };
 
-  const jwks = (): Promise<Map<string, JsonWebKey>> => {
-    const promise =
-      jwksPromise ??
-      (async () => {
+  const fetchJwks = async (): Promise<Map<string, JsonWebKey>> => {
       const { jwksUri } = await endpoints();
       let parsed: unknown;
       try {
@@ -143,13 +144,26 @@ export function createOidcClient(config: OidcClientConfig): OidcClient {
         }
       }
       return map;
-      })();
+  };
+
+  const jwks = (): Promise<Map<string, JsonWebKey>> => {
+    const promise = jwksPromise ?? fetchJwks();
     jwksPromise = promise;
     // A bad key set is retried on the next login, not cached forever.
     promise.catch(() => {
       if (jwksPromise === promise) jwksPromise = undefined;
     });
     return promise;
+  };
+
+  // A kid the cache doesn't know means either a rotated key (refetch) or a
+  // forged token (reject) — refetch once, at most one refetch per minute.
+  const jwksRefreshed = (): Promise<Map<string, JsonWebKey>> => {
+    const nowMs = Date.now();
+    if (nowMs - jwksRefreshedAt < JWKS_REFRESH_MIN_MS) return jwks();
+    jwksRefreshedAt = nowMs;
+    jwksPromise = undefined;
+    return jwks();
   };
 
   const verifyIdToken = async (idToken: string, expectedNonce: string): Promise<string | undefined> => {
@@ -161,9 +175,13 @@ export function createOidcClient(config: OidcClientConfig): OidcClient {
       return undefined;
     }
     if (field(header, 'alg') !== 'RS256') return undefined;
-    const keys = await jwks();
     const kid = field(header, 'kid');
-    const jwk = isNonEmptyString(kid) ? keys.get(kid) : keys.size === 1 ? [...keys.values()][0] : undefined;
+    let keys = await jwks();
+    let jwk = isNonEmptyString(kid) ? keys.get(kid) : keys.size === 1 ? [...keys.values()][0] : undefined;
+    if (!jwk && isNonEmptyString(kid)) {
+      keys = await jwksRefreshed();
+      jwk = keys.get(kid);
+    }
     if (!jwk) return undefined;
     let key: KeyObject;
     try {
@@ -186,7 +204,7 @@ export function createOidcClient(config: OidcClientConfig): OidcClient {
     const exp = field(payload, 'exp');
     if (typeof exp !== 'number' || exp * 1000 <= Date.now()) return undefined;
     if (field(payload, 'nonce') !== expectedNonce) return undefined;
-    if (field(payload, 'email_verified') === false) return undefined;
+    if (field(payload, 'email_verified') !== true) return undefined;
     const email = field(payload, 'email');
     if (!isNonEmptyString(email) || !email.includes('@')) return undefined;
     return email.toLowerCase();
@@ -237,12 +255,17 @@ export function createOidcClient(config: OidcClientConfig): OidcClient {
 }
 
 const COOKIE_NAME = 'af_session';
+const LOGIN_COOKIE_NAME = 'af_login';
 const DEFAULT_SESSION_TTL_SECONDS = 12 * 60 * 60;
 const PENDING_TTL_MS = 10 * 60 * 1000;
 
 interface PendingLogin {
   verifier: string;
   nonce: string;
+  // Random value the browser that started this login must present as the
+  // af_login cookie on the callback — binds state + PKCE verifier to that
+  // browser, so a callback URL forwarded to another browser is rejected.
+  loginId: string;
   expiresAt: number;
 }
 
@@ -255,10 +278,17 @@ export interface AuthDeps {
 
 export interface Auth {
   cookieName: string;
-  loginUrl(): Promise<string>;
+  // The provider authorization URL plus the short-lived signed af_login
+  // cookie that binds this attempt to the requesting browser.
+  loginUrl(): Promise<{ url: string; cookie: string }>;
   // The email of the completed sign-in, or undefined when the callback is
-  // missing a known state or the provider rejects the code.
-  completeLogin(query: { code?: string; state?: string }): Promise<string | undefined>;
+  // missing a known state, the browser's af_login cookie does not match the
+  // pending login, or the provider rejects the code.
+  completeLogin(
+    query: { code?: string; state?: string },
+    cookieHeader: string | undefined,
+  ): Promise<string | undefined>;
+  loginClearCookie(): string;
   sessionCookie(email: string): string;
   clearCookie(): string;
   // The verified session email from a Cookie header value, or undefined
@@ -274,6 +304,31 @@ export function createAuth(deps: AuthDeps): Auth {
   const sign = (payload: string): string =>
     createHmac('sha256', deps.sessionSecret).update(payload).digest('base64url');
 
+  // Reads one signed cookie (`name=payload.hmac`) out of a Cookie header;
+  // returns the payload or undefined when the cookie is absent or the
+  // signature does not match.
+  const readSignedCookie = (cookieHeader: string | undefined, name: string): string | undefined => {
+    if (!cookieHeader) return undefined;
+    let value: string | undefined;
+    for (const part of cookieHeader.split(';')) {
+      const trimmed = part.trim();
+      if (trimmed.startsWith(`${name}=`)) {
+        value = trimmed.slice(name.length + 1);
+        break;
+      }
+    }
+    if (!value) return undefined;
+    const dot = value.lastIndexOf('.');
+    if (dot <= 0) return undefined;
+    const payload = value.slice(0, dot);
+    const given = value.slice(dot + 1);
+    const expected = sign(payload);
+    if (expected.length !== given.length || !timingSafeEqual(Buffer.from(expected), Buffer.from(given))) {
+      return undefined;
+    }
+    return payload;
+  };
+
   const prune = (): void => {
     for (const [state, p] of pending) {
       if (p.expiresAt <= now()) pending.delete(state);
@@ -288,18 +343,38 @@ export function createAuth(deps: AuthDeps): Auth {
       const state = randomBytes(24).toString('base64url');
       const verifier = randomBytes(48).toString('base64url');
       const nonce = randomBytes(16).toString('base64url');
-      pending.set(state, { verifier, nonce, expiresAt: now() + PENDING_TTL_MS });
+      const loginId = randomBytes(24).toString('base64url');
+      pending.set(state, { verifier, nonce, loginId, expiresAt: now() + PENDING_TTL_MS });
       const codeChallenge = createHash('sha256').update(verifier).digest('base64url');
-      return deps.client.authorizationUrl({ state, nonce, codeChallenge });
+      const url = await deps.client.authorizationUrl({ state, nonce, codeChallenge });
+      const cookie = `${LOGIN_COOKIE_NAME}=${loginId}.${sign(loginId)}; Path=/auth; HttpOnly; Secure; SameSite=Lax; Max-Age=${Math.floor(PENDING_TTL_MS / 1000)}`;
+      return { url, cookie };
     },
 
-    async completeLogin(query) {
+    async completeLogin(query, cookieHeader) {
       prune();
       if (!query.code || !query.state) return undefined;
       const entry = pending.get(query.state);
+      if (!entry || entry.expiresAt <= now() || entry.verifier === '') {
+        pending.delete(query.state);
+        return undefined;
+      }
+      const loginId = readSignedCookie(cookieHeader, LOGIN_COOKIE_NAME);
+      if (
+        loginId === undefined ||
+        loginId.length !== entry.loginId.length ||
+        !timingSafeEqual(Buffer.from(loginId), Buffer.from(entry.loginId))
+      ) {
+        // A callback that fails the browser binding does not consume the
+        // pending login — the browser that started it can still arrive.
+        return undefined;
+      }
       pending.delete(query.state);
-      if (!entry || entry.expiresAt <= now() || entry.verifier === '') return undefined;
       return deps.client.redeemCode({ code: query.code, codeVerifier: entry.verifier, nonce: entry.nonce });
+    },
+
+    loginClearCookie() {
+      return `${LOGIN_COOKIE_NAME}=; Path=/auth; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
     },
 
     sessionCookie(email) {
@@ -314,27 +389,8 @@ export function createAuth(deps: AuthDeps): Auth {
     },
 
     sessionEmail(cookieHeader) {
-      if (!cookieHeader) return undefined;
-      let value: string | undefined;
-      for (const part of cookieHeader.split(';')) {
-        const trimmed = part.trim();
-        if (trimmed.startsWith(`${COOKIE_NAME}=`)) {
-          value = trimmed.slice(COOKIE_NAME.length + 1);
-          break;
-        }
-      }
-      if (!value) return undefined;
-      const dot = value.lastIndexOf('.');
-      if (dot <= 0) return undefined;
-      const payload = value.slice(0, dot);
-      const given = value.slice(dot + 1);
-      const expected = sign(payload);
-      if (
-        expected.length !== given.length ||
-        !timingSafeEqual(Buffer.from(expected), Buffer.from(given))
-      ) {
-        return undefined;
-      }
+      const payload = readSignedCookie(cookieHeader, COOKIE_NAME);
+      if (!payload) return undefined;
       const parsed = b64urlJson(payload);
       if (typeof parsed !== 'object' || parsed === null) return undefined;
       const email = field(parsed, 'email');

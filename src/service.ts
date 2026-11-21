@@ -212,11 +212,13 @@ export function createService(options: ServiceOptions): Server {
   }
 
   // The sign-in flow: /auth/login redirects to the provider with a fresh
-  // state + PKCE challenge, /auth/callback checks the returned state
-  // against the pending login and the code against the provider, then sets
-  // the signed session cookie. A callback without a known state or with a
-  // rejected code gets the fixed 400. /auth/me reports the session to the
-  // page; /auth/logout expires the cookie.
+  // state + PKCE challenge and sets a short-lived signed af_login cookie
+  // that binds the pending login to this browser. /auth/callback checks
+  // the returned state and that cookie against the pending login and the
+  // code against the provider, then sets the signed session cookie and
+  // clears af_login. A callback without a known state, without the
+  // matching af_login cookie, or with a rejected code gets the fixed 400.
+  // /auth/me reports the session to the page; /auth/logout expires it.
   async function handleAuth(
     req: IncomingMessage,
     res: ServerResponse,
@@ -225,22 +227,30 @@ export function createService(options: ServiceOptions): Server {
   ): Promise<void> {
     const method = req.method ?? 'GET';
     if (method === 'GET' && path === '/auth/login') {
-      const location = await session.loginUrl();
-      res.writeHead(302, { location });
+      const { url, cookie } = await session.loginUrl();
+      res.writeHead(302, { location: url, 'set-cookie': cookie });
       res.end();
       return;
     }
     if (method === 'GET' && path === '/auth/callback') {
       const query = new URL(req.url ?? '/', 'http://service.local').searchParams;
-      const email = await session.completeLogin({
-        code: query.get('code') ?? undefined,
-        state: query.get('state') ?? undefined,
-      });
+      const rawCookie = req.headers.cookie;
+      const cookieHeader = Array.isArray(rawCookie) ? rawCookie.join('; ') : rawCookie;
+      const email = await session.completeLogin(
+        {
+          code: query.get('code') ?? undefined,
+          state: query.get('state') ?? undefined,
+        },
+        cookieHeader,
+      );
       if (email === undefined) {
         sendError(res, 400, 'invalid_request');
         return;
       }
-      res.writeHead(302, { location: '/', 'set-cookie': session.sessionCookie(email) });
+      res.writeHead(302, {
+        location: '/',
+        'set-cookie': [session.sessionCookie(email), session.loginClearCookie()],
+      });
       res.end();
       return;
     }
