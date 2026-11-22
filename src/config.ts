@@ -14,6 +14,8 @@ export interface ServiceConfig {
   maxBlockSeconds: number;
   cacheDir: string;
   serviceToken?: string;
+  tenantsFile?: string;
+  googleCredentials?: string;
 }
 
 const DEFAULT_MAX_BLOCK_SECONDS = 8;
@@ -77,5 +79,8 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
 
   const serviceToken = (env.SERVICE_TOKEN ?? '').trim() || undefined;
 
-  return { port, model, maxBlockSeconds, cacheDir, serviceToken };
+  const tenantsFile = (env.TENANTS_FILE ?? '').trim() || undefined;
+  const googleCredentials = (env.GOOGLE_APPLICATION_CREDENTIALS ?? '').trim() || undefined;
+
+  return { port, model, maxBlockSeconds, cacheDir, serviceToken, tenantsFile, googleCredentials };
 }

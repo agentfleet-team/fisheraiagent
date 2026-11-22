@@ -93,9 +93,9 @@ export async function startDiscordBot(
         react: async (emoji) => {
           await message.react(emoji);
         },
-        reply: async (content, files) => {
+        reply: async (content, files, link) => {
           await message.channel.send({
-            content,
+            content: link ? `${content}\nSaved to Drive: ${link.url}` : content,
             files: files.map((f) => ({ attachment: Buffer.from(f.data, 'utf8'), name: f.name })),
           });
         },

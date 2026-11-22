@@ -1,9 +1,9 @@
-import { ApiError, type TranscriptApi } from './api.js';
+import { ApiError, type SavedLink, type TranscriptApi } from './api.js';
 import { findYouTubeUrl } from './find-url.js';
 import { transcriptToSrt, transcriptToTxt } from './format.js';
 import { loggerFor, type LogCode } from '../log.js';
 import { parseChannelId, parseGuildId, parseVideoId } from '../ids.js';
-import { hasMessage, safeText, type SafeText } from '../safe-text.js';
+import { hasMessage, safeText, type MessageCode, type SafeText } from '../safe-text.js';
 import type { GuildStore } from './store.js';
 
 // Discord-free core: the adapter in discord.js land translates events into
@@ -26,10 +26,11 @@ export interface AttachmentFile {
 // Text sent to a person takes only SafeText: an entry of the fixed
 // code-to-message table. A plain `string` — caught text, a remote field,
 // anything computed — does not fit, and no function turns one into
-// SafeText.
+// SafeText. `link` is structured data like the attachments: a saved-file
+// link that passed the API client's shape check, rendered by the adapter.
 export interface MessageSink {
   react(emoji: SafeText): Promise<void>;
-  reply(content: SafeText, files: AttachmentFile[]): Promise<void>;
+  reply(content: SafeText, files: AttachmentFile[], link?: SavedLink): Promise<void>;
 }
 
 export type BotSubcommand = 'set-key' | 'remove-key' | 'enable' | 'disable';
@@ -63,7 +64,14 @@ export interface BotCore {
   handleCommand(cmd: BotCommand, sink: CommandSink): Promise<void>;
 }
 
-type ErrorKey = Exclude<LogCode, 'usage'>;
+// Only a LogCode with a 'bot.error.<code>' entry in the messages table can
+// become an error reply; 'usage' and save-path codes have no such entry.
+type WithBotError<Code> = Code extends string
+  ? `bot.error.${Code}` extends MessageCode
+    ? Code
+    : never
+  : never;
+type ErrorKey = WithBotError<Exclude<LogCode, 'usage'>>;
 
 // A code is logged or shown only when it maps to a fixed table entry (the
 // 'bot.error.<code>' messages); anything else, including arbitrary remote
@@ -146,7 +154,12 @@ export function createBot(deps: BotDeps): BotCore {
 
       log('job_submitted', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId) });
       try {
-        const transcript = await api.transcribe(url, apiKey);
+        const outcome = await api.transcribe(url, apiKey, {
+          kind: 'discord',
+          guild_id: msg.guildId,
+          channel_id: msg.parentChannelId ?? msg.channelId,
+        });
+        const transcript = outcome.transcript;
         // transcript.video_id is remote data: validate before it logs as an id.
         log('job_done', {
           guild: parseGuildId(msg.guildId),
@@ -154,11 +167,17 @@ export function createBot(deps: BotDeps): BotCore {
           video: parseVideoId(transcript.video_id),
         });
         // The reply text is fixed; the transcript itself rides in the two
-        // attachments (its id is in the file names, url and language in the .txt).
-        await sink.reply(safeText('bot.transcript_ready'), [
+        // attachments (its id is in the file names, url and language in the
+        // .txt). A saved-file link rides as validated structured data.
+        const files = [
           { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
           { name: `${transcript.video_id}.srt`, data: transcriptToSrt(transcript) },
-        ]);
+        ];
+        if (outcome.saveErrorCode !== undefined) {
+          await sink.reply(safeText('bot.transcript_save_failed'), files);
+        } else {
+          await sink.reply(safeText('bot.transcript_ready'), files, outcome.saved);
+        }
       } catch (err) {
         const code = errorCode(err);
         log('job_failed', { guild: parseGuildId(msg.guildId), channel: parseChannelId(msg.channelId), code });

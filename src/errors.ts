@@ -10,7 +10,8 @@ export type ErrorCode =
   | 'upstream_rejected'
   | 'model_not_found'
   | 'bad_model_output'
-  | 'invalid_config';
+  | 'invalid_config'
+  | 'invalid_request';
 
 export class TranscriptError extends Error {
   readonly code: ErrorCode;

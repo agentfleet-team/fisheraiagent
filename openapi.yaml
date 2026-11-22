@@ -48,6 +48,8 @@ paths:
                   type: string
                   description: A YouTube watch/share URL or an 11-character video id.
                   example: https://youtu.be/hWe-j78vNpc
+                origin:
+                  $ref: '#/components/schemas/JobOrigin'
       responses:
         '202':
           description: Job accepted and running in the background.
@@ -64,7 +66,8 @@ paths:
           description: >
             Bad request. `missing_key` when X-Gemini-Key is absent or empty,
             `invalid_url` when the URL is not a YouTube URL or video id,
-            `invalid_request` for malformed JSON or a missing `url` field.
+            `invalid_request` for malformed JSON, a missing `url` field, or a
+            malformed `origin`.
           content:
             application/json:
               schema:
@@ -90,7 +93,10 @@ paths:
         '200':
           description: >
             Current job state. `result` is present when status is `done`;
-            `error` is present when status is `failed`.
+            `error` is present when status is `failed`. When the job's origin
+            resolved to a tenant with a destination, `saved` carries the
+            written file link, or `save_error` reports the failed write (the
+            transcript is still returned in `result`).
           content:
             application/json:
               schema:
@@ -128,6 +134,53 @@ components:
           $ref: '#/components/schemas/Transcript'
         error:
           $ref: '#/components/schemas/JobError'
+        saved:
+          $ref: '#/components/schemas/SavedFile'
+        save_error:
+          $ref: '#/components/schemas/JobError'
+    JobOrigin:
+      description: >
+        Where the job claims to come from. The claim is trusted only when
+        the request's bearer token is the caller credential the resolved
+        tenant entry names (TENANTS_FILE); a claim that resolves to a tenant
+        but fails that check saves nothing and reports `save_unauthorized`.
+        A `web` origin never resolves — web callers are anonymous until
+        sign-in — and an origin matching no tenant saves nothing.
+      oneOf:
+        - type: object
+          required: [kind, guild_id, channel_id]
+          properties:
+            kind:
+              type: string
+              enum: [discord]
+            guild_id:
+              type: string
+              description: The Discord server the message was posted in.
+            channel_id:
+              type: string
+              description: The configured channel (a parent channel id for thread messages).
+        - type: object
+          required: [kind, identity]
+          properties:
+            kind:
+              type: string
+              enum: [web]
+            identity:
+              type: string
+              description: A web identity string. Never resolves to a tenant today.
+    SavedFile:
+      type: object
+      required: [type, name, url]
+      properties:
+        type:
+          type: string
+          enum: [google-drive]
+        name:
+          type: string
+          description: The written file name, <english-slug>_<videoId>_<YYYYMMDD>.<ext>.
+        url:
+          type: string
+          description: Link that opens the file (Drive webViewLink).
     JobError:
       type: object
       required: [code, message]
@@ -145,9 +198,17 @@ components:
             - model_not_found
             - bad_model_output
             - invalid_config
+            - save_failed
+            - save_unauthorized
             - internal_error
         message:
           type: string
+          description: A fixed message looked up by `code` from the service's message table.
+        status:
+          type: integer
+          description: >
+            Optional upstream HTTP status when the failure came from a remote
+            service (for example 403 from the Drive API).
     Transcript:
       type: object
       required: [video_id, source_url, language, blocks]

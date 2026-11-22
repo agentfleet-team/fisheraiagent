@@ -6,7 +6,16 @@
 // id format, and the emit loop re-checks that format, so caught text cannot
 // reach a log line through an id field even behind a cast.
 
-import { ID_FORMATS, type ChannelId, type GuildId, type JobId, type VideoId } from './ids.js';
+import {
+  ID_FORMATS,
+  type ChannelId,
+  type DriveFileId,
+  type DriveFolderId,
+  type GuildId,
+  type JobId,
+  type TenantId,
+  type VideoId,
+} from './ids.js';
 
 export type LogEvent =
   | 'http_request'
@@ -20,6 +29,8 @@ export type LogEvent =
   | 'job_submitted'
   | 'job_done'
   | 'job_failed'
+  | 'file_saved'
+  | 'file_save_failed'
   | 'discord_ready'
   | 'commands_registered'
   | 'command_registration_failed'
@@ -46,14 +57,19 @@ export type LogCode =
   | 'api_unreachable'
   | 'job_lost'
   | 'job_timeout'
+  | 'save_failed'
+  | 'save_unauthorized'
   | 'internal_error'
   | 'usage';
 
 export interface LogFields {
   guild?: GuildId;
   channel?: ChannelId;
+  tenant?: TenantId;
   video?: VideoId;
   job?: JobId;
+  folder?: DriveFolderId;
+  file?: DriveFileId;
   route?: LogRoute;
   code?: LogCode;
   port?: number;
@@ -67,8 +83,11 @@ export type Logger = (event: LogEvent, fields?: LogFields) => void;
 const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'guild',
   'channel',
+  'tenant',
   'video',
   'job',
+  'folder',
+  'file',
   'route',
   'code',
   'port',

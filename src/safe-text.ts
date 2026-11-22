@@ -39,6 +39,10 @@ const MESSAGES = Object.freeze({
   unauthorized: brand('Authorization: Bearer <SERVICE_TOKEN> is required'),
   not_found: brand('unknown route or job_id'),
   internal_error: brand('unexpected server error'),
+  save_failed: brand(
+    'the transcript could not be saved to the configured destination — for a Drive folder, check it is shared with the service account email',
+  ),
+  save_unauthorized: brand('the caller is not allowed to save to that destination'),
   // Discord replies: the 'bot.error.<LogCode>' entries answer a failed
   // transcript job, the rest are the fixed setup and progress texts.
   'bot.error.invalid_url': brand("That doesn't look like a usable YouTube link."),
@@ -67,6 +71,9 @@ const MESSAGES = Object.freeze({
   'bot.no_key': brand('No Gemini key is set for this server. A server admin can add one with `/transcript set-key`.'),
   'bot.react_pending': brand('⏳'),
   'bot.transcript_ready': brand('Transcript ready — the .txt and .srt files are attached.'),
+  'bot.transcript_save_failed': brand(
+    "Transcript ready — couldn't save it to the configured destination (for a Drive folder, share it with the service account email). The .txt and .srt files are attached.",
+  ),
   'bot.dm_unsupported': brand('The transcript bot is set up per server, not in DMs.'),
   'bot.unknown_subcommand': brand('Unknown transcript subcommand.'),
 });

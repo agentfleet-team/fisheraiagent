@@ -30,3 +30,15 @@ async function reportFailure(problem: Error, target: MessageSink): Promise<void>
 void reportFailure;
 void body;
 void job;
+import type { DriveLink } from '../../../src/drive.js';
+declare const driveLink: DriveLink;
+const accepted3 = message.reply(safeText('bot.transcript_ready'), [], { type: 'google-drive', name: 'f', url: driveLink });
+void accepted3;
+message.reply(safeText('bot.transcript_ready'), [], { type: 'google-drive', name: 'f', url: err.message });
+message.reply(safeText('bot.transcript_ready'), [], { type: 'google-drive', name: 'f', url: alias });
+message.reply(safeText('bot.transcript_ready'), [], { type: 'google-drive', name: 'f', url: destructured });
+async function reportLink(problem: Error, target: MessageSink): Promise<void> {
+  await target.reply(safeText('bot.transcript_ready'), [], { type: 'google-drive', name: 'f', url: problem.message });
+}
+void reportLink;
+message.reply(safeText('bot.transcript_ready'), [], { type: 'google-drive', name: 'f', url: 'a bare literal is not a DriveLink' });

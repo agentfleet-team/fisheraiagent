@@ -1,19 +1,73 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
+import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
 import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps } from './jobs.js';
+import { createTranscriptSaver, createVideoMetadata, type VideoMetadata } from './save.js';
+import {
+  callerAuthorized,
+  loadTenantsFile,
+  resolveTenant,
+  type JobOrigin,
+  type Tenant,
+} from './tenants.js';
 
 const MAX_BODY_BYTES = 16 * 1024;
 const JOB_PATH = /^\/v1\/jobs\/([^/]+)$/;
 
 export interface ServiceOptions extends JobRunnerDeps {
   serviceToken?: string;
+  tenantsFile?: string;
+  drive?: DriveStore;
+  videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
+  now?: () => Date;
+}
+
+// Remote JSON is unknown until checked; this narrows fields by name so no
+// unchecked `as` stands between the request body and the code.
+function field(value: object, key: string): unknown {
+  return key in value ? Reflect.get(value, key) : undefined;
+}
+
+// The submit body's optional "origin": where the job came from, used to
+// resolve the tenant whose destination the transcript is saved to.
+//   {"kind": "discord", "guild_id": "...", "channel_id": "..."}
+//   {"kind": "web", "identity": "..."}
+function parseOrigin(value: unknown): JobOrigin | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== 'object') {
+    throw new TranscriptError('invalid_request', 'origin must be an object');
+  }
+  const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() !== '' ? v.trim() : undefined);
+  const kind = field(value, 'kind');
+  if (kind === 'discord') {
+    const guild_id = str(field(value, 'guild_id'));
+    const channel_id = str(field(value, 'channel_id'));
+    if (guild_id && channel_id) return { kind: 'discord', guild_id, channel_id };
+    throw new TranscriptError('invalid_request', 'a discord origin needs guild_id and channel_id strings');
+  }
+  if (kind === 'web') {
+    const identity = str(field(value, 'identity'));
+    if (identity) return { kind: 'web', identity };
+    throw new TranscriptError('invalid_request', 'a web origin needs an identity string');
+  }
+  throw new TranscriptError('invalid_request', 'origin.kind must be "discord" or "web"');
 }
 
 export function createService(options: ServiceOptions): Server {
-  const jobs = new JobStore(options);
+  const deps: JobRunnerDeps = { ...options };
+  if (!deps.saveTranscript && options.tenantsFile) {
+    deps.saveTranscript = createTranscriptSaver({
+      tenantsFile: options.tenantsFile,
+      drive: options.drive,
+      metadata: options.videoMetadata ?? createVideoMetadata(),
+      now: options.now,
+      log: options.log,
+    });
+  }
+  const jobs = new JobStore(deps);
   const log = loggerFor(options.log);
 
   const send = (res: ServerResponse, status: number, body: unknown): void => {
@@ -32,6 +86,32 @@ export function createService(options: ServiceOptions): Server {
     const expected = Buffer.from(`Bearer ${options.serviceToken}`, 'utf8');
     if (header.length !== expected.length) return false;
     return timingSafeEqual(header, expected);
+  };
+
+  const bearerToken = (req: IncomingMessage): string | undefined => {
+    const raw = req.headers.authorization;
+    const header = (Array.isArray(raw) ? raw[0] : raw) ?? '';
+    return header.startsWith('Bearer ') ? header.slice(7).trim() || undefined : undefined;
+  };
+
+  // An origin in the request body is a claim, not proof. It is trusted only
+  // when the bearer token the caller presented is the credential the
+  // resolved tenant entry names (the token's SHA-256, or an env reference);
+  // anything else is untrusted caller-controlled text. A claim that names a
+  // real tenant but fails the credential check is denied — the job still
+  // runs and reports the fixed save_unauthorized error — while a claim that
+  // matches no tenant is dropped silently, exactly like no origin at all.
+  const verifyClaim = (req: IncomingMessage, claimed: JobOrigin): 'verified' | 'denied' | 'none' => {
+    if (!options.tenantsFile) return 'none';
+    let tenants: Tenant[];
+    try {
+      tenants = loadTenantsFile(options.tenantsFile);
+    } catch {
+      return 'none';
+    }
+    const tenant = resolveTenant(tenants, claimed);
+    if (!tenant) return 'none';
+    return callerAuthorized(tenant, bearerToken(req)) ? 'verified' : 'denied';
   };
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -76,8 +156,7 @@ export function createService(options: ServiceOptions): Server {
       sendError(res, 400, 'invalid_request');
       return;
     }
-    const url =
-      typeof body === 'object' && body !== null && 'url' in body ? body.url : undefined;
+    const url = typeof body === 'object' && body !== null ? field(body, 'url') : undefined;
     if (typeof url !== 'string' || url.trim() === '') {
       sendError(res, 400, 'invalid_request');
       return;
@@ -98,7 +177,27 @@ export function createService(options: ServiceOptions): Server {
       }
       throw err;
     }
-    send(res, 202, { job_id: jobs.submit(videoId, apiKey) });
+    let claimed: JobOrigin | undefined;
+    try {
+      claimed = parseOrigin(typeof body === 'object' && body !== null ? field(body, 'origin') : undefined);
+    } catch (err) {
+      if (err instanceof TranscriptError) {
+        sendError(res, 400, codeOf(err));
+        return;
+      }
+      throw err;
+    }
+    // Web callers are anonymous until sign-in (#6): their origin shows the
+    // transcript only and saves nothing. Discord claims are verified here;
+    // only a verified claim reaches the job's save hook.
+    let origin: JobOrigin | undefined;
+    let saveDenied = false;
+    if (claimed?.kind === 'discord') {
+      const verdict = verifyClaim(req, claimed);
+      if (verdict === 'verified') origin = claimed;
+      else if (verdict === 'denied') saveDenied = true;
+    }
+    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin, saveDenied) });
   }
 
   return createServer((req, res) => {

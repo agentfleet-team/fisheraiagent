@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { loadServiceConfig } from './config.js';
+import { createDriveStore } from './drive.js';
 import { codeOf } from './errors.js';
 import { consoleSink, log } from './log.js';
 import { createGeminiCaller } from './gemini.js';
@@ -13,6 +14,10 @@ try {
     maxBlockSeconds: config.maxBlockSeconds,
     cacheDir: config.cacheDir,
     serviceToken: config.serviceToken,
+    tenantsFile: config.tenantsFile,
+    drive: config.googleCredentials
+      ? createDriveStore({ credentialsPath: config.googleCredentials })
+      : undefined,
     log: consoleSink,
   });
   server.listen(config.port, () => {

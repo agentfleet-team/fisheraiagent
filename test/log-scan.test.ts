@@ -248,9 +248,11 @@ test('R-14: every reply and HTTP error-body sink rejects plain string at compile
   // destructuring and via a helper parameter into reply, replyEphemeral and
   // react — plus a bare literal, a dynamic template through the code
   // lookup, a helper turning `string` into SafeText, an ErrorBody message
-  // and a failed JobView message — every one must be a compile error.
+  // and a failed JobView message — and the same flows again through the
+  // reply `link` parameter's branded DriveLink url, which must also reject
+  // a bare literal — every one must be a compile error.
   assert.deepEqual(
     [...errorLines].sort((a, b) => a - b),
-    [12, 14, 16, 17, 18, 19, 20, 22, 25, 26, 28],
+    [12, 14, 16, 17, 18, 19, 20, 22, 25, 26, 28, 37, 38, 39, 41, 44],
   );
 });
