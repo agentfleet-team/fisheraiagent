@@ -184,7 +184,7 @@ paths:
             Current job state. `result` is present when status is `done`;
             `error` is present when status is `failed`. When the job's origin
             resolved to a tenant with a destination, `saved` carries the
-            written file link, or `save_error` reports the failed write (the
+            written file link or path, or `save_error` reports the failed write (the
             transcript is still returned in `result`).
           content:
             application/json:
@@ -262,17 +262,23 @@ components:
                 service from its verified session email, not from this field.
     SavedFile:
       type: object
-      required: [type, name, url]
+      required: [type, name]
       properties:
         type:
           type: string
-          enum: [google-drive]
+          enum: [google-drive, webdav]
         name:
           type: string
           description: The written file name, <english-slug>_<videoId>_<YYYYMMDD>.<ext>.
         url:
           type: string
-          description: Link that opens the file (Drive webViewLink).
+          description: Link that opens the file (Drive webViewLink; google-drive only).
+        path:
+          type: string
+          description: The saved path under the tenant's configured WebDAV folder (webdav only).
+        folder:
+          type: string
+          description: The tenant's configured WebDAV folder, so a client can re-render and re-check `path` from folder plus name instead of trusting a wire string (webdav only).
     JobError:
       type: object
       required: [code, message]

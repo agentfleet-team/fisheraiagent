@@ -36,6 +36,7 @@ export interface ServiceOptions extends JobRunnerDeps {
   // of a file path. tenantsFile wins when both are set.
   tenantsJson?: string;
   drive?: DriveStore;
+  webdavFetch?: typeof fetch;
   videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
   // Built sign-in handler (tests inject one); when absent but `oidc` is
@@ -88,6 +89,7 @@ export function createService(options: ServiceOptions): Server {
     deps.saveTranscript = createTranscriptSaver({
       loadTenants,
       drive: options.drive,
+      webdavFetch: options.webdavFetch,
       metadata: options.videoMetadata ?? createVideoMetadata(),
       now: options.now,
       log: options.log,

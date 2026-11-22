@@ -7,6 +7,7 @@ import {
   type DriveFolderId,
   type TenantId,
 } from './ids.js';
+import { parseWebdavBaseUrl, parseWebdavFolder, type WebdavBaseUrl } from './webdav.js';
 
 // Where a job came from. Discord origins carry the guild and the configured
 // channel (never a thread id); web origins carry an identity string. The
@@ -24,7 +25,15 @@ export type FileExtension = '.txt' | '.md' | '.srt';
 
 export type TenantDestination =
   | { type: 'none' }
-  | { type: 'google-drive'; folder_id: DriveFolderId; extension?: FileExtension };
+  | { type: 'google-drive'; folder_id: DriveFolderId; extension?: FileExtension }
+  | {
+      type: 'webdav';
+      base_url: WebdavBaseUrl;
+      path: string;
+      username: string;
+      password_env: string;
+      extension?: FileExtension;
+    };
 
 // The credential a caller must present before the service trusts its
 // origin claim for this tenant: either the hex SHA-256 of the caller's
@@ -92,11 +101,59 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
   }
   const type = field(value, 'type');
   if (type === 'none') return { type: 'none' };
-  if (type !== 'google-drive') {
+  if (type !== 'google-drive' && type !== 'webdav') {
     throw new TranscriptError(
       'invalid_config',
-      `${path}: destination.type must be "google-drive" or "none"`,
+      `${path}: destination.type must be "google-drive", "webdav" or "none"`,
     );
+  }
+  const rawExtension = field(value, 'extension');
+  if (rawExtension !== undefined && !isFileExtension(rawExtension)) {
+    throw new TranscriptError(
+      'invalid_config',
+      `${path}: destination.extension must be .txt, .md or .srt`,
+    );
+  }
+  const extension = isFileExtension(rawExtension) ? rawExtension : undefined;
+  if (type === 'webdav') {
+    // TLS only: a webdav base URL must be https, with no credential, query
+    // or fragment embedded. The password is never in the file — the config
+    // names an environment variable and the value is read from it at save
+    // time.
+    const base_url = parseWebdavBaseUrl(field(value, 'base_url'));
+    if (!base_url) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: a webdav destination needs an https:// base_url`,
+      );
+    }
+    const segments = parseWebdavFolder(field(value, 'path'));
+    if (!segments) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: a webdav destination needs a folder path under the WebDAV root`,
+      );
+    }
+    const rawUser = field(value, 'username');
+    if (!isNonEmptyString(rawUser)) {
+      throw new TranscriptError('invalid_config', `${path}: a webdav destination needs a username`);
+    }
+    const rawPasswordEnv = field(value, 'password_env');
+    if (!isNonEmptyString(rawPasswordEnv)) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: a webdav destination needs a password_env env var name`,
+      );
+    }
+    const destination: TenantDestination = {
+      type: 'webdav',
+      base_url,
+      path: `/${segments.join('/')}`,
+      username: rawUser.trim(),
+      password_env: rawPasswordEnv.trim(),
+    };
+    if (extension !== undefined) destination.extension = extension;
+    return destination;
   }
   const rawFolderId = field(value, 'folder_id');
   if (!isNonEmptyString(rawFolderId)) {
@@ -106,15 +163,8 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
   if (!folder_id) {
     throw new TranscriptError('invalid_config', `${path}: folder_id is not a Drive folder id`);
   }
-  const rawExtension = field(value, 'extension');
-  if (rawExtension !== undefined && !isFileExtension(rawExtension)) {
-    throw new TranscriptError(
-      'invalid_config',
-      `${path}: destination.extension must be .txt, .md or .srt`,
-    );
-  }
   const destination: TenantDestination = { type: 'google-drive', folder_id };
-  if (rawExtension !== undefined && isFileExtension(rawExtension)) destination.extension = rawExtension;
+  if (extension !== undefined) destination.extension = extension;
   return destination;
 }
 
@@ -180,6 +230,18 @@ function parseLimits(value: unknown, path: string): TenantLimits | undefined {
 //       "discord_channel_ids": ["222", "333"],
 //       "caller": { "token_env": "BOT_SERVICE_TOKEN" },
 //       "destination": { "type": "google-drive", "folder_id": "0AbC...", "extension": ".md" }
+//     },
+//     {
+//       "id": "nas-room",
+//       "discord_guild_id": "111",
+//       "caller": { "token_env": "BOT_SERVICE_TOKEN" },
+//       "destination": {
+//         "type": "webdav",
+//         "base_url": "https://nas.example.ts.net",
+//         "path": "/transcripts",
+//         "username": "transcripts",
+//         "password_env": "NAS_WEBDAV_PASSWORD"
+//       }
 //     }
 //   ]
 // }
