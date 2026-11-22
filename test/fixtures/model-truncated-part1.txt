@@ -1,7 +1,6 @@
-DURATION: 100
 LANGUAGE: en
-[0.0 - 8.0] line one of the transcript
-[8.0 - 16.0] line two of the transcript
-[16.0 - 24.0] line three of the transcript
-[24.0 - 32.0] line four of the transcript
-[32.0 - 40.0] line five of the transcript
+[00:00 - 00:08] line one of the transcript
+[00:08 - 00:16] line two of the transcript
+[00:16 - 00:24] line three of the transcript
+[00:24 - 00:32] line four of the transcript
+[00:32 - 00:40] line five of the transcri
