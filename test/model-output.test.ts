@@ -98,7 +98,36 @@ test('a malformed block line is rejected, not absorbed as text or preamble', () 
   );
 });
 
-test('bracketed spoken text without a range stays continuation text', () => {
-  const out = parseModelOutput('LANGUAGE: en\n[00:00 - 00:08] a\n[music]', 8);
-  assert.equal(out.blocks[0].text, 'a [music]');
+test('any bracket-led line with a time-like token must parse fully as a range block', () => {
+  for (const bad of [
+    '［00:08 - 00:16］ full-width brackets',
+    '［00:08 - 00:16] mixed opening bracket',
+    '[00:08 - 00:16］ mixed closing bracket',
+    '[00：08 - 00：16] full-width colons',
+    '[00:08 - ] missing end',
+    '[00:08] missing end without separator',
+    '[00:08 - 00:16 missing closing bracket',
+    '[-00:08 - 00:16] negative start',
+    '[00:08 - -00:16] negative end',
+    '[00:-08 - 00:16] negative component',
+    '[broken - 00:16] non-numeric start',
+    '[00:08 - NaN] non-numeric end',
+    '[00:08 - 00:16 - 00:24] extra range field',
+    '[00:00:00:08 - 00:00:00:16] extra colon component',
+    '[00:08 - 00:16, 00:24] extra comma field',
+  ]) {
+    for (const position of ['before', 'after']) {
+      const valid = '[00:00 - 00:08] a';
+      const raw = `LANGUAGE: en\n${position === 'before' ? `${bad}\n${valid}` : `${valid}\n${bad}`}`;
+      assert.throws(() => parseModelOutput(raw, 8), ModelOutputError, bad);
+    }
+  }
+});
+
+test('bracket-led lines without a time-like token stay text', () => {
+  const out = parseModelOutput(
+    'LANGUAGE: en\n[music]\n[00:00 - 00:08] a\n【拍手】\n[laughter]',
+    8,
+  );
+  assert.equal(out.blocks[0].text, 'a 【拍手】 [laughter]');
 });

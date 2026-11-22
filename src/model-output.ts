@@ -20,8 +20,13 @@ export interface ParseOptions {
 
 // Block times are MM:SS (HH:MM:SS past one hour) per the video docs; plain
 // seconds are still accepted so tolerant parsing survives model drift.
-// Any line that opens like a timestamp block ("[... - ...]") is a block:
-// it parses or the whole output is rejected, never absorbed as text.
+// A line that opens with a bracket ([, ［ or 【) and carries a time-like
+// token (digits, ASCII or full-width colon, digits) is block intent: it
+// must parse fully as a range block or the whole output is rejected,
+// never absorbed as text. Bracket-led lines with no time-like token
+// ([music], 【拍手】) stay text.
+const BLOCK_INTENT = /^[\[［【]/;
+const TIME_TOKEN = /\d+\s*[:：]\s*\d+/;
 const BLOCK_SHAPE = /^\[([^\]\-]*)-([^\]]*)\]\s*(.*)$/;
 const TIMESTAMP = /^\d+(?::\d{1,2}){0,2}(?:\.\d+)?$/;
 const HEADER_LINE = /^\s*(LANGUAGE|DURATION)\s*:/im;
@@ -66,6 +71,9 @@ function classifyLine(line: string, lineNumber: number): Line {
       throw new ModelOutputError(`line ${lineNumber}: invalid timestamp in "${text.slice(0, 60)}"`);
     }
     return { kind: 'block', block: { start, end, text: shape[3].trim() } };
+  }
+  if (BLOCK_INTENT.test(text) && TIME_TOKEN.test(text)) {
+    throw new ModelOutputError(`line ${lineNumber}: invalid timestamp in "${text.slice(0, 60)}"`);
   }
   return { kind: 'text', text };
 }
