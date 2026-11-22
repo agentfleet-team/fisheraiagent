@@ -23,12 +23,19 @@ export interface ParsedModelOutput {
   durationSeconds?: number;
   language: string;
   blocks: TranscriptBlock[];
+  // Present only when ParseOptions.allowOverLimitBlocks let one or more
+  // over-long spans through: how many, and the longest span in seconds.
+  overLimit?: { count: number; longestSeconds: number };
 }
 
 export interface ParseOptions {
   // Allow a response with a header but no blocks: on a continuation the
   // model reports "no spoken audio left in this range" with LANGUAGE only.
   allowEmpty?: boolean;
+  // Let spans past maxBlockSeconds through instead of throwing
+  // block_too_long, reporting them in overLimit. Ordering and timestamp
+  // checks are unchanged — this tolerates the length rule only.
+  allowOverLimitBlocks?: boolean;
 }
 
 // Block times are MM:SS (HH:MM:SS past one hour) per the video docs; plain
@@ -142,16 +149,23 @@ export function parseModelOutput(
     throw new ModelOutputError('no_blocks', 'no transcript blocks in model output');
   }
 
+  let overLimit: { count: number; longestSeconds: number } | undefined;
   let previousStart = -EPS;
   for (const [index, b] of blocks.entries()) {
     if (b.end < b.start) {
       throw new ModelOutputError('end_before_start', `block ${index + 1}: end (${b.end}) is before start (${b.start})`);
     }
-    if (b.end - b.start > maxBlockSeconds + EPS) {
-      throw new ModelOutputError(
-        'block_too_long',
-        `block ${index + 1}: ${(b.end - b.start).toFixed(3)}s exceeds ${maxBlockSeconds}s limit`,
-      );
+    const span = b.end - b.start;
+    if (span > maxBlockSeconds + EPS) {
+      if (!options?.allowOverLimitBlocks) {
+        throw new ModelOutputError(
+          'block_too_long',
+          `block ${index + 1}: ${span.toFixed(3)}s exceeds ${maxBlockSeconds}s limit`,
+        );
+      }
+      overLimit ??= { count: 0, longestSeconds: 0 };
+      overLimit.count += 1;
+      overLimit.longestSeconds = Math.max(overLimit.longestSeconds, span);
     }
     if (b.start < previousStart - EPS) {
       throw new ModelOutputError('out_of_order', `block ${index + 1}: start (${b.start}) is before the previous block start`);
@@ -159,5 +173,9 @@ export function parseModelOutput(
     previousStart = b.start;
   }
 
-  return { durationSeconds, language, blocks };
+  const out: ParsedModelOutput = { durationSeconds, language, blocks };
+  if (overLimit) {
+    out.overLimit = { count: overLimit.count, longestSeconds: Math.round(overLimit.longestSeconds * 1e3) / 1e3 };
+  }
+  return out;
 }

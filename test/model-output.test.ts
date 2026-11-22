@@ -67,6 +67,19 @@ test('a block longer than the limit is rejected', () => {
   assert.throws(() => parseModelOutput(fixture('model-overlong.txt'), 8), /exceeds 8s limit/);
 });
 
+test('allowOverLimitBlocks reports the over-limit spans and keeps the other checks strict', () => {
+  const raw = 'LANGUAGE: en\n[00:00 - 00:08] a\n[00:08 - 00:19] b\n[00:19 - 00:30] c';
+  assert.throws(() => parseModelOutput(raw, 8), /exceeds 8s limit/);
+  const out = parseModelOutput(raw, 8, { allowOverLimitBlocks: true });
+  assert.deepEqual(out.overLimit, { count: 2, longestSeconds: 11 });
+  assert.equal(out.blocks.length, 3);
+  const unordered = 'LANGUAGE: en\n[00:08 - 00:19] b\n[00:00 - 00:08] a';
+  assert.throws(
+    () => parseModelOutput(unordered, 8, { allowOverLimitBlocks: true }),
+    /before the previous block start/,
+  );
+});
+
 test('output with no transcript blocks is rejected', () => {
   assert.throws(() => parseModelOutput(fixture('model-garbage.txt'), 8), ModelOutputError);
 });

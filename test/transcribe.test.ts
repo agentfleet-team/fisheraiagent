@@ -627,6 +627,43 @@ test('a failed re-ask of the token-detected tail stays upstream_media_error', as
   );
 });
 
+test('an over-long block on both attempts is kept after the strict retry, not a lost window', async () => {
+  // Both the plain and the strict answer carry one 11 s block past the
+  // 8 s limit: the window still succeeds and the block is kept verbatim.
+  const w0 = 'LANGUAGE: en\n[00:00 - 00:11] a long block kept as-is.';
+  const { calls, caller } = geminiDouble([{ text: w0 }, { text: w0 }, { text: EMPTY }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  const t = await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.length, 3);
+  assert.ok(calls[1].prompt.includes('Output ONLY the format above'));
+  assert.deepEqual(t.blocks, [{ start: 0, end: 11, text: 'a long block kept as-is.' }]);
+  // The first failure is still a model_output_error; acceptance is the
+  // block_over_limit event with the count and the longest length only.
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('model_output_error')),
+    ['model_output_error reason=block_too_long windowStart=0'],
+  );
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('block_over_limit')),
+    ['block_over_limit count=1 longestBlockSeconds=11 windowStart=0'],
+  );
+  assert.ok(!logs.some((l) => l.includes('kept as-is')));
+});
+
+test('the strict retry still rejects a second failure that is not block length', async () => {
+  // The first attempt's only problem is an 11 s block; the strict answer
+  // fails a different check, so the tolerance must not rescue it.
+  const w0 = 'LANGUAGE: en\n[00:00 - 00:11] over the limit.';
+  const bad = 'LANGUAGE: en\n[00:10 - 00:02] end before start the model said';
+  const { calls, caller } = geminiDouble([{ text: w0 }, { text: bad }]);
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'bad_model_output',
+  );
+  assert.equal(calls.length, 2);
+});
+
 test('a parse failure emits one allowlisted event with the reason and the window start, never transcript text', async () => {
   const w0 = 'LANGUAGE: en\n[00:00 - 00:08] fine.';
   const bad = 'LANGUAGE: en\n[99:99 - 01:00] garbage the model said';

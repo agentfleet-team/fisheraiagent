@@ -108,7 +108,21 @@ async function callRound(
         // One retry with a stricter instruction, then give up.
         const res = await request(true);
         try {
-          return { ...parse(res.text), status: res.status, promptTokens };
+          // The strict retry tolerates over-limit spans only: one long
+          // block keeps the window's answer instead of discarding it,
+          // and the event reports counts, never block text.
+          const { overLimit, ...parsed } = parseModelOutput(res.text, deps.maxBlockSeconds, {
+            allowEmpty: true,
+            allowOverLimitBlocks: true,
+          });
+          if (overLimit) {
+            loggerFor(deps.log)('block_over_limit', {
+              windowStart,
+              count: overLimit.count,
+              longestBlockSeconds: overLimit.longestSeconds,
+            });
+          }
+          return { ...parsed, status: res.status, promptTokens };
         } catch (second) {
           if (second instanceof ModelOutputError) {
             loggerFor(deps.log)('model_output_error', { reason: second.reason, windowStart });
