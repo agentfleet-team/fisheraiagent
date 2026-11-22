@@ -16,6 +16,7 @@ import {
   type TenantId,
   type VideoId,
 } from './ids.js';
+import type { ModelOutputErrorReason } from './model-output.js';
 
 export type LogEvent =
   | 'http_request'
@@ -23,6 +24,7 @@ export type LogEvent =
   | 'service_listening'
   | 'cache_hit'
   | 'gemini_call'
+  | 'model_output_error'
   | 'key_set'
   | 'key_removed'
   | 'channel_enabled'
@@ -84,6 +86,8 @@ export interface LogFields {
   inputTokens?: number;
   outputTokens?: number;
   totalTokens?: number;
+  reason?: ModelOutputErrorReason;
+  windowStart?: number;
 }
 
 export type LogSink = (line: string) => void;
@@ -106,11 +110,14 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'inputTokens',
   'outputTokens',
   'totalTokens',
+  'reason',
+  'windowStart',
 ];
 
 const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   ...ID_FORMATS,
   dest: /^(google-drive|webdav)$/,
+  reason: /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks)$/,
 };
 
 export const consoleSink: LogSink = (line) => console.log(line);

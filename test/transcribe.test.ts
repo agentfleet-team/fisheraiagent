@@ -517,3 +517,103 @@ test('a window tail left mid-sentence is rerun once; silence there stands', asyn
   assert.equal(calls[2].startOffsetSeconds, 40);
   assert.equal(t.blocks.length, 1);
 });
+
+const tokens = (promptTokenCount: number): GeminiVideoResponse['usage'] => ({ promptTokenCount });
+
+test('a window billed far under the first window\'s token count is re-asked once at the estimated video end', async () => {
+  const full = (prefix: string) =>
+    ['LANGUAGE: en', ...[0, 8, 16, 24, 32].map((s) => `[${s} - ${s + 8}] ${prefix}${s}.`)].join('\n');
+  // The tail's first answer stretched five blocks across the silence; its
+  // token count (1800 vs the 4000 of a full 40 s window) gives it away.
+  const stretched = full('stretched');
+  const tail = 'LANGUAGE: en\n[00:00 - 00:08] real.\n[00:08 - 00:16] tail.\n[00:16 - 00:18] done.';
+  const { calls, caller } = geminiDouble([
+    { text: full('a'), usage: tokens(4000) },
+    { text: full('b'), usage: tokens(4000) },
+    { text: stretched, usage: tokens(1800) },
+    { text: tail, usage: tokens(1800) },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  // The [80,120) answer is discarded and the window is re-asked once with
+  // the clip end ceil(80 + 40 * 1800/4000) + 1 = 99; no call starts at 120.
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [80, 120],
+      [80, 99],
+    ],
+  );
+  assert.equal(t.blocks.length, 13);
+  assert.equal(t.blocks.at(-1)?.end, 98);
+  assert.ok(!t.blocks.some((b) => b.text.startsWith('stretched')));
+  // Normal windows state an upper bound; only the re-asked tail states the
+  // real clip length.
+  assert.ok(calls[0].prompt.includes('at most 40 seconds'));
+  assert.ok(calls[0].prompt.includes('Never stretch'));
+  assert.ok(calls[3].prompt.includes('The clip is 19 seconds long'));
+  assertContiguous(t.blocks);
+});
+
+test('a window billed near the reference count is not the tail', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a.', usage: tokens(4000) },
+    { text: EMPTY, usage: tokens(3900) },
+  ]);
+  await transcribeVideo('hWe-j78vNpc', deps(caller));
+  // 3900 >= 4000 * 0.97, so the empty second window ends the video by the
+  // coverage rule alone — no token-estimate re-ask.
+  assert.equal(calls.length, 2);
+});
+
+test('a missing token count leaves the coverage rules as the only end-of-video evidence', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a.' }, // no usage: no reference count
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] b.', usage: tokens(4000) },
+    { text: EMPTY, usage: tokens(500) }, // far under any full count, still no re-ask
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [80, 120],
+    ],
+  );
+  assert.equal(t.blocks.at(-1)?.end, 48);
+});
+
+test('a short first window still seeds the reference, and an equal count is not the tail', async () => {
+  const { calls, caller } = geminiDouble([
+    // The video ends inside the first window: its count is a tail count,
+    // not a full-window one.
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a.\n[00:08 - 00:16] last.', usage: tokens(1800) },
+    { text: EMPTY, usage: tokens(1800) }, // 1800 >= 1800 * 0.97: not under
+    { text: 'LANGUAGE: en' }, // would answer a mistaken re-ask
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.equal(t.blocks.at(-1)?.end, 16);
+});
+
+test('a parse failure emits one allowlisted event with the reason and the window start, never transcript text', async () => {
+  const w0 = 'LANGUAGE: en\n[00:00 - 00:08] fine.';
+  const bad = 'LANGUAGE: en\n[99:99 - 01:00] garbage the model said';
+  const { calls, caller } = geminiDouble([{ text: w0 }, { text: bad }, { text: bad }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', d),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'bad_model_output',
+  );
+  assert.equal(calls.length, 3);
+  // The non-strict and strict attempts each produced a ModelOutputError.
+  const events = logs.filter((l) => l.startsWith('model_output_error'));
+  assert.deepEqual(events, [
+    'model_output_error reason=invalid_timestamp windowStart=40',
+    'model_output_error reason=invalid_timestamp windowStart=40',
+  ]);
+  assert.ok(!logs.some((l) => l.includes('garbage')));
+});

@@ -1,6 +1,11 @@
 export { TranscriptError, type ErrorCode } from './errors.js';
 export { parseYouTubeVideoId, canonicalVideoUrl } from './youtube-url.js';
-export { parseModelOutput, ModelOutputError, type ParsedModelOutput } from './model-output.js';
+export {
+  parseModelOutput,
+  ModelOutputError,
+  type ModelOutputErrorReason,
+  type ParsedModelOutput,
+} from './model-output.js';
 export {
   createGeminiCaller,
   type GeminiCaller,

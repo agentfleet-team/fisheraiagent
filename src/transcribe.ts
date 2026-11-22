@@ -32,9 +32,17 @@ export interface TranscribeDeps {
 interface RoundResult extends ParsedModelOutput {
   status: string;
   noMoreContent?: boolean;
+  // The first (non-strict) request's input token count. It tracks the real
+  // clip length upstream billed for, so a window billed far under the first
+  // window's count is the tail where the video ended.
+  promptTokens?: number;
 }
 
 const MAX_WINDOW_RERUNS = 8;
+// A later window whose first-round input token count falls under this
+// share of the first window's count is the tail: the API billed a shorter
+// clip because the video ends inside it.
+const TAIL_TOKEN_RATIO = 0.97;
 const EPS = 1e-3;
 // Block times are whole seconds, so boundary rounding can leave a gap of
 // about a second between honest adjacent blocks; only a larger hole is
@@ -51,12 +59,17 @@ const TERMINAL_PUNCTUATION = /\p{Terminal_Punctuation}[\p{Pf}\p{Pe}"']*$/u;
 // upstream wording; either code ends the video here.
 const PAST_END_OFFSET_MESSAGE = /offset|past (the )?end|beyond (the )?(video |end|duration|length)|exceeds? (the )?(video )?(duration|length)/i;
 
+// One clip request. windowStart is the owning window's start, recorded on
+// the parse-failure log event; exactClipLength marks the re-asked tail
+// window whose prompt may state the estimated real length.
 async function callRound(
   videoId: string,
   videoUrl: string,
   clipStart: number,
   clipEnd: number,
   deps: TranscribeDeps,
+  windowStart: number,
+  exactClipLength = false,
 ): Promise<RoundResult> {
   // Usage metadata rides every successful call so the input-token cost of
   // one video can be summed from the log.
@@ -69,7 +82,7 @@ async function callRound(
     });
 
   const request = async (strict: boolean) => {
-    const base = clipPrompt(deps.maxBlockSeconds, clipEnd - clipStart);
+    const base = clipPrompt(deps.maxBlockSeconds, clipEnd - clipStart, exactClipLength);
     const res = await deps.caller({
       videoUrl,
       prompt: strict ? base + STRICT_RETRY_SUFFIX : base,
@@ -84,16 +97,22 @@ async function callRound(
     // Every call is a clip, so a header-only answer is always legal: it is
     // the model reporting no spoken audio in the requested range.
     const parse = (text: string) => parseModelOutput(text, deps.maxBlockSeconds, { allowEmpty: true });
+    let promptTokens: number | undefined;
     try {
       const res = await request(false);
-      return { ...parse(res.text), status: res.status };
+      promptTokens = res.usage?.promptTokenCount;
+      return { ...parse(res.text), status: res.status, promptTokens };
     } catch (err) {
       if (err instanceof ModelOutputError) {
+        loggerFor(deps.log)('model_output_error', { reason: err.reason, windowStart });
         // One retry with a stricter instruction, then give up.
         const res = await request(true);
         try {
-          return { ...parse(res.text), status: res.status };
+          return { ...parse(res.text), status: res.status, promptTokens };
         } catch (second) {
+          if (second instanceof ModelOutputError) {
+            loggerFor(deps.log)('model_output_error', { reason: second.reason, windowStart });
+          }
           throw new TranscriptError('bad_model_output', 'model output not in expected format', { cause: second });
         }
       }
@@ -146,13 +165,15 @@ async function callRoundChecked(
   clipStart: number,
   clipEnd: number,
   deps: TranscribeDeps,
+  windowStart: number,
+  exactClipLength = false,
 ): Promise<RoundResult> {
   try {
-    return await callRound(videoId, videoUrl, clipStart, clipEnd, deps);
+    return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength);
   } catch (err) {
     if (!isMediaDataError(err) || err instanceof TranscriptError) throw err;
     try {
-      return await callRound(videoId, videoUrl, clipStart, clipEnd, deps);
+      return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength);
     } catch (second) {
       if (isMediaDataError(second)) throw asUpstreamMediaError(second);
       throw second;
@@ -243,6 +264,13 @@ interface WindowOutcome {
   // evidence that more speech exists, so a later media-data fault must
   // not be read as the video's end.
   lastRoundCompleted: boolean;
+  // The first-round non-strict request's input token count; the caller
+  // keeps the first window's as the full-window reference.
+  promptTokens?: number;
+  // True when the token count showed this window is the video's tail:
+  // its clip was re-asked at the estimated real end and no later window
+  // exists.
+  videoEnded: boolean;
 }
 
 // One clipped window: a first call over [windowStart, windowEnd), then
@@ -251,7 +279,8 @@ interface WindowOutcome {
 // never corrupt coverage already merged. coveredEndAtWindowStart is where
 // the transcript's coverage stood when this window began, and
 // priorRoundCompleted says whether the response that produced it finished
-// normally.
+// normally. fullWindowTokens is the first window's first-round input token
+// count, the reference a later window's count is measured against.
 async function transcribeWindow(
   videoId: string,
   videoUrl: string,
@@ -260,16 +289,37 @@ async function transcribeWindow(
   deps: TranscribeDeps,
   coveredEndAtWindowStart?: number,
   priorRoundCompleted?: boolean,
+  fullWindowTokens?: number,
 ): Promise<WindowOutcome> {
   const blocks: TranscriptBlock[] = [];
   let language = 'unknown';
   let clipStart = windowStart;
   let lastRoundCompleted = priorRoundCompleted ?? false;
+  let promptTokens: number | undefined;
+  let videoEnded = false;
 
   for (let round = 0; ; round++) {
     let out: RoundResult;
     try {
-      out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps);
+      out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart);
+      // A later window billed far under the reference is the tail: the
+      // video ends inside the clip, and an open-ended prompt would let the
+      // model stretch block times across the silence. Discard the answer
+      // and re-ask once with the clip end set to just past the estimated
+      // video end, so the prompt states the true clip length; that answer
+      // is the window's first response and no later window is requested.
+      if (
+        round === 0 &&
+        windowStart > 0 &&
+        fullWindowTokens !== undefined &&
+        out.promptTokens !== undefined &&
+        out.promptTokens < fullWindowTokens * TAIL_TOKEN_RATIO
+      ) {
+        const estimatedEnd = windowStart + (windowEnd - windowStart) * (out.promptTokens / fullWindowTokens);
+        windowEnd = Math.ceil(estimatedEnd) + 1;
+        videoEnded = true;
+        out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart, true);
+      }
     } catch (err) {
       if (!isMediaDataError(err)) throw err;
       // A media-data 400 ends the video only on evidence already in hand:
@@ -284,12 +334,13 @@ async function transcribeWindow(
         coveredEnd !== undefined &&
         (round === 0 ? coveredEnd < windowStart - EPS : coveredEnd <= clipStart + EPS);
       if (clipStart > 0 && lastRoundCompleted && endedBeforeBoundary) {
-        return { blocks, language, empty: true, lastRoundCompleted };
+        return { blocks, language, empty: true, lastRoundCompleted, promptTokens, videoEnded };
       }
       throw err;
     }
     lastRoundCompleted = out.status === 'completed';
     if (round === 0) {
+      promptTokens = out.promptTokens;
       // A first response that declares an over-limit duration rejects the
       // video here, before any continuation call is spent.
       if (
@@ -308,13 +359,17 @@ async function transcribeWindow(
       // Round 0: the whole window is speechless (or starts past the video
       // end), so the video is over. A rerun: the range is confirmed
       // silence and the window's coverage stands.
-      return { blocks, language, empty: round === 0, lastRoundCompleted };
+      return { blocks, language, empty: round === 0, lastRoundCompleted, promptTokens, videoEnded };
     }
     // The model reported blocks but none survived the clip window: the
     // response is unusable output, not evidence of silence.
     if (blocks.length === 0) {
       throw new TranscriptError('bad_model_output', 'model output contained no usable blocks for the clip');
     }
+    // The re-asked tail answer is the window's final coverage: the token
+    // estimate already fixed the video end, so no further coverage call is
+    // spent inside this window.
+    if (videoEnded) break;
     // A rerun that adds nothing new has said all it will say about the
     // range; the window's coverage stands.
     if (round > 0 && added === 0) break;
@@ -348,7 +403,7 @@ async function transcribeWindow(
     if (clipStart >= windowEnd - EPS) break;
   }
 
-  return { blocks, language, empty: false, lastRoundCompleted };
+  return { blocks, language, empty: false, lastRoundCompleted, promptTokens, videoEnded };
 }
 
 export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
@@ -360,6 +415,11 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
   // finished normally; seeded false so a media fault on the very first
   // request can never read as end of video.
   let lastRoundCompleted = false;
+  // The first window's first-round input token count is the full-window
+  // reference every later window is measured against. When the first
+  // window is itself short or the response carried no usage metadata
+  // there is no reference and the coverage rules below decide alone.
+  let fullWindowTokens: number | undefined;
 
   const result = (): Transcript => {
     assertOrderedEnds(blocks);
@@ -380,11 +440,13 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
       deps,
       blocks.at(-1)?.end,
       lastRoundCompleted,
+      fullWindowTokens,
     );
 
     if (out.language !== 'unknown') language = out.language;
     blocks.push(...out.blocks);
     lastRoundCompleted = out.lastRoundCompleted;
+    if (windowStart === 0) fullWindowTokens = out.promptTokens;
 
     if (out.empty) {
       if (blocks.length === 0) {
@@ -397,6 +459,8 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
     if (deps.maxVideoSeconds !== undefined && blocks[blocks.length - 1].end > deps.maxVideoSeconds) {
       throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
     }
+    // The token count already proved this window holds the video end.
+    if (out.videoEnded) return result();
   }
 }
 

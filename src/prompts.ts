@@ -33,11 +33,19 @@ function formatRules(maxBlockSeconds: number): string {
 // One prompt shape for every call: the request always carries a clipped
 // interval, so the model's block times are relative to the clip start — a
 // known offset the caller adds back, not something the model must track.
-export function clipPrompt(maxBlockSeconds: number, clipSeconds: number): string {
+// The length is stated as an upper bound: when the video ends inside the
+// clip an exact "is N seconds" claim makes the model stretch block times to
+// fill it. Only a re-asked tail window (exactLength) states a real length —
+// its clip end was estimated from the per-call token count, so the claim
+// there is true.
+export function clipPrompt(maxBlockSeconds: number, clipSeconds: number, exactLength = false): string {
   const end = formatTimestamp(clipSeconds);
+  const length = exactLength
+    ? `The clip is ${formatSeconds(clipSeconds)} seconds long; its last frame is ${end}.`
+    : `The clip is at most ${formatSeconds(clipSeconds)} seconds long; it is shorter when the video ends sooner, so its last frame can be earlier than ${end}. Never stretch block times to fill the clip.`;
   return [
     'Transcribe the spoken audio of this clip.',
-    `The clip is ${formatSeconds(clipSeconds)} seconds long; its last frame is ${end}.`,
+    length,
     'Report every block time relative to the clip: the first frame is 00:00, not the position the clip was cut from.',
     'If the clip has no spoken audio, output only the LANGUAGE line.',
     formatRules(maxBlockSeconds),
