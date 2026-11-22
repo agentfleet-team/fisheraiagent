@@ -13,6 +13,7 @@ import {
   type JobOrigin,
   type Tenant,
 } from './tenants.js';
+import { serveWebAsset } from './web-static.js';
 
 const MAX_BODY_BYTES = 16 * 1024;
 const JOB_PATH = /^\/v1\/jobs\/([^/]+)$/;
@@ -126,6 +127,7 @@ export function createService(options: ServiceOptions): Server {
     }
 
     if (!path.startsWith('/v1/')) {
+      if (await serveWebAsset(method, path, res)) return;
       sendError(res, 404, 'not_found');
       return;
     }
