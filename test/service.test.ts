@@ -566,17 +566,42 @@ test('unknown routes and bad input get JSON errors', async () => {
 });
 
 // Issue #42: the web page's save-time key check reads the configured model.
-test('GET /v1/config returns the configured model', async () => {
+// Issue #46: the page footer reads the build identity; a service built
+// without version args reports the dev defaults.
+test('GET /v1/config returns the configured model and build identity', async () => {
   const calls: GeminiCall[] = [];
   const { base, logs, close } = await startService(calls);
   try {
     const res = await fetch(`${base}/v1/config`);
     assert.equal(res.status, 200);
-    assert.deepEqual(await res.json(), { model: 'test-model' });
+    assert.deepEqual(await res.json(), {
+      model: 'test-model',
+      version: '0.0.0-dev',
+      commit: 'unknown',
+    });
     assert.ok(
       logs.some((line) => line.includes('route=GET /v1/config')),
       `config route missing from logs: ${logs.join('\n')}`,
     );
+  } finally {
+    await close();
+  }
+});
+
+test('GET /v1/config reports the version and commit the service was built with', async () => {
+  const calls: GeminiCall[] = [];
+  const { base, close } = await startService(calls, {
+    version: 'v0.1.0',
+    commit: '011b7680d9a2c1f4a5b6c7d8e9f0a1b2c3d4e5f6',
+  });
+  try {
+    const res = await fetch(`${base}/v1/config`);
+    assert.equal(res.status, 200);
+    assert.deepEqual(await res.json(), {
+      model: 'test-model',
+      version: 'v0.1.0',
+      commit: '011b7680d9a2c1f4a5b6c7d8e9f0a1b2c3d4e5f6',
+    });
   } finally {
     await close();
   }

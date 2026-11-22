@@ -59,6 +59,8 @@ Service environment variables:
 | `MAX_CONCURRENT_JOBS_PER_CLIENT` | no | `2` | In-flight jobs one client may hold at once (see "Per-client job limits"). |
 | `MAX_JOBS_PER_HOUR_PER_CLIENT` | no | `20` | Accepted job submissions one client may make in a sliding hour. |
 | `TRUSTED_PROXY_IPS` | no | `127.0.0.1,::1` | Peers allowed to supply the client IP via `CF-Connecting-IP` — the Cloudflare Tunnel connector's address, as a comma-separated list of IPs or IPv4 CIDRs. `none` disables header trust entirely. |
+| `APP_VERSION` | no | `0.0.0-dev` | Build identity reported by `GET /v1/config` and shown in the page footer. The Docker build bakes it in via `--build-arg APP_VERSION` (see "Release checklist"). |
+| `APP_COMMIT` | no | `unknown` | Commit the running image was built from, reported next to `APP_VERSION`; baked in via `--build-arg APP_COMMIT`. |
 
 ### Per-client job limits (anonymous surface)
 
@@ -318,6 +320,25 @@ Develop: `npm test` runs the offline unit tests (no key, no network). `npm run t
 ## Limits (from Google)
 
 Gemini reads public or unlisted YouTube videos only, one video per request. See [Gemini video understanding](https://ai.google.dev/gemini-api/docs/video-understanding).
+
+## Release checklist
+
+Releases are semantic-version git tags on `main` (`vMAJOR.MINOR.PATCH`); user-visible changes and migration notes live in [CHANGELOG.md](CHANGELOG.md). The image records its identity (`APP_VERSION`, `APP_COMMIT`) so the deployed build reports itself at `GET /v1/config` and in the page footer.
+
+1. Move the `Unreleased` changelog entries under `## [X.Y.Z] - YYYY-MM-DD` and merge to `main`.
+2. On `main`: `npm ci && npm run build && npm test && npm run test:web && npm run typecheck` all green, then the live acceptance gate (the 9-run D2 oracle) on the same commit.
+3. Tag the accepted commit: `git tag -a vX.Y.Z -m "vX.Y.Z" <sha>` and `git push origin vX.Y.Z`.
+4. Build the image with the version and full commit sha baked in, tagged by both:
+
+   ```bash
+   docker build \
+     --build-arg APP_VERSION=vX.Y.Z --build-arg APP_COMMIT=<full sha> \
+     -t <ecr-repo>:vX.Y.Z -t <ecr-repo>:<full sha> .
+   docker push <ecr-repo>:vX.Y.Z && docker push <ecr-repo>:<full sha>
+   ```
+
+5. Deploy the `vX.Y.Z` image tag, then live check: `GET /v1/config` on the site reports `"version": "vX.Y.Z"` and the page footer shows it.
+6. Rollback: deploy the previous version tag.
 
 ## License
 

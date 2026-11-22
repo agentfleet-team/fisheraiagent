@@ -34,16 +34,25 @@ paths:
           description: >
             Non-secret configuration. `model` names the Gemini model the
             service transcribes with; the web page reads it so its save-time
-            key check can probe that model on Gemini directly.
+            key check can probe that model on Gemini directly. `version` and
+            `commit` identify the running build (baked in at image build
+            time; `0.0.0-dev`/`unknown` for a local dev build) — the page
+            footer shows them so a bug report can name the exact build.
           content:
             application/json:
               schema:
                 type: object
-                required: [model]
+                required: [model, version, commit]
                 properties:
                   model:
                     type: string
                     example: gemini-3.8-flash
+                  version:
+                    type: string
+                    example: v0.1.0
+                  commit:
+                    type: string
+                    example: 011b7680d9a2c1f4a5b6c7d8e9f0a1b2c3d4e5f6
         '401':
           description: Missing or wrong bearer token (only when SERVICE_TOKEN is set).
           content:
