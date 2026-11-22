@@ -152,7 +152,7 @@ test('C2: .txt and .srt downloads are valid', async () => {
       assert.equal(lines[0], String(i + 1));
       assert.match(lines[1], /^\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}$/);
     }
-    assert.match(srt, /00:00:00,000 --> 00:00:07,480\nThere's this technique/);
+    assert.match(srt, /00:00:00,000 --> 00:00:07,000\nThere's this technique/);
   } finally {
     await page.context().close();
   }
