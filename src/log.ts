@@ -26,6 +26,7 @@ export type LogEvent =
   | 'gemini_call'
   | 'model_output_error'
   | 'block_over_limit'
+  | 'clip_blocks_dropped'
   | 'key_set'
   | 'key_removed'
   | 'channel_enabled'

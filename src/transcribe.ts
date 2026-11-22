@@ -37,9 +37,9 @@ export interface TranscribeDeps {
 interface RoundResult extends ParsedModelOutput {
   status: string;
   noMoreContent?: boolean;
-  // The first (non-strict) request's input token count. It tracks the real
-  // clip length upstream billed for, so a window billed far under the first
-  // window's count is the tail where the video ended.
+  // The first request's input token count. It tracks the real clip length
+  // upstream billed for, so a window billed far under the first window's
+  // count is the tail where the video ended.
   promptTokens?: number;
 }
 
@@ -66,7 +66,9 @@ const PAST_END_OFFSET_MESSAGE = /offset|past (the )?end|beyond (the )?(video |en
 
 // One clip request. windowStart is the owning window's start, recorded on
 // the parse-failure log event; exactClipLength marks the re-asked tail
-// window whose prompt may state the estimated real length.
+// window whose prompt may state the estimated real length. strictFirst
+// makes the first request itself the strict variant, used for the one
+// re-ask a full-length window gets after a no-usable-blocks answer.
 async function callRound(
   videoId: string,
   videoUrl: string,
@@ -75,6 +77,7 @@ async function callRound(
   deps: TranscribeDeps,
   windowStart: number,
   exactClipLength = false,
+  strictFirst = false,
 ): Promise<RoundResult> {
   // Usage metadata rides every successful call so the input-token cost of
   // one video can be summed from the log.
@@ -173,7 +176,7 @@ async function callRound(
       parseModelOutput(text, deps.maxBlockSeconds, { allowEmpty: true, allowOverLimitBlocks: true });
     let promptTokens: number | undefined;
     try {
-      const res = await request(false);
+      const res = await request(strictFirst);
       promptTokens = res.usage?.promptTokenCount;
       return { ...(await repairOverLimit(parse(res.text))), status: res.status, promptTokens };
     } catch (err) {
@@ -241,13 +244,14 @@ async function callRoundChecked(
   deps: TranscribeDeps,
   windowStart: number,
   exactClipLength = false,
+  strictFirst = false,
 ): Promise<RoundResult> {
   try {
-    return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength);
+    return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength, strictFirst);
   } catch (err) {
     if (!isMediaDataError(err) || err instanceof TranscriptError) throw err;
     try {
-      return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength);
+      return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength, strictFirst);
     } catch (second) {
       if (isMediaDataError(second)) throw asUpstreamMediaError(second);
       throw second;
@@ -331,7 +335,9 @@ interface WindowOutcome {
   blocks: TranscriptBlock[];
   language: string;
   // True when the window's first call reports no speech (or its start
-  // offset lands past the video end): the video is finished.
+  // offset lands past the video end): the video is finished. A window
+  // billed at the full-window reference reports the same answer as
+  // recorded silence instead, so it never sets this.
   empty: boolean;
   // Whether the most recent successful response covering this window's
   // range finished normally ('completed'). A truncated response is
@@ -381,9 +387,25 @@ async function transcribeWindow(
   let lastRoundCompleted = priorRoundCompleted ?? false;
   let promptTokens: number | undefined;
   let videoEnded = false;
+  // The first round's token count proved this window is full-length
+  // media: it can hold silence but it can never be the end of the video.
+  let fullLengthWindow = false;
+
+  // Clip-relative block times shifted into video time and clamped at the
+  // window end; a block the clamp drops is counted once on the log with
+  // the window start, never with its text.
+  const shiftAndLog = (o: RoundResult): TranscriptBlock[] => {
+    const kept = shiftClipBlocks(o.blocks, clipStart, windowEnd);
+    const dropped = o.blocks.length - kept.length;
+    if (dropped > 0) {
+      loggerFor(deps.log)('clip_blocks_dropped', { windowStart, count: dropped });
+    }
+    return kept;
+  };
 
   for (let round = 0; ; round++) {
     let out: RoundResult;
+    let shifted: TranscriptBlock[] = [];
     try {
       out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart);
       // A later window billed far under the reference is the tail: the
@@ -404,6 +426,24 @@ async function transcribeWindow(
         videoEnded = true;
         out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart, true);
       }
+      shifted = shiftAndLog(out);
+      if (round === 0) {
+        // A window billed at or over the full-window reference is
+        // full-length media: the API charged for the whole clip, so the
+        // video cannot end inside it. An empty or all-dropped answer
+        // there is unusable output, not evidence the video ended; the
+        // same clip is re-asked once with the strict prompt, whose
+        // clip-relative times instruction answers the failure seen live.
+        fullLengthWindow =
+          !videoEnded &&
+          fullWindowTokens !== undefined &&
+          out.promptTokens !== undefined &&
+          out.promptTokens >= fullWindowTokens * TAIL_TOKEN_RATIO;
+        if (fullLengthWindow && shifted.length === 0) {
+          out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart, false, true);
+          shifted = shiftAndLog(out);
+        }
+      }
     } catch (err) {
       if (!isMediaDataError(err)) throw err;
       // A media-data 400 ends the video only on evidence already in hand:
@@ -412,14 +452,15 @@ async function transcribeWindow(
       // coverage stopped before the boundary this request asks about (the
       // window start for a first call, the rerun's own start after that).
       // An offset-0 fault, coverage that reached the boundary, a
-      // truncated response, or the failed re-ask of a token-detected
-      // tail — whose discarded answer already proved speech there —
-      // stays a real upstream error.
+      // truncated response, the failed re-ask of a token-detected
+      // tail — whose discarded answer already proved speech there — or
+      // any fault inside a token-proven full-length window stays a real
+      // upstream error.
       const coveredEnd = blocks.at(-1)?.end ?? coveredEndAtWindowStart;
       const endedBeforeBoundary =
         coveredEnd !== undefined &&
         (round === 0 ? coveredEnd < windowStart - EPS : coveredEnd <= clipStart + EPS);
-      if (clipStart > 0 && lastRoundCompleted && endedBeforeBoundary && !videoEnded) {
+      if (clipStart > 0 && lastRoundCompleted && endedBeforeBoundary && !videoEnded && !fullLengthWindow) {
         return { blocks, language, empty: true, lastRoundCompleted, promptTokens, videoEnded };
       }
       throw err;
@@ -434,17 +475,31 @@ async function transcribeWindow(
       }
     }
     if (out.language !== 'unknown') language = out.language;
-    const added = mergeNewBlocks(blocks, shiftClipBlocks(out.blocks, clipStart, windowEnd));
+    const added = mergeNewBlocks(blocks, shifted);
 
     if (out.noMoreContent) {
       // Round 0: the whole window is speechless (or starts past the video
-      // end), so the video is over. A rerun: the range is confirmed
-      // silence and the window's coverage stands.
-      return { blocks, language, empty: round === 0, lastRoundCompleted, promptTokens, videoEnded };
+      // end), so the video is over — unless its token count proved it
+      // full-length media, where an empty answer even after the strict
+      // re-ask is recorded as silence and the loop goes on. A rerun: the
+      // range is confirmed silence and the window's coverage stands.
+      return {
+        blocks,
+        language,
+        empty: round === 0 && !fullLengthWindow,
+        lastRoundCompleted,
+        promptTokens,
+        videoEnded,
+      };
     }
-    // The model reported blocks but none survived the clip window: the
-    // response is unusable output, not evidence of silence.
     if (blocks.length === 0) {
+      // A full-length window whose answer stayed all-dropped after the
+      // strict re-ask is recorded as silence; the loop continues at the
+      // next window. Any other window's all-dropped answer is unusable
+      // output, not evidence of silence.
+      if (fullLengthWindow) {
+        return { blocks, language, empty: false, lastRoundCompleted, promptTokens, videoEnded };
+      }
       throw new TranscriptError('bad_model_output', 'model output contained no usable blocks for the clip');
     }
     // The re-asked tail answer is the window's final coverage: the token
@@ -537,10 +592,21 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
       }
       return result();
     }
+    // A window recorded as silence contributes no coverage, but its full
+    // bill proves the video runs through the whole window: once that
+    // proven reach crosses the length limit the video is too long. This
+    // is also what bounds the loop when the model reports silence without
+    // end — coverage alone cannot grow to meet the bound.
+    if (out.blocks.length === 0 && windowStart + windowSeconds > maxVideoSeconds) {
+      throw new TranscriptError('video_too_long', 'video exceeds the length limit');
+    }
     // Coverage past the length limit rejects the video even when the
     // model never declared a duration; with no tenant cap the default
-    // bound is what stops the window loop.
-    if (blocks[blocks.length - 1].end > maxVideoSeconds) {
+    // bound is what stops the window loop. A window recorded as silence
+    // may leave the transcript empty still, so the last block is looked
+    // up, not assumed.
+    const lastEnd = blocks.at(-1)?.end;
+    if (lastEnd !== undefined && lastEnd > maxVideoSeconds) {
       throw new TranscriptError('video_too_long', 'video exceeds the length limit');
     }
     // The token count already proved this window holds the video end.
