@@ -1,4 +1,4 @@
 LANGUAGE: en
-[0.0 - 8.0] first block
-[20.0 - 28.0] second block
-[10.0 - 18.0] this block is out of order
+[00:00 - 00:08] first block
+[00:20 - 00:28] second block
+[00:10 - 00:18] this block is out of order
