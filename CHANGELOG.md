@@ -11,10 +11,19 @@ git tags on `main`.
 
 - Every Gemini call beyond a clip's first request now writes one
   allowlisted `gemini_extra_call` log line — `reason` is `strict_retry`,
-  `empty_full_window`, `subclip`, `tail_reask` or `media_retry` — with
-  `video` and `windowStart` and never transcript or prompt text, so a
-  run's input-token cost can be charged to the retry rule that spent it
-  (#49).
+  `empty_full_window`, `subclip`, `tail_reask`, `media_retry` or
+  `continuation` — with `video` and `windowStart` and never transcript or
+  prompt text, so a run's input-token cost can be charged to the retry
+  rule that spent it (#49).
+
+### Fixed
+
+- Static assets no longer reach browsers a deploy late: the page stamps
+  its asset URLs with `?v=<commit>`, and the service sends a year-long
+  `max-age` for a versioned URL while HTML and unversioned URLs go out as
+  `no-cache, no-store`. Cloudflare's default 4-hour browser TTL — which
+  rewrote the old `no-cache` to `max-age=14400` — respects the higher
+  `max-age` and leaves `no-store` alone (#50).
 
 ## [0.1.0] - 2026-11-23
 

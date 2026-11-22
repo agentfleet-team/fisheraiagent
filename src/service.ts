@@ -238,7 +238,8 @@ export function createService(options: ServiceOptions): Server {
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const method = req.method ?? 'GET';
     // Path only: query strings are never logged or inspected.
-    const path = new URL(req.url ?? '/', 'http://service.local').pathname;
+    const reqUrl = new URL(req.url ?? '/', 'http://service.local');
+    const path = reqUrl.pathname;
     log('http_request', { route: routeTemplate(method, path) });
 
     if (method === 'GET' && path === '/healthz') {
@@ -254,7 +255,16 @@ export function createService(options: ServiceOptions): Server {
     }
 
     if (!path.startsWith('/v1/')) {
-      if (await serveWebAsset(method, path, res)) return;
+      // The page's asset URLs carry the build commit as ?v=<commit> so a
+      // deploy changes what a browser fetches; web-static decides the
+      // cache header from the URL's stamp and the file's type.
+      if (
+        await serveWebAsset(method, path, res, {
+          assetVersion: options.commit ?? DEFAULT_COMMIT,
+          versioned: reqUrl.searchParams.has('v'),
+        })
+      )
+        return;
       sendError(res, 404, 'not_found');
       return;
     }

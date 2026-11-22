@@ -557,3 +557,24 @@ test('C13: the footer shows the build identity', async () => {
     await new Promise<void>((resolve) => versioned.close(() => resolve()));
   }
 });
+
+// Issue #50: the page fetches its assets at build-versioned URLs
+// (?v=<commit>) so a deploy is never read through a stale cache entry.
+test('C14: the page loads its assets at build-versioned URLs', async () => {
+  const { page, requests } = await newPage();
+  try {
+    await page.goto(`${base}/`);
+    const assets = requests
+      .map((r) => new URL(r.url()))
+      .filter((u) => u.origin === base && /\.(js|css)$/.test(u.pathname));
+    assert.deepEqual(
+      assets.map((u) => u.pathname).sort(),
+      ['/app.js', '/styles.css'],
+    );
+    for (const u of assets) {
+      assert.equal(u.searchParams.get('v'), 'unknown');
+    }
+  } finally {
+    await page.context().close();
+  }
+});
