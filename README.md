@@ -189,6 +189,63 @@ Notes:
 - **Guild keys are encrypted at rest** and decrypted only in memory for the duration of one job; they are never logged. The bot sends only the video URL to the service — message text never leaves Discord.
 - The API returns no video title, so the reply links the video id to its watch page and reports the covered length.
 
+## Use from any agent (MCP)
+
+Any MCP-capable runtime — Claude Code, Codex, Kiro, Devin, OpenAB bots, and others — can get a transcript with one tool call. The repo ships a stdio MCP server exposing a single tool, `get_transcript(url, max_block_seconds?)`, that returns the same transcript JSON the CLI prints, or a fixed error code (`{"error": {"code": "...", "message": "..."}}`). Gemini stays the transcription engine behind it; your own Gemini API key is sent per call and is never logged, stored or returned. `max_block_seconds` applies only when the server runs in-process (no `FISHERAIAGENT_URL`).
+
+Build once, then point your agent runtime at the server (`npx fisheraiagent-mcp` when the package is installed; otherwise `node dist/mcp.js`):
+
+```bash
+npm ci && npm run build    # the server is dist/mcp.js
+node dist/mcp.js           # speaks MCP over stdio
+```
+
+Server environment variables:
+
+| Variable | Required | What it does |
+|---|---|---|
+| `GEMINI_API_KEY` | per call | The caller's Gemini key; a call without it returns `missing_key`. |
+| `FISHERAIAGENT_URL` | no | When set, remote mode: the tool submits and polls jobs on that fisheraiagent HTTP service (sending the key as `X-Gemini-Key`) instead of transcribing in-process. |
+| `FISHERAIAGENT_TOKEN` | no | Bearer token for a service started with `SERVICE_TOKEN`. |
+| `GEMINI_MODEL` | no | In-process mode only: Gemini model (default `gemini-3.8-flash`). |
+| `MAX_BLOCK_SECONDS` | no | In-process mode only: default max block length; a call's `max_block_seconds` overrides it. |
+| `CACHE_DIR` | no | In-process mode only: transcript cache directory. |
+
+Claude Code:
+
+```bash
+claude mcp add fisheraiagent --env GEMINI_API_KEY=<your Gemini API key> -- node /absolute/path/to/dist/mcp.js
+```
+
+Codex (`~/.codex/config.toml`):
+
+```toml
+[mcp_servers.fisheraiagent]
+command = "node"
+args = ["/absolute/path/to/dist/mcp.js"]
+env = { GEMINI_API_KEY = "<your Gemini API key>" }
+```
+
+Any MCP client that takes a JSON server block:
+
+```json
+{
+  "mcpServers": {
+    "fisheraiagent": {
+      "command": "node",
+      "args": ["/absolute/path/to/dist/mcp.js"],
+      "env": { "GEMINI_API_KEY": "<your Gemini API key>" }
+    }
+  }
+}
+```
+
+To run the tool against a self-hosted service instead of in-process, add `FISHERAIAGENT_URL` (and `FISHERAIAGENT_TOKEN` when the service sets `SERVICE_TOKEN`) to the `env` block. Under docker compose, the `mcp` service is pre-wired to the `api` service in remote mode — point the client at:
+
+```bash
+docker compose run --rm -T mcp
+```
+
 ## Self-host quick start (CLI)
 
 One YouTube URL in, the full timed transcript out as JSON — for videos with or without captions. You bring your own Gemini API key; the video URL goes to Gemini as video input. Nothing is downloaded or stored but the transcript cache you choose.
