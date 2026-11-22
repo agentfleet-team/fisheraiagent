@@ -47,3 +47,30 @@ test('different settings produce a different cache entry', async () => {
   await transcribeYouTube('hWe-j78vNpc', { caller, model: 'm1', maxBlockSeconds: 10, cacheDir });
   assert.equal(readdirSync(cacheDir).length, 3);
 });
+
+test('a different transcript format version is a cache miss; the same version is a hit', async () => {
+  const cacheDir = mkdtempSync(join(tmpdir(), 'fa-cache-'));
+  const calls: GeminiVideoRequest[] = [];
+  const caller: GeminiCaller = async (req) => {
+    calls.push(req);
+    return { text: fixture('model-good.txt'), status: 'completed' };
+  };
+  const base = { caller, model: 'test-model', maxBlockSeconds: 8, cacheDir };
+
+  await transcribeYouTube('hWe-j78vNpc', { ...base, formatVersion: 1 });
+  assert.equal(calls.length, 1);
+
+  // Same video, model and block length but a newer format version: the
+  // old entry is a miss and the model is called again.
+  await transcribeYouTube('hWe-j78vNpc', { ...base, formatVersion: 2 });
+  assert.equal(calls.length, 2);
+  assert.equal(readdirSync(cacheDir).length, 2);
+
+  // The same version hits its own entry: no further call.
+  await transcribeYouTube('hWe-j78vNpc', { ...base, formatVersion: 2 });
+  assert.equal(calls.length, 2, 'cache hit must not call Gemini');
+
+  // Old entries are never deleted: version 1 still hits its own file.
+  await transcribeYouTube('hWe-j78vNpc', { ...base, formatVersion: 1 });
+  assert.equal(calls.length, 2, 'old-format entry must still hit its own cache file');
+});

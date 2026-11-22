@@ -4,7 +4,7 @@ import { loggerFor, type LogSink } from './log.js';
 import type { GeminiCaller } from './gemini.js';
 import { ModelOutputError, parseModelOutput, type ParsedModelOutput } from './model-output.js';
 import { initialPrompt, rangePrompt, STRICT_RETRY_SUFFIX } from './prompts.js';
-import { readCachedTranscript, writeCachedTranscript } from './cache.js';
+import { readCachedTranscript, TRANSCRIPT_FORMAT_VERSION, writeCachedTranscript } from './cache.js';
 import { canonicalVideoUrl } from './youtube-url.js';
 import type { Transcript, TranscriptBlock } from './transcript.js';
 
@@ -14,6 +14,10 @@ export interface TranscribeDeps {
   maxBlockSeconds: number;
   cacheDir: string;
   log?: LogSink;
+  // Cache key component: defaults to TRANSCRIPT_FORMAT_VERSION, bumped on
+  // every prompt, format or parser change. Tests set it directly to prove
+  // a version bump makes old entries misses.
+  formatVersion?: number;
   // A per-tenant length cap. A video known (or discovered on the first
   // model response) to be longer fails with video_too_long instead of
   // spending further Gemini calls.
@@ -202,7 +206,8 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
 }
 
 export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
-  const cached = await readCachedTranscript(deps.cacheDir, videoId, deps.model, deps.maxBlockSeconds);
+  const formatVersion = deps.formatVersion ?? TRANSCRIPT_FORMAT_VERSION;
+  const cached = await readCachedTranscript(deps.cacheDir, videoId, deps.model, deps.maxBlockSeconds, formatVersion);
   if (cached) {
     const coverage = cached.blocks.length > 0 ? Math.max(...cached.blocks.map((b) => b.end)) : 0;
     if (deps.maxVideoSeconds !== undefined && coverage > deps.maxVideoSeconds) {
@@ -212,6 +217,6 @@ export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): 
     return cached;
   }
   const transcript = await transcribeVideo(videoId, deps);
-  await writeCachedTranscript(deps.cacheDir, transcript, deps.model, deps.maxBlockSeconds);
+  await writeCachedTranscript(deps.cacheDir, transcript, deps.model, deps.maxBlockSeconds, formatVersion);
   return transcript;
 }
