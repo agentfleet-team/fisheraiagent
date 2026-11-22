@@ -1,0 +1,52 @@
+{
+  "family": "<service-name>",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "<execution-role-arn>",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "<aws-account-id>.dkr.ecr.<aws-region>.amazonaws.com/<ecr-repo>:<image-tag>",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "8080" },
+        { "name": "OIDC_ISSUER", "value": "https://accounts.google.com" },
+        { "name": "OIDC_REDIRECT_URI", "value": "https://<your-domain>/auth/callback" },
+        { "name": "GEMINI_MODEL", "value": "" },
+        { "name": "MAX_BLOCK_SECONDS", "value": "8" },
+        { "name": "CACHE_DIR", "value": "/data/cache" }
+      ],
+      "secrets": [
+        { "name": "SERVICE_TOKEN", "valueFrom": "<secret-arn>:SERVICE_TOKEN::" },
+        { "name": "OIDC_CLIENT_ID", "valueFrom": "<secret-arn>:OIDC_CLIENT_ID::" },
+        { "name": "OIDC_CLIENT_SECRET", "valueFrom": "<secret-arn>:OIDC_CLIENT_SECRET::" },
+        { "name": "SESSION_SECRET", "valueFrom": "<secret-arn>:SESSION_SECRET::" },
+        { "name": "TENANTS_JSON", "valueFrom": "<secret-arn>:TENANTS_JSON::" },
+        { "name": "GOOGLE_CREDENTIALS_JSON", "valueFrom": "<secret-arn>:GOOGLE_CREDENTIALS_JSON::" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/<service-name>",
+          "awslogs-region": "<aws-region>",
+          "awslogs-stream-prefix": "app"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "node -e \"fetch('http://localhost:8080/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))\""],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 10
+      }
+    }
+  ]
+}

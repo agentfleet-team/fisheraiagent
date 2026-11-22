@@ -41,6 +41,14 @@
       errInvalidRequest:
         'The request was not valid. Please reload the page and try again.',
       errNetwork: 'Cannot reach the service. Check your connection.',
+      signIn: 'Sign in',
+      signOut: 'Sign out',
+      savedTo: 'Saved to Drive: ',
+      errSaveFailed: 'The transcript could not be saved to the configured destination.',
+      errSaveUnauthorized: 'This caller is not allowed to save to that destination.',
+      errNoTenant: 'Your sign-in is not linked to a tenant, so nothing was saved.',
+      errRateLimited: 'Too many jobs in the last hour. Try again later.',
+      errVideoTooLong: 'This video is longer than the limit for your account.',
     },
     zh: {
       title: 'YouTube 逐字稿',
@@ -77,6 +85,14 @@
       errUnauthorized: '此服務需要存取權杖。',
       errInvalidRequest: '請求格式有誤，請重新整理頁面後再試。',
       errNetwork: '無法連線到服務，請檢查網路連線。',
+      signIn: '登入',
+      signOut: '登出',
+      savedTo: '已儲存到雲端硬碟：',
+      errSaveFailed: '逐字稿無法儲存到設定的目的地。',
+      errSaveUnauthorized: '此呼叫者沒有儲存到該目的地的權限。',
+      errNoTenant: '您的登入未連結到任何租戶，因此沒有儲存。',
+      errRateLimited: '這一小時內的工作數已達上限，請稍後再試。',
+      errVideoTooLong: '這部影片超過您帳號的長度上限。',
     },
   };
 
@@ -93,6 +109,11 @@
     not_found: 'errNotFound',
     unauthorized: 'errUnauthorized',
     invalid_request: 'errInvalidRequest',
+    save_failed: 'errSaveFailed',
+    save_unauthorized: 'errSaveUnauthorized',
+    no_tenant: 'errNoTenant',
+    rate_limited: 'errRateLimited',
+    video_too_long: 'errVideoTooLong',
   };
 
   const lang = /^zh/i.test(navigator.language || '') ? 'zh' : 'en';
@@ -119,6 +140,13 @@
   const copyBtn = $('copy-btn');
   const txtBtn = $('download-txt');
   const srtBtn = $('download-srt');
+  const authBox = $('auth-box');
+  const signinLink = $('signin-link');
+  const signedIn = $('signed-in');
+  const userLabel = $('user-label');
+  const savedLine = $('saved-line');
+  const savedLink = $('saved-link');
+  const saveNote = $('save-note');
 
   const LS_KEY = 'geminiApiKey';
   const POLL_MS = 1500;
@@ -128,6 +156,29 @@
     el.textContent = t(el.dataset.i18n);
   }
   urlInput.placeholder = t('urlPlaceholder');
+
+  // Sign-in exists only when the service is configured for it: /auth/me
+  // answers 404 on a self-hosted instance without OIDC and the box stays
+  // hidden, keeping the page anonymous.
+  (async () => {
+    try {
+      const res = await fetch('/auth/me');
+      if (!res.ok) return;
+      const me = await res.json().catch(() => ({}));
+      if (!me?.enabled) return;
+      authBox.hidden = false;
+      if (me.signed_in) {
+        signedIn.hidden = false;
+        signinLink.hidden = true;
+        userLabel.textContent = me.tenant ? `${me.email} · ${me.tenant}` : (me.email ?? '');
+      } else {
+        signinLink.hidden = false;
+        signedIn.hidden = true;
+      }
+    } catch {
+      // The page works without sign-in state.
+    }
+  })();
 
   let transcript = null;
   let busy = false;
@@ -203,6 +254,10 @@
     event.preventDefault();
     if (busy) return;
     resultBox.hidden = true;
+    savedLine.hidden = true;
+    savedLink.textContent = '';
+    savedLink.removeAttribute('href');
+    saveNote.textContent = '';
     transcript = null;
 
     const key = getKey();
@@ -229,6 +284,7 @@
       const job = await pollJob(body.job_id);
       if (job.status === 'done' && job.result) {
         renderResult(job.result);
+        renderSave(job);
         hideStatus();
       } else {
         showStatus(codeMessage(job?.error?.code), { error: true });
@@ -282,6 +338,24 @@
       blocksList.append(li);
     }
     resultBox.hidden = false;
+  }
+
+  // After a signed-in tenant's job, the saved-file link or the fixed
+  // save/skip message rides on the job payload.
+  function renderSave(job) {
+    if (job?.saved?.url) {
+      savedLink.href = job.saved.url;
+      savedLink.textContent = `${t('savedTo')}${job.saved.name || job.saved.url}`;
+      saveNote.textContent = '';
+      savedLine.hidden = false;
+      return;
+    }
+    if (job?.save_error?.code) {
+      savedLink.removeAttribute('href');
+      savedLink.textContent = '';
+      saveNote.textContent = codeMessage(job.save_error.code);
+      savedLine.hidden = false;
+    }
   }
 
   copyBtn.addEventListener('click', async () => {

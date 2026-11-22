@@ -8,6 +8,7 @@ export class ModelOutputError extends Error {
 }
 
 export interface ParsedModelOutput {
+  durationSeconds?: number;
   language: string;
   blocks: TranscriptBlock[];
 }
@@ -30,7 +31,7 @@ const TIME_TOKEN = /\d+\s*[:：]\s*\d+/;
 const BLOCK_SHAPE = /^\[([^\]\-]*)-([^\]]*)\]\s*(.*)$/;
 const TIMESTAMP = /^\d+(?::\d{1,2}){0,2}(?:\.\d+)?$/;
 const HEADER_LINE = /^\s*(LANGUAGE|DURATION)\s*:/im;
-const DURATION_LINE = /^DURATION:\s*\S+\s*$/i;
+const DURATION_LINE = /^DURATION:\s*(\S+)\s*$/i;
 const LANGUAGE_LINE = /^LANGUAGE:\s*(\S+)\s*$/i;
 const EPS = 1e-3;
 
@@ -38,6 +39,7 @@ type Line =
   | { kind: 'skip' }
   | { kind: 'language'; value: string }
   | { kind: 'block'; block: TranscriptBlock }
+  | { kind: 'duration'; value: number }
   | { kind: 'text'; text: string };
 
 /** Seconds for a valid timestamp, or undefined when any component is out of range. */
@@ -59,8 +61,13 @@ function timestampToSeconds(raw: string): number | undefined {
 function classifyLine(line: string, lineNumber: number): Line {
   const text = line.trim();
   if (!text || text.startsWith('```')) return { kind: 'skip' };
-  // A DURATION line is consumed but never trusted as the video end.
-  if (DURATION_LINE.test(text)) return { kind: 'skip' };
+  // A DURATION line is consumed but never trusted as the video end; a
+  // numeric value is still reported so a caller can enforce a length cap.
+  const duration = DURATION_LINE.exec(text);
+  if (duration) {
+    const value = Number.parseFloat(duration[1]);
+    return Number.isFinite(value) ? { kind: 'duration', value } : { kind: 'skip' };
+  }
   const lang = LANGUAGE_LINE.exec(text);
   if (lang) return { kind: 'language', value: lang[1] };
   const shape = BLOCK_SHAPE.exec(text);
@@ -88,6 +95,7 @@ export function parseModelOutput(
   maxBlockSeconds: number,
   options?: ParseOptions,
 ): ParsedModelOutput {
+  let durationSeconds: number | undefined;
   let language = 'unknown';
   const blocks: TranscriptBlock[] = [];
 
@@ -98,6 +106,9 @@ export function parseModelOutput(
         break;
       case 'language':
         language = parsed.value;
+        break;
+      case 'duration':
+        durationSeconds = parsed.value;
         break;
       case 'block':
         blocks.push(parsed.block);
@@ -114,7 +125,7 @@ export function parseModelOutput(
 
   if (blocks.length === 0) {
     if (options?.allowEmpty && HEADER_LINE.test(raw)) {
-      return { language, blocks };
+      return { durationSeconds, language, blocks };
     }
     throw new ModelOutputError('no transcript blocks in model output');
   }
@@ -135,5 +146,5 @@ export function parseModelOutput(
     previousStart = b.start;
   }
 
-  return { language, blocks };
+  return { durationSeconds, language, blocks };
 }

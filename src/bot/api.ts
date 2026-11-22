@@ -62,11 +62,13 @@ const REMOTE_ERROR_CODES = new Set([
   'unauthorized',
   'not_found',
   'internal_error',
+  'rate_limited',
+  'video_too_long',
 ]);
 
 // save_error codes the service contract defines; anything else folds to
 // save_failed before it can reach a log line or a Discord reply.
-const SAVE_ERROR_CODES = new Set(['save_failed', 'save_unauthorized', 'invalid_config']);
+const SAVE_ERROR_CODES = new Set(['save_failed', 'save_unauthorized', 'invalid_config', 'no_tenant']);
 
 function remoteCode(value: unknown, fallback: string): string {
   return typeof value === 'string' && REMOTE_ERROR_CODES.has(value) ? value : fallback;

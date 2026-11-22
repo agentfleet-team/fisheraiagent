@@ -2,7 +2,13 @@ import { DriveError, parseDriveLink, type DriveLink, type DriveStore, type Store
 import { TranscriptError } from './errors.js';
 import { parseDriveFileId, parseVideoId } from './ids.js';
 import { loggerFor, type LogFields, type LogSink } from './log.js';
-import { loadTenantsFile, resolveTenant, type FileExtension, type JobOrigin } from './tenants.js';
+import {
+  loadTenantsFile,
+  resolveTenant,
+  type FileExtension,
+  type JobOrigin,
+  type Tenant,
+} from './tenants.js';
 import type { Transcript } from './transcript.js';
 import {
   createWebdavStore,
@@ -145,7 +151,10 @@ export function createVideoMetadata(
 }
 
 export interface SaverDeps {
-  tenantsFile: string;
+  // The tenants document source: a file path re-read on every job, or an
+  // already-built loader (an inline TENANTS_JSON document, a test fake).
+  tenantsFile?: string;
+  loadTenants?: () => Tenant[];
   drive?: DriveStore;
   webdavFetch?: typeof fetch;
   metadata?: (videoId: string) => Promise<VideoMetadata>;
@@ -163,6 +172,14 @@ export function createTranscriptSaver(
   deps: SaverDeps,
 ): (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined> {
   const metadata = deps.metadata ?? createVideoMetadata();
+  const loadTenants =
+    deps.loadTenants ??
+    (() => {
+      if (deps.tenantsFile === undefined) {
+        throw new TranscriptError('invalid_config', 'no tenants source configured');
+      }
+      return loadTenantsFile(deps.tenantsFile);
+    });
   const log = loggerFor(deps.log);
   // File identity is tenant + video id, held in memory here and persisted on
   // the Drive file's appProperties. Writes for one identity serialize on a
@@ -183,7 +200,7 @@ export function createTranscriptSaver(
     return next;
   };
   return async (origin, transcript) => {
-    const tenants = loadTenantsFile(deps.tenantsFile);
+    const tenants = loadTenants();
     const tenant = resolveTenant(tenants, origin);
     const destination = tenant?.destination;
     if (!tenant || !destination || destination.type === 'none') return undefined;
