@@ -80,9 +80,11 @@ paths:
                 $ref: '#/components/schemas/Error'
         '429':
           description: >
-            The resolved tenant is over its `jobs_per_hour` limit
-            (`rate_limited`). Applies only to authenticated callers whose
-            tenant names the limit.
+            `rate_limited`. The resolved tenant is over its
+            `jobs_per_hour` limit (authenticated callers whose tenant
+            names the limit), or — on an anonymous service (no
+            SERVICE_TOKEN) — the client is over the per-client
+            concurrency or hourly submission cap.
           content:
             application/json:
               schema:

@@ -56,6 +56,15 @@ Service environment variables:
 | `OIDC_REDIRECT_URI` | no | — | This service's callback URL, `https://<host>/auth/callback`. |
 | `OIDC_ISSUER` | no | `https://accounts.google.com` | The OpenID provider's issuer. |
 | `SESSION_SECRET` | no | — | Any long random string; signs the session cookie. |
+| `MAX_CONCURRENT_JOBS_PER_CLIENT` | no | `2` | In-flight jobs one client may hold at once (see "Per-client job limits"). |
+| `MAX_JOBS_PER_HOUR_PER_CLIENT` | no | `20` | Accepted job submissions one client may make in a sliding hour. |
+| `TRUSTED_PROXY_IPS` | no | `127.0.0.1,::1` | Peers allowed to supply the client IP via `CF-Connecting-IP` — the Cloudflare Tunnel connector's address, as a comma-separated list of IPs or IPv4 CIDRs. `none` disables header trust entirely. |
+
+### Per-client job limits (anonymous surface)
+
+When `SERVICE_TOKEN` is unset — the public page — `POST /v1/jobs` limits each client to `MAX_CONCURRENT_JOBS_PER_CLIENT` jobs in flight and `MAX_JOBS_PER_HOUR_PER_CLIENT` accepted submissions in a sliding hour; over either cap the reply is `429` `rate_limited`, which the page shows as a "too many jobs" message. `/healthz` and job polling are never limited.
+
+A client is its source IP: `CF-Connecting-IP` when the request's own peer is listed in `TRUSTED_PROXY_IPS`, its socket address otherwise. Behind a Cloudflare Tunnel the connector (cloudflared) overwrites `CF-Connecting-IP` with the real client IP, so point `TRUSTED_PROXY_IPS` at the connector — the loopback default fits a connector running in the same task or host. A request that did not come through the tunnel can forge the header, so its value is trusted only from those peers; any other caller is counted on the address it connects from. Limits are in-process: a restart resets the counters. When `SERVICE_TOKEN` is set, authenticated callers are trusted infrastructure (the Discord bot, an MCP client) and are not limited.
 
 ### Web sign-in (optional, off by default)
 

@@ -1,4 +1,9 @@
 import { readFileSync } from 'node:fs';
+import {
+  DEFAULT_MAX_CONCURRENT_JOBS_PER_CLIENT,
+  DEFAULT_MAX_JOBS_PER_HOUR_PER_CLIENT,
+  parseTrustedProxyIps,
+} from './client-limit.js';
 import { TranscriptError } from './errors.js';
 
 export interface Config {
@@ -20,6 +25,15 @@ export interface ServiceConfig {
   serviceToken?: string;
   tenantsFile?: string;
   tenantsJson?: string;
+  // Per-client job-creation limits for the anonymous surface (no
+  // SERVICE_TOKEN): in-flight jobs per client and accepted submissions
+  // per client per sliding hour.
+  maxConcurrentJobsPerClient: number;
+  maxJobsPerHourPerClient: number;
+  // Peers that may supply the client IP via CF-Connecting-IP (the
+  // Cloudflare Tunnel's connector); a request from anywhere else is keyed
+  // on its socket address.
+  trustedProxyIps: string[];
   googleCredentials?: string;
   googleCredentialsJson?: string;
   oidc?: {
@@ -135,6 +149,18 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
 
   const serviceToken = (env.SERVICE_TOKEN ?? '').trim() || undefined;
 
+  const maxConcurrentJobsPerClient = parsePositiveInteger(
+    env.MAX_CONCURRENT_JOBS_PER_CLIENT,
+    'MAX_CONCURRENT_JOBS_PER_CLIENT',
+    DEFAULT_MAX_CONCURRENT_JOBS_PER_CLIENT,
+  );
+  const maxJobsPerHourPerClient = parsePositiveInteger(
+    env.MAX_JOBS_PER_HOUR_PER_CLIENT,
+    'MAX_JOBS_PER_HOUR_PER_CLIENT',
+    DEFAULT_MAX_JOBS_PER_HOUR_PER_CLIENT,
+  );
+  const trustedProxyIps = parseTrustedProxyIps(env.TRUSTED_PROXY_IPS ?? '');
+
   const tenantsFile = (env.TENANTS_FILE ?? '').trim() || undefined;
   const tenantsJson = (env.TENANTS_JSON ?? '').trim() || undefined;
   const googleCredentials = (env.GOOGLE_APPLICATION_CREDENTIALS ?? '').trim() || undefined;
@@ -175,8 +201,23 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
     serviceToken,
     tenantsFile,
     tenantsJson,
+    maxConcurrentJobsPerClient,
+    maxJobsPerHourPerClient,
+    trustedProxyIps,
     googleCredentials,
     googleCredentialsJson,
     oidc,
   };
+}
+
+// A count from the environment: unset means the default; a set-but-bad
+// value fails startup like the other service variables.
+function parsePositiveInteger(raw: string | undefined, name: string, fallback: number): number {
+  const text = (raw ?? '').trim();
+  if (text === '') return fallback;
+  const value = Number(text);
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new TranscriptError('invalid_config', `${name} must be a positive integer, got: ${text}`);
+  }
+  return value;
 }

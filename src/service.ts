@@ -2,6 +2,14 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { timingSafeEqual } from 'node:crypto';
 import { createAuth, createOidcClient, type Auth, type OidcClientConfig } from './auth.js';
 import { cachedVideoCoverage, TRANSCRIPT_FORMAT_VERSION } from './cache.js';
+import {
+  clientIp,
+  ClientRateLimiter,
+  DEFAULT_MAX_CONCURRENT_JOBS_PER_CLIENT,
+  DEFAULT_MAX_JOBS_PER_HOUR_PER_CLIENT,
+  DEFAULT_TRUSTED_PROXY_IPS,
+  proxyMatcher,
+} from './client-limit.js';
 import { DEFAULT_WINDOW_SECONDS } from './config.js';
 import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
@@ -38,6 +46,19 @@ export interface ServiceOptions extends JobRunnerDeps {
   tenantsJson?: string;
   drive?: DriveStore;
   webdavFetch?: typeof fetch;
+  // Per-client limits on job creation for the public surface: at most
+  // maxConcurrentJobsPerClient in-flight jobs and maxJobsPerHourPerClient
+  // accepted submissions per client, identified by CF-Connecting-IP when
+  // the socket peer is a trusted proxy (the Cloudflare Tunnel) and by the
+  // socket address otherwise. They apply only when no SERVICE_TOKEN is
+  // configured — a bearer-authenticated caller is trusted infrastructure
+  // (the Discord bot, an MCP client) and is not limited.
+  maxConcurrentJobsPerClient?: number;
+  maxJobsPerHourPerClient?: number;
+  // Peers whose requests may supply the client IP via CF-Connecting-IP:
+  // exact IPv4/IPv6 addresses or IPv4 CIDRs. The default trusts loopback —
+  // the documented deployment runs cloudflared in the same task or host.
+  trustedProxies?: string[];
   videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
   // Built sign-in handler (tests inject one); when absent but `oidc` is
@@ -105,6 +126,36 @@ export function createService(options: ServiceOptions): Server {
       options.windowSeconds ?? DEFAULT_WINDOW_SECONDS,
       TRANSCRIPT_FORMAT_VERSION,
     );
+  // The per-client limiter guards the anonymous surface only: with a
+  // SERVICE_TOKEN configured, every caller that reaches submitJob already
+  // authenticated as trusted infrastructure. A malformed trusted-proxy
+  // entry fails startup rather than silently widening who may speak for
+  // the client IP.
+  const proxyTrust = proxyMatcher(options.trustedProxies ?? DEFAULT_TRUSTED_PROXY_IPS);
+  const maxConcurrentJobs = options.maxConcurrentJobsPerClient ?? DEFAULT_MAX_CONCURRENT_JOBS_PER_CLIENT;
+  const maxJobsPerHour = options.maxJobsPerHourPerClient ?? DEFAULT_MAX_JOBS_PER_HOUR_PER_CLIENT;
+  if (!Number.isInteger(maxConcurrentJobs) || maxConcurrentJobs <= 0) {
+    throw new TranscriptError('invalid_config', 'maxConcurrentJobsPerClient must be a positive integer');
+  }
+  if (!Number.isInteger(maxJobsPerHour) || maxJobsPerHour <= 0) {
+    throw new TranscriptError('invalid_config', 'maxJobsPerHourPerClient must be a positive integer');
+  }
+  const clientLimiter =
+    options.serviceToken === undefined
+      ? new ClientRateLimiter({ maxConcurrentJobs, maxJobsPerHour })
+      : undefined;
+  // job_id -> the client its in-flight slot is booked to; released when
+  // the store reports the job finished.
+  const pendingClients = new Map<string, string>();
+  const callerOnFinished = options.onJobFinished;
+  deps.onJobFinished = (jobId: string) => {
+    const client = pendingClients.get(jobId);
+    if (client !== undefined) {
+      pendingClients.delete(jobId);
+      clientLimiter?.release(client);
+    }
+    callerOnFinished?.(jobId);
+  };
   const jobs = new JobStore(deps);
   const log = loggerFor(options.log);
   const limiter = new TenantRateLimiter();
@@ -291,6 +342,21 @@ export function createService(options: ServiceOptions): Server {
   }
 
   async function submitJob(req: IncomingMessage, res: ServerResponse): Promise<void> {
+    // The per-client check runs before the body is even read: a flood is
+    // answered 429 without spending parse, key or tenant-file work. The
+    // client is the CF-Connecting-IP value only when the socket peer is a
+    // trusted proxy (the tunnel); any other peer is keyed on its address.
+    const admission =
+      clientLimiter === undefined
+        ? undefined
+        : {
+            key: clientIp(req.socket.remoteAddress, req.headers['cf-connecting-ip'], proxyTrust),
+            limiter: clientLimiter,
+          };
+    if (admission !== undefined && admission.limiter.overLimit(admission.key)) {
+      sendError(res, 429, 'rate_limited');
+      return;
+    }
     let body: unknown;
     try {
       body = await readJsonBody(req);
@@ -363,7 +429,14 @@ export function createService(options: ServiceOptions): Server {
       sendError(res, 429, 'rate_limited');
       return;
     }
-    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits) });
+    const jobId = jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits);
+    // The job is accepted: book the client's in-flight slot and the hourly
+    // hit, released via deps.onJobFinished when the store settles the job.
+    if (admission !== undefined) {
+      admission.limiter.recordAccepted(admission.key);
+      pendingClients.set(jobId, admission.key);
+    }
+    send(res, 202, { job_id: jobId });
   }
 
   return createServer((req, res) => {

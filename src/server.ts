@@ -18,6 +18,9 @@ try {
     serviceToken: config.serviceToken,
     tenantsFile: config.tenantsFile,
     tenantsJson: config.tenantsJson,
+    maxConcurrentJobsPerClient: config.maxConcurrentJobsPerClient,
+    maxJobsPerHourPerClient: config.maxJobsPerHourPerClient,
+    trustedProxies: config.trustedProxyIps,
     drive:
       config.googleCredentials !== undefined || config.googleCredentialsJson !== undefined
         ? createDriveStore({

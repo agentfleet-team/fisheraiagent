@@ -31,6 +31,12 @@ services:
       OIDC_ISSUER: ${OIDC_ISSUER:-}
       OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI:-}
       SESSION_SECRET: ${SESSION_SECRET:-}
+      # Per-client job limits for the anonymous surface (no SERVICE_TOKEN);
+      # see README "Per-client job limits". Pass through only when set —
+      # the defaults live in src/config.ts.
+      MAX_CONCURRENT_JOBS_PER_CLIENT: ${MAX_CONCURRENT_JOBS_PER_CLIENT:-}
+      MAX_JOBS_PER_HOUR_PER_CLIENT: ${MAX_JOBS_PER_HOUR_PER_CLIENT:-}
+      TRUSTED_PROXY_IPS: ${TRUSTED_PROXY_IPS:-}
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache
 
