@@ -106,6 +106,7 @@ const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
 };
 
 export const consoleSink: LogSink = (line) => console.log(line);
+export const stderrSink: LogSink = (line) => console.error(line);
 
 export function createLogger(sink: LogSink): Logger {
   return (event, fields = {}) => {
