@@ -80,7 +80,8 @@ export type ExtraCallReason =
   | 'empty_full_window'
   | 'subclip'
   | 'tail_reask'
-  | 'media_retry';
+  | 'media_retry'
+  | 'continuation';
 
 export interface LogFields {
   guild?: GuildId;
@@ -133,7 +134,7 @@ const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   ...ID_FORMATS,
   dest: /^(google-drive|webdav)$/,
   reason:
-    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry)$/,
+    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation)$/,
 };
 
 export const consoleSink: LogSink = (line) => console.log(line);

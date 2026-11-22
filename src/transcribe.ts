@@ -561,9 +561,16 @@ async function transcribeWindow(
     }
     // Rerun only the missing range, clipped at the window end: a hole is
     // re-covered from where coverage broke off, everything else continues
-    // from the last block's end.
+    // from the last block's end. Reaching the loop's bottom means one
+    // more request is spent inside this window, logged so every call
+    // past a clip's first is charged to a reason.
     clipStart = hole ?? last.end;
     if (clipStart >= windowEnd - EPS) break;
+    loggerFor(deps.log)('gemini_extra_call', {
+      video: parseVideoId(videoId),
+      reason: 'continuation',
+      windowStart,
+    });
   }
 
   return { blocks, language, empty: false, lastRoundCompleted, promptTokens, videoEnded };
