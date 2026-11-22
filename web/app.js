@@ -10,9 +10,12 @@
       close: 'Close',
       keyLabel: 'Gemini API key',
       keyHint:
-        'Your key is kept only in this browser (localStorage) and is sent to the service only when you submit a URL.',
+        'Your key is kept only in this browser (localStorage). Saving checks it once against Gemini directly; the service sees it only when you submit a URL.',
       keySaved: 'Key stored in this browser.',
       keyAbsent: 'No key stored.',
+      keyChecking: 'Checking the key with Gemini…',
+      keyValid: 'Key verified — it can use the model this service runs.',
+      keyCheckFailed: 'The key is stored, but the check could not reach Gemini. Check your connection.',
       save: 'Save',
       remove: 'Remove',
       urlPlaceholder: 'https://youtu.be/…',
@@ -58,9 +61,12 @@
       close: '關閉',
       keyLabel: 'Gemini API 金鑰',
       keyHint:
-        '金鑰只會保存在這個瀏覽器中（localStorage），只有在您送出網址時才會傳給服務。',
+        '金鑰只會保存在這個瀏覽器中（localStorage）。儲存時會直接向 Gemini 驗證一次；只有在您送出網址時才會傳給服務。',
       keySaved: '金鑰已儲存在此瀏覽器。',
       keyAbsent: '尚未儲存金鑰。',
+      keyChecking: '正在向 Gemini 驗證金鑰……',
+      keyValid: '金鑰驗證成功——可使用本服務的模型。',
+      keyCheckFailed: '金鑰已儲存，但無法連線到 Gemini 驗證，請檢查網路連線。',
       save: '儲存',
       remove: '移除',
       urlPlaceholder: 'https://youtu.be/…',
@@ -228,9 +234,62 @@
     if (value) {
       localStorage.setItem(LS_KEY, value);
       keyInput.value = '';
+      void verifyKey(value);
+      return;
     }
     refreshKeyState();
   });
+
+  // The model this service transcribes with, fetched once from its own
+  // config endpoint — the key check probes that exact model. A failed
+  // fetch is not cached so the next Save retries.
+  let modelPromise = null;
+  function configuredModel() {
+    modelPromise ??= fetch('/v1/config')
+      .then(async (res) => {
+        if (!res.ok) throw new Error('config unavailable');
+        const body = await res.json();
+        if (typeof body?.model !== 'string' || body.model === '') {
+          throw new Error('config has no model');
+        }
+        return body.model;
+      })
+      .catch((err) => {
+        modelPromise = null;
+        throw err;
+      });
+    return modelPromise;
+  }
+
+  // Save-time key check (the browser-side design): one models.get call
+  // straight to Gemini with the key in the x-goog-api-key header, so the
+  // key never reaches this service for the check. The result lands in the
+  // key-state line: valid, invalid, out of quota, or check failed.
+  let checkSeq = 0;
+  async function verifyKey(key) {
+    const seq = ++checkSeq;
+    const show = (state, textKey) => {
+      // A newer Save (or Remove, which drops the stored key) wins.
+      if (seq !== checkSeq || getKey() !== key) return;
+      keyState.dataset.state = state;
+      keyState.textContent = t(textKey);
+    };
+    show('checking', 'keyChecking');
+    try {
+      const model = await configuredModel();
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}`,
+        { headers: { 'x-goog-api-key': key }, signal: AbortSignal.timeout(10_000) },
+      );
+      if (res.status === 200) show('valid', 'keyValid');
+      else if (res.status === 429) show('quota', 'errQuota');
+      else if (res.status === 400 || res.status === 401 || res.status === 403) {
+        show('invalid', 'errKeyRejected');
+      } else show('unavailable', 'keyCheckFailed');
+    } catch {
+      show('unavailable', 'keyCheckFailed');
+    }
+  }
 
   removeKeyBtn.addEventListener('click', () => {
     localStorage.removeItem(LS_KEY);

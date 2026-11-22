@@ -25,6 +25,31 @@ paths:
                   status:
                     type: string
                     example: ok
+  /v1/config:
+    get:
+      summary: Service configuration for the web page
+      operationId: getConfig
+      responses:
+        '200':
+          description: >
+            Non-secret configuration. `model` names the Gemini model the
+            service transcribes with; the web page reads it so its save-time
+            key check can probe that model on Gemini directly.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [model]
+                properties:
+                  model:
+                    type: string
+                    example: gemini-3.8-flash
+        '401':
+          description: Missing or wrong bearer token (only when SERVICE_TOKEN is set).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /v1/jobs:
     post:
       summary: Submit a transcription job

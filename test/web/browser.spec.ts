@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
-import { chromium, type Browser, type Page, type Request } from 'playwright-core';
+import { chromium, type Browser, type BrowserContext, type Page, type Request } from 'playwright-core';
 import { createService } from '../../src/service.js';
 import { TranscriptError } from '../../src/errors.js';
 import type { GeminiCaller, GeminiVideoRequest } from '../../src/gemini.js';
@@ -26,6 +26,10 @@ const VIDEO_OK = 'hWe-j78vNpc';
 const VIDEO_FAIL = 'dQw4w9WgXcQ';
 const KEY_OK = 'WEB-TEST-KEY-OK-zz11';
 const KEY_FAIL = 'WEB-TEST-KEY-FAIL-zz22';
+const KEY_QUOTA = 'WEB-TEST-KEY-QUOTA-zz33';
+const KEY_FORBIDDEN = 'WEB-TEST-KEY-FORBIDDEN-zz44';
+const KEY_OFFLINE = 'WEB-TEST-KEY-OFFLINE-zz55';
+const GEMINI_HOST = 'https://generativelanguage.googleapis.com';
 const LS_KEY = 'geminiApiKey';
 const SHOTS = fileURLToPath(new URL('./screenshots/', import.meta.url));
 
@@ -43,8 +47,26 @@ const doubleFactory =
     if (apiKey === KEY_FAIL) {
       throw new TranscriptError('video_unavailable', 'video is private or removed');
     }
-    return { text: GOOD, status: 'completed' };
+    // A continuation-window call answers "no more speech" — the way the
+    // window loop learns the video ended (the service and hosted doubles
+    // do the same). Answering GOOD again would loop the windows forever.
+    return { text: (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD, status: 'completed' };
   };
+
+// Issue #42: the page's save-time key check calls Gemini's models.get
+// directly. Stand in for it so no test traffic reaches the real API.
+async function stubGemini(context: BrowserContext): Promise<void> {
+  await context.route(`${GEMINI_HOST}/**`, async (route) => {
+    const key = route.request().headers()['x-goog-api-key'] ?? '';
+    if (key === KEY_OFFLINE) return route.abort();
+    const status =
+      key === KEY_OK ? 200 : key === KEY_QUOTA ? 429 : key === KEY_FORBIDDEN ? 403 : 400;
+    return route.fulfill({
+      status,
+      json: status === 200 ? { name: 'models/test-model' } : { error: { code: status } },
+    });
+  });
+}
 
 async function newPage(options: { locale?: string; width?: number; height?: number } = {}): Promise<{
   page: Page;
@@ -54,6 +76,7 @@ async function newPage(options: { locale?: string; width?: number; height?: numb
     locale: options.locale ?? 'en-US',
     viewport: { width: options.width ?? 1280, height: options.height ?? 900 },
   });
+  await stubGemini(context);
   await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: base });
   const page = await context.newPage();
   const requests: Request[] = [];
@@ -276,6 +299,99 @@ test('C7: zh-TW and en render, and 390 px has no horizontal scroll', async () =>
   }
 });
 
+// Issue #42: saving a key verifies it with one direct call to Gemini
+// (models.get for the service's model); the service only answers
+// /v1/config. The Gemini responses above are test doubles.
+test('C8: a working key verifies against the service model — key never reaches the service', async () => {
+  const { page, requests } = await newPage();
+  try {
+    await page.goto(`${base}/`);
+    await page.click('#settings-btn');
+    await page.fill('#key-input', KEY_OK);
+    await page.click('#save-key');
+    await page.waitForFunction(
+      () => document.getElementById('key-state')?.dataset.state === 'valid',
+      { timeout: 10000 },
+    );
+    assert.match((await page.locator('#key-state').textContent()) ?? '', /verified/i);
+    assert.equal(await page.evaluate((k) => localStorage.getItem(k), LS_KEY), KEY_OK);
+
+    const checks = requests.filter((r) => r.url().startsWith(GEMINI_HOST));
+    assert.equal(checks.length, 1);
+    assert.match(checks[0].url(), /\/v1beta\/models\/test-model$/);
+    assert.equal(checks[0].headers()['x-goog-api-key'], KEY_OK);
+    // The only service call the check makes is /v1/config; no service
+    // request ever carried the key.
+    const toService = requests.filter((r) => r.url().startsWith(base));
+    assert.ok(toService.some((r) => r.url().endsWith('/v1/config')));
+    for (const r of toService) {
+      assert.ok(
+        !r.url().includes(KEY_OK) && !(r.postData() ?? '').includes(KEY_OK),
+        `key leaked to the service in ${r.url()}`,
+      );
+    }
+    assert.ok(!logs.join('\n').includes(KEY_OK), 'key leaked into server logs');
+  } finally {
+    await page.context().close();
+  }
+});
+
+test('C9: a rejected key (400 and 403) shows the invalid state', async () => {
+  const { page } = await newPage();
+  try {
+    await page.goto(`${base}/`);
+    await page.click('#settings-btn');
+    for (const key of [KEY_FAIL, KEY_FORBIDDEN]) {
+      await page.fill('#key-input', key);
+      await page.click('#save-key');
+      await page.waitForFunction(
+        () => document.getElementById('key-state')?.dataset.state === 'invalid',
+        { timeout: 10000 },
+      );
+      assert.match((await page.locator('#key-state').textContent()) ?? '', /rejected/i);
+      assert.equal(await page.evaluate((k) => localStorage.getItem(k), LS_KEY), key);
+    }
+  } finally {
+    await page.context().close();
+  }
+});
+
+test('C10: an out-of-quota key (429) shows the quota state', async () => {
+  const { page } = await newPage();
+  try {
+    await page.goto(`${base}/`);
+    await page.click('#settings-btn');
+    await page.fill('#key-input', KEY_QUOTA);
+    await page.click('#save-key');
+    await page.waitForFunction(
+      () => document.getElementById('key-state')?.dataset.state === 'quota',
+      { timeout: 10000 },
+    );
+    assert.match((await page.locator('#key-state').textContent()) ?? '', /quota/i);
+    assert.equal(await page.evaluate((k) => localStorage.getItem(k), LS_KEY), KEY_QUOTA);
+  } finally {
+    await page.context().close();
+  }
+});
+
+test('C11: a check that cannot reach Gemini is reported and the key still stores', async () => {
+  const { page } = await newPage();
+  try {
+    await page.goto(`${base}/`);
+    await page.click('#settings-btn');
+    await page.fill('#key-input', KEY_OFFLINE);
+    await page.click('#save-key');
+    await page.waitForFunction(
+      () => document.getElementById('key-state')?.dataset.state === 'unavailable',
+      { timeout: 10000 },
+    );
+    assert.match((await page.locator('#key-state').textContent()) ?? '', /could not reach/i);
+    assert.equal(await page.evaluate((k) => localStorage.getItem(k), LS_KEY), KEY_OFFLINE);
+  } finally {
+    await page.context().close();
+  }
+});
+
 // Issue #6: a signed-in tenant user. The service gets its own instance with
 // OIDC configured against the fake provider; the session cookie rides into
 // the browser context like the real callback would leave it.
@@ -320,6 +436,7 @@ test('H1-web: a signed-in tenant user sees the saved-file link on the page', asy
     const pair = cookiePair(setCookie);
     const eq = pair.indexOf('=');
     const context = await browser.newContext();
+    await stubGemini(context);
     await context.addCookies([
       {
         name: pair.slice(0, eq),

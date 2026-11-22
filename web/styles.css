@@ -185,6 +185,19 @@ button:hover {
   color: #5f6368;
 }
 
+#key-state[data-state='valid'] {
+  color: #137333;
+}
+
+#key-state[data-state='invalid'],
+#key-state[data-state='quota'] {
+  color: #b3261e;
+}
+
+#key-state[data-state='unavailable'] {
+  color: #b06000;
+}
+
 .drawer-actions {
   display: flex;
   gap: 8px;
