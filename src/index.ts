@@ -4,5 +4,7 @@ export { parseModelOutput, ModelOutputError, type ParsedModelOutput } from './mo
 export { createGeminiCaller, type GeminiCaller, type GeminiVideoRequest, type GeminiVideoResponse } from './gemini.js';
 export { transcribeVideo, transcribeYouTube, type TranscribeDeps } from './transcribe.js';
 export { readCachedTranscript, writeCachedTranscript } from './cache.js';
-export { loadConfig, type Config } from './config.js';
+export { loadConfig, loadServiceConfig, type Config, type ServiceConfig } from './config.js';
 export type { Transcript, TranscriptBlock } from './transcript.js';
+export { JobStore, type JobError, type JobRunnerDeps, type JobStatus, type JobView } from './jobs.js';
+export { createService, type ServiceOptions } from './service.js';

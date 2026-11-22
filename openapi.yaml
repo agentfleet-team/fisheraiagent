@@ -1,0 +1,186 @@
+openapi: 3.0.3
+info:
+  title: fisheraiagent transcript service
+  version: 0.1.0
+  description: >
+    One YouTube URL in, the full timed transcript out. Callers bring their own
+    Gemini API key per request (X-Gemini-Key); the key is held in memory only
+    for the duration of that job and is never logged, stored or returned.
+    Jobs are kept in an in-process store: a service restart loses them.
+paths:
+  /healthz:
+    get:
+      summary: Liveness probe
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: Service is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /v1/jobs:
+    post:
+      summary: Submit a transcription job
+      operationId: createJob
+      parameters:
+        - name: X-Gemini-Key
+          in: header
+          required: true
+          description: The caller's own Gemini API key. Used only for this job.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  description: A YouTube watch/share URL or an 11-character video id.
+                  example: https://youtu.be/hWe-j78vNpc
+      responses:
+        '202':
+          description: Job accepted and running in the background.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [job_id]
+                properties:
+                  job_id:
+                    type: string
+                    format: uuid
+        '400':
+          description: >
+            Bad request. `missing_key` when X-Gemini-Key is absent or empty,
+            `invalid_url` when the URL is not a YouTube URL or video id,
+            `invalid_request` for malformed JSON or a missing `url` field.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or wrong bearer token (only when SERVICE_TOKEN is set).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/jobs/{job_id}:
+    get:
+      summary: Poll a transcription job
+      operationId: getJob
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: >
+            Current job state. `result` is present when status is `done`;
+            `error` is present when status is `failed`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '401':
+          description: Missing or wrong bearer token (only when SERVICE_TOKEN is set).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Unknown job_id (including after a restart).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Required on every /v1 request only when SERVICE_TOKEN is set.
+  schemas:
+    Job:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, done, failed]
+        result:
+          $ref: '#/components/schemas/Transcript'
+        error:
+          $ref: '#/components/schemas/JobError'
+    JobError:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum:
+            - invalid_url
+            - video_unavailable
+            - missing_key
+            - key_rejected
+            - quota_exceeded
+            - upstream_timeout
+            - bad_model_output
+            - invalid_config
+            - internal_error
+        message:
+          type: string
+    Transcript:
+      type: object
+      required: [video_id, source_url, language, blocks]
+      properties:
+        video_id:
+          type: string
+        source_url:
+          type: string
+        language:
+          type: string
+        blocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TranscriptBlock'
+    TranscriptBlock:
+      type: object
+      required: [start, end, text]
+      properties:
+        start:
+          type: number
+        end:
+          type: number
+        text:
+          type: string
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+security:
+  - bearerAuth: []

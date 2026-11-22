@@ -2,13 +2,53 @@
 
 Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host them for free, or use them through AgentFleet.
 
-> Status: the YouTube transcript CLI works. Web, Discord and hosted surfaces follow.
+> Status: the YouTube transcript CLI and HTTP job API work. Web, Discord and hosted surfaces follow.
 
 ## Tools
 
 | Tool | What it does | Status |
 |---|---|---|
-| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | CLI ready |
+| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API ready |
+
+## Self-host quick start (HTTP service)
+
+One service, many callers: every client sends its own Gemini API key per request (`X-Gemini-Key` header), and jobs run in the background.
+
+```bash
+docker compose up -d          # serves on http://localhost:8080
+npm run smoke                 # prints 200 for /healthz and 400 missing_key for a keyless POST
+```
+
+Submit a job, then poll it:
+
+```bash
+curl -X POST http://localhost:8080/v1/jobs \
+  -H 'content-type: application/json' \
+  -H 'X-Gemini-Key: <your Gemini API key>' \
+  -d '{"url": "https://youtu.be/hWe-j78vNpc"}'
+# -> 202 {"job_id": "..."}
+
+curl http://localhost:8080/v1/jobs/<job_id>
+# -> {"job_id": "...", "status": "queued|running|done|failed",
+#     "result"?: {<the same transcript JSON the CLI prints>},
+#     "error"?: {"code": "...", "message": "..."}}
+```
+
+Service environment variables:
+
+| Variable | Required | Default | What it does |
+|---|---|---|---|
+| `PORT` | no | `8080` | Port the service listens on (also the host port under `docker compose`). |
+| `SERVICE_TOKEN` | no | — | When set, every `/v1` request needs `Authorization: Bearer <token>` (401 otherwise). `/healthz` stays open. |
+| `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
+| `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
+| `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
+
+Notes:
+
+- **Callers bring their own key.** `GEMINI_API_KEY` is not used by the service; each request's `X-Gemini-Key` lives in memory only for that job and is never logged, stored or returned.
+- **Jobs are in-process.** The job store is memory only — a service restart loses every job (`GET /v1/jobs/{id}` then returns 404). The transcript cache on disk survives.
+- The API is described in [openapi.yaml](openapi.yaml).
 
 ## Self-host quick start (CLI)
 
@@ -16,7 +56,7 @@ One YouTube URL in, the full timed transcript out as JSON — for videos with or
 
 ```bash
 export GEMINI_API_KEY=<your Gemini API key>
-docker compose run --rm transcribe https://youtu.be/hWe-j78vNpc
+docker compose run --rm transcribe dist/cli.js https://youtu.be/hWe-j78vNpc
 ```
 
 The transcript prints to stdout as JSON:
