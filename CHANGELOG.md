@@ -7,8 +7,11 @@ git tags on `main`.
 
 ## [Unreleased]
 
-Becomes `v0.1.0` — the build accepted live (`011b768`) plus the follow-ups
-merged since.
+## [0.1.0] - 2026-11-23
+
+First release: the build the owner accepted live on 2026-11-23 (`011b768`)
+plus the follow-ups merged since. Deployed at https://transcripts.agentfleet.team
+as a public page (bring your own Gemini key).
 
 ### Added
 
@@ -45,3 +48,6 @@ merged since.
 - The Docker image accepts `--build-arg APP_VERSION=<tag>` and
   `--build-arg APP_COMMIT=<sha>`; release images should set both so the
   deployed build reports its identity (#46).
+
+[Unreleased]: https://github.com/agentfleet-team/fisheraiagent/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/agentfleet-team/fisheraiagent/releases/tag/v0.1.0
