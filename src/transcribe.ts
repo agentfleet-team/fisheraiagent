@@ -1,7 +1,7 @@
 import { TranscriptError } from './errors.js';
 import { parseVideoId } from './ids.js';
 import { loggerFor, type LogSink } from './log.js';
-import type { GeminiCaller, GeminiVideoResponse } from './gemini.js';
+import { isMediaDataError, type GeminiCaller, type GeminiVideoResponse } from './gemini.js';
 import { ModelOutputError, parseModelOutput, type ParsedModelOutput } from './model-output.js';
 import { clipPrompt, STRICT_RETRY_SUFFIX } from './prompts.js';
 import { readCachedTranscript, TRANSCRIPT_FORMAT_VERSION, writeCachedTranscript } from './cache.js';
@@ -126,6 +126,40 @@ function isPastEndOffsetError(err: unknown): boolean {
   );
 }
 
+// A media-data failure an unmapped caller threw raw, reported with the same
+// code the mapped Gemini caller would have produced.
+function asUpstreamMediaError(err: unknown): TranscriptError {
+  if (err instanceof TranscriptError) return err;
+  const message = err instanceof Error ? err.message : String(err);
+  return new TranscriptError('upstream_media_error', `Gemini could not process the media data: ${message}`, {
+    httpStatus: 400,
+  });
+}
+
+// One clip request with the media-data policy applied. A raw media 400 from
+// an unmapped caller never saw the single retry the Gemini caller performs
+// itself, so it is run here; a repeat media failure is surfaced as
+// upstream_media_error for the window loop to weigh against coverage.
+async function callRoundChecked(
+  videoId: string,
+  videoUrl: string,
+  clipStart: number,
+  clipEnd: number,
+  deps: TranscribeDeps,
+): Promise<RoundResult> {
+  try {
+    return await callRound(videoId, videoUrl, clipStart, clipEnd, deps);
+  } catch (err) {
+    if (!isMediaDataError(err) || err instanceof TranscriptError) throw err;
+    try {
+      return await callRound(videoId, videoUrl, clipStart, clipEnd, deps);
+    } catch (second) {
+      if (isMediaDataError(second)) throw asUpstreamMediaError(second);
+      throw second;
+    }
+  }
+}
+
 // Clip-relative block times shift to video time by the clip's known start,
 // and the window end is a hard clamp: drift inside one window can never
 // reach into the next, so a block reported past the clip end is cut off
@@ -141,16 +175,36 @@ function shiftClipBlocks(blocks: TranscriptBlock[], clipStart: number, windowEnd
   return shifted;
 }
 
-// Insert rerun blocks into uncovered holes. A block that overlaps coverage
-// we already have is repeated or jittered output and is dropped, so merged
-// start and end times stay monotonic.
+// The part of a rerun block that is not covered yet. Accepted coverage is
+// sorted by start, so the scan finds the first gap between it and the
+// incoming range; a block that only restates known coverage has none.
+function uncoveredPart(b: TranscriptBlock, blocks: TranscriptBlock[]): TranscriptBlock | undefined {
+  let start = b.start;
+  for (const e of blocks) {
+    if (e.end <= start + EPS) continue;
+    if (e.start >= b.end - EPS) break;
+    if (e.start > start + EPS) return { start, end: Math.min(e.start, b.end), text: b.text };
+    start = Math.max(start, e.end);
+    if (start >= b.end - EPS) return undefined;
+  }
+  return { start, end: b.end, text: b.text };
+}
+
+// Insert rerun blocks into uncovered holes. A block identical to coverage
+// we already accepted is a repeat and is dropped, and a block that only
+// partially overlaps is trimmed to its uncovered part, so merged start and
+// end times stay monotonic and no block is duplicated.
 function mergeNewBlocks(blocks: TranscriptBlock[], incoming: TranscriptBlock[]): number {
   let added = 0;
   for (const b of incoming) {
-    const overlaps = blocks.some((e) => b.start < e.end - EPS && b.end > e.start + EPS);
-    if (overlaps) continue;
-    const at = blocks.findIndex((e) => e.start > b.start);
-    blocks.splice(at === -1 ? blocks.length : at, 0, b);
+    const duplicate = blocks.some(
+      (e) => Math.abs(e.start - b.start) <= EPS && Math.abs(e.end - b.end) <= EPS && e.text === b.text,
+    );
+    if (duplicate) continue;
+    const uncovered = uncoveredPart(b, blocks);
+    if (uncovered === undefined) continue;
+    const at = blocks.findIndex((e) => e.start > uncovered.start);
+    blocks.splice(at === -1 ? blocks.length : at, 0, uncovered);
     added += 1;
   }
   return added;
@@ -181,7 +235,6 @@ function findFirstHole(blocks: TranscriptBlock[]): number | undefined {
 interface WindowOutcome {
   blocks: TranscriptBlock[];
   language: string;
-  durationSeconds?: number;
   // True when the window's first call reports no speech (or its start
   // offset lands past the video end): the video is finished.
   empty: boolean;
@@ -190,22 +243,50 @@ interface WindowOutcome {
 // One clipped window: a first call over [windowStart, windowEnd), then
 // clipped reruns for the ranges its responses left uncovered. Every call's
 // block times are relative to that call's own clip start, so a rerun can
-// never corrupt coverage already merged.
+// never corrupt coverage already merged. coveredEndAtWindowStart is where
+// the transcript's coverage stood when this window began.
 async function transcribeWindow(
   videoId: string,
   videoUrl: string,
   windowStart: number,
   windowEnd: number,
   deps: TranscribeDeps,
+  coveredEndAtWindowStart?: number,
 ): Promise<WindowOutcome> {
   const blocks: TranscriptBlock[] = [];
   let language = 'unknown';
-  let durationSeconds: number | undefined;
   let clipStart = windowStart;
 
   for (let round = 0; ; round++) {
-    const out = await callRound(videoId, videoUrl, clipStart, windowEnd, deps);
-    if (round === 0) durationSeconds = out.durationSeconds;
+    let out: RoundResult;
+    try {
+      out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps);
+    } catch (err) {
+      if (!isMediaDataError(err)) throw err;
+      // A media-data 400 on a request that starts at or after the video's
+      // covered end is the past-end signal in disguise — but only when
+      // coverage stopped before the boundary this request asked about. A
+      // failure at offset 0, or where coverage reached the boundary, is a
+      // real upstream error.
+      const coveredEnd = blocks.at(-1)?.end ?? coveredEndAtWindowStart;
+      const boundary = round === 0 ? windowStart : windowEnd;
+      if (coveredEnd !== undefined && clipStart >= coveredEnd - EPS && coveredEnd < boundary - EPS) {
+        return { blocks, language, empty: true };
+      }
+      throw err;
+    }
+    if (round === 0) {
+      // A first response that declares an over-limit duration rejects the
+      // video here, before any continuation call is spent.
+      if (
+        windowStart === 0 &&
+        deps.maxVideoSeconds !== undefined &&
+        out.durationSeconds !== undefined &&
+        out.durationSeconds > deps.maxVideoSeconds
+      ) {
+        throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+      }
+    }
     if (out.language !== 'unknown') language = out.language;
     const added = mergeNewBlocks(blocks, shiftClipBlocks(out.blocks, clipStart, windowEnd));
 
@@ -213,7 +294,12 @@ async function transcribeWindow(
       // Round 0: the whole window is speechless (or starts past the video
       // end), so the video is over. A rerun: the range is confirmed
       // silence and the window's coverage stands.
-      return { blocks, language, durationSeconds, empty: round === 0 };
+      return { blocks, language, empty: round === 0 };
+    }
+    // The model reported blocks but none survived the clip window: the
+    // response is unusable output, not evidence of silence.
+    if (blocks.length === 0) {
+      throw new TranscriptError('bad_model_output', 'model output contained no usable blocks for the clip');
     }
     // A rerun that adds nothing new has said all it will say about the
     // range; the window's coverage stands.
@@ -222,7 +308,16 @@ async function transcribeWindow(
     const truncated = out.status === 'incomplete' || out.status === 'requires_continuation';
     const hole = findFirstHole(blocks);
     const last = blocks[blocks.length - 1];
-    const endsSentence = TERMINAL_PUNCTUATION.test(last.text);
+    // A first response that covered more than a block of the window and
+    // stopped within a block of its end may have dropped a trailing block;
+    // that short tail is confirmed by a rerun rather than trusted on a
+    // sentence end. A response that stopped early — or coverage already
+    // cross-checked by reruns — still completes on its sentence end.
+    const tailUnconfirmed =
+      round === 0 &&
+      last.end - windowStart > deps.maxBlockSeconds &&
+      windowEnd - last.end <= deps.maxBlockSeconds;
+    const endsSentence = TERMINAL_PUNCTUATION.test(last.text) && !tailUnconfirmed;
     const reachesEnd = last.end >= windowEnd - EPS;
 
     if (!truncated && hole === undefined && (endsSentence || reachesEnd)) break;
@@ -239,7 +334,7 @@ async function transcribeWindow(
     if (clipStart >= windowEnd - EPS) break;
   }
 
-  return { blocks, language, durationSeconds, empty: false };
+  return { blocks, language, empty: false };
 }
 
 export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
@@ -259,18 +354,14 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
   };
 
   for (let windowStart = 0; ; windowStart += windowSeconds) {
-    const out = await transcribeWindow(videoId, videoUrl, windowStart, windowStart + windowSeconds, deps);
-
-    // The first response declares the video's duration; an over-limit
-    // video is rejected here, before any continuation call.
-    if (
-      windowStart === 0 &&
-      deps.maxVideoSeconds !== undefined &&
-      out.durationSeconds !== undefined &&
-      out.durationSeconds > deps.maxVideoSeconds
-    ) {
-      throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
-    }
+    const out = await transcribeWindow(
+      videoId,
+      videoUrl,
+      windowStart,
+      windowStart + windowSeconds,
+      deps,
+      blocks.at(-1)?.end,
+    );
 
     if (out.language !== 'unknown') language = out.language;
     blocks.push(...out.blocks);

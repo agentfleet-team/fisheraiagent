@@ -55,6 +55,15 @@ function messageOf(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
 
+// A media-data 400, whether already mapped by this caller or still in the
+// raw SDK shape a different caller may throw.
+export function isMediaDataError(err: unknown): boolean {
+  if (err instanceof TranscriptError) {
+    return err.code === 'upstream_media_error' && err.httpStatus === 400;
+  }
+  return httpStatusOf(err) === 400 && MEDIA_DATA.test(messageOf(err)) && MEDIA_DATA_FAULT.test(messageOf(err));
+}
+
 function mapSdkError(err: unknown, model: string): TranscriptError | Error {
   if (err instanceof TranscriptError) return err;
 

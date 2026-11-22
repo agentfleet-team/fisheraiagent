@@ -221,6 +221,100 @@ test('a start offset past the video end ends the video instead of failing', asyn
   assert.equal(t.blocks.at(-1)?.end, 8);
 });
 
+const MEDIA_EMPTY_MESSAGE =
+  'Unable to process input: the file or media data is empty, corrupted, or malformed.';
+
+// The raw SDK shape: an Error carrying a numeric status, before a caller
+// maps it to upstream_media_error.
+function mediaData400(): Error {
+  const err = new Error(`400 INVALID_ARGUMENT. ${MEDIA_EMPTY_MESSAGE}`);
+  (err as Error & { status: number }).status = 400;
+  return err;
+}
+
+test('a media-data 400 on a window starting past the covered end ends the video', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] a.',
+    '[00:08 - 00:16] b.',
+    '[00:16 - 00:24] c.',
+    '[00:24 - 00:32] d.',
+    '[00:32 - 00:40] e.',
+  ].join('\n');
+  const w1 = ['LANGUAGE: en', '[00:00 - 00:08] f.', '[00:09 - 00:17] g.'].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: w0 },
+    { text: w1 },
+    { error: mediaData400() },
+    { error: mediaData400() },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  // Three distinct windows requested, plus the one media retry on the last.
+  assert.deepEqual(
+    calls.map((c) => c.startOffsetSeconds),
+    [0, 40, 80, 80],
+  );
+  assert.equal(t.blocks.at(-1)?.end, 57);
+});
+
+test('a media-data 400 on the first window stays upstream_media_error', async () => {
+  const { calls, caller } = geminiDouble([{ error: mediaData400() }, { error: mediaData400() }]);
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'upstream_media_error',
+  );
+  assert.equal(calls.length, 2);
+});
+
+test('a media-data 400 where coverage reached the window boundary stays upstream_media_error', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] a.',
+    '[00:08 - 00:16] b.',
+    '[00:16 - 00:24] c.',
+    '[00:24 - 00:32] d.',
+    '[00:32 - 00:40] e.',
+  ].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: w0 },
+    { error: mediaData400() },
+    { error: mediaData400() },
+  ]);
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'upstream_media_error',
+  );
+  assert.equal(calls.length, 3);
+});
+
+test('a media-data 400 on a rerun at the covered end ends the video', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] mid sentence' },
+    { error: mediaData400() },
+    { error: mediaData400() },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.deepEqual(
+    calls.map((c) => c.startOffsetSeconds),
+    [0, 8, 8],
+  );
+  assert.equal(t.blocks.at(-1)?.end, 8);
+});
+
+test('a mapped upstream_media_error past the covered end ends the video without another retry', async () => {
+  const mapped = new TranscriptError('upstream_media_error', `Gemini could not process the media data: ${MEDIA_EMPTY_MESSAGE}`, {
+    httpStatus: 400,
+  });
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] done here.' },
+    { error: mapped },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].startOffsetSeconds, 40);
+  assert.equal(t.blocks.at(-1)?.end, 8);
+});
+
 test('a key_rejected 400 on a later window propagates instead of ending the video', async () => {
   const { calls, caller } = geminiDouble([
     { text: 'LANGUAGE: en\n[00:00 - 00:08] first words.' },
