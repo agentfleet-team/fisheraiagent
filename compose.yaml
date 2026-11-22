@@ -1,0 +1,10 @@
+services:
+  transcribe:
+    build: .
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      MAX_BLOCK_SECONDS: ${MAX_BLOCK_SECONDS:-8}
+      CACHE_DIR: /data/cache
+    volumes:
+      - ${CACHE_DIR:-./transcript-cache}:/data/cache

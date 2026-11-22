@@ -1,0 +1,9 @@
+LANGUAGE: en
+[00:40 - 00:48] line six of the transcript
+[00:48 - 00:56] line seven of the transcript
+[00:56 - 01:04] line eight of the transcript
+[01:04 - 01:12] line nine of the transcript
+[01:12 - 01:20] line ten of the transcript
+[01:20 - 01:28] line eleven of the transcript
+[01:28 - 01:36] line twelve of the transcript
+[01:36 - 01:40] line thirteen, the last line.

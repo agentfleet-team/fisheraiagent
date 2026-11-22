@@ -2,15 +2,50 @@
 
 Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host them for free, or use them through AgentFleet.
 
-> Status: design. Nothing here is ready to run yet. Follow the issues for progress.
+> Status: the YouTube transcript CLI works. Web, Discord and hosted surfaces follow.
 
 ## Tools
 
 | Tool | What it does | Status |
 |---|---|---|
-| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | design |
+| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | CLI ready |
 
-## How the YouTube transcript tool will work
+## Self-host quick start (CLI)
+
+One YouTube URL in, the full timed transcript out as JSON — for videos with or without captions. You bring your own Gemini API key; the video URL goes to Gemini as video input. Nothing is downloaded or stored but the transcript cache you choose.
+
+```bash
+export GEMINI_API_KEY=<your Gemini API key>
+docker compose run --rm transcribe https://youtu.be/hWe-j78vNpc
+```
+
+The transcript prints to stdout as JSON:
+
+```json
+{"video_id": "hWe-j78vNpc", "source_url": "https://www.youtube.com/watch?v=hWe-j78vNpc", "language": "en", "blocks": [{"start": 0, "end": 7.48, "text": "..."}]}
+```
+
+Environment variables:
+
+| Variable | Required | Default | What it does |
+|---|---|---|---|
+| `GEMINI_API_KEY` | yes | — | Your Gemini API key. |
+| `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
+| `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
+| `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
+
+Without Docker, on Node 22 or newer:
+
+```bash
+npm ci
+GEMINI_API_KEY=<your Gemini API key> npm start -- https://youtu.be/hWe-j78vNpc
+```
+
+Error codes (stderr, non-zero exit): `invalid_url`, `video_unavailable`, `missing_key`, `key_rejected`, `quota_exceeded`, `upstream_timeout`, `upstream_rejected`, `model_not_found`, `bad_model_output`.
+
+Develop: `npm test` runs the offline unit tests (no key, no network). `.github/workflows/ci.yml` runs them on every push.
+
+## How the YouTube transcript tool works
 
 ```text
  Web page (one box)     Discord bot (paste a URL)     CLI / any AI agent

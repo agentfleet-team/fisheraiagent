@@ -1,0 +1,6 @@
+LANGUAGE: en
+[00:00 - 00:08] line one of the transcript
+[00:08 - 00:16] line two of the transcript
+[00:16 - 00:24] line three of the transcript
+[00:24 - 00:32] line four of the transcript
+[00:32 - 00:40] line five of the transcri

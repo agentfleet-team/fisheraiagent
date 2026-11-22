@@ -1,0 +1,3 @@
+LANGUAGE: en
+[00:00 - 00:08] first block
+[00:08 - 00:30] this block is far too long
