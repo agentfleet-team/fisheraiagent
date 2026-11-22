@@ -47,6 +47,12 @@ const MESSAGES = Object.freeze({
   no_tenant: brand('this sign-in is not allowlisted for any tenant, so nothing was saved'),
   rate_limited: brand('too many jobs in the last hour — try again later'),
   video_too_long: brand('the video is longer than the limit for this destination'),
+  // Client-side failures of a remote transcript service call (the MCP
+  // server in remote mode): the job never produced a service error body, so
+  // these codes exist only for the caller's own fixed messages.
+  api_unreachable: brand('the transcript service is unreachable'),
+  job_lost: brand('the transcript service restarted and lost the job'),
+  job_timeout: brand('timed out waiting for the transcript'),
   // Discord replies: the 'bot.error.<LogCode>' entries answer a failed
   // transcript job, the rest are the fixed setup and progress texts.
   'bot.error.invalid_url': brand("That doesn't look like a usable YouTube link."),
