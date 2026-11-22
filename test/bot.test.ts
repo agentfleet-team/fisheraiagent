@@ -16,6 +16,7 @@ import { Client, Events } from 'discord.js';
 import { deriveEncryptionKey, decryptSecret, type KeyRecord } from '../src/bot/crypto.js';
 import { GuildStore } from '../src/bot/store.js';
 import { transcriptToSrt, formatDuration } from '../src/bot/format.js';
+import { safeText } from '../src/safe-text.js';
 
 const GOOD = readFileSync(new URL('./fixtures/model-good.txt', import.meta.url), 'utf8');
 const GUILD = 'guild-1';
@@ -418,6 +419,74 @@ test('F1b: a failed job maps contract codes and folds unknown ones to the fixed 
   const known = fakeDiscord(CHANNEL);
   await createBot({ api: failingJob('video_unavailable'), store }).handleMessage(msg(), known.sink);
   assert.match(known.replies[0].content, /unavailable/i);
+});
+
+test('F1c: new core codes survive submit, poll and failed-job paths; unknown codes still fold', async () => {
+  const REMOTE_TEXT = 'FAKE-UPSTREAM-TEXT-DO-NOT-EXPOSE';
+  type Stage = 'submit' | 'poll' | 'job';
+  const failing = (stage: Stage, code: string): TranscriptApi => {
+    let submitted = false;
+    return createApiClient({
+      baseUrl: 'http://offline.invalid',
+      fetchImpl: async () => {
+        if (!submitted) {
+          submitted = true;
+          if (stage === 'submit') {
+            return new Response(JSON.stringify({ error: { code, message: REMOTE_TEXT } }), {
+              status: 502,
+            });
+          }
+          return new Response(JSON.stringify({ job_id: 'job-1' }), { status: 202 });
+        }
+        if (stage === 'poll') {
+          return new Response(JSON.stringify({ error: { code, message: REMOTE_TEXT } }), {
+            status: 500,
+          });
+        }
+        return new Response(
+          JSON.stringify({ job_id: 'job-1', status: 'failed', error: { code, message: REMOTE_TEXT } }),
+          { status: 200 },
+        );
+      },
+    });
+  };
+  const { store } = makeStore();
+  store.setKey(GUILD, GUILD_KEY);
+  store.enableChannel(GUILD, CHANNEL);
+  const msg = () => threadMessage({ channelId: CHANNEL, parentChannelId: undefined });
+  const run = async (stage: Stage, code: string) => {
+    const logs: string[] = [];
+    const discord = fakeDiscord(CHANNEL);
+    await createBot({ api: failing(stage, code), store, log: (l) => logs.push(l) }).handleMessage(
+      msg(),
+      discord.sink,
+    );
+    return { logs, replies: discord.replies.map((r) => r.content) };
+  };
+
+  for (const stage of ['submit', 'poll', 'job'] as const) {
+    for (const code of ['upstream_rejected', 'model_not_found'] as const) {
+      const { logs, replies } = await run(stage, code);
+      assert.deepEqual(replies, [safeText(`bot.error.${code}`)], `${stage} must map ${code}`);
+      assert.ok(
+        logs.some((line) => line.endsWith(`code=${code}`)),
+        `${stage} must log code=${code}: ${logs.join(' | ')}`,
+      );
+      for (const line of logs) {
+        assert.ok(!line.includes(REMOTE_TEXT), `${stage} log leaked remote text: ${line}`);
+      }
+    }
+    const folded = await run(stage, `FAKE-CODE-${stage.toUpperCase()}`);
+    assert.deepEqual(
+      folded.replies,
+      [safeText('bot.error.internal_error')],
+      `${stage} must fold an unknown code to the fixed fallback`,
+    );
+    assert.ok(folded.logs.some((line) => line.endsWith('code=internal_error')));
+    for (const line of folded.logs) {
+      assert.ok(!line.includes('FAKE-CODE'), `${stage} log leaked remote text: ${line}`);
+    }
+  }
 });
 
 // --- F2: the adapter never reads content in a disabled channel --------------
