@@ -132,8 +132,8 @@ export function parseModelOutput(
 
   let previousStart = -EPS;
   for (const [index, b] of blocks.entries()) {
-    if (b.end <= b.start) {
-      throw new ModelOutputError(`block ${index + 1}: end (${b.end}) is not after start (${b.start})`);
+    if (b.end < b.start) {
+      throw new ModelOutputError(`block ${index + 1}: end (${b.end}) is before start (${b.start})`);
     }
     if (b.end - b.start > maxBlockSeconds + EPS) {
       throw new ModelOutputError(

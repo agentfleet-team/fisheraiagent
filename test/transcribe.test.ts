@@ -66,6 +66,14 @@ test('a clean complete response finishes in one call', async () => {
   assert.equal(t.blocks.at(-1)?.end, 39);
 });
 
+test('a zero-length block at whole-second precision merges into the transcript', async () => {
+  const { calls, caller } = geminiDouble([{ text: fixture('model-zero-length.txt') }]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 1);
+  assert.equal(t.blocks.length, 8);
+  assert.deepEqual(t.blocks[6], { start: 43, end: 43, text: '好。' });
+});
+
 test('an incomplete interaction status also triggers a range continuation', async () => {
   const part1 = 'LANGUAGE: en\n[00:00 - 00:08] only block.';
   const part2 = 'LANGUAGE: en\n[00:08 - 00:16] second block.\n[00:16 - 00:24] third block.';
