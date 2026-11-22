@@ -1,9 +1,21 @@
 import type { TranscriptBlock } from './transcript.js';
 
+// Why a model response was rejected. This enum is the only detail a log
+// line may carry about a parse failure — never the rejected text itself.
+export type ModelOutputErrorReason =
+  | 'invalid_timestamp'
+  | 'block_too_long'
+  | 'end_before_start'
+  | 'out_of_order'
+  | 'no_blocks';
+
 export class ModelOutputError extends Error {
-  constructor(message: string) {
+  readonly reason: ModelOutputErrorReason;
+
+  constructor(reason: ModelOutputErrorReason, message: string) {
     super(message);
     this.name = 'ModelOutputError';
+    this.reason = reason;
   }
 }
 
@@ -75,12 +87,12 @@ function classifyLine(line: string, lineNumber: number): Line {
     const start = timestampToSeconds(shape[1]);
     const end = timestampToSeconds(shape[2]);
     if (start === undefined || end === undefined) {
-      throw new ModelOutputError(`line ${lineNumber}: invalid timestamp in "${text.slice(0, 60)}"`);
+      throw new ModelOutputError('invalid_timestamp', `line ${lineNumber}: invalid timestamp in "${text.slice(0, 60)}"`);
     }
     return { kind: 'block', block: { start, end, text: shape[3].trim() } };
   }
   if (BLOCK_INTENT.test(text) && TIME_TOKEN.test(text)) {
-    throw new ModelOutputError(`line ${lineNumber}: invalid timestamp in "${text.slice(0, 60)}"`);
+    throw new ModelOutputError('invalid_timestamp', `line ${lineNumber}: invalid timestamp in "${text.slice(0, 60)}"`);
   }
   return { kind: 'text', text };
 }
@@ -127,21 +139,22 @@ export function parseModelOutput(
     if (options?.allowEmpty && HEADER_LINE.test(raw)) {
       return { durationSeconds, language, blocks };
     }
-    throw new ModelOutputError('no transcript blocks in model output');
+    throw new ModelOutputError('no_blocks', 'no transcript blocks in model output');
   }
 
   let previousStart = -EPS;
   for (const [index, b] of blocks.entries()) {
     if (b.end < b.start) {
-      throw new ModelOutputError(`block ${index + 1}: end (${b.end}) is before start (${b.start})`);
+      throw new ModelOutputError('end_before_start', `block ${index + 1}: end (${b.end}) is before start (${b.start})`);
     }
     if (b.end - b.start > maxBlockSeconds + EPS) {
       throw new ModelOutputError(
+        'block_too_long',
         `block ${index + 1}: ${(b.end - b.start).toFixed(3)}s exceeds ${maxBlockSeconds}s limit`,
       );
     }
     if (b.start < previousStart - EPS) {
-      throw new ModelOutputError(`block ${index + 1}: start (${b.start}) is before the previous block start`);
+      throw new ModelOutputError('out_of_order', `block ${index + 1}: start (${b.start}) is before the previous block start`);
     }
     previousStart = b.start;
   }

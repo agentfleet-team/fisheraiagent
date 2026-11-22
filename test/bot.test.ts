@@ -39,10 +39,11 @@ interface ApiDouble {
 
 async function startApiDouble(opts: { failWith?: unknown } = {}): Promise<ApiDouble> {
   const state = { calls: 0, logs: [] as string[] };
-  const caller: GeminiCaller = async () => {
+  const caller: GeminiCaller = async (req) => {
     state.calls += 1;
     if (opts.failWith) throw opts.failWith;
-    return { text: GOOD, status: 'completed' };
+    const text = (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD;
+    return { text, status: 'completed' };
   };
   const options: ServiceOptions = {
     callerFactory: () => caller,
@@ -131,7 +132,7 @@ test('D1: a URL posted in a thread of an enabled channel gets the reply and two 
 
     await core.handleMessage(threadMessage(), discord.sink);
 
-    assert.equal(api.calls, 1);
+    assert.equal(api.calls, 2);
     assert.deepEqual(discord.reactions, [{ targetId: THREAD, emoji: '⏳' }]);
     assert.equal(discord.replies.length, 1);
     const reply = discord.replies[0];
@@ -163,7 +164,7 @@ test('D1b: a URL posted in an enabled channel (no thread) gets the reply in that
       discord.sink,
     );
 
-    assert.equal(api.calls, 1);
+    assert.equal(api.calls, 2);
     assert.equal(discord.replies.length, 1);
     assert.equal(discord.replies[0].targetId, CHANNEL);
   } finally {

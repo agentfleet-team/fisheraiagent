@@ -29,7 +29,8 @@ const doubleFactory =
   async (req) => {
     calls.push({ apiKey, req });
     const videoId = /v=([A-Za-z0-9_-]{11})/.exec(req.videoUrl)?.[1] ?? '';
-    return { text: texts[videoId] ?? GOOD, status: 'completed' };
+    const text = (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : (texts[videoId] ?? GOOD);
+    return { text, status: 'completed' };
   };
 
 interface Running {

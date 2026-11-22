@@ -59,9 +59,18 @@ function fileUriOf(part: Record<string, unknown>): unknown {
   return fileData?.fileUri ?? fileData?.file_uri;
 }
 
+function videoMetadataOf(part: Record<string, unknown>): Record<string, unknown> | undefined {
+  return (part.videoMetadata ?? part.video_metadata) as Record<string, unknown> | undefined;
+}
+
 function startOffsetOf(part: Record<string, unknown>): unknown {
-  const metadata = (part.videoMetadata ?? part.video_metadata) as Record<string, unknown> | undefined;
+  const metadata = videoMetadataOf(part);
   return metadata?.startOffset ?? metadata?.start_offset;
+}
+
+function endOffsetOf(part: Record<string, unknown>): unknown {
+  const metadata = videoMetadataOf(part);
+  return metadata?.endOffset ?? metadata?.end_offset;
 }
 
 test('the caller sends generateContent with the YouTube URL as fileData.fileUri and the prompt as a text part', async () => {
@@ -95,6 +104,52 @@ test('a partial-range rerun carries the start offset in videoMetadata', async ()
   const videoPart = parts.find((p) => fileUriOf(p) !== undefined);
   assert.equal(fileUriOf(videoPart ?? {}), VIDEO_URL);
   assert.equal(startOffsetOf(videoPart ?? {}), '40s');
+});
+
+test('a clipped window carries both start and end offsets in videoMetadata', async () => {
+  const { requests, fetch } = stubbedHttp(() => modelResponse('LANGUAGE: en\n[00:00 - 00:08] hi'));
+  const caller = createGeminiCaller({ apiKey: 'test-key', model: 'test-model', fetch });
+
+  await caller({ videoUrl: VIDEO_URL, prompt: 'CLIP PROMPT', startOffsetSeconds: 40, endOffsetSeconds: 160 });
+
+  const parts = requests[0].body.contents?.[0]?.parts ?? [];
+  const videoPart = parts.find((p) => fileUriOf(p) !== undefined);
+  assert.equal(startOffsetOf(videoPart ?? {}), '40s');
+  assert.equal(endOffsetOf(videoPart ?? {}), '160s');
+});
+
+test('a clip that starts at zero sends only the end offset', async () => {
+  const { requests, fetch } = stubbedHttp(() => modelResponse('LANGUAGE: en\n[00:00 - 00:08] hi'));
+  const caller = createGeminiCaller({ apiKey: 'test-key', model: 'test-model', fetch });
+
+  await caller({ videoUrl: VIDEO_URL, prompt: 'CLIP PROMPT', startOffsetSeconds: 0, endOffsetSeconds: 120 });
+
+  const parts = requests[0].body.contents?.[0]?.parts ?? [];
+  const videoPart = parts.find((p) => fileUriOf(p) !== undefined);
+  assert.equal(startOffsetOf(videoPart ?? {}), undefined);
+  assert.equal(endOffsetOf(videoPart ?? {}), '120s');
+});
+
+test('response usage metadata is passed through to the caller result', async () => {
+  const { fetch } = stubbedHttp(() => {
+    const res = modelResponse('LANGUAGE: en\n[00:00 - 00:08] hi');
+    (res.body as Record<string, unknown>).usageMetadata = {
+      promptTokenCount: 3210,
+      candidatesTokenCount: 64,
+      thoughtsTokenCount: 12,
+      totalTokenCount: 3286,
+    };
+    return res;
+  });
+  const caller = createGeminiCaller({ apiKey: 'test-key', model: 'test-model', fetch });
+
+  const res = await caller({ videoUrl: VIDEO_URL, prompt: 'P' });
+  assert.deepEqual(res.usage, {
+    promptTokenCount: 3210,
+    candidatesTokenCount: 64,
+    thoughtsTokenCount: 12,
+    totalTokenCount: 3286,
+  });
 });
 
 test('a max-tokens finish maps to an incomplete status', async () => {

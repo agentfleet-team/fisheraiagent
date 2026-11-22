@@ -7,6 +7,8 @@ services:
       PORT: 8080
       GEMINI_MODEL: ${GEMINI_MODEL:-}
       MAX_BLOCK_SECONDS: ${MAX_BLOCK_SECONDS:-8}
+      # Pass through only when set: the single default lives in src/config.ts.
+      WINDOW_SECONDS: ${WINDOW_SECONDS:-}
       CACHE_DIR: /data/cache
       SERVICE_TOKEN: ${SERVICE_TOKEN:-}
       # Per-tenant destinations: mount your tenants JSON and the service
@@ -73,6 +75,8 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-}
       MAX_BLOCK_SECONDS: ${MAX_BLOCK_SECONDS:-8}
+      # Pass through only when set: the single default lives in src/config.ts.
+      WINDOW_SECONDS: ${WINDOW_SECONDS:-}
       CACHE_DIR: /data/cache
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache

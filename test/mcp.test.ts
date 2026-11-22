@@ -93,7 +93,10 @@ async function startService(
     callerFactory: (apiKey) => async (req) => {
       calls.push({ apiKey, req });
       if (req.videoUrl.includes(VIDEO_B_ID)) throw new Error(CANARY);
-      return { text: GOOD, status: 'completed' };
+      return {
+        text: (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD,
+        status: 'completed',
+      };
     },
     model: 'test-model',
     maxBlockSeconds: 8,

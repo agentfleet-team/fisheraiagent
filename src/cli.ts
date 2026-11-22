@@ -25,6 +25,7 @@ export async function main(input: string | undefined, caller?: GeminiCaller): Pr
       model: config.model,
       maxBlockSeconds: config.maxBlockSeconds,
       cacheDir: config.cacheDir,
+      windowSeconds: config.windowSeconds,
       log: stderrSink,
     });
     process.stdout.write(JSON.stringify(transcript, null, 2) + '\n');

@@ -28,7 +28,8 @@ function doubleFactory(
     calls.push({ apiKey, req });
     const err = errors?.get(apiKey);
     if (err) throw err;
-    return { text: GOOD, status: 'completed' };
+    const text = (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD;
+    return { text, status: 'completed' };
   };
 }
 

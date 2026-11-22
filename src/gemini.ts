@@ -1,16 +1,27 @@
 import { FinishReason, GoogleGenAI } from '@google/genai';
-import type { Fetch, Part } from '@google/genai';
+import type { Fetch, Part, VideoMetadata } from '@google/genai';
 import { TranscriptError } from './errors.js';
 
 export interface GeminiVideoRequest {
   videoUrl: string;
   prompt: string;
   startOffsetSeconds?: number;
+  endOffsetSeconds?: number;
+}
+
+// Token counts copied off the response's usage metadata; input tokens are
+// what the clipped-window cost budget is measured against.
+export interface GeminiUsage {
+  promptTokenCount?: number;
+  candidatesTokenCount?: number;
+  thoughtsTokenCount?: number;
+  totalTokenCount?: number;
 }
 
 export interface GeminiVideoResponse {
   text: string;
   status: string;
+  usage?: GeminiUsage;
 }
 
 export type GeminiCaller = (request: GeminiVideoRequest) => Promise<GeminiVideoResponse>;
@@ -42,6 +53,15 @@ function httpStatusOf(err: unknown): number | undefined {
 
 function messageOf(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
+}
+
+// A media-data 400, whether already mapped by this caller or still in the
+// raw SDK shape a different caller may throw.
+export function isMediaDataError(err: unknown): boolean {
+  if (err instanceof TranscriptError) {
+    return err.code === 'upstream_media_error' && err.httpStatus === 400;
+  }
+  return httpStatusOf(err) === 400 && MEDIA_DATA.test(messageOf(err)) && MEDIA_DATA_FAULT.test(messageOf(err));
 }
 
 function mapSdkError(err: unknown, model: string): TranscriptError | Error {
@@ -111,11 +131,20 @@ export function createGeminiCaller(options: {
 
   return async (request) => {
     // Documented YouTube-URL request shape: one generateContent call whose
-    // video part is fileData.fileUri; a partial-range rerun adds
-    // videoMetadata.startOffset ("<seconds>s").
+    // video part is fileData.fileUri; a clipped interval carries
+    // videoMetadata.startOffset / endOffset ("<seconds>s"). An end offset
+    // past the video end clamps to the end upstream; a start offset past
+    // it comes back as a 400 INVALID_ARGUMENT.
     const videoPart: Part = { fileData: { fileUri: request.videoUrl } };
+    const videoMetadata: VideoMetadata = {};
     if (request.startOffsetSeconds !== undefined && request.startOffsetSeconds > 0) {
-      videoPart.videoMetadata = { startOffset: `${Number(request.startOffsetSeconds.toFixed(3))}s` };
+      videoMetadata.startOffset = `${Number(request.startOffsetSeconds.toFixed(3))}s`;
+    }
+    if (request.endOffsetSeconds !== undefined) {
+      videoMetadata.endOffset = `${Number(request.endOffsetSeconds.toFixed(3))}s`;
+    }
+    if (videoMetadata.startOffset !== undefined || videoMetadata.endOffset !== undefined) {
+      videoPart.videoMetadata = videoMetadata;
     }
 
     const generate = async (): Promise<GeminiVideoResponse> => {
@@ -126,7 +155,20 @@ export function createGeminiCaller(options: {
 
       const finishReason = response.candidates?.[0]?.finishReason;
       const status = finishReason === FinishReason.MAX_TOKENS ? 'incomplete' : 'completed';
-      return { text: response.text ?? '', status };
+      const usage = response.usageMetadata;
+      return {
+        text: response.text ?? '',
+        status,
+        usage:
+          usage === undefined
+            ? undefined
+            : {
+                promptTokenCount: usage.promptTokenCount,
+                candidatesTokenCount: usage.candidatesTokenCount,
+                thoughtsTokenCount: usage.thoughtsTokenCount,
+                totalTokenCount: usage.totalTokenCount,
+              },
+      };
     };
 
     try {
