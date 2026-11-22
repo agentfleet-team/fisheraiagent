@@ -28,7 +28,7 @@ const GAP_TOLERANCE_SECONDS = 2;
 // The transcript is complete only when the response itself says so: a
 // finished status, no hole in coverage, and a last block that ends a
 // sentence. The model's self-reported video duration is never trusted.
-const TERMINAL_PUNCTUATION = /[.!?…。！？]["'”’」』»)】\]]*$/;
+const TERMINAL_PUNCTUATION = /\p{Terminal_Punctuation}[\p{Pf}\p{Pe}"']*$/u;
 // Only a 400 that specifically reports a start offset past the video end
 // means "nothing left"; any other 400 is a real failure. Such a 400 may be
 // classified as video_unavailable or upstream_rejected depending on the

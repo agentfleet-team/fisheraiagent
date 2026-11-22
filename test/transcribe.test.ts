@@ -211,3 +211,29 @@ test('permanent errors are not retried', async () => {
   );
   assert.equal(calls.length, 1);
 });
+
+for (const [label, last] of [
+  ['English', 'It ends here.'],
+  ['Chinese', '到此為止。'],
+  ['Japanese', 'これで終わりですか？'],
+  ['Hindi', 'यह अंत है।'],
+  ['Arabic', 'هل هذه النهاية؟'],
+  ['closing quote', 'He said “stop.”'],
+] as const) {
+  test(`a final block ending in ${label} terminal punctuation completes in one call`, async () => {
+    const { calls, caller } = geminiDouble([{ text: `LANGUAGE: x\n[00:00 - 00:08] ${last}` }]);
+    await transcribeVideo('hWe-j78vNpc', deps(caller));
+    assert.equal(calls.length, 1);
+  });
+}
+
+test('Thai text with no terminal mark causes exactly one continuation call', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: th\n[00:00 - 00:08] สวัสดีครับทุกคน' },
+    { text: 'LANGUAGE: th' },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].startOffsetSeconds, 8);
+  assert.equal(t.blocks.length, 1);
+});

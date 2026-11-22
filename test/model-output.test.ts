@@ -75,3 +75,30 @@ test('a continuation line is joined to the previous block', () => {
   const out = parseModelOutput(text, 8);
   assert.equal(out.blocks[0].text, 'first part of the same sentence');
 });
+
+test('a timestamp component out of range is rejected', () => {
+  for (const bad of ['[00:60 - 01:07] x', '[1:60:00 - 1:60:07] x', '[75:00 - 75:07] x']) {
+    assert.throws(() => parseModelOutput(`LANGUAGE: en\n${bad}`, 8), ModelOutputError);
+  }
+});
+
+test('hour rollover and fractional seconds parse', () => {
+  const out = parseModelOutput('LANGUAGE: en\n[59:56 - 1:00:04] a\n[01:00:04 - 01:00:11.5] b', 8);
+  assert.deepEqual(out.blocks.map((b) => [b.start, b.end]), [[3596, 3604], [3604, 3611.5]]);
+});
+
+test('a malformed block line is rejected, not absorbed as text or preamble', () => {
+  assert.throws(
+    () => parseModelOutput('LANGUAGE: en\n[00:00 - 00:08] a\n[00:08 - broken] b', 8),
+    ModelOutputError,
+  );
+  assert.throws(
+    () => parseModelOutput('LANGUAGE: en\n[broken - 00:08] b\n[00:08 - 00:16] c', 8),
+    ModelOutputError,
+  );
+});
+
+test('bracketed spoken text without a range stays continuation text', () => {
+  const out = parseModelOutput('LANGUAGE: en\n[00:00 - 00:08] a\n[music]', 8);
+  assert.equal(out.blocks[0].text, 'a [music]');
+});

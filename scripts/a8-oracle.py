@@ -3,7 +3,7 @@ Reference anchors are the video's own YouTube English captions (start seconds).
 PASS needs: every anchor found within +-6 s, last block end <= 540 s, last block
 text contains the closing line, blocks monotonic and <= 8 s."""
 import json, sys
-ANCHORS = [("cohort 005", 262.0), ("enjoy my self-paced", 501.2), ("that is the home repo", 513.9), ("see you in the next one", 531.0)]
+ANCHORS = [("sandcastle doesn't exist", 257.0), ("enjoy my self-paced", 501.2), ("that is the home repo", 513.9), ("see you in the next one", 531.0)]
 t = open(sys.argv[1]).read(); d = json.loads(t[t.rfind("\n{") + 1:] if not t.lstrip().startswith("{") else t)
 b = d["blocks"]; ok = True
 def norm(s): return " ".join(s.lower().replace(",", " ").split())
