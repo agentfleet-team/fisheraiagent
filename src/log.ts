@@ -25,6 +25,7 @@ export type LogEvent =
   | 'cache_hit'
   | 'gemini_call'
   | 'model_output_error'
+  | 'block_over_limit'
   | 'key_set'
   | 'key_removed'
   | 'channel_enabled'
@@ -88,6 +89,7 @@ export interface LogFields {
   totalTokens?: number;
   reason?: ModelOutputErrorReason;
   windowStart?: number;
+  longestBlockSeconds?: number;
 }
 
 export type LogSink = (line: string) => void;
@@ -106,6 +108,7 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'code',
   'port',
   'count',
+  'longestBlockSeconds',
   'durationMs',
   'inputTokens',
   'outputTokens',
