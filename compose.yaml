@@ -41,10 +41,11 @@ services:
       - api
     restart: unless-stopped
 
-  # One-off CLI runs: docker compose run --rm transcribe dist/cli.js <youtube-url>
+  # One-off CLI runs: docker compose run --rm transcribe <youtube-url>
   transcribe:
     build: .
     profiles: ['cli']
+    entrypoint: ["node", "dist/cli.js"]
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-}
