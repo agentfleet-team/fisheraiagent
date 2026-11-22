@@ -1,10 +1,9 @@
-DURATION: 100
 LANGUAGE: en
-[40.0 - 48.0] line six of the transcript
-[48.0 - 56.0] line seven of the transcript
-[56.0 - 64.0] line eight of the transcript
-[64.0 - 72.0] line nine of the transcript
-[72.0 - 80.0] line ten of the transcript
-[80.0 - 88.0] line eleven of the transcript
-[88.0 - 96.0] line twelve of the transcript
-[96.0 - 100.0] line thirteen, the last line
+[00:40 - 00:48] line six of the transcript
+[00:48 - 00:56] line seven of the transcript
+[00:56 - 01:04] line eight of the transcript
+[01:04 - 01:12] line nine of the transcript
+[01:12 - 01:20] line ten of the transcript
+[01:20 - 01:28] line eleven of the transcript
+[01:28 - 01:36] line twelve of the transcript
+[01:36 - 01:40] line thirteen, the last line.

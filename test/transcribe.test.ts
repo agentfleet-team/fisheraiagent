@@ -10,6 +10,12 @@ import { TranscriptError } from '../src/errors.js';
 const fixture = (name: string) =>
   readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8');
 
+const mmss = (seconds: number) => {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+};
+
 function geminiDouble(
   responses: Array<{ text?: string; status?: string; error?: unknown }>,
 ): { calls: GeminiVideoRequest[]; caller: GeminiCaller } {
@@ -52,9 +58,17 @@ test('output that stops before the video end re-requests the missing range and m
   assert.equal(t.video_id, 'hWe-j78vNpc');
 });
 
+test('a clean complete response finishes in one call', async () => {
+  const { calls, caller } = geminiDouble([{ text: fixture('model-good.txt') }]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 1);
+  assert.equal(t.blocks.length, 5);
+  assert.equal(t.blocks.at(-1)?.end, 39);
+});
+
 test('an incomplete interaction status also triggers a range continuation', async () => {
-  const part1 = ['LANGUAGE: en', '[0.0 - 8.0] only block'].join('\n');
-  const part2 = fixture('model-truncated-part2.txt');
+  const part1 = 'LANGUAGE: en\n[00:00 - 00:08] only block.';
+  const part2 = 'LANGUAGE: en\n[00:08 - 00:16] second block.\n[00:16 - 00:24] third block.';
   const { calls, caller } = geminiDouble([
     { text: part1, status: 'incomplete' },
     { text: part2 },
@@ -62,7 +76,41 @@ test('an incomplete interaction status also triggers a range continuation', asyn
   const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
   assert.equal(calls.length, 2);
   assert.equal(calls[1].startOffsetSeconds, 8);
-  assert.equal(t.blocks.length, 9);
+  assert.equal(t.blocks.length, 3);
+});
+
+test('a hole at the tail is re-requested from where coverage broke off', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: fixture('model-tail-gap-part1.txt') },
+    { text: fixture('model-tail-gap-part2.txt') },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].startOffsetSeconds, 16);
+  assert.deepEqual(t.blocks.map((b) => b.start), [0, 8, 16, 24, 30]);
+  assert.equal(t.blocks.at(-1)?.end, 38);
+});
+
+test('a tail hole the model leaves empty is kept after one confirmation call', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: fixture('model-tail-gap-part1.txt') },
+    { text: fixture('model-tail-gap-part1.txt') },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.deepEqual(t.blocks.map((b) => b.start), [0, 8, 30]);
+});
+
+test('a continuation that reports no more audio ends the video', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: fixture('model-truncated-part1.txt') },
+    { text: 'LANGUAGE: en' },
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 2);
+  assert.equal(t.blocks.length, 5);
+  assert.equal(t.blocks.at(-1)?.end, 40);
 });
 
 test('bad model output is retried once, then fails with bad_model_output', async () => {
@@ -101,10 +149,10 @@ test('a range request rejected with 400 ends the video instead of failing', asyn
   assert.equal(t.blocks.at(-1)?.end, 40);
 });
 
-test('a known missing tail shorter than the block limit is still requested', async () => {
+test('a tail cut mid-sentence is requested and merged', async () => {
   const { calls, caller } = geminiDouble([
-    { text: 'DURATION: 20\nLANGUAGE: en\n[0 - 8] a\n[8 - 16] b' },
-    { text: 'DURATION: 20\nLANGUAGE: en\n[16 - 20] final spoken words' },
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a\n[00:08 - 00:16] b' },
+    { text: 'LANGUAGE: en\n[00:16 - 00:20] final spoken words.' },
   ]);
   const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
   assert.equal(calls.length, 2);
@@ -114,7 +162,7 @@ test('a known missing tail shorter than the block limit is still requested', asy
 
 test('a key_rejected 400 during continuation propagates instead of ending the video', async () => {
   const { calls, caller } = geminiDouble([
-    { text: 'DURATION: 100\nLANGUAGE: en\n[0 - 8] first words' },
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] first words' },
     { error: new TranscriptError('key_rejected', 'API key not valid', { httpStatus: 400 }) },
   ]);
   await assert.rejects(
@@ -126,8 +174,8 @@ test('a key_rejected 400 during continuation propagates instead of ending the vi
 
 test('repeated or overlapping continuation blocks are dropped, keeping ends monotonic', async () => {
   const { calls, caller } = geminiDouble([
-    { text: 'DURATION: 30\nLANGUAGE: en\n[0 - 8] a\n[8 - 16] b' },
-    { text: 'DURATION: 30\nLANGUAGE: en\n[9 - 10] repeated\n[16 - 24] c\n[24 - 30] d' },
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a\n[00:08 - 00:16] b' },
+    { text: 'LANGUAGE: en\n[00:09 - 00:10] repeated\n[00:16 - 00:24] c\n[00:24 - 00:30] d.' },
   ]);
   const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
   assert.equal(calls.length, 2);
@@ -138,6 +186,19 @@ test('repeated or overlapping continuation blocks are dropped, keeping ends mono
   for (let i = 1; i < t.blocks.length; i++) {
     assert.ok(t.blocks[i].end >= t.blocks[i - 1].end, 'block end must not go backwards');
   }
+});
+
+test('a transcript that never completes fails after the continuation cap', async () => {
+  const { calls, caller } = geminiDouble(
+    Array.from({ length: 9 }, (_, i) => ({
+      text: `LANGUAGE: en\n[${mmss(i * 8)} - ${mmss(i * 8 + 8)}] still talking`,
+    })),
+  );
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'bad_model_output',
+  );
+  assert.equal(calls.length, 9);
 });
 
 test('permanent errors are not retried', async () => {

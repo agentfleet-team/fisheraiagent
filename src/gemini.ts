@@ -37,7 +37,7 @@ function messageOf(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
 
-function mapSdkError(err: unknown): TranscriptError | Error {
+function mapSdkError(err: unknown, model: string): TranscriptError | Error {
   if (err instanceof TranscriptError) return err;
 
   const status = httpStatusOf(err);
@@ -58,6 +58,9 @@ function mapSdkError(err: unknown): TranscriptError | Error {
     return new TranscriptError('key_rejected', `Gemini rejected the API key: ${message}`, { httpStatus: status });
   }
   if (status === 404) {
+    if (/model/i.test(message)) {
+      return new TranscriptError('model_not_found', `Gemini model '${model}' not found; check GEMINI_MODEL (or config.geminiModel in package.json): ${message}`, { httpStatus: status });
+    }
     return new TranscriptError('video_unavailable', `Gemini returned 404 (video or model not found): ${message}`, { httpStatus: status });
   }
   if (status === 429) {
@@ -113,7 +116,7 @@ export function createGeminiCaller(options: {
       const status = finishReason === FinishReason.MAX_TOKENS ? 'incomplete' : 'completed';
       return { text: response.text ?? '', status };
     } catch (err) {
-      throw mapSdkError(err);
+      throw mapSdkError(err, options.model);
     }
   };
 }

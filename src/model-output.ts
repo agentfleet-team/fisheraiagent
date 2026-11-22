@@ -8,23 +8,45 @@ export class ModelOutputError extends Error {
 }
 
 export interface ParsedModelOutput {
-  durationSeconds?: number;
   language: string;
   blocks: TranscriptBlock[];
 }
 
-const BLOCK_LINE = /^\[\s*(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*\]\s*(.*)$/;
-const DURATION_LINE = /^DURATION:\s*(\d+(?:\.\d+)?)\s*$/i;
+export interface ParseOptions {
+  // Allow a response with a header but no blocks: on a continuation the
+  // model reports "no spoken audio left in this range" with LANGUAGE only.
+  allowEmpty?: boolean;
+}
+
+// Block times are MM:SS (HH:MM:SS past one hour) per the video docs; plain
+// seconds are still accepted so tolerant parsing survives model drift.
+const TIMESTAMP = '\\d+(?::\\d{1,2}){0,2}(?:\\.\\d+)?';
+const BLOCK_LINE = new RegExp(`^\\[\\s*(${TIMESTAMP})\\s*-\\s*(${TIMESTAMP})\\s*\\]\\s*(.*)$`);
+const HEADER_LINE = /^\s*(LANGUAGE|DURATION)\s*:/im;
+const DURATION_LINE = /^DURATION:\s*\S+\s*$/i;
 const LANGUAGE_LINE = /^LANGUAGE:\s*(\S+)\s*$/i;
 const EPS = 1e-3;
+
+function timestampToSeconds(raw: string): number {
+  let seconds = 0;
+  for (const part of raw.split(':')) {
+    const value = Number.parseFloat(part);
+    if (!Number.isFinite(value)) return Number.NaN;
+    seconds = seconds * 60 + value;
+  }
+  return seconds;
+}
 
 /**
  * Parse the model's transcript output. Tolerant of preamble lines and code
  * fences, strict about block shape, ordering and the block length limit.
  * Throws ModelOutputError when the output is not in the expected format.
  */
-export function parseModelOutput(raw: string, maxBlockSeconds: number): ParsedModelOutput {
-  let durationSeconds: number | undefined;
+export function parseModelOutput(
+  raw: string,
+  maxBlockSeconds: number,
+  options?: ParseOptions,
+): ParsedModelOutput {
   let language = 'unknown';
   const blocks: TranscriptBlock[] = [];
 
@@ -32,11 +54,8 @@ export function parseModelOutput(raw: string, maxBlockSeconds: number): ParsedMo
     const text = line.trim();
     if (!text || text.startsWith('```')) continue;
 
-    const duration = DURATION_LINE.exec(text);
-    if (duration) {
-      durationSeconds = Number.parseFloat(duration[1]);
-      continue;
-    }
+    // A DURATION line is consumed but never trusted as the video end.
+    if (DURATION_LINE.test(text)) continue;
     const lang = LANGUAGE_LINE.exec(text);
     if (lang) {
       language = lang[1];
@@ -45,8 +64,8 @@ export function parseModelOutput(raw: string, maxBlockSeconds: number): ParsedMo
     const block = BLOCK_LINE.exec(text);
     if (block) {
       blocks.push({
-        start: Number.parseFloat(block[1]),
-        end: Number.parseFloat(block[2]),
+        start: timestampToSeconds(block[1]),
+        end: timestampToSeconds(block[2]),
         text: block[3].trim(),
       });
       continue;
@@ -60,6 +79,9 @@ export function parseModelOutput(raw: string, maxBlockSeconds: number): ParsedMo
   }
 
   if (blocks.length === 0) {
+    if (options?.allowEmpty && HEADER_LINE.test(raw)) {
+      return { language, blocks };
+    }
     throw new ModelOutputError('no transcript blocks in model output');
   }
 
@@ -82,5 +104,5 @@ export function parseModelOutput(raw: string, maxBlockSeconds: number): ParsedMo
     previousStart = b.start;
   }
 
-  return { durationSeconds, language, blocks };
+  return { language, blocks };
 }
