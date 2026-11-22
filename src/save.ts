@@ -1,20 +1,28 @@
 import { DriveError, parseDriveLink, type DriveLink, type DriveStore, type StoredFile } from './drive.js';
 import { TranscriptError } from './errors.js';
 import { parseDriveFileId, parseVideoId } from './ids.js';
-import { loggerFor, type LogSink } from './log.js';
+import { loggerFor, type LogFields, type LogSink } from './log.js';
 import { loadTenantsFile, resolveTenant, type FileExtension, type JobOrigin } from './tenants.js';
 import type { Transcript } from './transcript.js';
+import {
+  createWebdavStore,
+  WebdavError,
+  webdavPassword,
+  type WebdavPath,
+  type WebdavStoredFile,
+} from './webdav.js';
 import { canonicalVideoUrl } from './youtube-url.js';
 
-// The saved-file link a job view and a reply may carry: the url is branded
-// DriveLink — raw Drive response text only after parseDriveLink has
-// rendered it canonical — so it can be shown to a person without becoming
-// a channel for arbitrary remote text.
-export interface SavedFile {
-  type: 'google-drive';
-  name: string;
-  url: DriveLink;
-}
+// The saved-file link a job view and a reply may carry: for Drive the url is
+// branded DriveLink — raw Drive response text only after parseDriveLink has
+// rendered it canonical — and for WebDAV the path is branded WebdavPath,
+// only ever the canonical rendering of the configured folder plus a safe
+// file name; folder travels with it so a client can re-render and re-check
+// the path instead of trusting a wire string. Neither can be a channel for
+// arbitrary remote text.
+export type SavedFile =
+  | { type: 'google-drive'; name: string; url: DriveLink }
+  | { type: 'webdav'; name: string; folder: string; path: WebdavPath };
 
 export interface VideoMetadata {
   title?: string;
@@ -139,6 +147,7 @@ export function createVideoMetadata(
 export interface SaverDeps {
   tenantsFile: string;
   drive?: DriveStore;
+  webdavFetch?: typeof fetch;
   metadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
   log?: LogSink;
@@ -161,6 +170,7 @@ export function createTranscriptSaver(
   // a find/create pair into a duplicate.
   const locks = new Map<string, Promise<unknown>>();
   const known = new Map<string, StoredFile>();
+  const knownWebdav = new Map<string, WebdavStoredFile>();
   const enqueue = <T>(key: string, fn: () => Promise<T>): Promise<T> => {
     const next = (locks.get(key) ?? Promise.resolve()).then(fn, fn);
     locks.set(
@@ -178,20 +188,61 @@ export function createTranscriptSaver(
     const destination = tenant?.destination;
     if (!tenant || !destination || destination.type === 'none') return undefined;
 
-    const fields = {
+    const fields: LogFields = {
       tenant: tenant.id,
       video: parseVideoId(transcript.video_id),
-      folder: destination.folder_id,
+      dest: destination.type,
     };
+    const key = `${tenant.id}:${transcript.video_id}`;
+    if (destination.type === 'webdav') {
+      let store: ReturnType<typeof createWebdavStore>;
+      try {
+        store = createWebdavStore({
+          baseUrl: destination.base_url,
+          path: destination.path,
+          username: destination.username,
+          password: webdavPassword(destination.password_env),
+          fetchImpl: deps.webdavFetch,
+        });
+      } catch (err) {
+        log('file_save_failed', { ...fields, code: 'invalid_config' });
+        throw err;
+      }
+      return enqueue(key, async () => {
+        const meta = await metadata(transcript.video_id);
+        const now = deps.now?.() ?? new Date();
+        const extension = destination.extension ?? '.txt';
+        const title = meta.title?.trim() || transcript.video_id;
+        const name = transcriptFileName(title, transcript.video_id, extension, now);
+        const content = renderTranscriptFile(transcript, meta, extension, now);
+
+        try {
+          const found =
+            knownWebdav.get(key) ?? (await store.findFileByVideoId(transcript.video_id));
+          const stored = found
+            ? await store.updateFile(found.id, content, MIME_TYPES[extension])
+            : await store.createFile(name, content, MIME_TYPES[extension]);
+          knownWebdav.set(key, stored);
+          log('file_saved', fields);
+          return { type: 'webdav', name: stored.name, folder: destination.path, path: stored.path };
+        } catch (err) {
+          knownWebdav.delete(key);
+          log('file_save_failed', { ...fields, code: 'save_failed' });
+          const status = err instanceof WebdavError ? err.status : undefined;
+          throw new SaveFailedError('the destination write failed', status);
+        }
+      });
+    }
+
+    const driveFields: LogFields = { ...fields, folder: destination.folder_id };
     if (!deps.drive) {
-      log('file_save_failed', { ...fields, code: 'invalid_config' });
+      log('file_save_failed', { ...driveFields, code: 'invalid_config' });
       throw new TranscriptError(
         'invalid_config',
         `tenant ${tenant.id}: a google-drive destination needs GOOGLE_APPLICATION_CREDENTIALS`,
       );
     }
     const drive = deps.drive;
-    const key = `${tenant.id}:${transcript.video_id}`;
     return enqueue(key, async () => {
       const meta = await metadata(transcript.video_id);
       const now = deps.now?.() ?? new Date();
@@ -212,11 +263,11 @@ export function createTranscriptSaver(
         const url = parseDriveLink(stored.url);
         if (!url) throw new DriveError('the Drive response carried no usable file link');
         known.set(key, stored);
-        log('file_saved', { ...fields, file: parseDriveFileId(stored.id) });
+        log('file_saved', { ...driveFields, file: parseDriveFileId(stored.id) });
         return { type: 'google-drive', name: stored.name, url };
       } catch (err) {
         known.delete(key);
-        log('file_save_failed', { ...fields, code: 'save_failed' });
+        log('file_save_failed', { ...driveFields, code: 'save_failed' });
         const status = err instanceof DriveError ? err.status : undefined;
         throw new SaveFailedError('the destination write failed', status);
       }

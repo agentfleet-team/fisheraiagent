@@ -256,3 +256,34 @@ test('R-14: every reply and HTTP error-body sink rejects plain string at compile
     [12, 14, 16, 17, 18, 19, 20, 22, 25, 26, 28, 37, 38, 39, 41, 44],
   );
 });
+
+test('F3: the WebDAV reply path has no string-to-brand route — the import is gone and plain strings are refused', () => {
+  const file = join(FIXTURES, 'bad-webdav-path.ts.txt');
+  const text = readFileSync(file, 'utf8');
+  const virtual = join(import.meta.dirname, 'fixtures', 'scan', 'bad-webdav-path.ts');
+  const options: ts.CompilerOptions = {
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.NodeNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    strict: true,
+    noEmit: true,
+    skipLibCheck: true,
+    types: ['node'],
+  };
+  const host = ts.createCompilerHost(options);
+  const readFile = host.readFile.bind(host);
+  host.readFile = (f) => (f === virtual ? text : readFile(f));
+  const fileExists = host.fileExists.bind(host);
+  host.fileExists = (f) => f === virtual || fileExists(f);
+  const program = ts.createProgram([virtual], options, host);
+  const errorLines = new Set(
+    ts
+      .getPreEmitDiagnostics(program)
+      .filter((d) => d.file?.fileName === virtual)
+      .map((d) => d.file!.getLineAndCharacterOfPosition(d.start!).line + 1),
+  );
+  // Line 2 imports a string-to-WebdavPath parser that no longer exists;
+  // lines 11-13 pass `err.message`, its alias and a bare literal as the
+  // reply `path` — every one must be a compile error.
+  assert.deepEqual([...errorLines].sort((a, b) => a - b), [2, 11, 12, 13]);
+});

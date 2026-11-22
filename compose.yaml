@@ -15,6 +15,11 @@ services:
       # TENANTS_FILE=/data/tenants.json). See README "Per-tenant destinations".
       TENANTS_FILE: ${TENANTS_FILE:-}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
+      # webdav destinations read the NAS password from the env var named by
+      # password_env in the tenants file (e.g. NAS_WEBDAV_PASSWORD); pass it
+      # through here. The base_url must be https — reach a LAN NAS through a
+      # mesh VPN such as Tailscale, never by exposing it to the internet.
+      NAS_WEBDAV_PASSWORD: ${NAS_WEBDAV_PASSWORD:-}
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache
 

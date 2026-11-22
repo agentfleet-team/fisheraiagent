@@ -48,7 +48,7 @@ Service environment variables:
 | `TENANTS_FILE` | no | — | Path to a JSON file of per-tenant save destinations (below). When unset, jobs still return transcripts; nothing is written to any destination. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | no | — | Path to a Google service-account key JSON, needed only when a tenant uses a `google-drive` destination. |
 
-### Per-tenant destinations (Google Drive)
+### Per-tenant destinations (Google Drive or NAS)
 
 Each Discord server/channel can pick where its transcripts are saved. Adding a tenant is an edit to the tenants file — no code change, no restart (the file is read fresh on every job).
 
@@ -67,6 +67,19 @@ Each Discord server/channel can pick where its transcripts are saved. Adding a t
       "discord_channel_ids": ["222222222222222222"],
       "caller": { "token_sha256": "<hex sha256 of the caller's bearer token>" },
       "destination": { "type": "google-drive", "folder_id": "0CdefAnotherFolderId" }
+    },
+    {
+      "id": "office-nas",
+      "discord_guild_id": "111111111111111111",
+      "caller": { "token_env": "SERVICE_TOKEN" },
+      "destination": {
+        "type": "webdav",
+        "base_url": "https://nas.example.ts.net",
+        "path": "/transcripts",
+        "username": "transcripts",
+        "password_env": "NAS_WEBDAV_PASSWORD",
+        "extension": ".md"
+      }
     }
   ]
 }
@@ -74,12 +87,14 @@ Each Discord server/channel can pick where its transcripts are saved. Adding a t
 
 - **Matching.** A job carries its `origin` (the Discord bot sends the guild and configured channel automatically). A tenant `id` is a lowercase slug (`a-z`, `0-9`, `-`, `_`). A tenant with `discord_channel_ids` claims only those channels; a tenant with just `discord_guild_id` claims every channel no channel entry took. First match wins; no match means nothing is saved.
 - **Caller credential.** An origin in the request body is a claim, not proof: the service writes only when the caller's bearer token is the credential the resolved tenant names — `token_env` (an environment variable holding the token, for example the Discord bot's `SERVICE_TOKEN`) or `token_sha256` (the token's lowercase hex SHA-256). A claim that resolves to a tenant but fails the check saves nothing and reports the fixed `save_unauthorized` error; a tenant without `caller` cannot be claimed. Web callers are anonymous until sign-in lands: a web origin always shows the transcript only and saves nothing.
-- **Destinations.** `"type": "google-drive"` writes into that `folder_id`; `"type": "none"` saves nothing. `extension` is `.txt` (default), `.md` or `.srt`.
+- **Destinations.** `"type": "google-drive"` writes into that `folder_id`; `"type": "webdav"` writes into `path` on a WebDAV server (a NAS); `"type": "none"` saves nothing. `extension` is `.txt` (default), `.md` or `.srt`.
 - **Google Drive setup.** Create a service account in Google Cloud, download its key JSON, and set `GOOGLE_APPLICATION_CREDENTIALS` to the file's path. Then share each `folder_id` with the service account's `client_email` (right-click folder → Share → paste the email → Editor). The service account can only reach folders you share with it. Under `docker compose`, bind-mount both files into the container and point the variables at the in-container paths (e.g. `- ./tenants.json:/data/tenants.json:ro` with `TENANTS_FILE=/data/tenants.json`).
-- **The file.** Name: `<english-slug>_<videoId>_<YYYYMMDD>.<ext>` — a lowercase slug of the video title, the video id and the capture date. Contents: a header with title, channel, source URL and capture date, then the timestamped transcript. The video id is also stored in the file's `appProperties`, so saving the same video again — another day, a renamed title — updates the existing file instead of making a duplicate.
-- **Failures.** If the write fails (for example the folder is not shared with the service account), the job still completes and returns the transcript, and the Discord reply or web result shows the save failure. The Discord bot replies with the file link when the write succeeds.
+- **NAS (WebDAV) setup.** Enable the NAS's HTTPS WebDAV service (Synology: WebDAV Server package; Nextcloud: its WebDAV endpoint) and create a user for this service. `base_url` must be `https://` — plain HTTP is refused at config load. The file holds only `password_env`: the name of an environment variable that carries the password (e.g. `NAS_WEBDAV_PASSWORD`), never the password itself; set that variable where the api process runs (under `docker compose`, add it to the api service's `environment:`).
+- **Reaching a home or office NAS from a hosted instance.** Put both machines on a mesh VPN such as [Tailscale](https://tailscale.com/): install Tailscale where the api container runs and on (or beside) the NAS, then use the NAS's tailnet HTTPS name as `base_url` — for example `https://nas.tail1234.ts.net` with Tailscale HTTPS certificates enabled. Never expose the NAS to the public internet: no port forwarding, no public IP listener. If the api runs on the same LAN as the NAS, use its LAN HTTPS address instead.
+- **The file.** Name: `<english-slug>_<videoId>_<YYYYMMDD>.<ext>` — a lowercase slug of the video title, the video id and the capture date. Contents: a header with title, channel, source URL and capture date, then the timestamped transcript. On Drive the video id is also stored in `appProperties`; on WebDAV it is the `<videoId>` inside the file name. Either way, saving the same video again — another day, a renamed title — updates the existing file instead of making a duplicate, and two different videos can never overwrite each other even when their names collide.
+- **Failures.** If the write fails (for example the folder is not shared with the service account, or the NAS rejects the login), the job still completes and returns the transcript, and the Discord reply or web result shows the save failure. The Discord bot replies with the file link (`Saved to Drive:`) or the saved path (`Saved to NAS:`) when the write succeeds.
 
-The callers keep working exactly as before: the Discord reply gains a `Saved to Drive:` link, and the job result the web page reads gains a `saved.url` field when a verified caller's job saves (plus a `save_error` on failure). See [openapi.yaml](openapi.yaml) for the `origin` and `saved` contract.
+The callers keep working exactly as before: the Discord reply gains a saved-file line, and the job result the web page reads gains a `saved.url` or `saved.path` field when a verified caller's job saves (plus a `save_error` on failure). See [openapi.yaml](openapi.yaml) for the `origin` and `saved` contract.
 
 Notes:
 
