@@ -5,6 +5,7 @@ export type ErrorCode =
   | 'key_rejected'
   | 'quota_exceeded'
   | 'upstream_timeout'
+  | 'upstream_rejected'
   | 'bad_model_output'
   | 'invalid_config';
 

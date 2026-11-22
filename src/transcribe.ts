@@ -25,7 +25,9 @@ const EPS = 1e-3;
 // not worth another request.
 const TAIL_TOLERANCE_SECONDS = 1;
 // Only a 400 that specifically reports a start offset past the video end
-// means "nothing left"; any other 400 is a real failure.
+// means "nothing left"; any other 400 is a real failure. Such a 400 may be
+// classified as video_unavailable or upstream_rejected depending on the
+// upstream wording; either code ends the video here.
 const PAST_END_OFFSET_MESSAGE = /offset|past (the )?end|beyond (the )?(video |end|duration|length)|exceeds? (the )?(video )?(duration|length)/i;
 
 async function callRound(
@@ -77,7 +79,7 @@ async function callRound(
 function isPastEndOffsetError(err: unknown): boolean {
   return (
     err instanceof TranscriptError &&
-    err.code === 'video_unavailable' &&
+    (err.code === 'video_unavailable' || err.code === 'upstream_rejected') &&
     err.httpStatus === 400 &&
     PAST_END_OFFSET_MESSAGE.test(err.message)
   );
