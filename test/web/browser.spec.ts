@@ -515,3 +515,45 @@ test('H1-web: a signed-in tenant user sees the saved-file link on the page', asy
     await provider.stop();
   }
 });
+
+// Issue #46: the footer names the build — the dev default on the shared
+// service, and the version/short-commit a release build reports.
+test('C13: the footer shows the build identity', async () => {
+  const { page } = await newPage();
+  try {
+    await page.goto(`${base}/`);
+    await page.waitForSelector('#version-footer:not([hidden])', { timeout: 10000 });
+    assert.equal(
+      (await page.locator('#version-footer').textContent())?.trim(),
+      'fisheraiagent 0.0.0-dev',
+    );
+  } finally {
+    await page.context().close();
+  }
+
+  const dir = mkdtempSync(join(tmpdir(), 'fa-web-version-'));
+  const port = await freePort();
+  const versioned: Server = createService({
+    callerFactory: doubleFactory(),
+    model: 'test-model',
+    version: 'v0.1.0',
+    commit: '011b7680d9a2c1f4a5b6c7d8e9f0a1b2c3d4e5f6',
+    maxBlockSeconds: 8,
+    cacheDir: dir,
+  });
+  await new Promise<void>((resolve) => versioned.listen(port, '127.0.0.1', resolve));
+  const versionedBase = `http://127.0.0.1:${port}`;
+  const context = await browser.newContext({ locale: 'en-US' });
+  const versionedPage = await context.newPage();
+  try {
+    await versionedPage.goto(`${versionedBase}/`);
+    await versionedPage.waitForSelector('#version-footer:not([hidden])', { timeout: 10000 });
+    assert.equal(
+      (await versionedPage.locator('#version-footer').textContent())?.trim(),
+      'fisheraiagent v0.1.0 · 011b768',
+    );
+  } finally {
+    await context.close();
+    await new Promise<void>((resolve) => versioned.close(() => resolve()));
+  }
+});

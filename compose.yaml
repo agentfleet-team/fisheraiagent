@@ -1,6 +1,16 @@
+# Build identity: APP_VERSION/APP_COMMIT reach the Dockerfile as build
+# args and are reported by /v1/config and the page footer. Compose passes
+# the shell's values through when set; the Dockerfile defaults apply to a
+# plain local build.
+x-build-args: &build-args
+  context: .
+  args:
+    APP_VERSION: ${APP_VERSION:-0.0.0-dev}
+    APP_COMMIT: ${APP_COMMIT:-unknown}
+
 services:
   api:
-    build: .
+    build: *build-args
     ports:
       - "${PORT:-8080}:8080"
     environment:
@@ -44,7 +54,7 @@ services:
   # back in the same channel or thread. Needs DISCORD_TOKEN and
   # BOT_ENCRYPTION_KEY; talks only to the api service.
   bot:
-    build: .
+    build: *build-args
     command: ["dist/bot.js"]
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN:-}
@@ -62,7 +72,7 @@ services:
   # point the client at `docker compose run --rm -T mcp` — remote mode, jobs
   # run on the api service with the caller's own Gemini key.
   mcp:
-    build: .
+    build: *build-args
     profiles: ['mcp']
     command: ["dist/mcp.js"]
     stdin_open: true
@@ -75,7 +85,7 @@ services:
 
   # One-off CLI runs: docker compose run --rm transcribe <youtube-url>
   transcribe:
-    build: .
+    build: *build-args
     profiles: ['cli']
     entrypoint: ["node", "dist/cli.js"]
     environment:

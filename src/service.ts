@@ -10,7 +10,7 @@ import {
   DEFAULT_TRUSTED_PROXY_IPS,
   proxyMatcher,
 } from './client-limit.js';
-import { DEFAULT_WINDOW_SECONDS } from './config.js';
+import { DEFAULT_COMMIT, DEFAULT_VERSION, DEFAULT_WINDOW_SECONDS } from './config.js';
 import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
 import { loggerFor, type LogRoute } from './log.js';
@@ -39,6 +39,10 @@ export interface OidcServiceConfig extends OidcClientConfig {
 }
 
 export interface ServiceOptions extends JobRunnerDeps {
+  // Build identity reported by GET /v1/config and the page footer; baked in
+  // at image build time. Unset means a dev build.
+  version?: string;
+  commit?: string;
   serviceToken?: string;
   tenantsFile?: string;
   // The tenants document inline (from a secrets-manager env var) instead
@@ -261,9 +265,14 @@ export function createService(options: ServiceOptions): Server {
 
     // Non-secret configuration the web page reads once: the model the
     // service runs, so the page's save-time key check can probe that exact
-    // model against Gemini. No key or caller data is involved.
+    // model against Gemini, and the build identity the footer shows. No key
+    // or caller data is involved.
     if (method === 'GET' && path === '/v1/config') {
-      send(res, 200, { model: options.model });
+      send(res, 200, {
+        model: options.model,
+        version: options.version ?? DEFAULT_VERSION,
+        commit: options.commit ?? DEFAULT_COMMIT,
+      });
       return;
     }
     if (method === 'POST' && path === '/v1/jobs') {

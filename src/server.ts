@@ -11,6 +11,8 @@ try {
   const server = createService({
     callerFactory: (apiKey) => createGeminiCaller({ apiKey, model: config.model }),
     model: config.model,
+    version: config.version,
+    commit: config.commit,
     maxBlockSeconds: config.maxBlockSeconds,
     cacheDir: config.cacheDir,
     windowSeconds: config.windowSeconds,

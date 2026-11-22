@@ -84,6 +84,22 @@ test('per-client limit env vars default and override', () => {
   assert.deepEqual(loadServiceConfig({ TRUSTED_PROXY_IPS: 'none' }).trustedProxyIps, []);
 });
 
+// Issue #46: the Docker build bakes APP_VERSION/APP_COMMIT in as build
+// args; a local run without them reports the dev defaults.
+test('build identity env vars default and override', () => {
+  const cfg = loadServiceConfig({});
+  assert.equal(cfg.version, '0.0.0-dev');
+  assert.equal(cfg.commit, 'unknown');
+
+  const custom = loadServiceConfig({ APP_VERSION: 'v0.1.0', APP_COMMIT: ' 011b768 ' });
+  assert.equal(custom.version, 'v0.1.0');
+  assert.equal(custom.commit, '011b768');
+
+  const blank = loadServiceConfig({ APP_VERSION: '  ', APP_COMMIT: '' });
+  assert.equal(blank.version, '0.0.0-dev');
+  assert.equal(blank.commit, 'unknown');
+});
+
 test('invalid per-client limit env vars fail with invalid_config', () => {
   for (const env of [
     { MAX_CONCURRENT_JOBS_PER_CLIENT: '0' },

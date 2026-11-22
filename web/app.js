@@ -153,6 +153,7 @@
   const savedLine = $('saved-line');
   const savedLink = $('saved-link');
   const saveNote = $('save-note');
+  const versionFooter = $('version-footer');
 
   const LS_KEY = 'geminiApiKey';
   const POLL_MS = 1500;
@@ -240,26 +241,47 @@
     refreshKeyState();
   });
 
-  // The model this service transcribes with, fetched once from its own
-  // config endpoint — the key check probes that exact model. A failed
+  // The service's non-secret config, fetched once — the key check probes
+  // the model it names, and the footer shows the build identity. A failed
   // fetch is not cached so the next Save retries.
-  let modelPromise = null;
-  function configuredModel() {
-    modelPromise ??= fetch('/v1/config')
+  let configPromise = null;
+  function serviceConfig() {
+    configPromise ??= fetch('/v1/config')
       .then(async (res) => {
         if (!res.ok) throw new Error('config unavailable');
-        const body = await res.json();
-        if (typeof body?.model !== 'string' || body.model === '') {
-          throw new Error('config has no model');
-        }
-        return body.model;
+        return res.json();
       })
       .catch((err) => {
-        modelPromise = null;
+        configPromise = null;
         throw err;
       });
-    return modelPromise;
+    return configPromise;
   }
+
+  async function configuredModel() {
+    const body = await serviceConfig();
+    if (typeof body?.model !== 'string' || body.model === '') {
+      throw new Error('config has no model');
+    }
+    return body.model;
+  }
+
+  // The build this service runs, bottom of the page, so a bug report can
+  // name it. Stays hidden when the config cannot be read.
+  (async () => {
+    try {
+      const body = await serviceConfig();
+      if (typeof body?.version !== 'string' || body.version === '') return;
+      const commit =
+        typeof body?.commit === 'string' && body.commit !== '' && body.commit !== 'unknown'
+          ? ` · ${body.commit.slice(0, 7)}`
+          : '';
+      versionFooter.textContent = `fisheraiagent ${body.version}${commit}`;
+      versionFooter.hidden = false;
+    } catch {
+      // The page works without the footer.
+    }
+  })();
 
   // Save-time key check (the browser-side design): one models.get call
   // straight to Gemini with the key in the x-goog-api-key header, so the

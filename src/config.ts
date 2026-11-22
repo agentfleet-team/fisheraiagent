@@ -18,6 +18,8 @@ export interface Config {
 export interface ServiceConfig {
   port: number;
   model: string;
+  version: string;
+  commit: string;
   maxBlockSeconds: number;
   cacheDir: string;
   windowSeconds: number;
@@ -54,6 +56,10 @@ export const DEFAULT_WINDOW_SECONDS = 120;
 export const DEFAULT_MAX_VIDEO_SECONDS = 12 * 60 * 60;
 const DEFAULT_CACHE_DIR = './transcript-cache';
 const DEFAULT_PORT = 8080;
+// Build identity: the Docker build bakes APP_VERSION/APP_COMMIT in as build
+// args; a local run without them reports the dev defaults.
+export const DEFAULT_VERSION = '0.0.0-dev';
+export const DEFAULT_COMMIT = 'unknown';
 
 function defaultModel(): string {
   const pkg: { config?: { geminiModel?: string } } = JSON.parse(
@@ -149,6 +155,9 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
 
   const serviceToken = (env.SERVICE_TOKEN ?? '').trim() || undefined;
 
+  const version = (env.APP_VERSION ?? '').trim() || DEFAULT_VERSION;
+  const commit = (env.APP_COMMIT ?? '').trim() || DEFAULT_COMMIT;
+
   const maxConcurrentJobsPerClient = parsePositiveInteger(
     env.MAX_CONCURRENT_JOBS_PER_CLIENT,
     'MAX_CONCURRENT_JOBS_PER_CLIENT',
@@ -194,6 +203,8 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
   return {
     port,
     model,
+    version,
+    commit,
     maxBlockSeconds,
     cacheDir,
     windowSeconds,
