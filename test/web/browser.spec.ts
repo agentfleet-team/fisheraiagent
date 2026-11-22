@@ -39,6 +39,10 @@ let base = '';
 let server: Server;
 let browser: Browser;
 
+// The same model double the service tests use: the first answer carries
+// the fixture transcript; a later window's answer is language-only, which
+// the window loop reads as that range being silence. Answering every
+// window with the same blocks is not a valid model and fails the job.
 const doubleFactory =
   (): ((apiKey: string) => GeminiCaller) =>
   (apiKey) =>
@@ -389,6 +393,42 @@ test('C11: a check that cannot reach Gemini is reported and the key still stores
     assert.equal(await page.evaluate((k) => localStorage.getItem(k), LS_KEY), KEY_OFFLINE);
   } finally {
     await page.context().close();
+  }
+});
+
+// Issue #43: an over-limit submit shows the fixed 429 message on the page.
+// The service gets its own instance with a one-job-per-hour client cap.
+test('C12: a 429 over the per-client cap shows the rate-limit message', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'fa-web-limit-'));
+  const port = await freePort();
+  const limited: Server = createService({
+    callerFactory: doubleFactory(),
+    model: 'test-model',
+    maxBlockSeconds: 8,
+    cacheDir: dir,
+    maxJobsPerHourPerClient: 1,
+  });
+  await new Promise<void>((resolve) => limited.listen(port, '127.0.0.1', resolve));
+  const limitedBase = `http://127.0.0.1:${port}`;
+  const context = await browser.newContext({ locale: 'en-US' });
+  await stubGemini(context);
+  const page = await context.newPage();
+  try {
+    await page.goto(`${limitedBase}/`);
+    await storeKey(page, KEY_OK);
+    await submitUrl(page, `https://youtu.be/${VIDEO_OK}`);
+    await page.waitForSelector('#blocks li', { timeout: 20000 });
+
+    await submitUrl(page, `https://youtu.be/${VIDEO_FAIL}`);
+    await page.waitForFunction(
+      () => document.getElementById('status-text')?.textContent?.includes('Too many jobs'),
+      { timeout: 10000 },
+    );
+    assert.ok(await page.locator('#status.error').count());
+    assert.ok(await page.locator('#spinner').isHidden());
+  } finally {
+    await context.close();
+    await new Promise<void>((resolve) => limited.close(() => resolve()));
   }
 });
 

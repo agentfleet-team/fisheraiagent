@@ -2,6 +2,14 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { timingSafeEqual } from 'node:crypto';
 import { createAuth, createOidcClient, type Auth, type OidcClientConfig } from './auth.js';
 import { cachedVideoCoverage, TRANSCRIPT_FORMAT_VERSION } from './cache.js';
+import {
+  clientIp,
+  ClientRateLimiter,
+  DEFAULT_MAX_CONCURRENT_JOBS_PER_CLIENT,
+  DEFAULT_MAX_JOBS_PER_HOUR_PER_CLIENT,
+  DEFAULT_TRUSTED_PROXY_IPS,
+  proxyMatcher,
+} from './client-limit.js';
 import { DEFAULT_WINDOW_SECONDS } from './config.js';
 import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
@@ -38,6 +46,19 @@ export interface ServiceOptions extends JobRunnerDeps {
   tenantsJson?: string;
   drive?: DriveStore;
   webdavFetch?: typeof fetch;
+  // Per-client limits on job creation for the public surface: at most
+  // maxConcurrentJobsPerClient in-flight jobs and maxJobsPerHourPerClient
+  // accepted submissions per client, identified by CF-Connecting-IP when
+  // the socket peer is a trusted proxy (the Cloudflare Tunnel) and by the
+  // socket address otherwise. They apply only when no SERVICE_TOKEN is
+  // configured — a bearer-authenticated caller is trusted infrastructure
+  // (the Discord bot, an MCP client) and is not limited.
+  maxConcurrentJobsPerClient?: number;
+  maxJobsPerHourPerClient?: number;
+  // Peers whose requests may supply the client IP via CF-Connecting-IP:
+  // exact IPv4/IPv6 addresses or IPv4 CIDRs. The default trusts loopback —
+  // the documented deployment runs cloudflared in the same task or host.
+  trustedProxies?: string[];
   videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
   // Built sign-in handler (tests inject one); when absent but `oidc` is
@@ -105,6 +126,36 @@ export function createService(options: ServiceOptions): Server {
       options.windowSeconds ?? DEFAULT_WINDOW_SECONDS,
       TRANSCRIPT_FORMAT_VERSION,
     );
+  // The per-client limiter guards the anonymous surface only: with a
+  // SERVICE_TOKEN configured, every caller that reaches submitJob already
+  // authenticated as trusted infrastructure. A malformed trusted-proxy
+  // entry fails startup rather than silently widening who may speak for
+  // the client IP.
+  const proxyTrust = proxyMatcher(options.trustedProxies ?? DEFAULT_TRUSTED_PROXY_IPS);
+  const maxConcurrentJobs = options.maxConcurrentJobsPerClient ?? DEFAULT_MAX_CONCURRENT_JOBS_PER_CLIENT;
+  const maxJobsPerHour = options.maxJobsPerHourPerClient ?? DEFAULT_MAX_JOBS_PER_HOUR_PER_CLIENT;
+  if (!Number.isInteger(maxConcurrentJobs) || maxConcurrentJobs <= 0) {
+    throw new TranscriptError('invalid_config', 'maxConcurrentJobsPerClient must be a positive integer');
+  }
+  if (!Number.isInteger(maxJobsPerHour) || maxJobsPerHour <= 0) {
+    throw new TranscriptError('invalid_config', 'maxJobsPerHourPerClient must be a positive integer');
+  }
+  const clientLimiter =
+    options.serviceToken === undefined
+      ? new ClientRateLimiter({ maxConcurrentJobs, maxJobsPerHour })
+      : undefined;
+  // job_id -> the client its in-flight slot is booked to; released when
+  // the store reports the job finished.
+  const pendingClients = new Map<string, string>();
+  const callerOnFinished = options.onJobFinished;
+  deps.onJobFinished = (jobId: string) => {
+    const client = pendingClients.get(jobId);
+    if (client !== undefined) {
+      pendingClients.delete(jobId);
+      clientLimiter?.release(client);
+    }
+    callerOnFinished?.(jobId);
+  };
   const jobs = new JobStore(deps);
   const log = loggerFor(options.log);
   const limiter = new TenantRateLimiter();
@@ -298,79 +349,109 @@ export function createService(options: ServiceOptions): Server {
   }
 
   async function submitJob(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    let body: unknown;
-    try {
-      body = await readJsonBody(req);
-    } catch {
-      sendError(res, 400, 'invalid_request');
-      return;
-    }
-    const url = typeof body === 'object' && body !== null ? field(body, 'url') : undefined;
-    if (typeof url !== 'string' || url.trim() === '') {
-      sendError(res, 400, 'invalid_request');
-      return;
-    }
-    const keyHeader = req.headers['x-gemini-key'];
-    const apiKey = (Array.isArray(keyHeader) ? keyHeader[0] : keyHeader)?.trim() ?? '';
-    if (!apiKey) {
-      sendError(res, 400, 'missing_key');
-      return;
-    }
-    let videoId: string;
-    try {
-      videoId = parseYouTubeVideoId(url);
-    } catch (err) {
-      if (err instanceof TranscriptError) {
-        sendError(res, 400, codeOf(err));
-        return;
-      }
-      throw err;
-    }
-    let claimed: JobOrigin | undefined;
-    try {
-      claimed = parseOrigin(typeof body === 'object' && body !== null ? field(body, 'origin') : undefined);
-    } catch (err) {
-      if (err instanceof TranscriptError) {
-        sendError(res, 400, codeOf(err));
-        return;
-      }
-      throw err;
-    }
-    // Who is this caller? A verified sign-in session is the strongest
-    // identity: its email resolves to a tenant through web_emails and
-    // becomes the job's authenticated origin — a request field, header or
-    // claimed origin that names another tenant is ignored entirely, so a
-    // signed-in caller can never land a job in a tenant that is not its
-    // own. A session email no tenant allowlists still gets its transcript
-    // plus the fixed no_tenant message. Without a session, anonymous web
-    // requests keep the old behavior (transcript only) and only a discord
-    // claim is checked, against the resolved tenant's caller credential.
-    let origin: JobOrigin | undefined;
-    let saveBlocked: SaveBlock | undefined;
-    let tenant: Tenant | undefined;
-    const email = sessionEmail(req);
-    if (email !== undefined) {
-      const tenants = tryTenants();
-      tenant = tenants ? resolveTenant(tenants, { kind: 'web', identity: email }) : undefined;
-      if (tenant) origin = { kind: 'web', identity: email };
-      else saveBlocked = 'no_tenant';
-    } else if (claimed?.kind === 'discord') {
-      const { verdict, tenant: resolved } = verifyClaim(req, claimed);
-      if (verdict === 'verified') {
-        origin = claimed;
-        tenant = resolved;
-      } else if (verdict === 'denied') {
-        saveBlocked = 'unauthorized';
-      }
-    }
-    // Per-tenant limits apply only to the authenticated caller they came
-    // with: an unauthenticated claim never spends a tenant's allowance.
-    const perHour = tenant?.limits?.jobs_per_hour;
-    if (tenant && perHour !== undefined && !limiter.allow(tenant.id, perHour)) {
+    // The per-client check books its slot in one synchronous step before
+    // the body is even read: a flood is answered 429 without spending
+    // parse, key or tenant-file work, and requests racing the check
+    // cannot overshoot a cap — each already holds its slot while it
+    // waits. The client is the CF-Connecting-IP value only when the
+    // socket peer is a trusted proxy (the tunnel); any other peer is
+    // keyed on its address. A booking whose request is rejected below is
+    // given back, so a rejection consumes no allowance; only a submitted
+    // job keeps it.
+    const ticket =
+      clientLimiter === undefined
+        ? undefined
+        : clientLimiter.tryAdmit(
+            clientIp(req.socket.remoteAddress, req.headers['cf-connecting-ip'], proxyTrust),
+          );
+    if (clientLimiter !== undefined && ticket === undefined) {
       sendError(res, 429, 'rate_limited');
       return;
     }
-    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits) });
+    let submitted = false;
+    try {
+      let body: unknown;
+      try {
+        body = await readJsonBody(req);
+      } catch {
+        sendError(res, 400, 'invalid_request');
+        return;
+      }
+      const url = typeof body === 'object' && body !== null ? field(body, 'url') : undefined;
+      if (typeof url !== 'string' || url.trim() === '') {
+        sendError(res, 400, 'invalid_request');
+        return;
+      }
+      const keyHeader = req.headers['x-gemini-key'];
+      const apiKey = (Array.isArray(keyHeader) ? keyHeader[0] : keyHeader)?.trim() ?? '';
+      if (!apiKey) {
+        sendError(res, 400, 'missing_key');
+        return;
+      }
+      let videoId: string;
+      try {
+        videoId = parseYouTubeVideoId(url);
+      } catch (err) {
+        if (err instanceof TranscriptError) {
+          sendError(res, 400, codeOf(err));
+          return;
+        }
+        throw err;
+      }
+      let claimed: JobOrigin | undefined;
+      try {
+        claimed = parseOrigin(typeof body === 'object' && body !== null ? field(body, 'origin') : undefined);
+      } catch (err) {
+        if (err instanceof TranscriptError) {
+          sendError(res, 400, codeOf(err));
+          return;
+        }
+        throw err;
+      }
+      // Who is this caller? A verified sign-in session is the strongest
+      // identity: its email resolves to a tenant through web_emails and
+      // becomes the job's authenticated origin — a request field, header or
+      // claimed origin that names another tenant is ignored entirely, so a
+      // signed-in caller can never land a job in a tenant that is not its
+      // own. A session email no tenant allowlists still gets its transcript
+      // plus the fixed no_tenant message. Without a session, anonymous web
+      // requests keep the old behavior (transcript only) and only a discord
+      // claim is checked, against the resolved tenant's caller credential.
+      let origin: JobOrigin | undefined;
+      let saveBlocked: SaveBlock | undefined;
+      let tenant: Tenant | undefined;
+      const email = sessionEmail(req);
+      if (email !== undefined) {
+        const tenants = tryTenants();
+        tenant = tenants ? resolveTenant(tenants, { kind: 'web', identity: email }) : undefined;
+        if (tenant) origin = { kind: 'web', identity: email };
+        else saveBlocked = 'no_tenant';
+      } else if (claimed?.kind === 'discord') {
+        const { verdict, tenant: resolved } = verifyClaim(req, claimed);
+        if (verdict === 'verified') {
+          origin = claimed;
+          tenant = resolved;
+        } else if (verdict === 'denied') {
+          saveBlocked = 'unauthorized';
+        }
+      }
+      // Per-tenant limits apply only to the authenticated caller they came
+      // with: an unauthenticated claim never spends a tenant's allowance.
+      const perHour = tenant?.limits?.jobs_per_hour;
+      if (tenant && perHour !== undefined && !limiter.allow(tenant.id, perHour)) {
+        sendError(res, 429, 'rate_limited');
+        return;
+      }
+      const jobId = jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits);
+      // The booking is now the job's: the hourly hit stays, and the
+      // in-flight half returns via deps.onJobFinished when the store
+      // settles the job.
+      if (ticket !== undefined) pendingClients.set(jobId, ticket.client);
+      submitted = true;
+      send(res, 202, { job_id: jobId });
+    } finally {
+      if (!submitted && ticket !== undefined) clientLimiter?.cancel(ticket);
+    }
   }
 
   return createServer((req, res) => {

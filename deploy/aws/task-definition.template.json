@@ -22,6 +22,9 @@
         { "name": "OIDC_REDIRECT_URI", "value": "https://<your-domain>/auth/callback" },
         { "name": "GEMINI_MODEL", "value": "" },
         { "name": "MAX_BLOCK_SECONDS", "value": "8" },
+        { "name": "MAX_CONCURRENT_JOBS_PER_CLIENT", "value": "2" },
+        { "name": "MAX_JOBS_PER_HOUR_PER_CLIENT", "value": "20" },
+        { "name": "TRUSTED_PROXY_IPS", "value": "127.0.0.1,::1" },
         { "name": "CACHE_DIR", "value": "/data/cache" }
       ],
       "secrets": [

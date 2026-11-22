@@ -50,6 +50,10 @@ export interface JobRunnerDeps {
   // max_video_seconds or the service default — to reject an over-length
   // video without spending a call.
   knownDurationSeconds?: (videoId: string) => Promise<number | undefined>;
+  // Called exactly once per submitted job when it reaches a terminal
+  // state (done or failed), so the HTTP layer can release the per-client
+  // in-flight slot it booked for the job.
+  onJobFinished?: (jobId: string) => void;
 }
 
 // Why a job's transcript must not be saved even though it completed:
@@ -114,42 +118,46 @@ export class JobStore {
     saveBlocked?: SaveBlock,
     limits?: TenantLimits,
   ): Promise<void> {
-    const record = this.records.get(id);
-    if (!record) return;
-    record.status = 'running';
     try {
-      const maxVideoSeconds = limits?.max_video_seconds ?? this.deps.defaultMaxVideoSeconds;
-      if (maxVideoSeconds !== undefined && this.deps.knownDurationSeconds) {
-        const known = await this.deps.knownDurationSeconds(videoId);
-        if (known !== undefined && known > maxVideoSeconds) {
-          throw new TranscriptError('video_too_long', 'video exceeds the length limit');
+      const record = this.records.get(id);
+      if (!record) return;
+      record.status = 'running';
+      try {
+        const maxVideoSeconds = limits?.max_video_seconds ?? this.deps.defaultMaxVideoSeconds;
+        if (maxVideoSeconds !== undefined && this.deps.knownDurationSeconds) {
+          const known = await this.deps.knownDurationSeconds(videoId);
+          if (known !== undefined && known > maxVideoSeconds) {
+            throw new TranscriptError('video_too_long', 'video exceeds the length limit');
+          }
         }
-      }
-      record.result = await transcribeYouTube(videoId, {
-        caller: this.deps.callerFactory(apiKey),
-        model: this.deps.model,
-        maxBlockSeconds: this.deps.maxBlockSeconds,
-        cacheDir: this.deps.cacheDir,
-        windowSeconds: this.deps.windowSeconds,
-        log: this.deps.log,
-        maxVideoSeconds: limits?.max_video_seconds,
-        defaultMaxVideoSeconds: this.deps.defaultMaxVideoSeconds,
-      });
-      if (this.deps.saveTranscript && origin) {
-        try {
-          const saved = await this.deps.saveTranscript(origin, record.result);
-          if (saved) record.saved = saved;
-        } catch (err) {
-          record.save_error = toJobError(err);
+        record.result = await transcribeYouTube(videoId, {
+          caller: this.deps.callerFactory(apiKey),
+          model: this.deps.model,
+          maxBlockSeconds: this.deps.maxBlockSeconds,
+          cacheDir: this.deps.cacheDir,
+          windowSeconds: this.deps.windowSeconds,
+          log: this.deps.log,
+          maxVideoSeconds: limits?.max_video_seconds,
+          defaultMaxVideoSeconds: this.deps.defaultMaxVideoSeconds,
+        });
+        if (this.deps.saveTranscript && origin) {
+          try {
+            const saved = await this.deps.saveTranscript(origin, record.result);
+            if (saved) record.saved = saved;
+          } catch (err) {
+            record.save_error = toJobError(err);
+          }
+        } else if (saveBlocked !== undefined) {
+          const code = saveBlocked === 'unauthorized' ? 'save_unauthorized' : 'no_tenant';
+          record.save_error = { code, message: messageForCode(code) };
         }
-      } else if (saveBlocked !== undefined) {
-        const code = saveBlocked === 'unauthorized' ? 'save_unauthorized' : 'no_tenant';
-        record.save_error = { code, message: messageForCode(code) };
+        record.status = 'done';
+      } catch (err) {
+        record.status = 'failed';
+        record.error = toJobError(err);
       }
-      record.status = 'done';
-    } catch (err) {
-      record.status = 'failed';
-      record.error = toJobError(err);
+    } finally {
+      this.deps.onJobFinished?.(id);
     }
   }
 

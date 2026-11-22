@@ -154,3 +154,11 @@ client, or sign-in is rejected at the provider.
   of this recipe.
 - Keep `SERVICE_TOKEN` set if the API is exposed beyond the web page: the
   `/v1` endpoints otherwise accept any caller's jobs.
+- Without `SERVICE_TOKEN` the anonymous job API applies per-client limits
+  (`MAX_CONCURRENT_JOBS_PER_CLIENT`, `MAX_JOBS_PER_HOUR_PER_CLIENT`; see the
+  main README). Clients are keyed on `CF-Connecting-IP` only when the
+  request's peer is in `TRUSTED_PROXY_IPS`. Behind this ALB recipe every
+  client's peer is a balancer node, so the whole site shares a few buckets:
+  raise the limits, or front the task with a Cloudflare Tunnel and set
+  `TRUSTED_PROXY_IPS` to the connector's address (`127.0.0.1,::1` fits a
+  cloudflared sidecar in the same task).

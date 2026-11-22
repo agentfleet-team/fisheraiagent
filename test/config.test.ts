@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadConfig } from '../src/config.js';
+import { loadConfig, loadServiceConfig } from '../src/config.js';
 import { TranscriptError } from '../src/errors.js';
 
 const base = { GEMINI_API_KEY: 'test-key' };
@@ -62,6 +62,42 @@ test('invalid MAX_VIDEO_SECONDS fails with invalid_config', () => {
       () => loadConfig({ ...base, MAX_VIDEO_SECONDS: bad }),
       (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
       bad,
+    );
+  }
+});
+
+test('per-client limit env vars default and override', () => {
+  const cfg = loadServiceConfig({});
+  assert.equal(cfg.maxConcurrentJobsPerClient, 2);
+  assert.equal(cfg.maxJobsPerHourPerClient, 20);
+  assert.deepEqual(cfg.trustedProxyIps, ['127.0.0.1', '::1']);
+
+  const custom = loadServiceConfig({
+    MAX_CONCURRENT_JOBS_PER_CLIENT: '5',
+    MAX_JOBS_PER_HOUR_PER_CLIENT: '100',
+    TRUSTED_PROXY_IPS: ' 10.0.0.1, 10.1.0.0/16 , ::1 ',
+  });
+  assert.equal(custom.maxConcurrentJobsPerClient, 5);
+  assert.equal(custom.maxJobsPerHourPerClient, 100);
+  assert.deepEqual(custom.trustedProxyIps, ['10.0.0.1', '10.1.0.0/16', '::1']);
+
+  assert.deepEqual(loadServiceConfig({ TRUSTED_PROXY_IPS: 'none' }).trustedProxyIps, []);
+});
+
+test('invalid per-client limit env vars fail with invalid_config', () => {
+  for (const env of [
+    { MAX_CONCURRENT_JOBS_PER_CLIENT: '0' },
+    { MAX_CONCURRENT_JOBS_PER_CLIENT: 'abc' },
+    { MAX_CONCURRENT_JOBS_PER_CLIENT: '1.5' },
+    { MAX_JOBS_PER_HOUR_PER_CLIENT: '-2' },
+    { TRUSTED_PROXY_IPS: 'not-an-ip' },
+    { TRUSTED_PROXY_IPS: '10.0.0.0/33' },
+    { TRUSTED_PROXY_IPS: '10.0.0.0/' },
+  ]) {
+    assert.throws(
+      () => loadServiceConfig(env),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      JSON.stringify(env),
     );
   }
 });
