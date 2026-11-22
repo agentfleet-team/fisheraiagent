@@ -37,6 +37,8 @@ const REMOTE_ERROR_CODES = new Set([
   'key_rejected',
   'quota_exceeded',
   'upstream_timeout',
+  'upstream_rejected',
+  'model_not_found',
   'bad_model_output',
   'invalid_config',
   'invalid_request',
