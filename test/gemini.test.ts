@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createGeminiCaller } from '../src/gemini.js';
 import { TranscriptError } from '../src/errors.js';
+import { parseVideoId } from '../src/ids.js';
 
 const VIDEO_URL = 'https://www.youtube.com/watch?v=hWe-j78vNpc';
 
@@ -287,4 +288,55 @@ test('a 404 without a model reference stays video_unavailable', async () => {
       err.code === 'video_unavailable' &&
       err.httpStatus === 404,
   );
+});
+
+test('the caller\'s own media retry logs the extra call with the request\'s window context', async () => {
+  let calls = 0;
+  const { fetch } = stubbedHttp(() => {
+    calls += 1;
+    return calls === 1
+      ? apiError(400, MEDIA_FAULT_MESSAGE)
+      : modelResponse('LANGUAGE: en\n[00:00 - 00:08] hi');
+  });
+  const logs: string[] = [];
+  const caller = createGeminiCaller({
+    apiKey: 'test-key',
+    model: 'test-model',
+    fetch,
+    sleep: async () => {},
+    log: (line) => logs.push(line),
+  });
+
+  const res = await caller({
+    videoUrl: VIDEO_URL,
+    prompt: 'P',
+    startOffsetSeconds: 250,
+    endOffsetSeconds: 360,
+    logContext: { video: parseVideoId('hWe-j78vNpc'), windowStart: 240 },
+  });
+
+  assert.equal(res.status, 'completed');
+  assert.deepEqual(logs, ['gemini_extra_call video=hWe-j78vNpc reason=media_retry windowStart=240']);
+});
+
+test('a media retry without request context and a clean first call each log no extra-call line', async () => {
+  let calls = 0;
+  const { fetch } = stubbedHttp(() => {
+    calls += 1;
+    return calls === 1
+      ? apiError(400, MEDIA_FAULT_MESSAGE)
+      : modelResponse('LANGUAGE: en\n[00:00 - 00:08] hi');
+  });
+  const logs: string[] = [];
+  const caller = createGeminiCaller({
+    apiKey: 'test-key',
+    model: 'test-model',
+    fetch,
+    sleep: async () => {},
+    log: (line) => logs.push(line),
+  });
+
+  await caller({ videoUrl: VIDEO_URL, prompt: 'P' }); // retried internally, but no logContext
+  await caller({ videoUrl: VIDEO_URL, prompt: 'P' }); // first attempt succeeds
+  assert.deepEqual(logs, []);
 });

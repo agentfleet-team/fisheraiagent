@@ -7,6 +7,15 @@ git tags on `main`.
 
 ## [Unreleased]
 
+### Added
+
+- Every Gemini call beyond a clip's first request now writes one
+  allowlisted `gemini_extra_call` log line — `reason` is `strict_retry`,
+  `empty_full_window`, `subclip`, `tail_reask` or `media_retry` — with
+  `video` and `windowStart` and never transcript or prompt text, so a
+  run's input-token cost can be charged to the retry rule that spent it
+  (#49).
+
 ## [0.1.0] - 2026-11-23
 
 First release: the build the owner accepted live on 2026-11-23 (`011b768`)

@@ -96,6 +96,7 @@ async function callRound(
       prompt: strict ? base + STRICT_RETRY_SUFFIX : base,
       startOffsetSeconds: clipStart,
       endOffsetSeconds: clipEnd,
+      logContext: { video: parseVideoId(videoId), windowStart },
     });
     logUsage(res);
     return res;
@@ -115,12 +116,18 @@ async function callRound(
     const subEnd = Math.min(clipStart + b.end, clipEnd);
     const subSeconds = subEnd - (clipStart + b.start);
     if (subSeconds <= EPS) return undefined;
+    loggerFor(deps.log)('gemini_extra_call', {
+      video: parseVideoId(videoId),
+      reason: 'subclip',
+      windowStart,
+    });
     try {
       const res = await deps.caller({
         videoUrl,
         prompt: clipPrompt(deps.maxBlockSeconds, subSeconds, true),
         startOffsetSeconds: clipStart + b.start,
         endOffsetSeconds: subEnd,
+        logContext: { video: parseVideoId(videoId), windowStart },
       });
       logUsage(res);
       const { blocks } = parseModelOutput(res.text, deps.maxBlockSeconds, { allowEmpty: true });
@@ -183,6 +190,11 @@ async function callRound(
       if (err instanceof ModelOutputError) {
         loggerFor(deps.log)('model_output_error', { reason: err.reason, windowStart });
         // One retry with a stricter instruction, then give up.
+        loggerFor(deps.log)('gemini_extra_call', {
+          video: parseVideoId(videoId),
+          reason: 'strict_retry',
+          windowStart,
+        });
         const res = await request(true);
         try {
           return { ...(await repairOverLimit(parse(res.text))), status: res.status, promptTokens };
@@ -250,6 +262,11 @@ async function callRoundChecked(
     return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength, strictFirst);
   } catch (err) {
     if (!isMediaDataError(err) || err instanceof TranscriptError) throw err;
+    loggerFor(deps.log)('gemini_extra_call', {
+      video: parseVideoId(videoId),
+      reason: 'media_retry',
+      windowStart,
+    });
     try {
       return await callRound(videoId, videoUrl, clipStart, clipEnd, deps, windowStart, exactClipLength, strictFirst);
     } catch (second) {
@@ -424,6 +441,11 @@ async function transcribeWindow(
         const estimatedEnd = windowStart + (windowEnd - windowStart) * (out.promptTokens / fullWindowTokens);
         windowEnd = Math.ceil(estimatedEnd) + 1;
         videoEnded = true;
+        loggerFor(deps.log)('gemini_extra_call', {
+          video: parseVideoId(videoId),
+          reason: 'tail_reask',
+          windowStart,
+        });
         out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart, true);
       }
       shifted = shiftAndLog(out);
@@ -440,6 +462,11 @@ async function transcribeWindow(
           out.promptTokens !== undefined &&
           out.promptTokens >= fullWindowTokens * TAIL_TOKEN_RATIO;
         if (fullLengthWindow && shifted.length === 0) {
+          loggerFor(deps.log)('gemini_extra_call', {
+            video: parseVideoId(videoId),
+            reason: 'empty_full_window',
+            windowStart,
+          });
           out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps, windowStart, false, true);
           shifted = shiftAndLog(out);
         }

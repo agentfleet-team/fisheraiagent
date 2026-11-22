@@ -24,6 +24,7 @@ export type LogEvent =
   | 'service_listening'
   | 'cache_hit'
   | 'gemini_call'
+  | 'gemini_extra_call'
   | 'model_output_error'
   | 'block_over_limit'
   | 'clip_blocks_dropped'
@@ -71,6 +72,16 @@ export type LogCode =
   | 'internal_error'
   | 'usage';
 
+// Why a Gemini call beyond a clip's first request was spent — the only
+// detail the gemini_extra_call event carries besides the window it
+// belongs to.
+export type ExtraCallReason =
+  | 'strict_retry'
+  | 'empty_full_window'
+  | 'subclip'
+  | 'tail_reask'
+  | 'media_retry';
+
 export interface LogFields {
   guild?: GuildId;
   channel?: ChannelId;
@@ -88,7 +99,7 @@ export interface LogFields {
   inputTokens?: number;
   outputTokens?: number;
   totalTokens?: number;
-  reason?: ModelOutputErrorReason;
+  reason?: ModelOutputErrorReason | ExtraCallReason;
   windowStart?: number;
   longestBlockSeconds?: number;
 }
@@ -121,7 +132,8 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
 const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   ...ID_FORMATS,
   dest: /^(google-drive|webdav)$/,
-  reason: /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks)$/,
+  reason:
+    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry)$/,
 };
 
 export const consoleSink: LogSink = (line) => console.log(line);
