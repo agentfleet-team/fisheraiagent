@@ -238,13 +238,20 @@ interface WindowOutcome {
   // True when the window's first call reports no speech (or its start
   // offset lands past the video end): the video is finished.
   empty: boolean;
+  // Whether the most recent successful response covering this window's
+  // range finished normally ('completed'). A truncated response is
+  // evidence that more speech exists, so a later media-data fault must
+  // not be read as the video's end.
+  lastRoundCompleted: boolean;
 }
 
 // One clipped window: a first call over [windowStart, windowEnd), then
 // clipped reruns for the ranges its responses left uncovered. Every call's
 // block times are relative to that call's own clip start, so a rerun can
 // never corrupt coverage already merged. coveredEndAtWindowStart is where
-// the transcript's coverage stood when this window began.
+// the transcript's coverage stood when this window began, and
+// priorRoundCompleted says whether the response that produced it finished
+// normally.
 async function transcribeWindow(
   videoId: string,
   videoUrl: string,
@@ -252,10 +259,12 @@ async function transcribeWindow(
   windowEnd: number,
   deps: TranscribeDeps,
   coveredEndAtWindowStart?: number,
+  priorRoundCompleted?: boolean,
 ): Promise<WindowOutcome> {
   const blocks: TranscriptBlock[] = [];
   let language = 'unknown';
   let clipStart = windowStart;
+  let lastRoundCompleted = priorRoundCompleted ?? false;
 
   for (let round = 0; ; round++) {
     let out: RoundResult;
@@ -263,18 +272,23 @@ async function transcribeWindow(
       out = await callRoundChecked(videoId, videoUrl, clipStart, windowEnd, deps);
     } catch (err) {
       if (!isMediaDataError(err)) throw err;
-      // A media-data 400 on a request that starts at or after the video's
-      // covered end is the past-end signal in disguise — but only when
-      // coverage stopped before the boundary this request asked about. A
-      // failure at offset 0, or where coverage reached the boundary, is a
-      // real upstream error.
+      // A media-data 400 ends the video only on evidence already in hand:
+      // the request starts past offset 0, the most recent successful
+      // response covering the range before it finished normally, and that
+      // coverage stopped before the boundary this request asks about (the
+      // window start for a first call, the rerun's own start after that).
+      // An offset-0 fault, coverage that reached the boundary, or a
+      // truncated response stays a real upstream error.
       const coveredEnd = blocks.at(-1)?.end ?? coveredEndAtWindowStart;
-      const boundary = round === 0 ? windowStart : windowEnd;
-      if (coveredEnd !== undefined && clipStart >= coveredEnd - EPS && coveredEnd < boundary - EPS) {
-        return { blocks, language, empty: true };
+      const endedBeforeBoundary =
+        coveredEnd !== undefined &&
+        (round === 0 ? coveredEnd < windowStart - EPS : coveredEnd <= clipStart + EPS);
+      if (clipStart > 0 && lastRoundCompleted && endedBeforeBoundary) {
+        return { blocks, language, empty: true, lastRoundCompleted };
       }
       throw err;
     }
+    lastRoundCompleted = out.status === 'completed';
     if (round === 0) {
       // A first response that declares an over-limit duration rejects the
       // video here, before any continuation call is spent.
@@ -294,7 +308,7 @@ async function transcribeWindow(
       // Round 0: the whole window is speechless (or starts past the video
       // end), so the video is over. A rerun: the range is confirmed
       // silence and the window's coverage stands.
-      return { blocks, language, empty: round === 0 };
+      return { blocks, language, empty: round === 0, lastRoundCompleted };
     }
     // The model reported blocks but none survived the clip window: the
     // response is unusable output, not evidence of silence.
@@ -334,7 +348,7 @@ async function transcribeWindow(
     if (clipStart >= windowEnd - EPS) break;
   }
 
-  return { blocks, language, empty: false };
+  return { blocks, language, empty: false, lastRoundCompleted };
 }
 
 export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
@@ -342,6 +356,10 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
   const windowSeconds = deps.windowSeconds ?? DEFAULT_WINDOW_SECONDS;
   const blocks: TranscriptBlock[] = [];
   let language = 'unknown';
+  // Whether the response that produced the tail of the accepted coverage
+  // finished normally; seeded false so a media fault on the very first
+  // request can never read as end of video.
+  let lastRoundCompleted = false;
 
   const result = (): Transcript => {
     assertOrderedEnds(blocks);
@@ -361,10 +379,12 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
       windowStart + windowSeconds,
       deps,
       blocks.at(-1)?.end,
+      lastRoundCompleted,
     );
 
     if (out.language !== 'unknown') language = out.language;
     blocks.push(...out.blocks);
+    lastRoundCompleted = out.lastRoundCompleted;
 
     if (out.empty) {
       if (blocks.length === 0) {

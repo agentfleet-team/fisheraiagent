@@ -301,6 +301,39 @@ test('a media-data 400 on a rerun at the covered end ends the video', async () =
   assert.equal(t.blocks.at(-1)?.end, 8);
 });
 
+test('a media-data 400 on a rerun after a truncated response stays upstream_media_error', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] a.',
+    '[00:08 - 00:16] b.',
+    '[00:16 - 00:24] c.',
+    '[00:24 - 00:32] d.',
+    '[00:32 - 00:40] e.',
+  ].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: w0 },
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] unfinished', status: 'incomplete' },
+    { error: mediaData400() },
+    { error: mediaData400() },
+  ]);
+  // The truncated [40, 80) response explicitly requires continuation, so
+  // a repeat ingestion fault on the rerun must fail, not return a
+  // successful transcript ending at 48.
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'upstream_media_error',
+  );
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [48, 80],
+      [48, 80],
+    ],
+  );
+});
+
 test('a mapped upstream_media_error past the covered end ends the video without another retry', async () => {
   const mapped = new TranscriptError('upstream_media_error', `Gemini could not process the media data: ${MEDIA_EMPTY_MESSAGE}`, {
     httpStatus: 400,
