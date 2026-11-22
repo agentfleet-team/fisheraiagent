@@ -98,36 +98,91 @@ async function callRound(
     return res;
   };
 
+  // One sub-clip request over an over-limit block's own [start, end),
+  // clipped at the parent clip's end: raw block times can drift past the
+  // window end or the estimated tail end, but no request may cross the
+  // clip's boundary, and the prompt states the length actually asked for.
+  // The answer's times are relative to the sub-clip's start, so they
+  // re-anchor at the block's start. A failed call, a malformed or
+  // still-over-limit answer, a reply reporting no speech, and spans
+  // running past the requested range — which would merge over the next
+  // block's coverage — all produce undefined: the caller then keeps the
+  // original block rather than inventing or splitting text.
+  const subClip = async (b: TranscriptBlock): Promise<TranscriptBlock[] | undefined> => {
+    const subEnd = Math.min(clipStart + b.end, clipEnd);
+    const subSeconds = subEnd - (clipStart + b.start);
+    if (subSeconds <= EPS) return undefined;
+    try {
+      const res = await deps.caller({
+        videoUrl,
+        prompt: clipPrompt(deps.maxBlockSeconds, subSeconds, true),
+        startOffsetSeconds: clipStart + b.start,
+        endOffsetSeconds: subEnd,
+      });
+      logUsage(res);
+      const { blocks } = parseModelOutput(res.text, deps.maxBlockSeconds, { allowEmpty: true });
+      if (blocks.length === 0 || blocks.some((s) => s.end > subSeconds + EPS)) return undefined;
+      return blocks.map((s) => ({ start: s.start + b.start, end: s.end + b.start, text: s.text }));
+    } catch {
+      return undefined;
+    }
+  };
+
+  // An answer whose only offense is a span over the block limit keeps its
+  // valid blocks: each over-limit block's own range is re-asked once as a
+  // sub-clip and the returned blocks take its place in order. A block
+  // whose sub-clip still cannot produce in-limit blocks is kept verbatim
+  // and reported once per answer as block_over_limit — count and longest
+  // span only, never text. Other parse failures throw before this point.
+  const repairOverLimit = async (parsed: ParsedModelOutput): Promise<ParsedModelOutput> => {
+    const { overLimit, ...rest } = parsed;
+    if (!overLimit) return rest;
+    const kept: number[] = [];
+    const blocks: TranscriptBlock[] = [];
+    for (const b of parsed.blocks) {
+      const span = b.end - b.start;
+      if (span <= deps.maxBlockSeconds + EPS) {
+        blocks.push(b);
+        continue;
+      }
+      const sub = await subClip(b);
+      if (sub === undefined) {
+        blocks.push(b);
+        kept.push(span);
+      } else {
+        blocks.push(...sub);
+      }
+    }
+    if (kept.length > 0) {
+      loggerFor(deps.log)('block_over_limit', {
+        windowStart,
+        count: kept.length,
+        longestBlockSeconds: Math.round(Math.max(...kept) * 1e3) / 1e3,
+      });
+    }
+    return { ...rest, blocks };
+  };
+
   const run = async (): Promise<RoundResult> => {
     // Every call is a clip, so a header-only answer is always legal: it is
-    // the model reporting no spoken audio in the requested range.
-    const parse = (text: string) => parseModelOutput(text, deps.maxBlockSeconds, { allowEmpty: true });
+    // the model reporting no spoken audio in the requested range. Spans
+    // over the block limit are tolerated at parse time and repaired by
+    // sub-clip re-asks, so block length alone never spends the strict
+    // whole-window retry.
+    const parse = (text: string) =>
+      parseModelOutput(text, deps.maxBlockSeconds, { allowEmpty: true, allowOverLimitBlocks: true });
     let promptTokens: number | undefined;
     try {
       const res = await request(false);
       promptTokens = res.usage?.promptTokenCount;
-      return { ...parse(res.text), status: res.status, promptTokens };
+      return { ...(await repairOverLimit(parse(res.text))), status: res.status, promptTokens };
     } catch (err) {
       if (err instanceof ModelOutputError) {
         loggerFor(deps.log)('model_output_error', { reason: err.reason, windowStart });
         // One retry with a stricter instruction, then give up.
         const res = await request(true);
         try {
-          // The strict retry tolerates over-limit spans only: one long
-          // block keeps the window's answer instead of discarding it,
-          // and the event reports counts, never block text.
-          const { overLimit, ...parsed } = parseModelOutput(res.text, deps.maxBlockSeconds, {
-            allowEmpty: true,
-            allowOverLimitBlocks: true,
-          });
-          if (overLimit) {
-            loggerFor(deps.log)('block_over_limit', {
-              windowStart,
-              count: overLimit.count,
-              longestBlockSeconds: overLimit.longestSeconds,
-            });
-          }
-          return { ...parsed, status: res.status, promptTokens };
+          return { ...(await repairOverLimit(parse(res.text))), status: res.status, promptTokens };
         } catch (second) {
           if (second instanceof ModelOutputError) {
             loggerFor(deps.log)('model_output_error', { reason: second.reason, windowStart });
