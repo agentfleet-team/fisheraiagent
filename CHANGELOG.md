@@ -7,6 +7,15 @@ git tags on `main`.
 
 ## [Unreleased]
 
+### Fixed
+
+- Static assets no longer reach browsers a deploy late: the page stamps
+  its asset URLs with `?v=<commit>`, and the service sends a year-long
+  `max-age` for a versioned URL while HTML and unversioned URLs go out as
+  `no-cache, no-store`. Cloudflare's default 4-hour browser TTL — which
+  rewrote the old `no-cache` to `max-age=14400` — respects the higher
+  `max-age` and leaves `no-store` alone (#50).
+
 ## [0.1.0] - 2026-11-23
 
 First release: the build the owner accepted live on 2026-11-23 (`011b768`)
