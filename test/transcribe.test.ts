@@ -504,15 +504,20 @@ test('the window length is configurable', async () => {
 
 test('usage metadata is logged for every Gemini call', async () => {
   const usage = { promptTokenCount: 1200, candidatesTokenCount: 80, totalTokenCount: 1400 };
+  const pastEnd = new TranscriptError('video_unavailable', 'INVALID_ARGUMENT: start_offset past end', {
+    httpStatus: 400,
+  });
   const { caller } = geminiDouble([
     { text: 'LANGUAGE: en\n[00:00 - 00:08] only block.', usage },
+    { text: EMPTY, usage }, // full-length bill: strict-retried, then silence
     { text: EMPTY, usage },
+    { error: pastEnd },
   ]);
   const logs: string[] = [];
   const d = { ...deps(caller), log: (line: string) => logs.push(line) };
   await transcribeVideo('hWe-j78vNpc', d);
   const lines = logs.filter((l) => l.startsWith('gemini_call'));
-  assert.equal(lines.length, 2);
+  assert.equal(lines.length, 3);
   for (const line of lines) {
     assert.ok(line.includes('video=hWe-j78vNpc'));
     assert.ok(line.includes('inputTokens=1200'));
@@ -595,14 +600,30 @@ test('a window billed far under the first window\'s token count is re-asked once
 });
 
 test('a window billed near the reference count is not the tail', async () => {
+  const pastEnd = new TranscriptError('video_unavailable', 'INVALID_ARGUMENT: start_offset past end', {
+    httpStatus: 400,
+  });
   const { calls, caller } = geminiDouble([
     { text: 'LANGUAGE: en\n[00:00 - 00:08] a.', usage: tokens(4000) },
     { text: EMPTY, usage: tokens(3900) },
+    { text: EMPTY, usage: tokens(3900) }, // the strict re-ask
+    { error: pastEnd }, // the next window's offset proves the video ended
   ]);
-  await transcribeVideo('hWe-j78vNpc', deps(caller));
-  // 3900 >= 4000 * 0.97, so the empty second window ends the video by the
-  // coverage rule alone — no token-estimate re-ask.
-  assert.equal(calls.length, 2);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  // 3900 >= 4000 * 0.97, so no token-estimate re-ask — but the bill also
+  // proves full-length media, so the empty answer is strict-retried once,
+  // recorded as silence, and the loop continues to the next window.
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [40, 80],
+      [80, 120],
+    ],
+  );
+  assert.ok(calls[2].prompt.includes('Output ONLY the format above'));
+  assert.equal(t.blocks.at(-1)?.end, 8);
 });
 
 test('a missing token count leaves the coverage rules as the only end-of-video evidence', async () => {
@@ -624,15 +645,31 @@ test('a missing token count leaves the coverage rules as the only end-of-video e
 });
 
 test('a short first window still seeds the reference, and an equal count is not the tail', async () => {
+  const pastEnd = new TranscriptError('video_unavailable', 'INVALID_ARGUMENT: start_offset past end', {
+    httpStatus: 400,
+  });
   const { calls, caller } = geminiDouble([
     // The video ends inside the first window: its count is a tail count,
-    // not a full-window one.
+    // not a full-window one — yet it is the only reference available.
     { text: 'LANGUAGE: en\n[00:00 - 00:08] a.\n[00:08 - 00:16] last.', usage: tokens(1800) },
-    { text: EMPTY, usage: tokens(1800) }, // 1800 >= 1800 * 0.97: not under
-    { text: 'LANGUAGE: en' }, // would answer a mistaken re-ask
+    { text: EMPTY, usage: tokens(1800) }, // 1800 >= 1800 * 0.97: full-length, not the tail
+    { text: 'LANGUAGE: en' }, // the strict re-ask still reports no speech
+    { error: pastEnd }, // [80,120) lands past the video end
   ]);
   const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
-  assert.equal(calls.length, 2);
+  // No token-estimate re-ask — the count is not under the reference — but
+  // the full-length window's empty answer is strict-retried once, then
+  // recorded as silence while the loop continues.
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [40, 80],
+      [80, 120],
+    ],
+  );
+  assert.ok(calls[2].prompt.includes('Output ONLY the format above'));
   assert.equal(t.blocks.at(-1)?.end, 16);
 });
 
@@ -803,4 +840,120 @@ test('a parse failure emits one allowlisted event with the reason and the window
     'model_output_error reason=invalid_timestamp windowStart=40',
   ]);
   assert.ok(!logs.some((l) => l.includes('garbage')));
+});
+
+test('a full-length window whose answer drops every block is strict-retried, then recorded as silence', async () => {
+  const full = (prefix: string) =>
+    ['LANGUAGE: en', ...[0, 8, 16, 24, 32].map((s) => `[${s} - ${s + 8}] ${prefix}${s}.`)].join('\n');
+  // Window [40,80) answers only blocks outside the clip: every one is
+  // dropped by the clamp. Its 4000-token bill proves full-length media,
+  // so the empty result cannot end the video.
+  const outOfClip = 'LANGUAGE: en\n[00:45 - 00:53] wrong origin.\n[00:55 - 01:00] still wrong.';
+  const tail = 'LANGUAGE: en\n[00:00 - 00:08] real.\n[00:08 - 00:16] tail.\n[00:16 - 00:18] done.';
+  const { calls, caller } = geminiDouble([
+    { text: full('a'), usage: tokens(4000) },
+    { text: outOfClip, usage: tokens(4000) },
+    { text: EMPTY, usage: tokens(4000) }, // the strict re-ask stays empty
+    { text: full('c'), usage: tokens(4000) },
+    { text: full('stretched'), usage: tokens(1800) }, // tail answer, discarded
+    { text: tail, usage: tokens(1800) },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  const t = await transcribeVideo('hWe-j78vNpc', d);
+  // No success ending at 40: the strict re-ask ran, [40,80) stands as
+  // silence, and the loop continued through [80,120) to the token-
+  // detected tail, re-asked at ceil(120 + 40 * 1800/4000) + 1 = 139.
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [40, 80],
+      [80, 120],
+      [120, 160],
+      [120, 139],
+    ],
+  );
+  assert.ok(calls[2].prompt.includes('Output ONLY the format above'));
+  assert.equal(t.blocks.length, 13);
+  assert.ok(!t.blocks.some((b) => b.start >= 40 && b.start < 80));
+  assert.equal(t.blocks.at(-1)?.end, 138);
+  // The clamp's drops are counted once with the window start, never text.
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('clip_blocks_dropped')),
+    ['clip_blocks_dropped count=2 windowStart=40'],
+  );
+  assert.ok(!logs.some((l) => l.includes('wrong origin')));
+  assertContiguous(t.blocks);
+});
+
+test('a header-only answer on a full-length window is strict-retried, then the loop continues', async () => {
+  const pastEnd = new TranscriptError('video_unavailable', 'INVALID_ARGUMENT: start_offset past end', {
+    httpStatus: 400,
+  });
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] only block.', usage: tokens(4000) },
+    { text: EMPTY, usage: tokens(4000) }, // full-length bill: not the video end
+    { text: EMPTY, usage: tokens(4000) }, // the strict re-ask stays empty
+    { error: pastEnd }, // [80,120) proves the video really ended
+  ]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  // The video does not end at 40 on an empty answer: the strict re-ask
+  // runs on the same clip, the window is recorded as silence, and the
+  // next window is requested — its past-end offset is the real EOF.
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [40, 80],
+      [80, 120],
+    ],
+  );
+  assert.ok(calls[2].prompt.includes('Output ONLY the format above'));
+  assert.deepEqual(t.blocks, [{ start: 0, end: 8, text: 'only block.' }]);
+});
+
+test('a model that reports silence on every full-length window fails at the video bound', async () => {
+  const w0 = ['LANGUAGE: en', ...[0, 8, 16, 24, 32].map((s) => `[${s} - ${s + 8}] w.`)].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: w0, usage: tokens(4000) },
+    ...Array.from({ length: 6 }, () => ({ text: EMPTY, usage: tokens(4000) })),
+  ]);
+  const d = { ...deps(caller), maxVideoSeconds: 100 };
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', d),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'video_too_long',
+  );
+  // [40,80) and [80,120) are each strict-retried once and recorded as
+  // silence; [120,160) starts past the 100 s bound, so no call is spent.
+  assert.deepEqual(
+    calls.map((c) => c.startOffsetSeconds),
+    [0, 40, 40, 80, 80],
+  );
+});
+
+test('blocks dropped by the clip clamp are logged once per answer, never with text', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] kept words',
+    '[00:42 - 00:50] dropped one.',
+    '[00:52 - 00:59] dropped two.',
+  ].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: w0 },
+    { text: EMPTY }, // the 8-40 tail rerun confirms silence
+    { text: EMPTY }, // window [40,80) ends the video
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  const t = await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.length, 3);
+  assert.deepEqual(t.blocks, [{ start: 0, end: 8, text: 'kept words' }]);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('clip_blocks_dropped')),
+    ['clip_blocks_dropped count=2 windowStart=0'],
+  );
+  assert.ok(!logs.some((l) => l.includes('dropped one') || l.includes('dropped two')));
 });
