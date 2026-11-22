@@ -9,7 +9,7 @@ import { createService } from './service.js';
 try {
   const config = loadServiceConfig();
   const server = createService({
-    callerFactory: (apiKey) => createGeminiCaller({ apiKey, model: config.model }),
+    callerFactory: (apiKey) => createGeminiCaller({ apiKey, model: config.model, log: consoleSink }),
     model: config.model,
     version: config.version,
     commit: config.commit,

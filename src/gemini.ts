@@ -1,12 +1,20 @@
 import { FinishReason, GoogleGenAI } from '@google/genai';
 import type { Fetch, Part, VideoMetadata } from '@google/genai';
 import { TranscriptError } from './errors.js';
+import type { VideoId } from './ids.js';
+import { loggerFor, type LogSink } from './log.js';
 
 export interface GeminiVideoRequest {
   videoUrl: string;
   prompt: string;
   startOffsetSeconds?: number;
   endOffsetSeconds?: number;
+  // Where the request sits in the window loop: the media-ingestion retry
+  // this caller performs on its own is invisible to the loop, so the
+  // owning window's start and the video id ride the request for the
+  // extra-call log line. Logging context only — nothing here reaches
+  // the wire request.
+  logContext?: { video?: VideoId; windowStart: number };
 }
 
 // Token counts copied off the response's usage metadata; input tokens are
@@ -119,6 +127,9 @@ export function createGeminiCaller(options: {
   model: string;
   fetch?: Fetch;
   sleep?: (ms: number) => Promise<void>;
+  // Sink for the allowlisted extra-call line the media retry writes; it
+  // needs the request's logContext to name the owning window.
+  log?: LogSink;
 }): GeminiCaller {
   const ai = new GoogleGenAI({
     apiKey: options.apiKey,
@@ -183,6 +194,14 @@ export function createGeminiCaller(options: {
     // The media-ingestion 400 is transient: the identical call gets one
     // retry after a short delay. A second failure — of the same class or
     // any other — is reported by its own mapped code.
+    const ctx = request.logContext;
+    if (ctx !== undefined) {
+      loggerFor(options.log)('gemini_extra_call', {
+        video: ctx.video,
+        reason: 'media_retry',
+        windowStart: ctx.windowStart,
+      });
+    }
     await sleep(MEDIA_RETRY_DELAY_MS);
     try {
       return await generate();

@@ -7,6 +7,15 @@ git tags on `main`.
 
 ## [Unreleased]
 
+### Added
+
+- Every Gemini call beyond a clip's first request now writes one
+  allowlisted `gemini_extra_call` log line — `reason` is `strict_retry`,
+  `empty_full_window`, `subclip`, `tail_reask`, `media_retry` or
+  `continuation` — with `video` and `windowStart` and never transcript or
+  prompt text, so a run's input-token cost can be charged to the retry
+  rule that spent it (#49).
+
 ### Fixed
 
 - Static assets no longer reach browsers a deploy late: the page stamps

@@ -21,7 +21,7 @@ export async function main(input: string | undefined, caller?: GeminiCaller): Pr
     const videoId = parseYouTubeVideoId(input);
     const config = loadConfig();
     const transcript = await transcribeYouTube(videoId, {
-      caller: caller ?? createGeminiCaller({ apiKey: config.apiKey, model: config.model }),
+      caller: caller ?? createGeminiCaller({ apiKey: config.apiKey, model: config.model, log: stderrSink }),
       model: config.model,
       maxBlockSeconds: config.maxBlockSeconds,
       cacheDir: config.cacheDir,

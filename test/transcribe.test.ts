@@ -957,3 +957,248 @@ test('blocks dropped by the clip clamp are logged once per answer, never with te
   );
   assert.ok(!logs.some((l) => l.includes('dropped one') || l.includes('dropped two')));
 });
+
+test('a strict retry logs the extra call with its reason and window start, never text', async () => {
+  const garbage = "I'm sorry, but I can't provide a transcript for this clip.";
+  const { caller } = geminiDouble([{ text: garbage }, { text: garbage }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', d),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'bad_model_output',
+  );
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=strict_retry windowStart=0'],
+  );
+  assert.ok(!logs.some((l) => l.includes("can't provide")));
+});
+
+test('a full-length window strict re-ask logs empty_full_window with the window start', async () => {
+  const pastEnd = new TranscriptError('video_unavailable', 'INVALID_ARGUMENT: start_offset past end', {
+    httpStatus: 400,
+  });
+  const { caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] only block.', usage: tokens(4000) },
+    { text: EMPTY, usage: tokens(4000) }, // full-length bill: not the video end
+    { text: EMPTY, usage: tokens(4000) }, // the strict re-ask stays empty
+    { error: pastEnd }, // [80,120) proves the video really ended
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=empty_full_window windowStart=40'],
+  );
+});
+
+test('each over-limit block\'s sub-clip re-ask logs subclip with the owning window start', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:11] first long.',
+    '[00:11 - 00:19] ok.',
+    '[00:19 - 00:30] second long.',
+  ].join('\n');
+  const sub1 = 'LANGUAGE: en\n[00:00 - 00:05] first\n[00:05 - 00:11] long.';
+  const sub2 = 'LANGUAGE: en\n[00:00 - 00:06] second\n[00:06 - 00:11] long.';
+  const { caller } = geminiDouble([{ text: w0 }, { text: sub1 }, { text: sub2 }, { text: EMPTY }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    [
+      'gemini_extra_call video=hWe-j78vNpc reason=subclip windowStart=0',
+      'gemini_extra_call video=hWe-j78vNpc reason=subclip windowStart=0',
+    ],
+  );
+});
+
+test('the token-detected tail re-ask logs tail_reask with the window start', async () => {
+  const full = (prefix: string) =>
+    ['LANGUAGE: en', ...[0, 8, 16, 24, 32].map((s) => `[${s} - ${s + 8}] ${prefix}${s}.`)].join('\n');
+  const stretched = full('stretched');
+  const tail = 'LANGUAGE: en\n[00:00 - 00:08] real.\n[00:08 - 00:16] tail.\n[00:16 - 00:18] done.';
+  const { caller } = geminiDouble([
+    { text: full('a'), usage: tokens(4000) },
+    { text: full('b'), usage: tokens(4000) },
+    { text: stretched, usage: tokens(1800) },
+    { text: tail, usage: tokens(1800) },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=tail_reask windowStart=80'],
+  );
+});
+
+test('an unmapped caller\'s raw media fault logs media_retry before the one retry', async () => {
+  const { caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a.' },
+    { error: mediaData400() },
+    { error: mediaData400() },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=media_retry windowStart=40'],
+  );
+});
+
+test('a run without retries logs no extra-call lines', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] one.',
+    '[00:08 - 00:16] two.',
+    '[00:16 - 00:24] three.',
+    '[00:24 - 00:32] four.',
+    '[00:32 - 00:40] five',
+  ].join('\n');
+  const { caller } = geminiDouble([{ text: w0 }, { text: EMPTY }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    [],
+  );
+});
+
+test('a hole rerun logs continuation once with the window start', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] a.',
+    '[00:08 - 00:16] b.',
+    '[00:30 - 00:38] c.',
+  ].join('\n');
+  const fill = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] d.',
+    '[00:08 - 00:14] e.',
+    '[00:14 - 00:22] done.',
+  ].join('\n');
+  const { calls, caller } = geminiDouble([{ text: w0 }, { text: fill }, { text: EMPTY }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.filter((r) => r.logContext.windowStart === 0).length, 2);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0'],
+  );
+});
+
+test('a mid-sentence rerun logs continuation once with the window start', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a\n[00:08 - 00:16] mid sentence' },
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] rest of it.\n[00:08 - 00:16] done.' },
+    { text: EMPTY },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.filter((r) => r.logContext.windowStart === 0).length, 2);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0'],
+  );
+});
+
+test('a truncated response rerun logs continuation once with the window start', async () => {
+  const tail = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] b',
+    '[00:08 - 00:16] c',
+    '[00:16 - 00:24] d',
+    '[00:24 - 00:32] e',
+  ].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] first block', status: 'incomplete' },
+    { text: tail },
+    { text: EMPTY },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.filter((r) => r.logContext.windowStart === 0).length, 2);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0'],
+  );
+});
+
+test('an unconfirmed tail rerun logs continuation once with the window start', async () => {
+  // A first response that covered more than a block and stopped within a
+  // block of the window end is re-asked even though it ended a sentence.
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] a.',
+    '[00:08 - 00:16] b.',
+    '[00:16 - 00:24] c.',
+    '[00:24 - 00:32] d.',
+    '[00:32 - 00:36] tail.',
+  ].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: w0 },
+    { text: EMPTY }, // the [36, 40) rerun confirms silence
+    { text: EMPTY }, // window [40, 80) ends the video
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.filter((r) => r.logContext.windowStart === 0).length, 2);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    ['gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0'],
+  );
+});
+
+test('a window needing two continuations logs one event per request', async () => {
+  // A hole, then coverage still mid-sentence: two reruns in one window.
+  const w0 = 'LANGUAGE: en\n[00:00 - 00:08] a.\n[00:08 - 00:16] b.\n[00:30 - 00:38] c';
+  const fill = 'LANGUAGE: en\n[00:00 - 00:08] d.\n[00:08 - 00:14] e';
+  const tail = 'LANGUAGE: en\n[00:00 - 00:08] f.\n[00:08 - 00:10] done.';
+  const { calls, caller } = geminiDouble([
+    { text: w0 },
+    { text: fill },
+    { text: tail },
+    { text: EMPTY },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.filter((r) => r.logContext.windowStart === 0).length, 3);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    [
+      'gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0',
+      'gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0',
+    ],
+  );
+});
+
+test('a continuation that itself spends a strict retry logs one event per call', async () => {
+  const { calls, caller } = geminiDouble([
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] a\n[00:08 - 00:16] mid sentence' },
+    { text: "I'm sorry, but I can't provide a transcript for this clip." },
+    { text: 'LANGUAGE: en\n[00:00 - 00:08] rest of it.\n[00:08 - 00:16] done.' },
+    { text: EMPTY },
+  ]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.filter((r) => r.logContext.windowStart === 0).length, 3);
+  assert.deepEqual(
+    logs.filter((l) => l.startsWith('gemini_extra_call')),
+    [
+      'gemini_extra_call video=hWe-j78vNpc reason=continuation windowStart=0',
+      'gemini_extra_call video=hWe-j78vNpc reason=strict_retry windowStart=0',
+    ],
+  );
+  assert.ok(!logs.some((l) => l.includes("can't provide")));
+});

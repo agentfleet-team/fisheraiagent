@@ -115,7 +115,7 @@ async function getTranscript(
   const config = loadConfig(deps.env);
   const videoId = parseYouTubeVideoId(url);
   return transcribeYouTube(videoId, {
-    caller: deps.caller ?? createGeminiCaller({ apiKey: config.apiKey, model: config.model }),
+    caller: deps.caller ?? createGeminiCaller({ apiKey: config.apiKey, model: config.model, log: deps.log }),
     model: config.model,
     maxBlockSeconds: maxBlockSeconds ?? config.maxBlockSeconds,
     cacheDir: config.cacheDir,
