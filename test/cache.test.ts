@@ -87,3 +87,25 @@ test('a different transcript format version is a cache miss; the same version is
   await transcribeYouTube('hWe-j78vNpc', { ...base, formatVersion: 1 });
   assert.equal(calls.length, 4, 'old-format entry must still hit its own cache file');
 });
+
+test('a cache entry written under format version 2 is not served under the current version', async () => {
+  const cacheDir = mkdtempSync(join(tmpdir(), 'fa-cache-'));
+  const calls: GeminiVideoRequest[] = [];
+  const caller: GeminiCaller = async (req) => {
+    calls.push(req);
+    const text = (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : fixture('model-good.txt');
+    return { text, status: 'completed' };
+  };
+  const base = { caller, model: 'test-model', maxBlockSeconds: 8, cacheDir };
+
+  await transcribeYouTube('hWe-j78vNpc', { ...base, formatVersion: 2 });
+  assert.equal(calls.length, 2);
+  assert.equal(readdirSync(cacheDir).length, 1);
+
+  // No formatVersion override: the current TRANSCRIPT_FORMAT_VERSION must
+  // miss the v2 entry, call the model again and write a second file.
+  const result = await transcribeYouTube('hWe-j78vNpc', base);
+  assert.equal(calls.length, 4, 'v2 cache entry must be a miss under the current format version');
+  assert.equal(result.blocks.length, 5);
+  assert.equal(readdirSync(cacheDir).length, 2);
+});
