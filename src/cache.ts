@@ -19,7 +19,7 @@ export async function readCachedTranscript(
 ): Promise<Transcript | null> {
   try {
     const raw = await readFile(join(cacheDir, cacheFileName(videoId, model, maxBlockSeconds)), 'utf8');
-    const parsed = JSON.parse(raw) as Transcript;
+    const parsed: Transcript = JSON.parse(raw);
     if (parsed.video_id !== videoId || !Array.isArray(parsed.blocks)) return null;
     return parsed;
   } catch {

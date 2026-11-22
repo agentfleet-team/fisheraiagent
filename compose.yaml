@@ -12,6 +12,24 @@ services:
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache
 
+  # Discord bot: post a YouTube URL in an enabled channel, get the transcript
+  # back in the same channel or thread. Needs DISCORD_TOKEN and
+  # BOT_ENCRYPTION_KEY; talks only to the api service.
+  bot:
+    build: .
+    command: ["dist/bot.js"]
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN:-}
+      BOT_ENCRYPTION_KEY: ${BOT_ENCRYPTION_KEY:-}
+      API_BASE_URL: http://api:8080
+      SERVICE_TOKEN: ${SERVICE_TOKEN:-}
+      BOT_DATA_FILE: /data/bot-data.json
+    volumes:
+      - ${BOT_DATA_DIR:-./bot-data}:/data
+    depends_on:
+      - api
+    restart: unless-stopped
+
   # One-off CLI runs: docker compose run --rm transcribe dist/cli.js <youtube-url>
   transcribe:
     build: .
