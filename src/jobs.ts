@@ -34,6 +34,10 @@ export interface JobRunnerDeps {
   maxBlockSeconds: number;
   cacheDir: string;
   windowSeconds?: number;
+  // The length bound for a job whose tenant sets no max_video_seconds: the
+  // service-wide MAX_VIDEO_SECONDS, so an uncapped video's window loop is
+  // still bounded.
+  defaultMaxVideoSeconds?: number;
   log?: (line: string) => void; // sink for allowlisted log lines
   // After a transcript exists, persist it wherever the job's origin resolved
   // to. The origin here is a caller claim the HTTP boundary already
@@ -42,8 +46,9 @@ export interface JobRunnerDeps {
   // way.
   saveTranscript?: (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined>;
   // A length known before any Gemini call (local metadata such as the
-  // transcript cache); used by the per-tenant max_video_seconds limit to
-  // reject an over-length video without spending a call.
+  // transcript cache); used by the video length limit — the tenant's
+  // max_video_seconds or the service default — to reject an over-length
+  // video without spending a call.
   knownDurationSeconds?: (videoId: string) => Promise<number | undefined>;
 }
 
@@ -113,10 +118,11 @@ export class JobStore {
     if (!record) return;
     record.status = 'running';
     try {
-      if (limits?.max_video_seconds !== undefined && this.deps.knownDurationSeconds) {
+      const maxVideoSeconds = limits?.max_video_seconds ?? this.deps.defaultMaxVideoSeconds;
+      if (maxVideoSeconds !== undefined && this.deps.knownDurationSeconds) {
         const known = await this.deps.knownDurationSeconds(videoId);
-        if (known !== undefined && known > limits.max_video_seconds) {
-          throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+        if (known !== undefined && known > maxVideoSeconds) {
+          throw new TranscriptError('video_too_long', 'video exceeds the length limit');
         }
       }
       record.result = await transcribeYouTube(videoId, {
@@ -127,6 +133,7 @@ export class JobStore {
         windowSeconds: this.deps.windowSeconds,
         log: this.deps.log,
         maxVideoSeconds: limits?.max_video_seconds,
+        defaultMaxVideoSeconds: this.deps.defaultMaxVideoSeconds,
       });
       if (this.deps.saveTranscript && origin) {
         try {
