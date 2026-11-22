@@ -5,4 +5,9 @@ import { readFileSync } from 'node:fs';
 import { main } from '../../src/mcp.js';
 
 const GOOD = readFileSync(new URL('./model-good.txt', import.meta.url), 'utf8');
-await main({ caller: async () => ({ text: GOOD, status: 'completed' }) });
+await main({
+  caller: async (req) => ({
+    text: (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD,
+    status: 'completed',
+  }),
+});
