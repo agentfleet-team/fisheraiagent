@@ -48,6 +48,21 @@ test('non-monotonic block times are rejected', () => {
   assert.throws(() => parseModelOutput(fixture('model-nonmonotonic.txt'), 8), ModelOutputError);
 });
 
+test('a zero-length block at whole-second precision is accepted', () => {
+  const out = parseModelOutput(
+    'LANGUAGE: zh-TW\n[00:40 - 00:43] a\n[00:43 - 00:43] 好。\n[00:43 - 00:51] b',
+    8,
+  );
+  assert.deepEqual(out.blocks[1], { start: 43, end: 43, text: '好。' });
+});
+
+test('a block that ends before it starts is still rejected', () => {
+  assert.throws(
+    () => parseModelOutput('LANGUAGE: en\n[00:44 - 00:43] x', 8),
+    ModelOutputError,
+  );
+});
+
 test('a block longer than the limit is rejected', () => {
   assert.throws(() => parseModelOutput(fixture('model-overlong.txt'), 8), /exceeds 8s limit/);
 });
