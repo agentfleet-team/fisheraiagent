@@ -104,14 +104,25 @@ test('a max-tokens finish maps to an incomplete status', async () => {
   assert.equal(res.status, 'incomplete');
 });
 
-test('a 400 request-shape error maps to upstream_rejected, not video_unavailable', async () => {
-  const { fetch } = stubbedHttp(() =>
+const MEDIA_FAULT_MESSAGE =
+  'Unable to process input: the file or media data is empty, corrupted, or malformed.';
+
+test('a 400 request-shape error maps to upstream_rejected and is not retried', async () => {
+  const { requests, fetch } = stubbedHttp(() =>
     apiError(
       400,
       "The value 'text' is not supported for 'input[1].type' in v1, it is available in v1beta.",
     ),
   );
-  const caller = createGeminiCaller({ apiKey: 'test-key', model: 'test-model', fetch });
+  const sleeps: number[] = [];
+  const caller = createGeminiCaller({
+    apiKey: 'test-key',
+    model: 'test-model',
+    fetch,
+    sleep: async (ms) => {
+      sleeps.push(ms);
+    },
+  });
 
   await assert.rejects(
     () => caller({ videoUrl: VIDEO_URL, prompt: 'P' }),
@@ -120,6 +131,59 @@ test('a 400 request-shape error maps to upstream_rejected, not video_unavailable
       err.code === 'upstream_rejected' &&
       err.httpStatus === 400,
   );
+  assert.equal(requests.length, 1);
+  assert.equal(sleeps.length, 0);
+});
+
+test('a transient media-data 400 is retried once and the retry can succeed', async () => {
+  let calls = 0;
+  const { requests, fetch } = stubbedHttp(() => {
+    calls += 1;
+    return calls === 1
+      ? apiError(400, MEDIA_FAULT_MESSAGE)
+      : modelResponse('LANGUAGE: en\n[00:00 - 00:08] hi');
+  });
+  const sleeps: number[] = [];
+  const caller = createGeminiCaller({
+    apiKey: 'test-key',
+    model: 'test-model',
+    fetch,
+    sleep: async (ms) => {
+      sleeps.push(ms);
+    },
+  });
+
+  const res = await caller({ videoUrl: VIDEO_URL, prompt: 'P' });
+
+  assert.equal(requests.length, 2);
+  assert.deepEqual(requests[1].body, requests[0].body);
+  assert.equal(sleeps.length, 1);
+  assert.ok(sleeps[0] > 0);
+  assert.equal(res.text, 'LANGUAGE: en\n[00:00 - 00:08] hi');
+});
+
+test('a repeated media-data 400 reports upstream_media_error, not a private video', async () => {
+  const { requests, fetch } = stubbedHttp(() => apiError(400, MEDIA_FAULT_MESSAGE));
+  const sleeps: number[] = [];
+  const caller = createGeminiCaller({
+    apiKey: 'test-key',
+    model: 'test-model',
+    fetch,
+    sleep: async (ms) => {
+      sleeps.push(ms);
+    },
+  });
+
+  await assert.rejects(
+    () => caller({ videoUrl: VIDEO_URL, prompt: 'P' }),
+    (err: unknown) =>
+      err instanceof TranscriptError &&
+      err.code === 'upstream_media_error' &&
+      err.httpStatus === 400 &&
+      !/private|removed|no longer available/i.test(err.message),
+  );
+  assert.equal(requests.length, 2);
+  assert.equal(sleeps.length, 1);
 });
 
 test('a 400 that says the video cannot be accessed maps to video_unavailable', async () => {

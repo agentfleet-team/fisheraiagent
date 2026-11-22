@@ -48,6 +48,7 @@ export type LogCode =
   | 'quota_exceeded'
   | 'upstream_timeout'
   | 'upstream_rejected'
+  | 'upstream_media_error'
   | 'model_not_found'
   | 'bad_model_output'
   | 'invalid_config'

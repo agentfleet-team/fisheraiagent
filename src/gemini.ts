@@ -24,6 +24,14 @@ const VIDEO_SUBJECT = /video|youtube|media/i;
 const VIDEO_ACCESS_FAILURE =
   /private|members?[- ]?only|age[- ]?restrict|removed|deleted|no longer available|inaccessible|not accessible|cannot be accessed|can't be accessed|could not be accessed|unavailable|not found|(could not|couldn't|cannot|can't|unable to|failed to)[^.,;]{0,60}(access|process|read|fetch|load|retrieve|play|download)/i;
 
+// A 400 that calls the media payload itself empty, corrupted or malformed
+// is a transient upstream ingestion fault, not an access failure: the same
+// call is retried once after a short delay, and only a repeat failure is
+// reported to the caller as upstream_media_error.
+const MEDIA_DATA = /\b(?:file|media|video|audio)\s+data\b/i;
+const MEDIA_DATA_FAULT = /\b(?:empty|corrupt|malformed)\w*/i;
+const MEDIA_RETRY_DELAY_MS = 2_000;
+
 function httpStatusOf(err: unknown): number | undefined {
   if (err && typeof err === 'object') {
     if ('status' in err && typeof err.status === 'number') return err.status;
@@ -47,6 +55,9 @@ function mapSdkError(err: unknown, model: string): TranscriptError | Error {
   if (status === 400) {
     if (/api.?key|key not valid|key invalid/.test(lower)) {
       return new TranscriptError('key_rejected', `Gemini rejected the API key: ${message}`, { httpStatus: status });
+    }
+    if (MEDIA_DATA.test(message) && MEDIA_DATA_FAULT.test(message)) {
+      return new TranscriptError('upstream_media_error', `Gemini could not process the media data: ${message}`, { httpStatus: status });
     }
     if (VIDEO_SUBJECT.test(message) && VIDEO_ACCESS_FAILURE.test(message)) {
       return new TranscriptError('video_unavailable', `Gemini could not read the video (private, members-only, age-restricted or removed): ${message}`, { httpStatus: status });
@@ -87,6 +98,7 @@ export function createGeminiCaller(options: {
   apiKey: string;
   model: string;
   fetch?: Fetch;
+  sleep?: (ms: number) => Promise<void>;
 }): GeminiCaller {
   const ai = new GoogleGenAI({
     apiKey: options.apiKey,
@@ -95,6 +107,7 @@ export function createGeminiCaller(options: {
       ...(options.fetch === undefined ? {} : { fetch: options.fetch }),
     },
   });
+  const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
 
   return async (request) => {
     // Documented YouTube-URL request shape: one generateContent call whose
@@ -105,7 +118,7 @@ export function createGeminiCaller(options: {
       videoPart.videoMetadata = { startOffset: `${Number(request.startOffsetSeconds.toFixed(3))}s` };
     }
 
-    try {
+    const generate = async (): Promise<GeminiVideoResponse> => {
       const response = await ai.models.generateContent({
         model: options.model,
         contents: [{ role: 'user', parts: [videoPart, { text: request.prompt }] }],
@@ -114,6 +127,23 @@ export function createGeminiCaller(options: {
       const finishReason = response.candidates?.[0]?.finishReason;
       const status = finishReason === FinishReason.MAX_TOKENS ? 'incomplete' : 'completed';
       return { text: response.text ?? '', status };
+    };
+
+    try {
+      return await generate();
+    } catch (err) {
+      const mapped = mapSdkError(err, options.model);
+      if (!(mapped instanceof TranscriptError) || mapped.code !== 'upstream_media_error') {
+        throw mapped;
+      }
+    }
+
+    // The media-ingestion 400 is transient: the identical call gets one
+    // retry after a short delay. A second failure — of the same class or
+    // any other — is reported by its own mapped code.
+    await sleep(MEDIA_RETRY_DELAY_MS);
+    try {
+      return await generate();
     } catch (err) {
       throw mapSdkError(err, options.model);
     }
