@@ -45,6 +45,7 @@ Service environment variables:
 | `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
 | `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
 | `WINDOW_SECONDS` | no | `120` | Length of one clipped transcription window, in seconds. Each window is a separate Gemini call with start and end offsets, so timestamps re-anchor per window. |
+| `MAX_VIDEO_SECONDS` | no | `43200` | Length cap for a video whose tenant sets no `max_video_seconds`, in seconds; a tenant's own limit overrides it. A video known or discovered to be longer fails with `video_too_long`. The default is YouTube's documented 12-hour upload maximum. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
 | `TENANTS_FILE` | no | — | Path to a JSON file of per-tenant save destinations (below). When unset, jobs still return transcripts; nothing is written to any destination. |
 | `TENANTS_JSON` | no | — | The same tenants document inline (from a secrets manager, without a mounted file). `TENANTS_FILE` wins when both are set. |
@@ -210,6 +211,7 @@ Server environment variables:
 | `FISHERAIAGENT_TOKEN` | no | Bearer token for a service started with `SERVICE_TOKEN`. |
 | `GEMINI_MODEL` | no | In-process mode only: Gemini model (default `gemini-3.8-flash`). |
 | `MAX_BLOCK_SECONDS` | no | In-process mode only: default max block length; a call's `max_block_seconds` overrides it. |
+| `MAX_VIDEO_SECONDS` | no | In-process mode only: video length cap in seconds (default `43200`, YouTube's documented 12-hour upload maximum); a longer video fails with `video_too_long`. Remote mode uses the service's cap. |
 | `CACHE_DIR` | no | In-process mode only: transcript cache directory. |
 
 Claude Code:
@@ -270,6 +272,7 @@ Environment variables:
 | `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
 | `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
 | `WINDOW_SECONDS` | no | `120` | Length of one clipped transcription window, in seconds. Each window is a separate Gemini call with start and end offsets, so timestamps re-anchor per window. |
+| `MAX_VIDEO_SECONDS` | no | `43200` | Video length cap, in seconds; a video known or discovered to be longer fails with `video_too_long`. Also the hard bound on transcription windows when nothing else limits the video. The default is YouTube's documented 12-hour upload maximum. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
 
 Without Docker, on Node 22 or newer:

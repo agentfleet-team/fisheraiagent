@@ -7,6 +7,7 @@ export interface Config {
   maxBlockSeconds: number;
   cacheDir: string;
   windowSeconds: number;
+  maxVideoSeconds: number;
 }
 
 export interface ServiceConfig {
@@ -15,6 +16,7 @@ export interface ServiceConfig {
   maxBlockSeconds: number;
   cacheDir: string;
   windowSeconds: number;
+  maxVideoSeconds: number;
   serviceToken?: string;
   tenantsFile?: string;
   tenantsJson?: string;
@@ -31,6 +33,11 @@ export interface ServiceConfig {
 
 const DEFAULT_MAX_BLOCK_SECONDS = 8;
 export const DEFAULT_WINDOW_SECONDS = 120;
+// The length bound for a video no per-tenant cap covers, applied inside
+// the window loop: a caller that never reports silence still fails with
+// video_too_long instead of requesting windows without end. 12 hours is
+// YouTube's documented maximum upload length.
+export const DEFAULT_MAX_VIDEO_SECONDS = 12 * 60 * 60;
 const DEFAULT_CACHE_DIR = './transcript-cache';
 const DEFAULT_PORT = 8080;
 
@@ -71,7 +78,24 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
 
   const cacheDir = (env.CACHE_DIR ?? '').trim() || DEFAULT_CACHE_DIR;
 
-  return { apiKey, model, maxBlockSeconds, cacheDir, windowSeconds };
+  const maxVideoSeconds = parseMaxVideoSeconds(env);
+
+  return { apiKey, model, maxBlockSeconds, cacheDir, windowSeconds, maxVideoSeconds };
+}
+
+// MAX_VIDEO_SECONDS is the length bound a tenant's own max_video_seconds
+// overrides; the CLI and the in-process MCP path have no tenant, so it is
+// their only cap.
+function parseMaxVideoSeconds(env: NodeJS.ProcessEnv): number {
+  let maxVideoSeconds = DEFAULT_MAX_VIDEO_SECONDS;
+  const raw = (env.MAX_VIDEO_SECONDS ?? '').trim();
+  if (raw) {
+    maxVideoSeconds = Number(raw);
+    if (!Number.isFinite(maxVideoSeconds) || maxVideoSeconds <= 0) {
+      throw new TranscriptError('invalid_config', `MAX_VIDEO_SECONDS must be a positive number, got: ${raw}`);
+    }
+  }
+  return maxVideoSeconds;
 }
 
 // Service config: no GEMINI_API_KEY. Callers bring their own key per request.
@@ -97,6 +121,8 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
   }
 
   const cacheDir = (env.CACHE_DIR ?? '').trim() || DEFAULT_CACHE_DIR;
+
+  const maxVideoSeconds = parseMaxVideoSeconds(env);
 
   let port = DEFAULT_PORT;
   const rawPort = (env.PORT ?? '').trim();
@@ -145,6 +171,7 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
     maxBlockSeconds,
     cacheDir,
     windowSeconds,
+    maxVideoSeconds,
     serviceToken,
     tenantsFile,
     tenantsJson,

@@ -10,8 +10,8 @@
 //   remote — FISHERAIAGENT_URL (+ optional FISHERAIAGENT_TOKEN bearer): the
 //     job is submitted and polled on that fisheraiagent HTTP service.
 //   local — no URL set: the shared core runs in-process; CACHE_DIR,
-//     GEMINI_MODEL and MAX_BLOCK_SECONDS apply and a per-call
-//     max_block_seconds overrides the configured block length.
+//     GEMINI_MODEL, MAX_BLOCK_SECONDS and MAX_VIDEO_SECONDS apply and a
+//     per-call max_block_seconds overrides the configured block length.
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -119,6 +119,7 @@ async function getTranscript(
     model: config.model,
     maxBlockSeconds: maxBlockSeconds ?? config.maxBlockSeconds,
     cacheDir: config.cacheDir,
+    defaultMaxVideoSeconds: config.maxVideoSeconds,
     log: deps.log,
   });
 }

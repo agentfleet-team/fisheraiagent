@@ -5,7 +5,7 @@ import { isMediaDataError, type GeminiCaller, type GeminiVideoResponse } from '.
 import { ModelOutputError, parseModelOutput, type ParsedModelOutput } from './model-output.js';
 import { clipPrompt, STRICT_RETRY_SUFFIX } from './prompts.js';
 import { readCachedTranscript, TRANSCRIPT_FORMAT_VERSION, writeCachedTranscript } from './cache.js';
-import { DEFAULT_WINDOW_SECONDS } from './config.js';
+import { DEFAULT_MAX_VIDEO_SECONDS, DEFAULT_WINDOW_SECONDS } from './config.js';
 import { canonicalVideoUrl } from './youtube-url.js';
 import type { Transcript, TranscriptBlock } from './transcript.js';
 
@@ -23,6 +23,11 @@ export interface TranscribeDeps {
   // model response) to be longer fails with video_too_long instead of
   // spending further Gemini calls.
   maxVideoSeconds?: number;
+  // The cap applied when maxVideoSeconds is unset — entry points supply
+  // their configured MAX_VIDEO_SECONDS here. Without it the window loop
+  // has no bound: a caller that always reports more speech would request
+  // windows without end, so unset falls back to DEFAULT_MAX_VIDEO_SECONDS.
+  defaultMaxVideoSeconds?: number;
   // Length of one clipped window in seconds. Every Gemini call carries a
   // start and an end offset, so block times re-anchor at a known point per
   // window instead of drifting across a single long generation.
@@ -287,6 +292,14 @@ interface WindowOutcome {
   videoEnded: boolean;
 }
 
+// The length bound for this video: the tenant's own limit, else the
+// configured default, else DEFAULT_MAX_VIDEO_SECONDS — the window loop
+// always has a hard bound, so a model that never reports silence fails
+// with video_too_long instead of running without end.
+function lengthLimit(deps: TranscribeDeps): number {
+  return deps.maxVideoSeconds ?? deps.defaultMaxVideoSeconds ?? DEFAULT_MAX_VIDEO_SECONDS;
+}
+
 // One clipped window: a first call over [windowStart, windowEnd), then
 // clipped reruns for the ranges its responses left uncovered. Every call's
 // block times are relative to that call's own clip start, so a rerun can
@@ -294,13 +307,15 @@ interface WindowOutcome {
 // the transcript's coverage stood when this window began, and
 // priorRoundCompleted says whether the response that produced it finished
 // normally. fullWindowTokens is the first window's first-round input token
-// count, the reference a later window's count is measured against.
+// count, the reference a later window's count is measured against, and
+// maxVideoSeconds is the resolved length bound (tenant cap or default).
 async function transcribeWindow(
   videoId: string,
   videoUrl: string,
   windowStart: number,
   windowEnd: number,
   deps: TranscribeDeps,
+  maxVideoSeconds: number,
   coveredEndAtWindowStart?: number,
   priorRoundCompleted?: boolean,
   fullWindowTokens?: number,
@@ -359,13 +374,8 @@ async function transcribeWindow(
       promptTokens = out.promptTokens;
       // A first response that declares an over-limit duration rejects the
       // video here, before any continuation call is spent.
-      if (
-        windowStart === 0 &&
-        deps.maxVideoSeconds !== undefined &&
-        out.durationSeconds !== undefined &&
-        out.durationSeconds > deps.maxVideoSeconds
-      ) {
-        throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+      if (windowStart === 0 && out.durationSeconds !== undefined && out.durationSeconds > maxVideoSeconds) {
+        throw new TranscriptError('video_too_long', 'video exceeds the length limit');
       }
     }
     if (out.language !== 'unknown') language = out.language;
@@ -425,6 +435,7 @@ async function transcribeWindow(
 export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
   const videoUrl = canonicalVideoUrl(videoId);
   const windowSeconds = deps.windowSeconds ?? DEFAULT_WINDOW_SECONDS;
+  const maxVideoSeconds = lengthLimit(deps);
   const blocks: TranscriptBlock[] = [];
   let language = 'unknown';
   // Whether the response that produced the tail of the accepted coverage
@@ -454,6 +465,7 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
       windowStart,
       windowStart + windowSeconds,
       deps,
+      maxVideoSeconds,
       blocks.at(-1)?.end,
       lastRoundCompleted,
       fullWindowTokens,
@@ -470,10 +482,11 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
       }
       return result();
     }
-    // Coverage past the tenant limit rejects the video even when the
-    // model never declared a duration.
-    if (deps.maxVideoSeconds !== undefined && blocks[blocks.length - 1].end > deps.maxVideoSeconds) {
-      throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+    // Coverage past the length limit rejects the video even when the
+    // model never declared a duration; with no tenant cap the default
+    // bound is what stops the window loop.
+    if (blocks[blocks.length - 1].end > maxVideoSeconds) {
+      throw new TranscriptError('video_too_long', 'video exceeds the length limit');
     }
     // The token count already proved this window holds the video end.
     if (out.videoEnded) return result();
@@ -493,8 +506,8 @@ export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): 
   );
   if (cached) {
     const coverage = cached.blocks.length > 0 ? Math.max(...cached.blocks.map((b) => b.end)) : 0;
-    if (deps.maxVideoSeconds !== undefined && coverage > deps.maxVideoSeconds) {
-      throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+    if (coverage > lengthLimit(deps)) {
+      throw new TranscriptError('video_too_long', 'video exceeds the length limit');
     }
     loggerFor(deps.log)('cache_hit', { video: parseVideoId(videoId) });
     return cached;

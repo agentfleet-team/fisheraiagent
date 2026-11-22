@@ -14,6 +14,7 @@ try {
     maxBlockSeconds: config.maxBlockSeconds,
     cacheDir: config.cacheDir,
     windowSeconds: config.windowSeconds,
+    defaultMaxVideoSeconds: config.maxVideoSeconds,
     serviceToken: config.serviceToken,
     tenantsFile: config.tenantsFile,
     tenantsJson: config.tenantsJson,

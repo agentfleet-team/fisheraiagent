@@ -451,6 +451,44 @@ test('coverage past the tenant limit fails even when no duration is declared', a
   assert.equal(calls.length, 2);
 });
 
+test('a model that always returns blocks fails at the video bound instead of looping without end', async () => {
+  // No tenant cap: the configured default bounds the window loop. Windows
+  // are 40 s, so the third window's coverage crosses the 100 s bound.
+  const calls: GeminiVideoRequest[] = [];
+  const caller: GeminiCaller = async (req) => {
+    calls.push(req);
+    return {
+      text: [
+        'LANGUAGE: en',
+        '[00:00 - 00:08] a.',
+        '[00:08 - 00:16] b.',
+        '[00:16 - 00:24] c.',
+        '[00:24 - 00:32] d.',
+        '[00:32 - 00:40] e.',
+      ].join('\n'),
+      status: 'completed',
+    };
+  };
+  const d = { ...deps(caller), defaultMaxVideoSeconds: 100 };
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', d),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'video_too_long',
+  );
+  assert.equal(calls.length, 3);
+});
+
+test('a tenant cap overrides the default video bound', async () => {
+  const full = (prefix: string) =>
+    ['LANGUAGE: en', ...[0, 8, 16, 24, 32].map((s) => `[${s} - ${s + 8}] ${prefix}${s}.`)].join('\n');
+  const { calls, caller } = geminiDouble([{ text: full('a') }, { text: full('b') }, { text: EMPTY }]);
+  const d = { ...deps(caller), maxVideoSeconds: 200, defaultMaxVideoSeconds: 50 };
+  const t = await transcribeVideo('hWe-j78vNpc', d);
+  // Coverage to 80 s crosses the 50 s default but not the 200 s tenant
+  // cap, so the speechless third window ends the video normally.
+  assert.equal(calls.length, 3);
+  assert.equal(t.blocks.at(-1)?.end, 80);
+});
+
 test('the window length is configurable', async () => {
   const { calls, caller } = geminiDouble([
     { text: 'LANGUAGE: en\n[00:00 - 00:08] short clip.' },

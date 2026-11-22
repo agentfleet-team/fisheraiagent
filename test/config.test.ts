@@ -22,6 +22,7 @@ test('defaults come from config, environment overrides them', () => {
   assert.equal(cfg.maxBlockSeconds, 8);
   assert.equal(cfg.cacheDir, './transcript-cache');
   assert.equal(cfg.windowSeconds, 120);
+  assert.equal(cfg.maxVideoSeconds, 43200);
 
   const custom = loadConfig({
     ...base,
@@ -29,11 +30,13 @@ test('defaults come from config, environment overrides them', () => {
     MAX_BLOCK_SECONDS: '5.5',
     CACHE_DIR: '/tmp/x',
     WINDOW_SECONDS: '90',
+    MAX_VIDEO_SECONDS: '3600',
   });
   assert.equal(custom.model, 'other-model');
   assert.equal(custom.maxBlockSeconds, 5.5);
   assert.equal(custom.cacheDir, '/tmp/x');
   assert.equal(custom.windowSeconds, 90);
+  assert.equal(custom.maxVideoSeconds, 3600);
 });
 
 test('invalid MAX_BLOCK_SECONDS fails with invalid_config', () => {
@@ -47,6 +50,16 @@ test('invalid WINDOW_SECONDS fails with invalid_config', () => {
   for (const bad of ['abc', '0', '-5']) {
     assert.throws(
       () => loadConfig({ ...base, WINDOW_SECONDS: bad }),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      bad,
+    );
+  }
+});
+
+test('invalid MAX_VIDEO_SECONDS fails with invalid_config', () => {
+  for (const bad of ['abc', '0', '-5']) {
+    assert.throws(
+      () => loadConfig({ ...base, MAX_VIDEO_SECONDS: bad }),
       (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
       bad,
     );
