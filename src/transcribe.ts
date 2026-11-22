@@ -98,23 +98,30 @@ async function callRound(
     return res;
   };
 
-  // One sub-clip request over an over-limit block's own [start, end), the
-  // prompt stating that exact length. The answer's times are relative to
-  // the sub-clip's start, so they re-anchor at the block's start. A failed
-  // call, a malformed or still-over-limit answer, and a reply reporting
-  // no speech all produce undefined: the caller then keeps the original
-  // block rather than inventing or splitting text.
+  // One sub-clip request over an over-limit block's own [start, end),
+  // clipped at the parent clip's end: raw block times can drift past the
+  // window end or the estimated tail end, but no request may cross the
+  // clip's boundary, and the prompt states the length actually asked for.
+  // The answer's times are relative to the sub-clip's start, so they
+  // re-anchor at the block's start. A failed call, a malformed or
+  // still-over-limit answer, a reply reporting no speech, and spans
+  // running past the requested range — which would merge over the next
+  // block's coverage — all produce undefined: the caller then keeps the
+  // original block rather than inventing or splitting text.
   const subClip = async (b: TranscriptBlock): Promise<TranscriptBlock[] | undefined> => {
+    const subEnd = Math.min(clipStart + b.end, clipEnd);
+    const subSeconds = subEnd - (clipStart + b.start);
+    if (subSeconds <= EPS) return undefined;
     try {
       const res = await deps.caller({
         videoUrl,
-        prompt: clipPrompt(deps.maxBlockSeconds, b.end - b.start, true),
+        prompt: clipPrompt(deps.maxBlockSeconds, subSeconds, true),
         startOffsetSeconds: clipStart + b.start,
-        endOffsetSeconds: clipStart + b.end,
+        endOffsetSeconds: subEnd,
       });
       logUsage(res);
       const { blocks } = parseModelOutput(res.text, deps.maxBlockSeconds, { allowEmpty: true });
-      if (blocks.length === 0) return undefined;
+      if (blocks.length === 0 || blocks.some((s) => s.end > subSeconds + EPS)) return undefined;
       return blocks.map((s) => ({ start: s.start + b.start, end: s.end + b.start, text: s.text }));
     } catch {
       return undefined;
