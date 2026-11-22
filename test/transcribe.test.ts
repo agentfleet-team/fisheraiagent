@@ -665,41 +665,124 @@ test('a failed re-ask of the token-detected tail stays upstream_media_error', as
   );
 });
 
-test('an over-long block on both attempts is kept after the strict retry, not a lost window', async () => {
-  // Both the plain and the strict answer carry one 11 s block past the
-  // 8 s limit: the window still succeeds and the block is kept verbatim.
+test('an over-limit block is re-asked once as a sub-clip and replaced, never retried whole-window', async () => {
+  // The first answer's only offense is an 11 s block inside [0,40): the
+  // window's valid blocks are kept, exactly one sub-clip request asks for
+  // the block's own [8,19) range, and its in-limit blocks take the
+  // over-limit block's place in order.
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:08] a.',
+    '[00:08 - 00:19] too long.',
+    '[00:19 - 00:27] c.',
+  ].join('\n');
+  const sub = 'LANGUAGE: en\n[00:00 - 00:05] too\n[00:05 - 00:11] long.';
+  const { calls, caller } = geminiDouble([{ text: w0 }, { text: sub }, { text: EMPTY }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  const t = await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.length, 3);
+  // The sub-clip prompt states the exact range length; it is not the
+  // strict whole-window retry, which would repeat [0,40) with the suffix.
+  assert.deepEqual([calls[1].startOffsetSeconds, calls[1].endOffsetSeconds], [8, 19]);
+  assert.ok(calls[1].prompt.includes('The clip is 11 seconds long'));
+  assert.ok(!calls[1].prompt.includes('Output ONLY the format above'));
+  assert.deepEqual([calls[2].startOffsetSeconds, calls[2].endOffsetSeconds], [40, 80]);
+  assert.deepEqual(t.blocks, [
+    { start: 0, end: 8, text: 'a.' },
+    { start: 8, end: 13, text: 'too' },
+    { start: 13, end: 19, text: 'long.' },
+    { start: 19, end: 27, text: 'c.' },
+  ]);
+  assert.ok(t.blocks.every((b) => b.end - b.start <= 8));
+  assert.ok(
+    !logs.some((l) => l.startsWith('block_over_limit') || l.startsWith('model_output_error')),
+  );
+  assert.ok(!logs.some((l) => l.includes('too long')));
+});
+
+test('each over-limit block in one answer gets its own sub-clip request', async () => {
+  const w0 = [
+    'LANGUAGE: en',
+    '[00:00 - 00:11] first long.',
+    '[00:11 - 00:19] ok.',
+    '[00:19 - 00:30] second long.',
+  ].join('\n');
+  const sub1 = 'LANGUAGE: en\n[00:00 - 00:05] first\n[00:05 - 00:11] long.';
+  const sub2 = 'LANGUAGE: en\n[00:00 - 00:06] second\n[00:06 - 00:11] long.';
+  const { calls, caller } = geminiDouble([{ text: w0 }, { text: sub1 }, { text: sub2 }, { text: EMPTY }]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 4);
+  assert.deepEqual([calls[1].startOffsetSeconds, calls[1].endOffsetSeconds], [0, 11]);
+  assert.deepEqual([calls[2].startOffsetSeconds, calls[2].endOffsetSeconds], [19, 30]);
+  assert.deepEqual(
+    t.blocks.map((b) => b.text),
+    ['first', 'long.', 'ok.', 'second', 'long.'],
+  );
+  assert.ok(t.blocks.every((b) => b.end - b.start <= 8));
+});
+
+test('a sub-clip answer still over the limit keeps the original block and logs block_over_limit', async () => {
   const w0 = 'LANGUAGE: en\n[00:00 - 00:11] a long block kept as-is.';
   const { calls, caller } = geminiDouble([{ text: w0 }, { text: w0 }, { text: EMPTY }]);
   const logs: string[] = [];
   const d = { ...deps(caller), log: (line: string) => logs.push(line) };
   const t = await transcribeVideo('hWe-j78vNpc', d);
   assert.equal(calls.length, 3);
-  assert.ok(calls[1].prompt.includes('Output ONLY the format above'));
+  assert.deepEqual([calls[1].startOffsetSeconds, calls[1].endOffsetSeconds], [0, 11]);
   assert.deepEqual(t.blocks, [{ start: 0, end: 11, text: 'a long block kept as-is.' }]);
-  // The first failure is still a model_output_error; acceptance is the
-  // block_over_limit event with the count and the longest length only.
-  assert.deepEqual(
-    logs.filter((l) => l.startsWith('model_output_error')),
-    ['model_output_error reason=block_too_long windowStart=0'],
-  );
+  // The fallback is the existing event with the count and the longest
+  // length only — never block text, and no model_output_error: the
+  // window's own answer parsed cleanly.
   assert.deepEqual(
     logs.filter((l) => l.startsWith('block_over_limit')),
     ['block_over_limit count=1 longestBlockSeconds=11 windowStart=0'],
   );
+  assert.ok(!logs.some((l) => l.startsWith('model_output_error')));
   assert.ok(!logs.some((l) => l.includes('kept as-is')));
 });
 
-test('the strict retry still rejects a second failure that is not block length', async () => {
-  // The first attempt's only problem is an 11 s block; the strict answer
-  // fails a different check, so the tolerance must not rescue it.
-  const w0 = 'LANGUAGE: en\n[00:00 - 00:11] over the limit.';
+test('a failed sub-clip call keeps the original block and logs block_over_limit', async () => {
+  const w0 = 'LANGUAGE: en\n[00:00 - 00:11] kept after the sub-clip failed.';
+  const quota = new TranscriptError('quota_exceeded', 'RESOURCE_EXHAUSTED', { httpStatus: 429 });
+  const { calls, caller } = geminiDouble([{ text: w0 }, { error: quota }, { text: EMPTY }]);
+  const logs: string[] = [];
+  const d = { ...deps(caller), log: (line: string) => logs.push(line) };
+  const t = await transcribeVideo('hWe-j78vNpc', d);
+  assert.equal(calls.length, 3);
+  assert.deepEqual(t.blocks, [{ start: 0, end: 11, text: 'kept after the sub-clip failed.' }]);
+  assert.equal(logs.filter((l) => l.startsWith('block_over_limit')).length, 1);
+});
+
+test('an over-limit block in the strict retry answer is re-asked as a sub-clip too', async () => {
+  // The first answer fails a check that is not block length, so the
+  // strict retry still runs; its over-limit block then gets the same
+  // one-shot sub-clip repair.
   const bad = 'LANGUAGE: en\n[00:10 - 00:02] end before start the model said';
-  const { calls, caller } = geminiDouble([{ text: w0 }, { text: bad }]);
+  const w0 = 'LANGUAGE: en\n[00:00 - 00:11] repaired anyway.';
+  const sub = 'LANGUAGE: en\n[00:00 - 00:05] repaired\n[00:05 - 00:11] anyway.';
+  const { calls, caller } = geminiDouble([{ text: bad }, { text: w0 }, { text: sub }, { text: EMPTY }]);
+  const t = await transcribeVideo('hWe-j78vNpc', deps(caller));
+  assert.equal(calls.length, 4);
+  assert.ok(calls[1].prompt.includes('Output ONLY the format above'));
+  assert.deepEqual([calls[2].startOffsetSeconds, calls[2].endOffsetSeconds], [0, 11]);
+  assert.deepEqual(t.blocks, [
+    { start: 0, end: 5, text: 'repaired' },
+    { start: 5, end: 11, text: 'anyway.' },
+  ]);
+});
+
+test('a parse failure that is not block length still gets the strict retry, then fails', async () => {
+  const bad = 'LANGUAGE: en\n[00:10 - 00:02] end before start the model said';
+  const { calls, caller } = geminiDouble([{ text: bad }, { text: bad }]);
   await assert.rejects(
     () => transcribeVideo('hWe-j78vNpc', deps(caller)),
     (err: unknown) => err instanceof TranscriptError && err.code === 'bad_model_output',
   );
   assert.equal(calls.length, 2);
+  // The retry is the same whole window with the strict suffix, not a sub-clip.
+  assert.deepEqual([calls[1].startOffsetSeconds, calls[1].endOffsetSeconds], [0, 40]);
+  assert.ok(calls[1].prompt.includes('Output ONLY the format above'));
 });
 
 test('a parse failure emits one allowlisted event with the reason and the window start, never transcript text', async () => {

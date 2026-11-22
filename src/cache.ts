@@ -6,7 +6,7 @@ import type { Transcript } from './transcript.js';
 // Bumped whenever the prompt, the transcript output shape or the model
 // output parser changes. It is part of the cache key, so entries written
 // by an older format are misses: no migration, no deletion.
-export const TRANSCRIPT_FORMAT_VERSION = 3;
+export const TRANSCRIPT_FORMAT_VERSION = 4;
 
 function cacheFileName(
   videoId: string,
