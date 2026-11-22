@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { AddressInfo } from 'node:net';
+import { createConnection, type AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
 import { createService, type ServiceOptions } from '../src/service.js';
 import { TranscriptError } from '../src/errors.js';
@@ -165,7 +165,7 @@ test('B3: a POST without X-Gemini-Key is 400 missing_key; a rejected key fails t
 
 test('B4: SERVICE_TOKEN gates /v1 but not /healthz', async () => {
   const calls: GeminiCall[] = [];
-  const { base, close } = await startService(calls, { serviceToken: 'tok-secret' });
+  const { base, logs, close } = await startService(calls, { serviceToken: 'tok-secret' });
   try {
     const health = await fetch(`${base}/healthz`);
     assert.equal(health.status, 200);
@@ -174,6 +174,29 @@ test('B4: SERVICE_TOKEN gates /v1 but not /healthz', async () => {
     assert.equal((await postJob(base, { key: KEY_A, token: 'wrong-tok' })).status, 401);
     assert.equal((await postJob(base, { key: KEY_A, token: 'tok-secret' })).status, 202);
     assert.equal((await getJob(base, 'whatever')).status, 401);
+
+    // A bearer with non-ASCII bytes has a different UTF-8 byte length; it must
+    // be a plain 401, never a 500 from a thrown comparison.
+    const port = Number(new URL(base).port);
+    const raw = await new Promise<string>((resolve, reject) => {
+      const socket = createConnection({ host: '127.0.0.1', port }, () =>
+        socket.write(
+          Buffer.from(
+            'GET /v1/jobs/unknown HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer tök-secret\r\nConnection: close\r\n\r\n',
+            'latin1',
+          ),
+        ),
+      );
+      let data = '';
+      socket.on('data', (chunk: Buffer) => (data += chunk.toString()));
+      socket.on('end', () => resolve(data));
+      socket.on('error', reject);
+    });
+    assert.ok(raw.startsWith('HTTP/1.1 401 '), `expected 401, got: ${raw}`);
+    assert.ok(
+      !logs.some((line) => line.includes('unhandled error')),
+      `unhandled error logged: ${logs.join('\n')}`,
+    );
   } finally {
     await close();
   }
@@ -200,6 +223,18 @@ test('B5: caller keys appear nowhere in logs, job records or responses', async (
 
     bodies.push(JSON.stringify((await postJob(base, {})).body));
     bodies.push(JSON.stringify((await getJob(base, 'no-such-job')).body));
+
+    // A key embedded in request input must not come back in errors or logs.
+    const badUrl = await postJob(base, {
+      url: `https://example.com/watch?key=${KEY_A}`,
+      key: KEY_A,
+    });
+    bodies.push(JSON.stringify(badUrl.body));
+    assert.equal(badUrl.body.error.code, 'invalid_url');
+    const pathProbe = await fetch(`${base}/v1/jobs/${KEY_A}`, {
+      headers: { 'x-gemini-key': KEY_A },
+    });
+    bodies.push(await pathProbe.text());
 
     const haystack = `${logs.join('\n')}\n${bodies.join('\n')}`;
     assert.ok(!haystack.includes(KEY_A), `key A leaked into: ${haystack}`);
