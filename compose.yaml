@@ -51,6 +51,21 @@ services:
       - api
     restart: unless-stopped
 
+  # MCP stdio server for agent runtimes (Claude Code, Codex, any MCP client):
+  # point the client at `docker compose run --rm -T mcp` — remote mode, jobs
+  # run on the api service with the caller's own Gemini key.
+  mcp:
+    build: .
+    profiles: ['mcp']
+    command: ["dist/mcp.js"]
+    stdin_open: true
+    environment:
+      FISHERAIAGENT_URL: http://api:8080
+      FISHERAIAGENT_TOKEN: ${SERVICE_TOKEN:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    depends_on:
+      - api
+
   # One-off CLI runs: docker compose run --rm transcribe <youtube-url>
   transcribe:
     build: .

@@ -1,4 +1,4 @@
-import { safeText, type MessageCode, type SafeText } from './safe-text.js';
+import { hasMessage, safeText, type MessageCode, type SafeText } from './safe-text.js';
 
 export type ErrorCode =
   | 'invalid_url'
@@ -39,6 +39,13 @@ export interface ErrorBody {
 
 export function messageForCode(code: FixedErrorCode): SafeText {
   return safeText(code);
+}
+
+// Whether an unchecked code (for example one that arrived over the wire in a
+// remote client's error object) names a non-bot entry of the fixed table, so
+// it can be reused as a FixedErrorCode instead of folding to internal_error.
+export function isFixedErrorCode(code: string): code is FixedErrorCode {
+  return hasMessage(code) && !code.startsWith('bot.');
 }
 
 export function codeOf(err: unknown): FixedErrorCode {
