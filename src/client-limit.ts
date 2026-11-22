@@ -121,31 +121,71 @@ export function clientIp(
   return peer ?? 'unknown';
 }
 
-// Per-client counters: a sliding window of accepted submissions plus the
-// jobs each client still has in flight. `overLimit` is a read-only check
-// made before the request body is read; `recordAccepted` books one job
-// when it is admitted and `release` returns its in-flight slot when it
-// settles. Two requests racing past the check can overshoot by the size
-// of the race — a simple in-process limit accepts that.
+// One booked submission: the client bucket it is held under and the
+// hourly timestamp it took. A request that is rejected after booking
+// hands the ticket to `cancel`; a submitted job keeps the hourly hit and
+// its in-flight half is returned through `release` when it settles.
+export interface ClientAdmission {
+  readonly client: string;
+  readonly at: number;
+}
+
+// Per-client counters: a sliding window of booked submissions plus the
+// jobs each client still has in flight. `tryAdmit` checks both caps and
+// books the slot in one synchronous step — there is no read-then-book
+// gap, so requests racing the check cannot overshoot a cap. Entries
+// expire out of `hits` when the client is next seen and through a
+// throttled sweep on the admit path, so a client that never returns does
+// not stay in memory forever; in-flight counts live in their own map and
+// are untouched by expiry.
 export class ClientRateLimiter {
   private readonly hits = new Map<string, number[]>();
   private readonly inFlight = new Map<string, number>();
+  private sweptAt = Number.NEGATIVE_INFINITY;
 
   constructor(
     private readonly limits: ClientLimits,
     private readonly now: () => number = () => Date.now(),
   ) {}
 
-  // Whether one more submission from this client would exceed either cap.
+  // Whether one more submission from this client would exceed either
+  // cap — a read-only probe. The request path admits through `tryAdmit`
+  // so the check and the booking stay one atomic step.
   overLimit(client: string): boolean {
+    this.sweep();
     if ((this.inFlight.get(client) ?? 0) >= this.limits.maxConcurrentJobs) return true;
     return this.recent(client).length >= this.limits.maxJobsPerHour;
   }
 
-  // Books one accepted submission: one in-flight slot and one hourly hit.
+  // Books one submission unconditionally — one in-flight slot and one
+  // hourly hit. `tryAdmit` is the checked form the request path uses.
   recordAccepted(client: string): void {
     this.inFlight.set(client, (this.inFlight.get(client) ?? 0) + 1);
     this.hits.set(client, [...this.recent(client), this.now()]);
+  }
+
+  // One synchronous check-and-book: the caller leaves either holding a
+  // slot (an in-flight share plus one hourly hit) or rejected with no
+  // state changed. Run before the request body is read so a flood is
+  // answered 429 without parse or key work.
+  tryAdmit(client: string): ClientAdmission | undefined {
+    if (this.overLimit(client)) return undefined;
+    const at = this.now();
+    this.hits.set(client, [...this.recent(client), at]);
+    this.inFlight.set(client, (this.inFlight.get(client) ?? 0) + 1);
+    return { client, at };
+  }
+
+  // Gives back a booking whose request was rejected before it became a
+  // job: the hourly hit and the in-flight slot both return, so a rejected
+  // request consumes no allowance.
+  cancel(ticket: ClientAdmission): void {
+    this.release(ticket.client);
+    const list = this.hits.get(ticket.client);
+    if (list === undefined) return;
+    const index = list.lastIndexOf(ticket.at);
+    if (index >= 0) list.splice(index, 1);
+    if (list.length === 0) this.hits.delete(ticket.client);
   }
 
   // Returns one in-flight slot when a job reaches a terminal state.
@@ -155,8 +195,29 @@ export class ClientRateLimiter {
     else this.inFlight.set(client, left);
   }
 
+  // The client's still-valid hits, pruned in place: expiry is written
+  // back on every read so a returning client's dead entries leave memory,
+  // and an empty list drops the map entry entirely.
   private recent(client: string): number[] {
     const cutoff = this.now() - HOUR_MS;
-    return (this.hits.get(client) ?? []).filter((t) => t > cutoff);
+    const kept = (this.hits.get(client) ?? []).filter((t) => t > cutoff);
+    if (kept.length === 0) this.hits.delete(client);
+    else this.hits.set(client, kept);
+    return kept;
+  }
+
+  // Whole-map expiry for clients that never return, run at most once a
+  // minute on the admit path — per-request cost stays bounded while dead
+  // entries cannot outlive the sweep interval by much.
+  private sweep(): void {
+    const now = this.now();
+    if (now - this.sweptAt < 60_000) return;
+    this.sweptAt = now;
+    const cutoff = now - HOUR_MS;
+    for (const [client, list] of this.hits) {
+      const kept = list.filter((t) => t > cutoff);
+      if (kept.length === 0) this.hits.delete(client);
+      else this.hits.set(client, kept);
+    }
   }
 }

@@ -4,7 +4,7 @@ import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createConnection, type AddressInfo } from 'node:net';
-import type { Server } from 'node:http';
+import { request, type ClientRequest, type Server } from 'node:http';
 import { createService, type ServiceOptions } from '../src/service.js';
 import { TranscriptError } from '../src/errors.js';
 import type { GeminiCaller, GeminiVideoRequest } from '../src/gemini.js';
@@ -36,6 +36,7 @@ function doubleFactory(
 interface RunningService {
   base: string;
   logs: string[];
+  server: Server;
   close: () => Promise<void>;
 }
 
@@ -57,6 +58,7 @@ async function startService(
   return {
     base: `http://127.0.0.1:${port}`,
     logs,
+    server,
     close: () => new Promise<void>((resolve) => server.close(() => resolve())),
   };
 }
@@ -420,6 +422,121 @@ test('L5: with SERVICE_TOKEN set the authenticated surface has no per-client lim
       assert.equal(res.status, 202);
       await pollJob(base, res.body.job_id, 'tok-secret');
     }
+  } finally {
+    await close();
+  }
+});
+
+// Sends `n` job posts whose headers all reach the service before any
+// body does — the race the per-client check must still hold: every
+// request is past header parsing while none has finished validating.
+async function raceSubmits(server: Server, base: string, n: number): Promise<number[]> {
+  let seen = 0;
+  const allSeen = new Promise<void>((resolve) => {
+    server.on('request', () => {
+      if (++seen === n) resolve();
+    });
+  });
+  const body = JSON.stringify({ url: `https://youtu.be/${VIDEO_A}` });
+  const port = Number(new URL(base).port);
+  const pending: ClientRequest[] = [];
+  const statuses = Array.from(
+    { length: n },
+    () =>
+      new Promise<number>((resolve, reject) => {
+        const req = request(
+          {
+            host: '127.0.0.1',
+            port,
+            path: '/v1/jobs',
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              'content-length': Buffer.byteLength(body),
+              'x-gemini-key': KEY_A,
+            },
+          },
+          (res) => {
+            res.resume();
+            res.on('end', () => resolve(res.statusCode ?? 0));
+          },
+        );
+        req.on('error', reject);
+        pending.push(req);
+        req.flushHeaders();
+      }),
+  );
+  await allSeen;
+  for (const req of pending) req.end(body);
+  return Promise.all(statuses);
+}
+
+test('L6: eight racing requests cannot pass the concurrency cap', async () => {
+  const calls: GeminiCall[] = [];
+  let release: () => void = () => {};
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  const { base, server, close } = await startService(calls, {
+    maxConcurrentJobsPerClient: 1,
+    maxJobsPerHourPerClient: 100,
+    callerFactory: () => async () => {
+      await gate;
+      throw new TranscriptError('video_unavailable', 'offline');
+    },
+  });
+  try {
+    const statuses = await raceSubmits(server, base, 8);
+    assert.equal(statuses.filter((s) => s === 202).length, 1, statuses.join(','));
+    assert.equal(statuses.filter((s) => s === 429).length, 7, statuses.join(','));
+  } finally {
+    release();
+    await close();
+  }
+});
+
+test('L7: eight racing requests cannot pass the hourly cap', async () => {
+  const calls: GeminiCall[] = [];
+  let release: () => void = () => {};
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  const { base, server, close } = await startService(calls, {
+    maxConcurrentJobsPerClient: 100,
+    maxJobsPerHourPerClient: 1,
+    callerFactory: () => async () => {
+      await gate;
+      throw new TranscriptError('video_unavailable', 'offline');
+    },
+  });
+  try {
+    const statuses = await raceSubmits(server, base, 8);
+    assert.equal(statuses.filter((s) => s === 202).length, 1, statuses.join(','));
+    assert.equal(statuses.filter((s) => s === 429).length, 7, statuses.join(','));
+  } finally {
+    release();
+    await close();
+  }
+});
+
+test('L8: a rejected request consumes neither cap allowance', async () => {
+  const calls: GeminiCall[] = [];
+  const { base, close } = await startService(calls, {
+    maxConcurrentJobsPerClient: 1,
+    maxJobsPerHourPerClient: 1,
+  });
+  try {
+    // Two rejections after booking — a bad URL and a missing key — hand
+    // their slots back, so the cap of one still admits a good submit.
+    const badUrl = await postJob(base, { url: 'https://example.com/x', key: KEY_A });
+    assert.equal(badUrl.status, 400);
+    const keyless = await postJob(base, {});
+    assert.equal(keyless.status, 400);
+
+    const good = await postJob(base, { key: KEY_A });
+    assert.equal(good.status, 202);
+    await pollJob(base, good.body.job_id);
+
+    // The accepted submit did spend the allowance: the next one is 429.
+    const limited = await postJob(base, { key: KEY_A });
+    assert.equal(limited.status, 429);
+    assert.equal(limited.body.error.code, 'rate_limited');
   } finally {
     await close();
   }
