@@ -447,3 +447,20 @@ test('unknown routes and bad input get JSON errors', async () => {
     await close();
   }
 });
+
+// Issue #42: the web page's save-time key check reads the configured model.
+test('GET /v1/config returns the configured model', async () => {
+  const calls: GeminiCall[] = [];
+  const { base, logs, close } = await startService(calls);
+  try {
+    const res = await fetch(`${base}/v1/config`);
+    assert.equal(res.status, 200);
+    assert.deepEqual(await res.json(), { model: 'test-model' });
+    assert.ok(
+      logs.some((line) => line.includes('route=GET /v1/config')),
+      `config route missing from logs: ${logs.join('\n')}`,
+    );
+  } finally {
+    await close();
+  }
+});

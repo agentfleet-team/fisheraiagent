@@ -43,7 +43,7 @@ export type LogEvent =
   | 'command_handler_failed'
   | 'startup_failed';
 
-export type LogRoute = 'GET /healthz' | 'POST /v1/jobs' | 'GET /v1/jobs/:id' | 'other';
+export type LogRoute = 'GET /healthz' | 'GET /v1/config' | 'POST /v1/jobs' | 'GET /v1/jobs/:id' | 'other';
 
 export type LogCode =
   | 'invalid_url'

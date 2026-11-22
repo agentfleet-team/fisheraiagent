@@ -19,7 +19,7 @@ docker compose up -d          # serves on http://localhost:8080
 npm run smoke                 # prints 200 for /healthz and 400 missing_key for a keyless POST
 ```
 
-Open http://localhost:8080 in a browser for the web page: one box, one button, the transcript below. Open Settings (top right) to add your Gemini API key — it is kept only in your browser's localStorage and is sent to the service, as `X-Gemini-Key`, only when you submit a URL.
+Open http://localhost:8080 in a browser for the web page: one box, one button, the transcript below. Open Settings (top right) to add your Gemini API key — it is kept only in your browser's localStorage and is sent to the service, as `X-Gemini-Key`, only when you submit a URL. On Save the page also checks the key once against Gemini directly (`models.get` for the model this service runs, read from `GET /v1/config`; the key travels in the `x-goog-api-key` header to Google, never to this service) and reports whether the key was accepted, rejected, out of quota, or could not be checked.
 
 Submit a job, then poll it:
 

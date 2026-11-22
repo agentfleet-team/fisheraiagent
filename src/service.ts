@@ -259,6 +259,13 @@ export function createService(options: ServiceOptions): Server {
       return;
     }
 
+    // Non-secret configuration the web page reads once: the model the
+    // service runs, so the page's save-time key check can probe that exact
+    // model against Gemini. No key or caller data is involved.
+    if (method === 'GET' && path === '/v1/config') {
+      send(res, 200, { model: options.model });
+      return;
+    }
     if (method === 'POST' && path === '/v1/jobs') {
       await submitJob(req, res);
       return;
@@ -450,6 +457,7 @@ export function createService(options: ServiceOptions): Server {
 
 function routeTemplate(method: string, path: string): LogRoute {
   if (method === 'GET' && path === '/healthz') return 'GET /healthz';
+  if (method === 'GET' && path === '/v1/config') return 'GET /v1/config';
   if (method === 'POST' && path === '/v1/jobs') return 'POST /v1/jobs';
   if (method === 'GET' && /^\/v1\/jobs\/[^/]+$/.test(path)) return 'GET /v1/jobs/:id';
   return 'other';
