@@ -195,7 +195,7 @@ One YouTube URL in, the full timed transcript out as JSON — for videos with or
 
 ```bash
 export GEMINI_API_KEY=<your Gemini API key>
-docker compose run --rm transcribe dist/cli.js https://youtu.be/hWe-j78vNpc
+docker compose run --rm transcribe https://youtu.be/hWe-j78vNpc
 ```
 
 The transcript prints to stdout as JSON:
