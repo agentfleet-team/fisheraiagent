@@ -7,6 +7,8 @@ git tags on `main`.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-23
+
 ### Added
 
 - Every Gemini call beyond a clip's first request now writes one
@@ -67,5 +69,6 @@ as a public page (bring your own Gemini key).
   `--build-arg APP_COMMIT=<sha>`; release images should set both so the
   deployed build reports its identity (#46).
 
-[Unreleased]: https://github.com/agentfleet-team/fisheraiagent/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/agentfleet-team/fisheraiagent/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/agentfleet-team/fisheraiagent/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/agentfleet-team/fisheraiagent/releases/tag/v0.1.0
