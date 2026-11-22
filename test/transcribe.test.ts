@@ -598,6 +598,35 @@ test('a short first window still seeds the reference, and an equal count is not 
   assert.equal(t.blocks.at(-1)?.end, 16);
 });
 
+test('a failed re-ask of the token-detected tail stays upstream_media_error', async () => {
+  const full = (prefix: string) =>
+    ['LANGUAGE: en', ...[0, 8, 16, 24, 32].map((s) => `[${s} - ${s + 8}] ${prefix}${s}.`)].join('\n');
+  const { calls, caller } = geminiDouble([
+    { text: full('a'), usage: tokens(4000) },
+    { text: 'LANGUAGE: en\n[0 - 8] b.', usage: tokens(4000) },
+    { text: full('stretched'), usage: tokens(1800) },
+    { error: mediaData400() },
+    { error: mediaData400() },
+  ]);
+  await assert.rejects(
+    () => transcribeVideo('hWe-j78vNpc', deps(caller)),
+    (err: unknown) => err instanceof TranscriptError && err.code === 'upstream_media_error',
+  );
+  // Coverage stopped at 48, short of the third window's start — but the
+  // tail was already detected, so its failed replacement is no
+  // end-of-video proof: the media retry runs and the error stays typed.
+  assert.deepEqual(
+    calls.map((c) => [c.startOffsetSeconds, c.endOffsetSeconds]),
+    [
+      [0, 40],
+      [40, 80],
+      [80, 120],
+      [80, 99],
+      [80, 99],
+    ],
+  );
+});
+
 test('a parse failure emits one allowlisted event with the reason and the window start, never transcript text', async () => {
   const w0 = 'LANGUAGE: en\n[00:00 - 00:08] fine.';
   const bad = 'LANGUAGE: en\n[99:99 - 01:00] garbage the model said';

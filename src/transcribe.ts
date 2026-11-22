@@ -327,13 +327,15 @@ async function transcribeWindow(
       // response covering the range before it finished normally, and that
       // coverage stopped before the boundary this request asks about (the
       // window start for a first call, the rerun's own start after that).
-      // An offset-0 fault, coverage that reached the boundary, or a
-      // truncated response stays a real upstream error.
+      // An offset-0 fault, coverage that reached the boundary, a
+      // truncated response, or the failed re-ask of a token-detected
+      // tail — whose discarded answer already proved speech there —
+      // stays a real upstream error.
       const coveredEnd = blocks.at(-1)?.end ?? coveredEndAtWindowStart;
       const endedBeforeBoundary =
         coveredEnd !== undefined &&
         (round === 0 ? coveredEnd < windowStart - EPS : coveredEnd <= clipStart + EPS);
-      if (clipStart > 0 && lastRoundCompleted && endedBeforeBoundary) {
+      if (clipStart > 0 && lastRoundCompleted && endedBeforeBoundary && !videoEnded) {
         return { blocks, language, empty: true, lastRoundCompleted, promptTokens, videoEnded };
       }
       throw err;
