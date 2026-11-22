@@ -44,6 +44,7 @@ Service environment variables:
 | `SERVICE_TOKEN` | no | — | When set, every `/v1` request needs `Authorization: Bearer <token>` (401 otherwise). `/healthz` stays open. |
 | `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
 | `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
+| `WINDOW_SECONDS` | no | `120` | Length of one clipped transcription window, in seconds. Each window is a separate Gemini call with start and end offsets, so timestamps re-anchor per window. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
 | `TENANTS_FILE` | no | — | Path to a JSON file of per-tenant save destinations (below). When unset, jobs still return transcripts; nothing is written to any destination. |
 | `TENANTS_JSON` | no | — | The same tenants document inline (from a secrets manager, without a mounted file). `TENANTS_FILE` wins when both are set. |
@@ -211,6 +212,7 @@ Environment variables:
 | `GEMINI_API_KEY` | yes | — | Your Gemini API key. |
 | `GEMINI_MODEL` | no | `gemini-3.8-flash` | Gemini model used for transcription. |
 | `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
+| `WINDOW_SECONDS` | no | `120` | Length of one clipped transcription window, in seconds. Each window is a separate Gemini call with start and end offsets, so timestamps re-anchor per window. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
 
 Without Docker, on Node 22 or newer:

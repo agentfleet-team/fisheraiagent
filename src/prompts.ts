@@ -18,6 +18,7 @@ function formatRules(maxBlockSeconds: number): string {
   return [
     'Output format (strict):',
     'Line 1: LANGUAGE: <BCP-47 language code of the spoken language>',
+    'Line 2 (when known): DURATION: <length of the full source video in seconds>',
     'Then one line per transcript block:',
     '[MM:SS - MM:SS] <spoken text>',
     'Rules:',
@@ -29,20 +30,16 @@ function formatRules(maxBlockSeconds: number): string {
   ].join('\n');
 }
 
-export function initialPrompt(maxBlockSeconds: number): string {
+// One prompt shape for every call: the request always carries a clipped
+// interval, so the model's block times are relative to the clip start — a
+// known offset the caller adds back, not something the model must track.
+export function clipPrompt(maxBlockSeconds: number, clipSeconds: number): string {
+  const end = formatTimestamp(clipSeconds);
   return [
-    'Transcribe the spoken audio of this video.',
-    'Start at the first timestamp of the video and cover it to the end. Do not stop early.',
-    formatRules(maxBlockSeconds),
-  ].join('\n');
-}
-
-export function rangePrompt(maxBlockSeconds: number, fromSeconds: number): string {
-  const from = formatTimestamp(fromSeconds);
-  return [
-    `Transcribe the spoken audio of this video from ${from} to the end of the video.`,
-    `Blocks start at ${from}.`,
-    `If there is no spoken audio from ${from} onward, output only the LANGUAGE line.`,
+    'Transcribe the spoken audio of this clip.',
+    `The clip is ${formatSeconds(clipSeconds)} seconds long; its last frame is ${end}.`,
+    'Report every block time relative to the clip: the first frame is 00:00, not the position the clip was cut from.',
+    'If the clip has no spoken audio, output only the LANGUAGE line.',
     formatRules(maxBlockSeconds),
   ].join('\n');
 }

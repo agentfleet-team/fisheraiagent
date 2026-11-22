@@ -22,6 +22,7 @@ export type LogEvent =
   | 'http_unhandled_error'
   | 'service_listening'
   | 'cache_hit'
+  | 'gemini_call'
   | 'key_set'
   | 'key_removed'
   | 'channel_enabled'
@@ -80,6 +81,9 @@ export interface LogFields {
   port?: number;
   count?: number;
   durationMs?: number;
+  inputTokens?: number;
+  outputTokens?: number;
+  totalTokens?: number;
 }
 
 export type LogSink = (line: string) => void;
@@ -99,6 +103,9 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'port',
   'count',
   'durationMs',
+  'inputTokens',
+  'outputTokens',
+  'totalTokens',
 ];
 
 const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {

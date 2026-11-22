@@ -33,6 +33,7 @@ export interface JobRunnerDeps {
   model: string;
   maxBlockSeconds: number;
   cacheDir: string;
+  windowSeconds?: number;
   log?: (line: string) => void; // sink for allowlisted log lines
   // After a transcript exists, persist it wherever the job's origin resolved
   // to. The origin here is a caller claim the HTTP boundary already
@@ -123,6 +124,7 @@ export class JobStore {
         model: this.deps.model,
         maxBlockSeconds: this.deps.maxBlockSeconds,
         cacheDir: this.deps.cacheDir,
+        windowSeconds: this.deps.windowSeconds,
         log: this.deps.log,
         maxVideoSeconds: limits?.max_video_seconds,
       });

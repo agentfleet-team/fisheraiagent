@@ -13,6 +13,7 @@ try {
     model: config.model,
     maxBlockSeconds: config.maxBlockSeconds,
     cacheDir: config.cacheDir,
+    windowSeconds: config.windowSeconds,
     serviceToken: config.serviceToken,
     tenantsFile: config.tenantsFile,
     tenantsJson: config.tenantsJson,

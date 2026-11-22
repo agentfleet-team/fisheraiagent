@@ -1,10 +1,22 @@
 export { TranscriptError, type ErrorCode } from './errors.js';
 export { parseYouTubeVideoId, canonicalVideoUrl } from './youtube-url.js';
 export { parseModelOutput, ModelOutputError, type ParsedModelOutput } from './model-output.js';
-export { createGeminiCaller, type GeminiCaller, type GeminiVideoRequest, type GeminiVideoResponse } from './gemini.js';
+export {
+  createGeminiCaller,
+  type GeminiCaller,
+  type GeminiUsage,
+  type GeminiVideoRequest,
+  type GeminiVideoResponse,
+} from './gemini.js';
 export { transcribeVideo, transcribeYouTube, type TranscribeDeps } from './transcribe.js';
 export { readCachedTranscript, writeCachedTranscript, TRANSCRIPT_FORMAT_VERSION } from './cache.js';
-export { loadConfig, loadServiceConfig, type Config, type ServiceConfig } from './config.js';
+export {
+  loadConfig,
+  loadServiceConfig,
+  DEFAULT_WINDOW_SECONDS,
+  type Config,
+  type ServiceConfig,
+} from './config.js';
 export type { Transcript, TranscriptBlock } from './transcript.js';
 export { JobStore, type JobError, type JobRunnerDeps, type JobStatus, type JobView } from './jobs.js';
 export { createService, type ServiceOptions } from './service.js';

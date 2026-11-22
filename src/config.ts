@@ -6,6 +6,7 @@ export interface Config {
   model: string;
   maxBlockSeconds: number;
   cacheDir: string;
+  windowSeconds: number;
 }
 
 export interface ServiceConfig {
@@ -13,6 +14,7 @@ export interface ServiceConfig {
   model: string;
   maxBlockSeconds: number;
   cacheDir: string;
+  windowSeconds: number;
   serviceToken?: string;
   tenantsFile?: string;
   tenantsJson?: string;
@@ -28,6 +30,7 @@ export interface ServiceConfig {
 }
 
 const DEFAULT_MAX_BLOCK_SECONDS = 8;
+export const DEFAULT_WINDOW_SECONDS = 120;
 const DEFAULT_CACHE_DIR = './transcript-cache';
 const DEFAULT_PORT = 8080;
 
@@ -57,9 +60,18 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     }
   }
 
+  let windowSeconds = DEFAULT_WINDOW_SECONDS;
+  const rawWindow = (env.WINDOW_SECONDS ?? '').trim();
+  if (rawWindow) {
+    windowSeconds = Number(rawWindow);
+    if (!Number.isFinite(windowSeconds) || windowSeconds <= 0) {
+      throw new TranscriptError('invalid_config', `WINDOW_SECONDS must be a positive number, got: ${rawWindow}`);
+    }
+  }
+
   const cacheDir = (env.CACHE_DIR ?? '').trim() || DEFAULT_CACHE_DIR;
 
-  return { apiKey, model, maxBlockSeconds, cacheDir };
+  return { apiKey, model, maxBlockSeconds, cacheDir, windowSeconds };
 }
 
 // Service config: no GEMINI_API_KEY. Callers bring their own key per request.
@@ -72,6 +84,15 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
     maxBlockSeconds = Number(rawMax);
     if (!Number.isFinite(maxBlockSeconds) || maxBlockSeconds <= 0) {
       throw new TranscriptError('invalid_config', `MAX_BLOCK_SECONDS must be a positive number, got: ${rawMax}`);
+    }
+  }
+
+  let windowSeconds = DEFAULT_WINDOW_SECONDS;
+  const rawWindow = (env.WINDOW_SECONDS ?? '').trim();
+  if (rawWindow) {
+    windowSeconds = Number(rawWindow);
+    if (!Number.isFinite(windowSeconds) || windowSeconds <= 0) {
+      throw new TranscriptError('invalid_config', `WINDOW_SECONDS must be a positive number, got: ${rawWindow}`);
     }
   }
 
@@ -123,6 +144,7 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
     model,
     maxBlockSeconds,
     cacheDir,
+    windowSeconds,
     serviceToken,
     tenantsFile,
     tenantsJson,

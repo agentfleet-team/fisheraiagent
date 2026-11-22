@@ -112,7 +112,10 @@ async function startService(
   const dir = mkdtempSync(join(tmpdir(), 'fa-save-'));
   const tenantsFile = writeTenantsFile(dir, tenants);
   const logs: string[] = [];
-  const caller: GeminiCaller = async () => ({ text: GOOD, status: 'completed' });
+  const caller: GeminiCaller = async (req) => ({
+    text: (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD,
+    status: 'completed',
+  });
   const server: Server = createService({
     callerFactory: () => caller,
     model: 'test-model',

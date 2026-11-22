@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import { timingSafeEqual } from 'node:crypto';
 import { createAuth, createOidcClient, type Auth, type OidcClientConfig } from './auth.js';
 import { cachedVideoCoverage, TRANSCRIPT_FORMAT_VERSION } from './cache.js';
+import { DEFAULT_WINDOW_SECONDS } from './config.js';
 import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
 import { loggerFor, type LogRoute } from './log.js';
@@ -96,7 +97,14 @@ export function createService(options: ServiceOptions): Server {
     });
   }
   deps.knownDurationSeconds ??= (videoId) =>
-    cachedVideoCoverage(options.cacheDir, videoId, options.model, options.maxBlockSeconds, TRANSCRIPT_FORMAT_VERSION);
+    cachedVideoCoverage(
+      options.cacheDir,
+      videoId,
+      options.model,
+      options.maxBlockSeconds,
+      options.windowSeconds ?? DEFAULT_WINDOW_SECONDS,
+      TRANSCRIPT_FORMAT_VERSION,
+    );
   const jobs = new JobStore(deps);
   const log = loggerFor(options.log);
   const limiter = new TenantRateLimiter();
