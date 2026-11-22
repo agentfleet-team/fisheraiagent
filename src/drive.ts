@@ -68,6 +68,19 @@ function field(value: unknown, key: string): unknown {
     : undefined;
 }
 
+function parseServiceAccount(parsed: unknown, source: string): ServiceAccount {
+  const doc = typeof parsed === 'object' && parsed !== null ? parsed : {};
+  const email = field(doc, 'client_email');
+  const key = field(doc, 'private_key');
+  if (typeof email !== 'string' || typeof key !== 'string') {
+    throw new TranscriptError(
+      'invalid_config',
+      `${source}: not a service account key (needs client_email and private_key)`,
+    );
+  }
+  return { client_email: email, private_key: key };
+}
+
 function loadServiceAccount(credentialsPath: string): ServiceAccount {
   let parsed: unknown;
   try {
@@ -78,15 +91,17 @@ function loadServiceAccount(credentialsPath: string): ServiceAccount {
       `cannot read GOOGLE_APPLICATION_CREDENTIALS file ${credentialsPath}: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
-  const email = field(parsed, 'client_email');
-  const key = field(parsed, 'private_key');
-  if (typeof email !== 'string' || typeof key !== 'string') {
-    throw new TranscriptError(
-      'invalid_config',
-      `${credentialsPath}: not a service account key file (needs client_email and private_key)`,
-    );
+  return parseServiceAccount(parsed, credentialsPath);
+}
+
+function loadServiceAccountJson(json: string): ServiceAccount {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    throw new TranscriptError('invalid_config', 'GOOGLE_CREDENTIALS_JSON is not valid JSON');
   }
-  return { client_email: email, private_key: key };
+  return parseServiceAccount(parsed, 'GOOGLE_CREDENTIALS_JSON');
 }
 
 function base64url(input: string | Buffer): string {
@@ -139,7 +154,10 @@ async function readApiError(res: Response): Promise<DriveError> {
 }
 
 export interface DriveStoreOptions {
-  credentialsPath: string;
+  credentialsPath?: string;
+  // The key JSON inline (from a secrets-manager env var) instead of a
+  // mounted file. credentialsPath wins when both are set.
+  credentialsJson?: string;
   fetchImpl?: typeof fetch;
 }
 
@@ -151,7 +169,17 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
   let account: ServiceAccount | undefined;
   let token: { value: string; expiresAt: number } | undefined;
 
-  const serviceAccount = (): ServiceAccount => (account ??= loadServiceAccount(options.credentialsPath));
+  const serviceAccount = (): ServiceAccount => {
+    if (account) return account;
+    if (options.credentialsPath !== undefined) {
+      account = loadServiceAccount(options.credentialsPath);
+    } else if (options.credentialsJson !== undefined) {
+      account = loadServiceAccountJson(options.credentialsJson);
+    } else {
+      throw new TranscriptError('invalid_config', 'no Google service account credentials configured');
+    }
+    return account;
+  };
 
   async function accessToken(): Promise<string> {
     if (token && Date.now() < token.expiresAt - 60_000) return token.value;

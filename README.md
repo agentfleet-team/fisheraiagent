@@ -2,7 +2,7 @@
 
 Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host them for free, or use them through AgentFleet.
 
-> Status: the YouTube transcript CLI, HTTP job API, web page and Discord bot work. Hosted surfaces follow.
+> Status: the YouTube transcript CLI, HTTP job API, web page, Discord bot, optional web sign-in with per-tenant limits, and an AWS deployment recipe work.
 
 ## Tools
 
@@ -46,11 +46,39 @@ Service environment variables:
 | `MAX_BLOCK_SECONDS` | no | `8` | Maximum length of one transcript block, in seconds. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
 | `TENANTS_FILE` | no | — | Path to a JSON file of per-tenant save destinations (below). When unset, jobs still return transcripts; nothing is written to any destination. |
+| `TENANTS_JSON` | no | — | The same tenants document inline (from a secrets manager, without a mounted file). `TENANTS_FILE` wins when both are set. |
 | `GOOGLE_APPLICATION_CREDENTIALS` | no | — | Path to a Google service-account key JSON, needed only when a tenant uses a `google-drive` destination. |
+| `GOOGLE_CREDENTIALS_JSON` | no | — | The same key JSON inline (from a secrets manager). `GOOGLE_APPLICATION_CREDENTIALS` wins when both are set. |
+| `OIDC_CLIENT_ID` | no | — | OAuth client id for web sign-in (below). |
+| `OIDC_CLIENT_SECRET` | no | — | OAuth client secret for web sign-in. |
+| `OIDC_REDIRECT_URI` | no | — | This service's callback URL, `https://<host>/auth/callback`. |
+| `OIDC_ISSUER` | no | `https://accounts.google.com` | The OpenID provider's issuer. |
+| `SESSION_SECRET` | no | — | Any long random string; signs the session cookie. |
+
+### Web sign-in (optional, off by default)
+
+When `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_REDIRECT_URI` and
+`SESSION_SECRET` are all set, the page gains a **Sign in** link
+(`/auth/login`) running the OpenID Connect authorization code flow with
+PKCE against `OIDC_ISSUER` (Google by default). `/auth/login` also sets a
+short-lived `af_login` cookie — HttpOnly, Secure, SameSite=Lax, HMAC-signed —
+binding the pending login's state and PKCE verifier to the browser that
+started it; the callback is rejected without it. A completed sign-in leaves
+an `af_session` cookie — HttpOnly, Secure, SameSite=Lax, HMAC-signed — that
+carries only the verified email. Setting only some of the four variables
+fails startup; setting none keeps today's anonymous page, so self-hosters
+are unaffected.
+
+A signed-in user's email resolves to a tenant through that tenant's
+`web_emails` allowlist — the session is the caller credential, so the job
+saves to that tenant's destination and the page shows the link. An email on
+no allowlist still gets its transcript plus a fixed "nothing was saved"
+note. A signed-in job always lands in the session's own tenant: any tenant
+the request itself claims is ignored.
 
 ### Per-tenant destinations (Google Drive or NAS)
 
-Each Discord server/channel can pick where its transcripts are saved. Adding a tenant is an edit to the tenants file — no code change, no restart (the file is read fresh on every job).
+Each Discord server/channel — and each allowlisted web sign-in — can pick where its transcripts are saved. Adding a tenant is an edit to the tenants file — no code change, no restart (the file is read fresh on every job).
 
 ```json
 {
@@ -69,6 +97,12 @@ Each Discord server/channel can pick where its transcripts are saved. Adding a t
       "destination": { "type": "google-drive", "folder_id": "0CdefAnotherFolderId" }
     },
     {
+      "id": "web-users",
+      "web_emails": ["alice@example.com", "bob@example.com"],
+      "destination": { "type": "google-drive", "folder_id": "0DghiThirdFolderId" },
+      "limits": { "max_video_seconds": 3600, "jobs_per_hour": 10 }
+    },
+    {
       "id": "office-nas",
       "discord_guild_id": "111111111111111111",
       "caller": { "token_env": "SERVICE_TOKEN" },
@@ -85,8 +119,9 @@ Each Discord server/channel can pick where its transcripts are saved. Adding a t
 }
 ```
 
-- **Matching.** A job carries its `origin` (the Discord bot sends the guild and configured channel automatically). A tenant `id` is a lowercase slug (`a-z`, `0-9`, `-`, `_`). A tenant with `discord_channel_ids` claims only those channels; a tenant with just `discord_guild_id` claims every channel no channel entry took. First match wins; no match means nothing is saved.
-- **Caller credential.** An origin in the request body is a claim, not proof: the service writes only when the caller's bearer token is the credential the resolved tenant names — `token_env` (an environment variable holding the token, for example the Discord bot's `SERVICE_TOKEN`) or `token_sha256` (the token's lowercase hex SHA-256). A claim that resolves to a tenant but fails the check saves nothing and reports the fixed `save_unauthorized` error; a tenant without `caller` cannot be claimed. Web callers are anonymous until sign-in lands: a web origin always shows the transcript only and saves nothing.
+- **Matching.** A job carries its `origin` (the Discord bot sends the guild and configured channel automatically; a signed-in web user's origin is the session's verified email). A tenant `id` is a lowercase slug (`a-z`, `0-9`, `-`, `_`). A tenant with `discord_channel_ids` claims only those channels; a tenant with just `discord_guild_id` claims every channel no channel entry took; a tenant with `web_emails` claims exactly those signed-in emails. First match wins; no match means nothing is saved.
+- **Caller credential.** An origin in the request body is a claim, not proof: the service writes only when the caller's bearer token is the credential the resolved tenant names — `token_env` (an environment variable holding the token, for example the Discord bot's `SERVICE_TOKEN`) or `token_sha256` (the token's lowercase hex SHA-256). A claim that resolves to a tenant but fails the check saves nothing and reports the fixed `save_unauthorized` error; a tenant without `caller` cannot be claimed. For web users the verified sign-in session is the credential: a request's own `web` origin never resolves, and a session email matches a tenant only through `web_emails`.
+- **Limits.** `limits.jobs_per_hour` caps accepted submissions in a sliding hour (a `429` `rate_limited` reply); `limits.max_video_seconds` rejects longer videos with `video_too_long` — before any Gemini call when the length is already known locally (the transcript cache), otherwise on the first model response, which declares the duration.
 - **Destinations.** `"type": "google-drive"` writes into that `folder_id`; `"type": "webdav"` writes into `path` on a WebDAV server (a NAS); `"type": "none"` saves nothing. `extension` is `.txt` (default), `.md` or `.srt`.
 - **Google Drive setup.** Create a service account in Google Cloud, download its key JSON, and set `GOOGLE_APPLICATION_CREDENTIALS` to the file's path. Then share each `folder_id` with the service account's `client_email` (right-click folder → Share → paste the email → Editor). The service account can only reach folders you share with it. Under `docker compose`, bind-mount both files into the container and point the variables at the in-container paths (e.g. `- ./tenants.json:/data/tenants.json:ro` with `TENANTS_FILE=/data/tenants.json`).
 - **NAS (WebDAV) setup.** Enable the NAS's HTTPS WebDAV service (Synology: WebDAV Server package; Nextcloud: its WebDAV endpoint) and create a user for this service. `base_url` must be `https://` — plain HTTP is refused at config load. The file holds only `password_env`: the name of an environment variable that carries the password (e.g. `NAS_WEBDAV_PASSWORD`), never the password itself; set that variable where the api process runs (under `docker compose`, add it to the api service's `environment:`).
@@ -101,6 +136,7 @@ Notes:
 - **Callers bring their own key.** `GEMINI_API_KEY` is not used by the service; each request's `X-Gemini-Key` lives in memory only for that job and is never logged, stored or returned.
 - **Jobs are in-process.** The job store is memory only — a service restart loses every job (`GET /v1/jobs/{id}` then returns 404). The transcript cache on disk survives.
 - The API is described in [openapi.yaml](openapi.yaml).
+- To run it on AWS (ECS Fargate behind an HTTPS load balancer, secrets in Secrets Manager, logs in CloudWatch), see [deploy/aws/](deploy/aws/README.md).
 
 ## Self-host the Discord bot
 

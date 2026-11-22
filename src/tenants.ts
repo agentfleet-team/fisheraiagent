@@ -11,9 +11,12 @@ import { parseWebdavBaseUrl, parseWebdavFolder, type WebdavBaseUrl } from './web
 
 // Where a job came from. Discord origins carry the guild and the configured
 // channel (never a thread id); web origins carry an identity string. The
-// origin is a claim, not proof: the service trusts a claim only when the
-// caller presents the credential the resolved tenant names, and a web
-// claim never resolves — web callers have no tenant until sign-in (#6).
+// origin is a claim, not proof: the service trusts a discord claim only when
+// the caller presents the credential the resolved tenant names, and a web
+// identity is trusted only when it comes from a verified sign-in session —
+// the session's email is the authenticated caller for the tenant whose
+// web_emails allowlists it. A web identity a request merely asserts never
+// reaches resolveTenant.
 export type JobOrigin =
   | { kind: 'discord'; guild_id: string; channel_id: string }
   | { kind: 'web'; identity: string };
@@ -41,12 +44,25 @@ export interface TenantCaller {
   token_env?: string;
 }
 
+// Per-tenant limits. `max_video_seconds` rejects a job for a video longer
+// than the limit (the fixed video_too_long message) as early as the length
+// is known: from local metadata or the transcript cache before any Gemini
+// call, or from the first model response's DURATION line before further
+// calls. `jobs_per_hour` caps accepted submissions in a sliding hour (the
+// fixed rate_limited message).
+export interface TenantLimits {
+  max_video_seconds?: number;
+  jobs_per_hour?: number;
+}
+
 export interface Tenant {
   id: TenantId;
   discord_guild_id?: string;
   discord_channel_ids?: string[];
+  web_emails?: string[];
   caller?: TenantCaller;
   destination?: TenantDestination;
+  limits?: TenantLimits;
 }
 
 // File data is unknown until checked; this narrows fields by name so no
@@ -181,6 +197,29 @@ function parseCaller(value: unknown, path: string): TenantCaller | undefined {
   return caller;
 }
 
+function parseLimits(value: unknown, path: string): TenantLimits | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object' || value === null) {
+    throw new TranscriptError('invalid_config', `${path}: limits must be an object`);
+  }
+  const limits: TenantLimits = {};
+  const seconds = field(value, 'max_video_seconds');
+  if (seconds !== undefined) {
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      throw new TranscriptError('invalid_config', `${path}: limits.max_video_seconds must be a positive number`);
+    }
+    limits.max_video_seconds = seconds;
+  }
+  const perHour = field(value, 'jobs_per_hour');
+  if (perHour !== undefined) {
+    if (typeof perHour !== 'number' || !Number.isInteger(perHour) || perHour <= 0) {
+      throw new TranscriptError('invalid_config', `${path}: limits.jobs_per_hour must be a positive integer`);
+    }
+    limits.jobs_per_hour = perHour;
+  }
+  return limits;
+}
+
 // The tenants file is JSON read fresh on every job submit, so adding a tenant
 // is an edit to one file — never a code change or a restart:
 // {
@@ -216,6 +255,23 @@ export function loadTenantsFile(path: string): Tenant[] {
       `cannot read tenants file ${path}: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
+  return parseTenantsDocument(parsed, path);
+}
+
+// A tenants document may also come inline from an environment variable
+// (TENANTS_JSON) — the same JSON, delivered by a secrets manager without a
+// mounted file.
+export function parseTenantsJson(text: string, source: string): Tenant[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw new TranscriptError('invalid_config', `${source}: not valid JSON`);
+  }
+  return parseTenantsDocument(parsed, source);
+}
+
+function parseTenantsDocument(parsed: unknown, path: string): Tenant[] {
   const list = typeof parsed === 'object' && parsed !== null ? field(parsed, 'tenants') : undefined;
   if (!Array.isArray(list)) {
     throw new TranscriptError('invalid_config', `${path}: expected a JSON object with a "tenants" array`);
@@ -242,8 +298,11 @@ export function loadTenantsFile(path: string): Tenant[] {
       tenant.discord_guild_id = guildId.trim();
     }
     tenant.discord_channel_ids = stringList(field(entry, 'discord_channel_ids'), 'discord_channel_ids', path);
+    const emails = stringList(field(entry, 'web_emails'), 'web_emails', path);
+    if (emails !== undefined) tenant.web_emails = emails.map((e) => e.toLowerCase());
     tenant.caller = parseCaller(field(entry, 'caller'), path);
     tenant.destination = parseDestination(field(entry, 'destination'), path);
+    tenant.limits = parseLimits(field(entry, 'limits'), path);
     return tenant;
   });
 }
@@ -270,11 +329,15 @@ export function callerAuthorized(tenant: Tenant, presentedToken: string | undefi
 
 // A channel-scoped entry (guild + channel list) claims only the listed
 // channels; a guild-wide entry (guild only) claims every channel that no
-// channel-scoped entry took. First matching entry wins. A web origin never
-// resolves: a web caller is anonymous until sign-in (#6), so it has no
-// tenant and saves nothing.
+// channel-scoped entry took. A web origin resolves only through the
+// allowlisted `web_emails` of a tenant — and only the service may build
+// such an origin, from a verified sign-in session; a request's own "web"
+// claim never reaches this function. First matching entry wins.
 export function resolveTenant(tenants: Tenant[], origin: JobOrigin): Tenant | undefined {
-  if (origin.kind === 'web') return undefined;
+  if (origin.kind === 'web') {
+    const email = origin.identity.toLowerCase();
+    return tenants.find((t) => (t.web_emails ?? []).some((e) => e.toLowerCase() === email));
+  }
   const scoped = tenants.find(
     (t) => t.discord_guild_id === origin.guild_id && t.discord_channel_ids?.includes(origin.channel_id),
   );
@@ -282,4 +345,28 @@ export function resolveTenant(tenants: Tenant[], origin: JobOrigin): Tenant | un
   return tenants.find(
     (t) => t.discord_guild_id === origin.guild_id && (t.discord_channel_ids ?? []).length === 0,
   );
+}
+
+const HOUR_MS = 60 * 60 * 1000;
+
+// Sliding-window count of accepted submissions per tenant, for the
+// jobs_per_hour limit. In-memory only: a restart resets the window, which
+// errs toward letting a few extra jobs through rather than blocking work.
+export class TenantRateLimiter {
+  private readonly hits = new Map<TenantId, number[]>();
+
+  constructor(private readonly now: () => number = () => Date.now()) {}
+
+  // Records one submission and reports whether it is within the limit.
+  allow(tenant: TenantId, jobsPerHour: number): boolean {
+    const cutoff = this.now() - HOUR_MS;
+    const recent = (this.hits.get(tenant) ?? []).filter((t) => t > cutoff);
+    if (recent.length >= jobsPerHour) {
+      this.hits.set(tenant, recent);
+      return false;
+    }
+    recent.push(this.now());
+    this.hits.set(tenant, recent);
+    return true;
+  }
 }

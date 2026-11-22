@@ -14,6 +14,10 @@ export interface TranscribeDeps {
   maxBlockSeconds: number;
   cacheDir: string;
   log?: LogSink;
+  // A per-tenant length cap. A video known (or discovered on the first
+  // model response) to be longer fails with video_too_long instead of
+  // spending further Gemini calls.
+  maxVideoSeconds?: number;
 }
 
 interface RoundResult extends ParsedModelOutput {
@@ -153,6 +157,17 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
   for (let round = 0; round <= MAX_CONTINUATION_ROUNDS; round++) {
     const out = await callRound(videoUrl, round === 0 ? undefined : continueFrom, deps);
 
+    // The first response declares the video's duration; an over-limit
+    // video is rejected here, before any continuation call.
+    if (
+      round === 0 &&
+      deps.maxVideoSeconds !== undefined &&
+      out.durationSeconds !== undefined &&
+      out.durationSeconds > deps.maxVideoSeconds
+    ) {
+      throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+    }
+
     if (out.language !== 'unknown') language = out.language;
     const added = mergeNewBlocks(blocks, out.blocks);
 
@@ -189,6 +204,10 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
 export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): Promise<Transcript> {
   const cached = await readCachedTranscript(deps.cacheDir, videoId, deps.model, deps.maxBlockSeconds);
   if (cached) {
+    const coverage = cached.blocks.length > 0 ? Math.max(...cached.blocks.map((b) => b.end)) : 0;
+    if (deps.maxVideoSeconds !== undefined && coverage > deps.maxVideoSeconds) {
+      throw new TranscriptError('video_too_long', 'video exceeds the tenant length limit');
+    }
     loggerFor(deps.log)('cache_hit', { video: parseVideoId(videoId) });
     return cached;
   }

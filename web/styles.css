@@ -89,6 +89,58 @@ button:hover {
   z-index: 10;
 }
 
+#topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+#topbar #settings-btn {
+  position: static;
+}
+
+#auth-box {
+  font-size: 0.9rem;
+}
+
+#auth-box a {
+  color: #1a0dab;
+}
+
+#signed-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#user-label {
+  color: #5f6368;
+  max-width: 40vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#saved-line {
+  text-align: left;
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+}
+
+#saved-line a {
+  color: #1a0dab;
+  word-break: break-all;
+}
+
+#save-note {
+  color: #5f6368;
+}
+
 #drawer-backdrop {
   position: fixed;
   inset: 0;

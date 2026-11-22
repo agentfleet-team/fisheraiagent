@@ -3,7 +3,7 @@
 // Run: npm run test:web (requires `npx playwright-core install chromium` once).
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,6 +13,13 @@ import { chromium, type Browser, type Page, type Request } from 'playwright-core
 import { createService } from '../../src/service.js';
 import { TranscriptError } from '../../src/errors.js';
 import type { GeminiCaller, GeminiVideoRequest } from '../../src/gemini.js';
+import {
+  cookiePair,
+  FakeDrive,
+  FakeOidcProvider,
+  freePort,
+  signInFlow,
+} from '../fakes.js';
 
 const GOOD = readFileSync(new URL('../fixtures/model-good.txt', import.meta.url), 'utf8');
 const VIDEO_OK = 'hWe-j78vNpc';
@@ -266,5 +273,88 @@ test('C7: zh-TW and en render, and 390 px has no horizontal scroll', async () =>
     await mobile.screenshot({ path: join(SHOTS, 'page-390.png'), fullPage: true });
   } finally {
     await mobile.context().close();
+  }
+});
+
+// Issue #6: a signed-in tenant user. The service gets its own instance with
+// OIDC configured against the fake provider; the session cookie rides into
+// the browser context like the real callback would leave it.
+test('H1-web: a signed-in tenant user sees the saved-file link on the page', async () => {
+  const provider = new FakeOidcProvider();
+  await provider.start();
+  const drive = new FakeDrive();
+  const dir = mkdtempSync(join(tmpdir(), 'fa-web-tenant-'));
+  writeFileSync(
+    join(dir, 'tenants.json'),
+    JSON.stringify({
+      tenants: [
+        {
+          id: 'tenant-a',
+          web_emails: ['alice@example.com'],
+          destination: { type: 'google-drive', folder_id: 'folder-a' },
+        },
+      ],
+    }),
+  );
+  const port = await freePort();
+  const authed: Server = createService({
+    callerFactory: doubleFactory(),
+    model: 'test-model',
+    maxBlockSeconds: 8,
+    cacheDir: dir,
+    tenantsFile: join(dir, 'tenants.json'),
+    drive,
+    videoMetadata: async () => ({}),
+    oidc: {
+      clientId: provider.clientId,
+      clientSecret: provider.clientSecret,
+      issuer: provider.issuer,
+      redirectUri: `http://127.0.0.1:${port}/auth/callback`,
+      sessionSecret: 'test-session-secret-0123456789',
+    },
+  });
+  await new Promise<void>((resolve) => authed.listen(port, '127.0.0.1', resolve));
+  const authedBase = `http://127.0.0.1:${port}`;
+  try {
+    const setCookie = await signInFlow(authedBase);
+    const pair = cookiePair(setCookie);
+    const eq = pair.indexOf('=');
+    const context = await browser.newContext();
+    await context.addCookies([
+      {
+        name: pair.slice(0, eq),
+        value: pair.slice(eq + 1),
+        url: authedBase,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Lax',
+      },
+    ]);
+    const page = await context.newPage();
+    try {
+      await page.goto(`${authedBase}/`);
+      // The signed-in box shows the allowlisted identity and tenant.
+      await page.waitForSelector('#signed-in:not([hidden])', { timeout: 10000 });
+      const label = (await page.locator('#user-label').textContent()) ?? '';
+      assert.match(label, /alice@example\.com/);
+      assert.match(label, /tenant-a/);
+      assert.ok(await page.locator('#signin-link').isHidden());
+
+      await storeKey(page, KEY_OK);
+      await submitUrl(page, `https://youtu.be/${VIDEO_OK}`);
+
+      // The saved-file link appears above the transcript blocks.
+      await page.waitForSelector('#saved-link', { state: 'visible', timeout: 20000 });
+      const href = await page.locator('#saved-link').getAttribute('href');
+      const files = drive.filesIn('folder-a');
+      assert.equal(files.length, 1);
+      assert.equal(href, files[0].url);
+      assert.ok(await page.locator('#blocks li').count());
+    } finally {
+      await context.close();
+    }
+  } finally {
+    await new Promise<void>((resolve) => authed.close(() => resolve()));
+    await provider.stop();
   }
 });

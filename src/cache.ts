@@ -27,6 +27,20 @@ export async function readCachedTranscript(
   }
 }
 
+// The end of the last cached block: a lower bound on the video's length
+// known without any Gemini call, used by the per-tenant length limit to
+// reject an over-length video before a job touches the model.
+export async function cachedVideoCoverage(
+  cacheDir: string,
+  videoId: string,
+  model: string,
+  maxBlockSeconds: number,
+): Promise<number | undefined> {
+  const cached = await readCachedTranscript(cacheDir, videoId, model, maxBlockSeconds);
+  if (!cached || cached.blocks.length === 0) return undefined;
+  return Math.max(...cached.blocks.map((b) => b.end));
+}
+
 export async function writeCachedTranscript(
   cacheDir: string,
   transcript: Transcript,

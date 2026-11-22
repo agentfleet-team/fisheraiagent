@@ -790,13 +790,18 @@ test('renderTranscriptFile: .srt carries the header then cues', () => {
   assert.match(out, /2\n00:00:01,500 --> 00:00:03,000\nworld/);
 });
 
-test('resolveTenant: channel-scoped beats guild-wide; web origins never resolve', () => {
+test('resolveTenant: channel-scoped beats guild-wide; web origins resolve only via web_emails', () => {
   const tenants = [
     { id: 'guild-wide', discord_guild_id: 'g', destination: { type: 'none' as const } },
     {
       id: 'channel-scoped',
       discord_guild_id: 'g',
       discord_channel_ids: ['c1'],
+      destination: { type: 'none' as const },
+    },
+    {
+      id: 'web-tenant',
+      web_emails: ['Alice@Example.com'],
       destination: { type: 'none' as const },
     },
   ];
@@ -808,8 +813,12 @@ test('resolveTenant: channel-scoped beats guild-wide; web origins never resolve'
     resolveTenant(tenants, { kind: 'discord', guild_id: 'g', channel_id: 'c9' })?.id,
     'guild-wide',
   );
+  // A web identity resolves only when a tenant allowlists it — and the
+  // allowlist match is case-insensitive.
+  assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'alice@example.com' })?.id, 'web-tenant');
+  assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'ALICE@EXAMPLE.COM' })?.id, 'web-tenant');
+  assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'bob@example.com' }), undefined);
   assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'w1' }), undefined);
-  assert.equal(resolveTenant(tenants, { kind: 'web', identity: 'w2' }), undefined);
 });
 
 test('loadTenantsFile rejects bad shapes with invalid_config', () => {

@@ -1,15 +1,19 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
+import { createAuth, createOidcClient, type Auth, type OidcClientConfig } from './auth.js';
+import { cachedVideoCoverage } from './cache.js';
 import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
 import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
-import { JobStore, type JobRunnerDeps } from './jobs.js';
+import { JobStore, type JobRunnerDeps, type SaveBlock } from './jobs.js';
 import { createTranscriptSaver, createVideoMetadata, type VideoMetadata } from './save.js';
 import {
   callerAuthorized,
   loadTenantsFile,
+  parseTenantsJson,
   resolveTenant,
+  TenantRateLimiter,
   type JobOrigin,
   type Tenant,
 } from './tenants.js';
@@ -18,13 +22,27 @@ import { serveWebAsset } from './web-static.js';
 const MAX_BODY_BYTES = 16 * 1024;
 const JOB_PATH = /^\/v1\/jobs\/([^/]+)$/;
 
+// Sign-in configuration: everything a Google (or generic OIDC) sign-in
+// needs. Sign-in exists only when this is set; without it the web page and
+// jobs stay anonymous.
+export interface OidcServiceConfig extends OidcClientConfig {
+  sessionSecret: string;
+}
+
 export interface ServiceOptions extends JobRunnerDeps {
   serviceToken?: string;
   tenantsFile?: string;
+  // The tenants document inline (from a secrets-manager env var) instead
+  // of a file path. tenantsFile wins when both are set.
+  tenantsJson?: string;
   drive?: DriveStore;
   webdavFetch?: typeof fetch;
   videoMetadata?: (videoId: string) => Promise<VideoMetadata>;
   now?: () => Date;
+  // Built sign-in handler (tests inject one); when absent but `oidc` is
+  // set, the real OIDC client is built from it.
+  auth?: Auth;
+  oidc?: OidcServiceConfig;
 }
 
 // Remote JSON is unknown until checked; this narrows fields by name so no
@@ -60,9 +78,16 @@ function parseOrigin(value: unknown): JobOrigin | undefined {
 
 export function createService(options: ServiceOptions): Server {
   const deps: JobRunnerDeps = { ...options };
-  if (!deps.saveTranscript && options.tenantsFile) {
+  // The tenants document is re-read on every job submit, from the file or
+  // the inline JSON — adding a tenant stays configuration, not code.
+  const hasTenants = options.tenantsFile !== undefined || options.tenantsJson !== undefined;
+  const loadTenants = (): Tenant[] =>
+    options.tenantsFile !== undefined
+      ? loadTenantsFile(options.tenantsFile)
+      : parseTenantsJson(options.tenantsJson ?? '', 'TENANTS_JSON');
+  if (!deps.saveTranscript && hasTenants) {
     deps.saveTranscript = createTranscriptSaver({
-      tenantsFile: options.tenantsFile,
+      loadTenants,
       drive: options.drive,
       webdavFetch: options.webdavFetch,
       metadata: options.videoMetadata ?? createVideoMetadata(),
@@ -70,8 +95,38 @@ export function createService(options: ServiceOptions): Server {
       log: options.log,
     });
   }
+  deps.knownDurationSeconds ??= (videoId) =>
+    cachedVideoCoverage(options.cacheDir, videoId, options.model, options.maxBlockSeconds);
   const jobs = new JobStore(deps);
   const log = loggerFor(options.log);
+  const limiter = new TenantRateLimiter();
+  const auth =
+    options.auth ??
+    (options.oidc
+      ? createAuth({ client: createOidcClient(options.oidc), sessionSecret: options.oidc.sessionSecret })
+      : undefined);
+
+  // The verified sign-in session's email from the request's cookies, or
+  // undefined when sign-in is off, the cookie is absent, or the signature
+  // or expiry check fails (a tampered cookie is anonymous, not signed in).
+  const sessionEmail = (req: IncomingMessage): string | undefined => {
+    if (!auth) return undefined;
+    const raw = req.headers.cookie;
+    const header = Array.isArray(raw) ? raw.join('; ') : raw;
+    return auth.sessionEmail(header);
+  };
+
+  // The tenants document as configured, or undefined when tenants are not
+  // configured or the document cannot be read — a broken tenant source
+  // resolves nothing rather than guessing.
+  const tryTenants = (): Tenant[] | undefined => {
+    if (!hasTenants) return undefined;
+    try {
+      return loadTenants();
+    } catch {
+      return undefined;
+    }
+  };
 
   const send = (res: ServerResponse, status: number, body: unknown): void => {
     res.writeHead(status, { 'content-type': 'application/json' });
@@ -104,17 +159,17 @@ export function createService(options: ServiceOptions): Server {
   // real tenant but fails the credential check is denied — the job still
   // runs and reports the fixed save_unauthorized error — while a claim that
   // matches no tenant is dropped silently, exactly like no origin at all.
-  const verifyClaim = (req: IncomingMessage, claimed: JobOrigin): 'verified' | 'denied' | 'none' => {
-    if (!options.tenantsFile) return 'none';
-    let tenants: Tenant[];
-    try {
-      tenants = loadTenantsFile(options.tenantsFile);
-    } catch {
-      return 'none';
-    }
+  const verifyClaim = (
+    req: IncomingMessage,
+    claimed: JobOrigin,
+  ): { verdict: 'verified' | 'denied' | 'none'; tenant?: Tenant } => {
+    const tenants = tryTenants();
+    if (!tenants) return { verdict: 'none' };
     const tenant = resolveTenant(tenants, claimed);
-    if (!tenant) return 'none';
-    return callerAuthorized(tenant, bearerToken(req)) ? 'verified' : 'denied';
+    if (!tenant) return { verdict: 'none' };
+    return callerAuthorized(tenant, bearerToken(req))
+      ? { verdict: 'verified', tenant }
+      : { verdict: 'denied', tenant };
   };
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
@@ -125,6 +180,13 @@ export function createService(options: ServiceOptions): Server {
 
     if (method === 'GET' && path === '/healthz') {
       send(res, 200, { status: 'ok' });
+      return;
+    }
+
+    // Sign-in endpoints exist only when OIDC is configured; without it the
+    // paths fall through to the static page's 404 like any unknown name.
+    if (auth && path.startsWith('/auth/')) {
+      await handleAuth(req, res, path, auth);
       return;
     }
 
@@ -147,6 +209,74 @@ export function createService(options: ServiceOptions): Server {
       const view = jobs.get(decodeURIComponent(jobMatch[1]));
       if (view) send(res, 200, view);
       else sendError(res, 404, 'not_found');
+      return;
+    }
+    sendError(res, 404, 'not_found');
+  }
+
+  // The sign-in flow: /auth/login redirects to the provider with a fresh
+  // state + PKCE challenge and sets a short-lived signed af_login cookie
+  // that binds the pending login to this browser. /auth/callback checks
+  // the returned state and that cookie against the pending login and the
+  // code against the provider, then sets the signed session cookie and
+  // clears af_login. A callback without a known state, without the
+  // matching af_login cookie, or with a rejected code gets the fixed 400.
+  // /auth/me reports the session to the page; /auth/logout expires it.
+  async function handleAuth(
+    req: IncomingMessage,
+    res: ServerResponse,
+    path: string,
+    session: Auth,
+  ): Promise<void> {
+    const method = req.method ?? 'GET';
+    if (method === 'GET' && path === '/auth/login') {
+      const { url, cookie } = await session.loginUrl();
+      res.writeHead(302, { location: url, 'set-cookie': cookie });
+      res.end();
+      return;
+    }
+    if (method === 'GET' && path === '/auth/callback') {
+      const query = new URL(req.url ?? '/', 'http://service.local').searchParams;
+      const rawCookie = req.headers.cookie;
+      const cookieHeader = Array.isArray(rawCookie) ? rawCookie.join('; ') : rawCookie;
+      const email = await session.completeLogin(
+        {
+          code: query.get('code') ?? undefined,
+          state: query.get('state') ?? undefined,
+        },
+        cookieHeader,
+      );
+      if (email === undefined) {
+        sendError(res, 400, 'invalid_request');
+        return;
+      }
+      res.writeHead(302, {
+        location: '/',
+        'set-cookie': [session.sessionCookie(email), session.loginClearCookie()],
+      });
+      res.end();
+      return;
+    }
+    if (path === '/auth/logout' && (method === 'GET' || method === 'POST')) {
+      res.writeHead(302, { location: '/', 'set-cookie': session.clearCookie() });
+      res.end();
+      return;
+    }
+    if (method === 'GET' && path === '/auth/me') {
+      const email = sessionEmail(req);
+      const body: { enabled: boolean; signed_in: boolean; email?: string; tenant?: string } = {
+        enabled: true,
+        signed_in: email !== undefined,
+      };
+      if (email !== undefined) {
+        body.email = email;
+        const tenants = tryTenants();
+        const tenant = tenants
+          ? resolveTenant(tenants, { kind: 'web', identity: email })
+          : undefined;
+        if (tenant) body.tenant = tenant.id;
+      }
+      send(res, 200, body);
       return;
     }
     sendError(res, 404, 'not_found');
@@ -191,17 +321,41 @@ export function createService(options: ServiceOptions): Server {
       }
       throw err;
     }
-    // Web callers are anonymous until sign-in (#6): their origin shows the
-    // transcript only and saves nothing. Discord claims are verified here;
-    // only a verified claim reaches the job's save hook.
+    // Who is this caller? A verified sign-in session is the strongest
+    // identity: its email resolves to a tenant through web_emails and
+    // becomes the job's authenticated origin — a request field, header or
+    // claimed origin that names another tenant is ignored entirely, so a
+    // signed-in caller can never land a job in a tenant that is not its
+    // own. A session email no tenant allowlists still gets its transcript
+    // plus the fixed no_tenant message. Without a session, anonymous web
+    // requests keep the old behavior (transcript only) and only a discord
+    // claim is checked, against the resolved tenant's caller credential.
     let origin: JobOrigin | undefined;
-    let saveDenied = false;
-    if (claimed?.kind === 'discord') {
-      const verdict = verifyClaim(req, claimed);
-      if (verdict === 'verified') origin = claimed;
-      else if (verdict === 'denied') saveDenied = true;
+    let saveBlocked: SaveBlock | undefined;
+    let tenant: Tenant | undefined;
+    const email = sessionEmail(req);
+    if (email !== undefined) {
+      const tenants = tryTenants();
+      tenant = tenants ? resolveTenant(tenants, { kind: 'web', identity: email }) : undefined;
+      if (tenant) origin = { kind: 'web', identity: email };
+      else saveBlocked = 'no_tenant';
+    } else if (claimed?.kind === 'discord') {
+      const { verdict, tenant: resolved } = verifyClaim(req, claimed);
+      if (verdict === 'verified') {
+        origin = claimed;
+        tenant = resolved;
+      } else if (verdict === 'denied') {
+        saveBlocked = 'unauthorized';
+      }
     }
-    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin, saveDenied) });
+    // Per-tenant limits apply only to the authenticated caller they came
+    // with: an unauthenticated claim never spends a tenant's allowance.
+    const perHour = tenant?.limits?.jobs_per_hour;
+    if (tenant && perHour !== undefined && !limiter.allow(tenant.id, perHour)) {
+      sendError(res, 429, 'rate_limited');
+      return;
+    }
+    send(res, 202, { job_id: jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits) });
   }
 
   return createServer((req, res) => {
