@@ -132,7 +132,7 @@ npm ci
 GEMINI_API_KEY=<your Gemini API key> npm start -- https://youtu.be/hWe-j78vNpc
 ```
 
-Error codes (stderr, non-zero exit): `invalid_url`, `video_unavailable`, `missing_key`, `key_rejected`, `quota_exceeded`, `upstream_timeout`, `bad_model_output`.
+Error codes (stderr, non-zero exit): `invalid_url`, `video_unavailable`, `missing_key`, `key_rejected`, `quota_exceeded`, `upstream_timeout`, `upstream_rejected`, `model_not_found`, `bad_model_output`.
 
 Develop: `npm test` runs the offline unit tests (no key, no network). `.github/workflows/ci.yml` runs them on every push.
 
