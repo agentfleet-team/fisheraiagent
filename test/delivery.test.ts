@@ -566,3 +566,42 @@ test('D11: delivery waits on the job view — done already carries delivery', as
     await svc.close();
   }
 });
+
+test('D12: a long transcript keeps the source, metadata and Drive link in the bounded summary', async () => {
+  const discord = new FakeDiscord();
+  discord.channels.set(CHAN, channelInGuild(CHAN));
+  const drive = new FakeDrive();
+  setTenantEnv();
+  const longCaller: GeminiCaller = async (req) => ({
+    text:
+      (req.startOffsetSeconds ?? 0) > 0
+        ? 'LANGUAGE: en'
+        : `DURATION: 8.0\nLANGUAGE: en\n[00:00 - 00:08] ${'x'.repeat(2200)}`,
+    status: 'completed',
+  });
+  const svc = await startService(discord, [tenantWithDelivery()], {
+    drive,
+    callerFactory: () => longCaller,
+  });
+  try {
+    const res = await postJob(svc.base, { origin: ORIGIN, token: CALLER_TOKEN, deliverTo: CHAN });
+    assert.equal(res.status, 202);
+    const job = await pollJob(svc.base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.equal(job.delivery.status, 'sent');
+    assert.equal(job.saved.type, 'google-drive');
+    assert.equal(drive.files.length, 1);
+
+    assert.equal(discord.posts.length, 1);
+    const content = discord.posts[0].payload.content!;
+    assert.ok(content.length <= 2000, `summary exceeds the cap: ${content.length}`);
+    assert.match(content, /Transcript: https:\/\/www\.youtube\.com\/watch\?v=/);
+    assert.match(content, /Language: en — 0:08 covered/);
+    assert.match(content, /Saved to Drive: https:\/\/drive\.google\.com\/file\/d\/fake-drive-1\/view/);
+    // The excerpt is what gave way — bounded, never the saved link.
+    assert.equal(discord.posts[0].file?.name, `${VIDEO_A}.txt`);
+  } finally {
+    clearTenantEnv();
+    await svc.close();
+  }
+});

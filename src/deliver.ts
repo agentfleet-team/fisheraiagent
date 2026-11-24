@@ -172,18 +172,30 @@ function renderDelivery(outcome: DeliveryOutcome): {
     return { content: `Transcript failed: ${code}` };
   }
   const covered = transcript.blocks.reduce((max, b) => Math.max(max, b.end), 0);
-  const lines = [
+  // The source, metadata and saved-link lines always survive the cap: only
+  // the transcript excerpt is bounded, to whatever room they leave.
+  const head = [
     `Transcript: ${transcript.source_url}`,
     `Language: ${transcript.language} — ${formatDuration(covered)} covered`,
   ];
+  const excerptLines: string[] = [];
   for (const block of transcript.blocks.slice(0, FIRST_LINES)) {
     const text = block.text.replace(/\s+/g, ' ').trim();
-    if (text !== '') lines.push(`- ${text}`);
+    if (text !== '') excerptLines.push(`- ${text}`);
   }
   const link = savedLine(outcome.saved);
-  if (link !== undefined) lines.push(link);
+  const fixed = [...head, ...(link === undefined ? [] : [link])].join('\n');
+  // The excerpt sits between head and link, so it pays for its own leading
+  // separator; the head-to-link separator already counts in `fixed`.
+  const excerptBudget =
+    excerptLines.length === 0 ? 0 : MAX_MESSAGE_CHARS - fixed.length - 1;
+  const excerpt =
+    excerptBudget >= 1 ? bound(excerptLines.join('\n'), excerptBudget) : '';
+  const parts = [head.join('\n')];
+  if (excerpt !== '') parts.push(excerpt);
+  if (link !== undefined) parts.push(link);
   return {
-    content: bound(lines.join('\n'), MAX_MESSAGE_CHARS),
+    content: parts.join('\n'),
     attachment: { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
   };
 }
