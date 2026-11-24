@@ -11,8 +11,10 @@ import {
   proxyMatcher,
 } from './client-limit.js';
 import { DEFAULT_COMMIT, DEFAULT_VERSION, DEFAULT_WINDOW_SECONDS } from './config.js';
+import { createTranscriptDeliverer, type DiscordApiFactory } from './deliver.js';
 import type { DriveStore } from './drive.js';
 import { TranscriptError, codeOf, messageForCode, type ErrorBody, type FixedErrorCode } from './errors.js';
+import { parseChannelId, type ChannelId } from './ids.js';
 import { loggerFor, type LogRoute } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import { JobStore, type JobRunnerDeps, type SaveBlock } from './jobs.js';
@@ -49,6 +51,10 @@ export interface ServiceOptions extends JobRunnerDeps {
   // of a file path. tenantsFile wins when both are set.
   tenantsJson?: string;
   drive?: DriveStore;
+  // Builds the Discord API client from a tenant's delivery token for
+  // service-side delivery (deliver_to); tests inject a fake. Unset means
+  // the real https://discord.com REST client.
+  discordApi?: DiscordApiFactory;
   webdavFetch?: typeof fetch;
   // Per-client limits on job creation for the public surface: at most
   // maxConcurrentJobsPerClient in-flight jobs and maxJobsPerHourPerClient
@@ -118,6 +124,13 @@ export function createService(options: ServiceOptions): Server {
       webdavFetch: options.webdavFetch,
       metadata: options.videoMetadata ?? createVideoMetadata(),
       now: options.now,
+      log: options.log,
+    });
+  }
+  if (!deps.deliverOutcome && hasTenants) {
+    deps.deliverOutcome = createTranscriptDeliverer({
+      loadTenants,
+      discord: options.discordApi,
       log: options.log,
     });
   }
@@ -423,6 +436,19 @@ export function createService(options: ServiceOptions): Server {
         }
         throw err;
       }
+      // The Discord channel or thread the caller wants the result posted
+      // into. A present-but-malformed value is a plain bad request; a
+      // well-formed one is a claim that only a verified tenant caller with
+      // delivery may make (checked below).
+      let deliverTo: ChannelId | undefined;
+      const rawDeliverTo = typeof body === 'object' && body !== null ? field(body, 'deliver_to') : undefined;
+      if (rawDeliverTo !== undefined) {
+        deliverTo = typeof rawDeliverTo === 'string' ? parseChannelId(rawDeliverTo.trim()) : undefined;
+        if (deliverTo === undefined) {
+          sendError(res, 400, 'invalid_request');
+          return;
+        }
+      }
       // Who is this caller? A verified sign-in session is the strongest
       // identity: its email resolves to a tenant through web_emails and
       // becomes the job's authenticated origin — a request field, header or
@@ -477,7 +503,13 @@ export function createService(options: ServiceOptions): Server {
         sendError(res, 429, 'rate_limited');
         return;
       }
-      const jobId = jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits);
+      // A delivery target counts only for a caller-verified tenant that
+      // holds a delivery token; anything weaker — no caller check, a
+      // denied claim, a tenant without discord_delivery — is ignored
+      // exactly like no target at all.
+      const deliver =
+        callerVerified && tenant?.discord_delivery !== undefined ? deliverTo : undefined;
+      const jobId = jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits, deliver);
       // The booking is now the job's: the hourly hit stays, and the
       // in-flight half returns via deps.onJobFinished when the store
       // settles the job.

@@ -44,6 +44,14 @@ export interface TenantCaller {
   token_env?: string;
 }
 
+// The credential the service posts a job's result into Discord with: a
+// dedicated minimal file-deliverer bot token, named by the environment
+// variable that holds it — like password_env and gemini_key_env, the file
+// names the variable and the value never appears in it.
+export interface TenantDiscordDelivery {
+  token_env: string;
+}
+
 // Per-tenant limits. `max_video_seconds` rejects a job for a video longer
 // than the limit (the fixed video_too_long message) as early as the length
 // is known: from local metadata or the transcript cache before any Gemini
@@ -66,6 +74,11 @@ export interface Tenant {
   // token passes this tenant's caller check — like the webdav password,
   // the file names the variable and the value never appears in it.
   gemini_key_env?: string;
+  // Optional service-side Discord delivery: a job whose verified caller
+  // names `deliver_to` gets its result posted into that channel or thread
+  // with this bot token — but only when Discord reports the target (or a
+  // thread's parent) among this tenant's discord_channel_ids.
+  discord_delivery?: TenantDiscordDelivery;
   destination?: TenantDestination;
   limits?: TenantLimits;
 }
@@ -202,6 +215,21 @@ function parseCaller(value: unknown, path: string): TenantCaller | undefined {
   return caller;
 }
 
+function parseDiscordDelivery(value: unknown, path: string): TenantDiscordDelivery | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object' || value === null) {
+    throw new TranscriptError('invalid_config', `${path}: discord_delivery must be an object`);
+  }
+  const env = field(value, 'token_env');
+  if (!isNonEmptyString(env)) {
+    throw new TranscriptError(
+      'invalid_config',
+      `${path}: discord_delivery needs a token_env env var name`,
+    );
+  }
+  return { token_env: env.trim() };
+}
+
 function parseLimits(value: unknown, path: string): TenantLimits | undefined {
   if (value === undefined) return undefined;
   if (typeof value !== 'object' || value === null) {
@@ -235,6 +263,7 @@ function parseLimits(value: unknown, path: string): TenantLimits | undefined {
 //       "discord_channel_ids": ["222", "333"],
 //       "caller": { "token_env": "BOT_SERVICE_TOKEN" },
 //       "gemini_key_env": "FAMILY_GEMINI_KEY",
+//       "discord_delivery": { "token_env": "FILE_DELIVERER_TOKEN" },
 //       "destination": { "type": "google-drive", "folder_id": "0AbC...", "extension": ".md" }
 //     },
 //     {
@@ -314,6 +343,7 @@ function parseTenantsDocument(parsed: unknown, path: string): Tenant[] {
       }
       tenant.gemini_key_env = keyEnv.trim();
     }
+    tenant.discord_delivery = parseDiscordDelivery(field(entry, 'discord_delivery'), path);
     tenant.destination = parseDestination(field(entry, 'destination'), path);
     tenant.limits = parseLimits(field(entry, 'limits'), path);
     return tenant;

@@ -37,6 +37,8 @@ export type LogEvent =
   | 'job_failed'
   | 'file_saved'
   | 'file_save_failed'
+  | 'delivery_sent'
+  | 'delivery_failed'
   | 'discord_ready'
   | 'commands_registered'
   | 'command_registration_failed'
@@ -69,6 +71,8 @@ export type LogCode =
   | 'no_tenant'
   | 'rate_limited'
   | 'video_too_long'
+  | 'delivery_failed'
+  | 'delivery_refused'
   | 'internal_error'
   | 'usage';
 
