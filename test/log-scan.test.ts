@@ -23,7 +23,9 @@ const SINK_NAMES = new Set([
 ]);
 
 // Functions whose return type is a closed union of codes; they cannot leak text.
-const CODE_MAPPERS = new Set(['codeOf', 'errorCode']);
+// driveFailureFields (save.ts) returns only an HTTP status and a reason
+// identifier that drive.ts validated by format.
+const CODE_MAPPERS = new Set(['codeOf', 'errorCode', 'driveFailureFields']);
 
 function listTs(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {

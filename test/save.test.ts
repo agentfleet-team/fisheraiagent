@@ -322,6 +322,38 @@ test('E2: an unauthenticated web result carries no link; a verified Discord repl
   }
 });
 
+// --- log fields: a failed Drive save logs the HTTP status and Google's reason ---
+
+test('file_save_failed logs httpStatus and apiReason, never the error message', async () => {
+  const drive = new FakeDrive();
+  drive.failWith = new DriveError(
+    'Drive API error 403: forbidden — is the folder shared with the service account email?',
+    403,
+    'insufficientFilePermissions',
+  );
+  const svc = await startService(drive, [
+    {
+      id: 'tenant-guild',
+      discord_guild_id: GUILD,
+      discord_channel_ids: [CHANNEL],
+      caller: { token_sha256: sha256(TOKEN_GUILD) },
+      destination: { type: 'google-drive', folder_id: 'folder-unshared' },
+    },
+  ]);
+  try {
+    const res = await submitJob(svc.base, { origin: discordOrigin(GUILD, CHANNEL), token: TOKEN_GUILD });
+    await pollJob(svc.base, res.body.job_id);
+    const line = svc.logs.find((l) => l.startsWith('file_save_failed'));
+    assert.ok(line, 'file_save_failed line is written');
+    assert.match(line, / httpStatus=403 /);
+    assert.match(line, / apiReason=insufficientFilePermissions/);
+    assert.match(line, / code=save_failed /);
+    assert.doesNotMatch(line, /shared with the service account/);
+  } finally {
+    await svc.close();
+  }
+});
+
 // --- E3: write failure is reported and the transcript is still returned -------
 
 test('E3: a 403 from Drive reports save_failed at the origin and still returns the transcript', async () => {

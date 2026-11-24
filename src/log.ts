@@ -98,6 +98,10 @@ export interface LogFields {
   dest?: 'google-drive' | 'webdav';
   route?: LogRoute;
   code?: LogCode;
+  // The HTTP status of a failed destination call, and Google's reason
+  // identifier for it (never free text).
+  httpStatus?: number;
+  apiReason?: string;
   port?: number;
   count?: number;
   durationMs?: number;
@@ -123,6 +127,8 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'dest',
   'route',
   'code',
+  'httpStatus',
+  'apiReason',
   'port',
   'count',
   'longestBlockSeconds',
@@ -137,6 +143,8 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
 const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   ...ID_FORMATS,
   dest: /^(google-drive|webdav)$/,
+  httpStatus: /^[1-5]\d\d$/,
+  apiReason: /^[A-Za-z_]{1,64}$/,
   reason:
     /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation)$/,
 };

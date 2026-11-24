@@ -53,6 +53,12 @@ export const MIME_TYPES: Record<FileExtension, string> = {
   '.srt': 'application/x-subrip',
 };
 
+// The only Drive failure detail a log line may carry: the HTTP status and
+// Google's reason identifier. Both were validated where drive.ts parsed them.
+function driveFailureFields(err: unknown): Pick<LogFields, 'httpStatus' | 'apiReason'> {
+  return err instanceof DriveError ? { httpStatus: err.status, apiReason: err.reason } : {};
+}
+
 function pad(n: number, width = 2): string {
   return String(n).padStart(width, '0');
 }
@@ -298,7 +304,7 @@ export function createTranscriptSaver(
         return { type: 'google-drive', name: stored.name, url };
       } catch (err) {
         known.delete(key);
-        log('file_save_failed', { ...driveFields, code: 'save_failed' });
+        log('file_save_failed', { ...driveFields, code: 'save_failed', ...driveFailureFields(err) });
         const status = err instanceof DriveError ? err.status : undefined;
         throw new SaveFailedError('the destination write failed', status);
       }

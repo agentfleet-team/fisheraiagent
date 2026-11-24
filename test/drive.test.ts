@@ -215,3 +215,62 @@ test('OAuth mode: exchanges the refresh token, then uploads into the folder as t
   assert.ok(upload, 'file uploaded');
   assert.match(upload.body ?? '', /"parents":\["folder-1"\]/);
 });
+
+// Reproduces the Markdown create (#1529): metadata first as application/json,
+// the stored type named in the metadata, and the media part typed text/markdown.
+// Shape per Drive v3 multipart upload: developers.google.com/workspace/drive/api/guides/manage-uploads
+test('Markdown create: metadata names text/markdown and the media part is text/markdown', async () => {
+  const { impl, requests } = fakeFetch((req) => {
+    if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
+    return json({ id: 'drv-md', name: 'clip_20261124.md', webViewLink: 'https://drive.google.com/file/d/drv-md/view' });
+  });
+  const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
+  await drive.createFile('folder-1', 'clip_20261124.md', '# Title\n\n**[0:01]** hello', 'text/markdown', {
+    videoId: 'hWe-j78vNpc',
+  });
+  const body = requests.find((r) => r.url.includes('/upload/drive/v3/files'))?.body ?? '';
+  assert.match(body, /^--fa_transcript_boundary\r\ncontent-type: application\/json; charset=UTF-8\r\n\r\n\{/);
+  assert.match(body, /"mimeType":"text\/markdown"/);
+  assert.match(body, /"name":"clip_20261124\.md"/);
+  assert.match(body, /\r\n--fa_transcript_boundary\r\ncontent-type: text\/markdown\r\n\r\n# Title\n/);
+  assert.match(body, /--fa_transcript_boundary--\r\n$/);
+});
+
+// The reason is an identifier Google names in its error body; the message text
+// and the OAuth error_description never travel with it.
+test('an API error keeps only Google\'s reason identifier, from Drive and from the token endpoint', async () => {
+  const drive403 = fakeFetch((req) => {
+    if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
+    return json(
+      {
+        error: {
+          code: 403,
+          message: 'The user does not have sufficient permissions for this file.',
+          errors: [{ domain: 'global', reason: 'insufficientFilePermissions', message: 'secret text' }],
+        },
+      },
+      403,
+    );
+  });
+  const d1 = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: drive403.impl });
+  const e1 = await d1.findFileByVideoId('folder-1', 'hWe-j78vNpc').then(
+    () => assert.fail('should throw'),
+    (e: unknown) => e,
+  );
+  assert.ok(e1 instanceof DriveError);
+  assert.equal(e1.status, 403);
+  assert.equal(e1.reason, 'insufficientFilePermissions');
+
+  const tokenFail = fakeFetch(() =>
+    json({ error: 'invalid_grant', error_description: 'Token has been expired or revoked.' }, 400),
+  );
+  const d2 = createDriveStore({ oauthJson: OAUTH_JSON, fetchImpl: tokenFail.impl });
+  const e2 = await d2.findFileByVideoId('folder-1', 'hWe-j78vNpc').then(
+    () => assert.fail('should throw'),
+    (e: unknown) => e,
+  );
+  assert.ok(e2 instanceof DriveError);
+  assert.equal(e2.status, 400);
+  assert.equal(e2.reason, 'invalid_grant');
+  assert.doesNotMatch(e2.message, /expired or revoked/);
+});

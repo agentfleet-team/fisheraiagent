@@ -47,11 +47,15 @@ export function parseDriveLink(value: unknown): DriveLink | undefined {
 
 export class DriveError extends Error {
   readonly status?: number;
+  // Google's machine reason identifier (Drive error.errors[0].reason, or the
+  // OAuth token endpoint's error code). Free text is never kept here.
+  readonly reason?: string;
 
-  constructor(message: string, status?: number) {
+  constructor(message: string, status?: number, reason?: string) {
     super(message);
     this.name = 'DriveError';
     this.status = status;
+    this.reason = reason;
   }
 }
 
@@ -178,10 +182,30 @@ function driveUrl(file: unknown): StoredFile {
   };
 }
 
+const REASON_FORMAT = /^[A-Za-z_]{1,64}$/;
+
+// Drive answers {error:{errors:[{reason}]}}; the token endpoint answers
+// {error:"invalid_grant"}. Only an identifier-shaped value is kept.
+async function readReason(res: Response): Promise<string | undefined> {
+  let body: unknown;
+  try {
+    body = JSON.parse(await res.text());
+  } catch {
+    return undefined;
+  }
+  const errors = field(field(body, 'error'), 'errors');
+  const driveReason = Array.isArray(errors) ? field(errors[0], 'reason') : undefined;
+  const oauthReason = field(body, 'error');
+  return [driveReason, oauthReason].find(
+    (v): v is string => typeof v === 'string' && REASON_FORMAT.test(v),
+  );
+}
+
 async function readApiError(res: Response, oauth = false): Promise<DriveError> {
   const shareHint =
     res.status === 403 && !oauth ? ' — is the folder shared with the service account email?' : '';
-  return new DriveError(`Drive API error ${res.status}${shareHint}`, res.status);
+  const reason = await readReason(res);
+  return new DriveError(`Drive API error ${res.status}${shareHint}`, res.status, reason);
 }
 
 export interface DriveStoreOptions {
@@ -293,6 +317,7 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
       const boundary = 'fa_transcript_boundary';
       const metadata = JSON.stringify({
         name,
+        mimeType,
         parents: [folderId],
         ...(appProperties === undefined ? {} : { appProperties }),
       });
