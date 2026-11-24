@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node --import tsx --test test/*.test.ts",
     "test:web": "node --import tsx test/web/browser.spec.ts",
+    "check:design": "node --import tsx --input-type=module -e \"import { spawn } from 'node:child_process'; import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'; import { tmpdir } from 'node:os'; import { join } from 'node:path'; import { chromium } from 'playwright-core'; import { createService } from './src/service.js'; const run = (args, env) => new Promise((res, rej) => { const p = spawn('node', ['./node_modules/impeccable/cli/bin/cli.js', ...args], { env, stdio: ['ignore', 'pipe', 'pipe'] }); let out = '', err = ''; p.stdout.on('data', (d) => { out += d; }); p.stderr.on('data', (d) => { err += d; }); p.on('error', rej); p.on('close', (code) => res({ code: code ?? 1, out, err })); }); const cacheDir = mkdtempSync(join(tmpdir(), 'fa-design-')); let server; try { let url = process.env.DESIGN_CHECK_URL?.trim(); if (!url) { server = createService({ callerFactory: () => async () => ({ text: 'LANGUAGE: en', status: 'completed' }), model: 'test-model', maxBlockSeconds: 8, cacheDir }); await new Promise((r) => server.listen(0, '127.0.0.1', r)); url = 'http://127.0.0.1:' + server.address().port + '/'; } const env = { ...process.env, IMPECCABLE_BROWSER: process.env.IMPECCABLE_BROWSER || chromium.executablePath() }; const targets = ['web/', url]; const results = []; let exitCode = 0; for (const target of targets) { const r = await run(['detect', '--json', target], env); if (r.err) process.stderr.write(r.err); if (r.code !== 0 && r.code !== 2) { exitCode = 1; break; } if (r.code === 2) exitCode = 2; results.push({ target, exitCode: r.code, findings: JSON.parse(r.out || '[]') }); } if (exitCode !== 1) { const findingCount = results.reduce((n, r) => n + r.findings.length, 0); writeFileSync('design-report.json', JSON.stringify({ targets: results, findingCount }, null, 2) + '\\n'); if (process.env.DESIGN_SARIF_FILE) { const s = await run(['detect', '--sarif', 'web/', url], env); if (s.err) process.stderr.write(s.err); if (s.code !== 0 && s.code !== 2) { exitCode = 1; } else { writeFileSync(process.env.DESIGN_SARIF_FILE, s.out); if (s.code === 2) exitCode = 2; } } console.log('design-check: ' + findingCount + ' findings (' + results.map((r) => r.target + ': ' + r.findings.length).join(', ') + ')'); } process.exitCode = exitCode; } finally { if (server) { server.closeAllConnections?.(); await new Promise((r) => server.close(r)); } rmSync(cacheDir, { recursive: true, force: true }); }\"",
     "start": "tsx src/cli.ts",
     "transcribe": "tsx src/cli.ts",
     "serve": "tsx src/server.ts",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "22.20.5",
+    "impeccable": "4.10.0",
     "playwright-core": "1.65.1",
     "tsx": "4.23.15",
     "typescript": "5.9.3"

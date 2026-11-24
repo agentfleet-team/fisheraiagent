@@ -8,6 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,3 +22,27 @@ jobs:
       - run: npm test
       - run: npx playwright-core install --with-deps chromium
       - run: npm run test:web
+      - name: Design check
+        env:
+          DESIGN_SARIF_FILE: impeccable.sarif
+        run: npm run check:design || test $? -eq 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: design-report
+          path: design-report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: impeccable-sarif
+          path: impeccable.sarif
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-screenshots
+          path: |
+            test/web/screenshots/page-1280.png
+            test/web/screenshots/page-390.png
+      - name: Upload SARIF to GitHub code scanning
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: impeccable.sarif
+          category: impeccable
