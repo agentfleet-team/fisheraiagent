@@ -137,14 +137,15 @@ class FakeDrive implements DriveStore {
       props: appProperties,
     };
     this.files.push(file);
-    return { id: file.id, name, url: file.url };
+    return { id: file.id, name };
   }
 
-  async updateFile(fileId: string, content: string) {
+  async updateFile(fileId: string, name: string, content: string) {
     const file = this.files.find((f) => f.id === fileId);
     assert.ok(file, `update for unknown file ${fileId}`);
+    file.name = name;
     file.content = content;
-    return { id: file.id, name: file.name, url: file.url };
+    return { id: file.id, name: file.name };
   }
 }
 

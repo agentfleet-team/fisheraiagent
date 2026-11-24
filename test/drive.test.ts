@@ -4,7 +4,7 @@ import { createVerify, generateKeyPairSync } from 'node:crypto';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createDriveStore, DriveError } from '../src/drive.js';
+import { createDriveStore, driveLinkForId, DriveError, parseDriveLink } from '../src/drive.js';
 import { TranscriptError } from '../src/errors.js';
 
 // The key pair is generated at test time: no key material ever sits in a
@@ -108,7 +108,7 @@ test('findFileByVideoId miss then createFile: token exchange, query, multipart c
     { videoId: 'hWe-j78vNpc' },
   );
   assert.equal(stored.id, 'drv-1');
-  assert.equal(stored.url, 'https://drive.google.com/file/d/drv-1/view');
+  assert.equal(stored.name, 'clip_20261122.txt');
 
   // Token fetched once, then cached.
   assert.equal(requests.filter((r) => r.url.includes('oauth2')).length, 1);
@@ -135,7 +135,7 @@ test('findFileByVideoId queries the stored appProperties video id inside the fol
   assert.equal(found?.id, 'drv-7');
 });
 
-test('findFileByVideoId hit then updateFile patches media on the same file id', async () => {
+test('findFileByVideoId hit then updateFile renames and rewrites the same file id', async () => {
   const { impl, requests } = fakeFetch((req) => {
     if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
     if (req.url.startsWith('https://www.googleapis.com/drive/v3/files')) {
@@ -145,10 +145,15 @@ test('findFileByVideoId hit then updateFile patches media on the same file id', 
     }
     if (req.url.startsWith('https://www.googleapis.com/upload/drive/v3/files/drv-9')) {
       assert.equal(req.method, 'PATCH');
-      assert.match(req.url, /uploadType=media/);
-      assert.equal(req.headers['content-type'], 'text/plain');
-      assert.equal(req.body, 'new contents');
-      return json({ id: 'drv-9', name: 'clip_20261122.txt', webViewLink: 'https://x/drv-9' });
+      assert.match(req.url, /uploadType=multipart/);
+      assert.match(req.headers['content-type'], /^multipart\/related; boundary=/);
+      assert.match(req.body ?? '', /"name":"clip_20261122\.md"/);
+      assert.match(req.body ?? '', /"mimeType":"text\/markdown"/);
+      assert.match(req.body ?? '', /\r\n--fa_transcript_boundary\r\ncontent-type: text\/markdown\r\n\r\n# new contents\n/);
+      // A rename must not move the file or drop its video id.
+      assert.doesNotMatch(req.body ?? '', /"parents"/);
+      assert.doesNotMatch(req.body ?? '', /"appProperties"/);
+      return json({ id: 'drv-9', name: 'clip_20261122.md' });
     }
     throw new Error(`unexpected request ${req.method} ${req.url}`);
   });
@@ -156,9 +161,33 @@ test('findFileByVideoId hit then updateFile patches media on the same file id', 
 
   const found = await drive.findFileByVideoId('folder-1', 'hWe-j78vNpc');
   assert.equal(found?.id, 'drv-9');
-  const updated = await drive.updateFile('drv-9', 'new contents', 'text/plain');
-  assert.equal(updated.url, 'https://x/drv-9');
+  const updated = await drive.updateFile('drv-9', 'clip_20261122.md', '# new contents\n', 'text/markdown');
+  assert.deepEqual(updated, { id: 'drv-9', name: 'clip_20261122.md' });
   assert.equal(requests.some((r) => r.method === 'POST' && r.url.includes('upload')), false);
+});
+
+// The live failure (#1534): Drive answers a text/markdown create with a
+// webViewLink that is not /file/d/<id>/view, so parsing that link rejected a
+// write that had succeeded. The saved link is built from the file id instead.
+test('a text/markdown create whose webViewLink is not a file/d link still yields the id link', async () => {
+  const { impl } = fakeFetch((req) => {
+    if (req.url.startsWith('https://oauth2.googleapis.com/token')) return TOKEN_ROUTE(req);
+    return json({
+      id: 'drv-md',
+      name: 'rick-astley-never-gonna-give-you-up_dQw4w9WgXcQ_20261124.md',
+      webViewLink: 'https://drive.google.com/open?id=drv-md&usp=drivesdk',
+    });
+  });
+  const drive = createDriveStore({ credentialsPath: credentialsFile(), fetchImpl: impl });
+  const stored = await drive.createFile(
+    'folder-1',
+    'rick-astley_dQw4w9WgXcQ_20261124.md',
+    '# Title\n',
+    'text/markdown',
+    { videoId: 'dQw4w9WgXcQ' },
+  );
+  assert.equal(parseDriveLink('https://drive.google.com/open?id=drv-md&usp=drivesdk'), undefined);
+  assert.equal(driveLinkForId(stored.id), 'https://drive.google.com/file/d/drv-md/view');
 });
 
 test('a 403 from the API becomes a DriveError with the folder-sharing hint', async () => {

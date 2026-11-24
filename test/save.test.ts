@@ -75,16 +75,17 @@ class FakeDrive implements DriveStore {
       props: appProperties,
     };
     this.files.push(file);
-    return { id: file.id, name, url: file.url };
+    return { id: file.id, name };
   }
 
-  async updateFile(fileId: string, content: string) {
+  async updateFile(fileId: string, name: string, content: string) {
     this.calls.push(`update:${fileId}`);
     if (this.failWith) throw this.failWith;
     const file = this.files.find((f) => f.id === fileId);
     assert.ok(file, `update for unknown file ${fileId}`);
+    file.name = name;
     file.content = content;
-    return { id: file.id, name: file.name, url: file.url };
+    return { id: file.id, name: file.name };
   }
 }
 
@@ -483,6 +484,47 @@ test('E4b: the same video on another day and with another title still updates on
     assert.equal(files.length, 1, 'same video across days and titles stays one file');
     assert.ok(drive.calls.includes(`update:${files[0].id}`));
     assert.match(files[0].content, /^Title: Renamed Video\n/);
+  } finally {
+    await svc.close();
+  }
+});
+
+// The live failure (#1534) — the second half: a tenant whose extension moves
+// from .txt to .md updates the same file, and the update renames it. The
+// stored file must not keep a name that says .txt over Markdown content.
+test('E4e: an extension change renames the existing file in the same update', async () => {
+  const drive = new FakeDrive();
+  const svc = await startService(drive, TENANTS_TWO);
+  try {
+    const first = await pollJob(
+      svc.base,
+      (
+        await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1'), token: TOKEN_A })
+      ).body.job_id,
+    );
+    assert.equal(first.saved.name, `my-great-video_${VIDEO_A}_20261122.txt`);
+
+    writeTenantsFile(svc.dir, [
+      {
+        ...TENANTS_TWO[0],
+        destination: { type: 'google-drive', folder_id: 'folder-a', extension: '.md' },
+      },
+      TENANTS_TWO[1],
+    ]);
+    const second = await pollJob(
+      svc.base,
+      (
+        await submitJob(svc.base, { origin: discordOrigin('guild-a', 'chan-1'), token: TOKEN_A })
+      ).body.job_id,
+    );
+    assert.equal(second.saved.name, `my-great-video_${VIDEO_A}_20261122.md`);
+    assert.equal(second.saved.url, 'https://drive.google.com/file/d/fake-drive-1/view');
+
+    const files = drive.filesIn('folder-a');
+    assert.equal(files.length, 1, 'a rename is an update, not a second file');
+    assert.equal(files[0].name, `my-great-video_${VIDEO_A}_20261122.md`);
+    assert.match(files[0].content, /^# My Great Video!\n/);
+    assert.ok(drive.calls.includes(`update:${files[0].id}`));
   } finally {
     await svc.close();
   }
