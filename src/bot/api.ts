@@ -33,6 +33,12 @@ export interface TranscriptOutcome {
 // submit request header, and is never part of an error or a log line.
 export interface TranscriptApi {
   transcribe(youtubeUrl: string, apiKey: string, origin?: JobOrigin): Promise<TranscriptOutcome>;
+  // The tenant listener's submit: forward the URL and let the service own
+  // everything after — transcription, save and Discord delivery. Resolves
+  // once the job is accepted (no polling), throws a coded ApiError when it
+  // is not. No X-Gemini-Key rides this request: the bearer caller token is
+  // what unlocks the tenant key.
+  submit(youtubeUrl: string, target: { origin: JobOrigin; deliverTo: string }): Promise<void>;
 }
 
 export interface ApiClientOptions {
@@ -199,6 +205,26 @@ export function createApiClient(options: ApiClientOptions): TranscriptApi {
         }
         if (Date.now() > deadline) throw new ApiError('job_timeout');
         await sleep(pollIntervalMs);
+      }
+    },
+
+    async submit(youtubeUrl, target) {
+      let res: Response;
+      try {
+        res = await doFetch(`${base}/v1/jobs`, {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({
+            url: youtubeUrl,
+            origin: target.origin,
+            deliver_to: target.deliverTo,
+          }),
+        });
+      } catch {
+        throw new ApiError('api_unreachable');
+      }
+      if (res.status !== 202) {
+        throw new ApiError(await readErrorCode(res, 'internal_error'));
       }
     },
   };

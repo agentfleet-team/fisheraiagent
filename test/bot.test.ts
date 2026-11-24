@@ -591,6 +591,110 @@ test('D8: the documented invite permissions cover every action the bot takes', (
   }
 });
 
+// --- Tenant listener mode -----------------------------------------------------
+
+const CALLER_TOKEN = 'TEST-CALLER-TOKEN-9f8e2b';
+const T_GUILD = '111111111111111111';
+const T_CHANNEL = '222222222222222222';
+const T_THREAD = '333333333333333333';
+const T_OTHER_CHANNEL = '444444444444444444';
+
+interface RecordedRequest {
+  method: string;
+  authorization: string | null;
+  geminiKey: string | null;
+  body: { url?: string; origin?: unknown; deliver_to?: string };
+}
+
+// The service double for the listener: records every request and accepts
+// jobs. The listener must issue exactly one POST per URL and never poll.
+function tenantListener() {
+  const requests: RecordedRequest[] = [];
+  const api = createApiClient({
+    baseUrl: 'http://offline.invalid',
+    serviceToken: CALLER_TOKEN,
+    fetchImpl: async (_input, init) => {
+      const headers = new Headers(init?.headers);
+      requests.push({
+        method: init?.method ?? 'GET',
+        authorization: headers.get('authorization'),
+        geminiKey: headers.get('x-gemini-key'),
+        body: JSON.parse(String(init?.body ?? '{}')),
+      });
+      return new Response(JSON.stringify({ job_id: 'job-1' }), { status: 202 });
+    },
+  });
+  const tenant = { callerToken: CALLER_TOKEN, guildId: T_GUILD, channelIds: [T_CHANNEL] };
+  return { requests, core: createBot({ api, tenant }) };
+}
+
+test('T1: tenant mode — a URL in a configured channel is forwarded once with bearer, origin and deliver_to', async () => {
+  const { requests, core } = tenantListener();
+  const discord = fakeDiscord(T_CHANNEL);
+
+  await core.handleMessage(
+    { guildId: T_GUILD, channelId: T_CHANNEL, authorIsBot: false, content: `watch ${VIDEO_URL}` },
+    discord.sink,
+  );
+
+  assert.equal(requests.length, 1);
+  const post = requests[0];
+  assert.equal(post.method, 'POST');
+  assert.equal(post.authorization, `Bearer ${CALLER_TOKEN}`);
+  assert.equal(post.geminiKey, null);
+  assert.deepEqual(post.body, {
+    url: `https://www.youtube.com/watch?v=${VIDEO_ID}`,
+    origin: { kind: 'discord', guild_id: T_GUILD, channel_id: T_CHANNEL },
+    deliver_to: T_CHANNEL,
+  });
+  // Fire-and-forget: the bot sends no message and adds no reaction itself.
+  assert.equal(discord.replies.length, 0);
+  assert.equal(discord.reactions.length, 0);
+});
+
+test('T2: tenant mode — a URL in a thread of a configured channel sets deliver_to to the thread', async () => {
+  const { requests, core } = tenantListener();
+
+  await core.handleMessage(
+    {
+      guildId: T_GUILD,
+      channelId: T_THREAD,
+      parentChannelId: T_CHANNEL,
+      authorIsBot: false,
+      content: VIDEO_URL,
+    },
+    fakeDiscord(T_THREAD).sink,
+  );
+
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].body.deliver_to, T_THREAD);
+  assert.deepEqual(requests[0].body.origin, {
+    kind: 'discord',
+    guild_id: T_GUILD,
+    channel_id: T_CHANNEL,
+  });
+});
+
+test('T3: tenant mode — another channel, a bot author and a message without a URL forward nothing', async () => {
+  const { requests, core } = tenantListener();
+  const discord = fakeDiscord(T_OTHER_CHANNEL);
+
+  const ignored: BotMessage[] = [
+    // A channel the tenant does not configure, and a thread under it.
+    { guildId: T_GUILD, channelId: T_OTHER_CHANNEL, authorIsBot: false, content: VIDEO_URL },
+    { guildId: T_GUILD, channelId: T_THREAD, parentChannelId: T_OTHER_CHANNEL, authorIsBot: false, content: VIDEO_URL },
+    // A bot's own message in a configured channel.
+    { guildId: T_GUILD, channelId: T_CHANNEL, authorIsBot: true, content: VIDEO_URL },
+    // A message with no YouTube URL in a configured channel.
+    { guildId: T_GUILD, channelId: T_CHANNEL, authorIsBot: false, content: 'hello everyone' },
+  ];
+  for (const msg of ignored) await core.handleMessage(msg, discord.sink);
+
+  assert.equal(requests.length, 0);
+  assert.equal(discord.replies.length, 0);
+  assert.equal(discord.reactions.length, 0);
+});
+
 // --- format helpers ---------------------------------------------------------
 
 test('format helpers: duration and srt timestamps', () => {

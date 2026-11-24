@@ -9,6 +9,15 @@ git tags on `main`.
 
 ### Added
 
+- The Discord bot gains a tenant listener mode: when `TENANT_CALLER_TOKEN`,
+  `TENANT_GUILD_ID` and `TENANT_CHANNEL_IDS` are set, the bot takes its
+  enabled channels from configuration — no slash commands, no per-guild key,
+  no data file — and forwards a posted YouTube URL to `POST /v1/jobs` once,
+  with the caller token as the bearer, the Discord `origin` (guild and
+  parent channel) and `deliver_to` (the message's channel or thread). The
+  service owns the transcript, the save and the delivery; the listener
+  sends no replies and adds no reactions. BYOK mode is unchanged
+  (fisherivco/allen-ai-os#1539).
 - A tenant may hold a Discord delivery credential: the tenants document
   gains an optional `discord_delivery` block naming `token_env`, the
   environment variable that carries a dedicated file-deliverer bot token.

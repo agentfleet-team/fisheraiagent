@@ -53,11 +53,18 @@ export interface CommandSink {
   replyEphemeral(content: SafeText): Promise<void>;
 }
 
-export interface BotDeps {
-  api: TranscriptApi;
-  store: GuildStore;
-  log?: (line: string) => void;
+// The channels a tenant listener answers in: the tenant's guild and its
+// configured channel ids (a thread is covered through its parent channel),
+// all from configuration — no per-guild key, no data file.
+export interface TenantChannels {
+  guildId: string;
+  channelIds: readonly string[];
 }
+
+export type BotDeps = {
+  api: TranscriptApi;
+  log?: (line: string) => void;
+} & ({ store: GuildStore } | { tenant: TenantChannels });
 
 export interface BotCore {
   handleMessage(msg: BotMessage, sink: MessageSink): Promise<void>;
@@ -87,10 +94,14 @@ function isErrorKey(code: string): code is ErrorKey {
 
 export function createBot(deps: BotDeps): BotCore {
   const log = loggerFor(deps.log);
-  const { api, store } = deps;
+  const { api } = deps;
+  const tenant = 'tenant' in deps ? deps.tenant : undefined;
+  const store = 'store' in deps ? deps.store : undefined;
 
   return {
     async handleCommand(cmd, sink) {
+      // Tenant mode registers no slash commands — there is nothing to set up.
+      if (store === undefined) return;
       if (!cmd.memberCanManageGuild) {
         await sink.replyEphemeral(safeText('bot.need_manage_server'));
         return;
@@ -135,7 +146,36 @@ export function createBot(deps: BotDeps): BotCore {
       // at message content in a channel or thread that is not enabled.
       // A thread is enabled by itself or through its parent channel.
       const ids = msg.parentChannelId ? [msg.channelId, msg.parentChannelId] : [msg.channelId];
-      if (!ids.some((id) => store.isEnabled(msg.guildId, id))) return;
+
+      // Tenant listener mode: forward the URL and stop. The service owns the
+      // transcript, the save and the delivery; the bot posts no message and
+      // adds no reaction itself.
+      if (tenant !== undefined) {
+        if (msg.guildId !== tenant.guildId) return;
+        if (!ids.some((id) => tenant.channelIds.includes(id))) return;
+        const url = findYouTubeUrl(msg.content);
+        if (!url) return;
+        const fields = {
+          guild: parseGuildId(msg.guildId),
+          channel: parseChannelId(msg.channelId),
+        };
+        log('job_submitted', fields);
+        try {
+          await api.submit(url, {
+            origin: {
+              kind: 'discord',
+              guild_id: msg.guildId,
+              channel_id: msg.parentChannelId ?? msg.channelId,
+            },
+            deliverTo: msg.channelId,
+          });
+        } catch (err) {
+          log('job_failed', { ...fields, code: errorCode(err) });
+        }
+        return;
+      }
+
+      if (store === undefined || !ids.some((id) => store.isEnabled(msg.guildId, id))) return;
 
       const url = findYouTubeUrl(msg.content);
       if (!url) return;
