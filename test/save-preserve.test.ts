@@ -38,12 +38,13 @@ test('an existing file with a matching name but another video id survives untouc
       files.push(f);
       return f;
     },
-    async updateFile(id, content) {
+    async updateFile(id, name, content) {
       updated.push(id);
       const f = files.find((x) => x.id === id);
       assert.ok(f);
+      f.name = name;
       f.content = content;
-      return f;
+      return { id: f.id, name: f.name };
     },
   };
   const save = createTranscriptSaver({

@@ -1,4 +1,10 @@
-import { DriveError, parseDriveLink, type DriveLink, type DriveStore, type StoredFile } from './drive.js';
+import {
+  driveLinkForId,
+  DriveError,
+  type DriveLink,
+  type DriveStore,
+  type StoredFile,
+} from './drive.js';
 import { TranscriptError } from './errors.js';
 import { parseDriveFileId, parseVideoId } from './ids.js';
 import { loggerFor, type LogFields, type LogSink } from './log.js';
@@ -21,10 +27,10 @@ import {
 import { canonicalVideoUrl } from './youtube-url.js';
 
 // The saved-file link a job view and a reply may carry: for Drive the url is
-// branded DriveLink — raw Drive response text only after parseDriveLink has
-// rendered it canonical — and for WebDAV the path is branded WebdavPath,
-// only ever the canonical rendering of the configured folder plus a safe
-// file name; folder travels with it so a client can re-render and re-check
+// branded DriveLink, built from the file id the write returned (or from a wire
+// string only through parseDriveLink); for WebDAV the path is branded
+// WebdavPath, only ever the canonical rendering of the configured folder plus a
+// safe file name; folder travels with it so a client can re-render and re-check
 // the path instead of trusting a wire string. Neither can be a channel for
 // arbitrary remote text.
 export type SavedFile =
@@ -293,12 +299,12 @@ export function createTranscriptSaver(
           known.get(key) ??
           (await drive.findFileByVideoId(destination.folder_id, transcript.video_id));
         stored = stored
-          ? await drive.updateFile(stored.id, content, MIME_TYPES[extension])
+          ? await drive.updateFile(stored.id, name, content, MIME_TYPES[extension])
           : await drive.createFile(destination.folder_id, name, content, MIME_TYPES[extension], {
               videoId: transcript.video_id,
             });
-        const url = parseDriveLink(stored.url);
-        if (!url) throw new DriveError('the Drive response carried no usable file link');
+        const url = driveLinkForId(stored.id);
+        if (!url) throw new DriveError('the Drive response carried no usable file id');
         known.set(key, stored);
         log('file_saved', { ...driveFields, file: parseDriveFileId(stored.id) });
         return { type: 'google-drive', name: stored.name, url };
