@@ -23,8 +23,26 @@ export {
   type ServiceConfig,
 } from './config.js';
 export type { Transcript, TranscriptBlock } from './transcript.js';
-export { JobStore, type JobError, type JobRunnerDeps, type JobStatus, type JobView } from './jobs.js';
+export {
+  JobStore,
+  type DeliveryOutcome,
+  type DeliveryView,
+  type JobError,
+  type JobRunnerDeps,
+  type JobStatus,
+  type JobView,
+} from './jobs.js';
 export { createService, type ServiceOptions } from './service.js';
+export {
+  createDiscordApi,
+  createTranscriptDeliverer,
+  DiscordError,
+  type DelivererDeps,
+  type DiscordApi,
+  type DiscordApiFactory,
+  type DiscordAttachment,
+  type DiscordChannel,
+} from './deliver.js';
 export {
   createDriveStore,
   DriveError,
@@ -75,4 +93,5 @@ export {
   type Tenant,
   type TenantCaller,
   type TenantDestination,
+  type TenantDiscordDelivery,
 } from './tenants.js';

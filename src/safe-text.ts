@@ -47,6 +47,8 @@ const MESSAGES = Object.freeze({
   no_tenant: brand('this sign-in is not allowlisted for any tenant, so nothing was saved'),
   rate_limited: brand('too many jobs in the last hour — try again later'),
   video_too_long: brand('the video is longer than the limit for this destination'),
+  delivery_failed: brand('the result could not be posted to the Discord target'),
+  delivery_refused: brand("the Discord target is not one of the tenant's configured channels"),
   // Client-side failures of a remote transcript service call (the MCP
   // server in remote mode): the job never produced a service error body, so
   // these codes exist only for the caller's own fixed messages.

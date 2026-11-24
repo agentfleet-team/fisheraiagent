@@ -88,6 +88,22 @@ paths:
                   example: https://youtu.be/hWe-j78vNpc
                 origin:
                   $ref: '#/components/schemas/JobOrigin'
+                deliver_to:
+                  type: string
+                  description: >
+                    A Discord channel or thread id (snowflake) to post the
+                    job's result into. Honored only when the request's bearer
+                    token passes the resolved tenant's caller check and that
+                    tenant names `discord_delivery`; anything weaker is
+                    ignored exactly like no target. Even then the service
+                    posts only when Discord reports the target — or a
+                    thread's parent channel — among the tenant's
+                    `discord_channel_ids`: a done job gets one bounded
+                    summary (max 2000 characters, Drive link when saved)
+                    with the `.txt` attached, a failed job one short line
+                    with the fixed error code. The job view's `delivery`
+                    reports what happened.
+                  example: '1567766696058421400'
       responses:
         '202':
           description: Job accepted and running in the background.
@@ -105,7 +121,8 @@ paths:
             Bad request. `missing_key` when X-Gemini-Key is absent or empty
             and no verified tenant key applies, `invalid_url` when the URL
             is not a YouTube URL or video id, `invalid_request` for
-            malformed JSON, a missing `url` field, or a malformed `origin`.
+            malformed JSON, a missing `url` field, or a malformed `origin`
+            or `deliver_to`.
           content:
             application/json:
               schema:
@@ -225,7 +242,8 @@ paths:
             `error` is present when status is `failed`. When the job's origin
             resolved to a tenant with a destination, `saved` carries the
             written file link or path, or `save_error` reports the failed write (the
-            transcript is still returned in `result`).
+            transcript is still returned in `result`). When the job carried an
+            accepted `deliver_to`, `delivery` reports the Discord post.
           content:
             application/json:
               schema:
@@ -267,6 +285,36 @@ components:
           $ref: '#/components/schemas/SavedFile'
         save_error:
           $ref: '#/components/schemas/JobError'
+        delivery:
+          $ref: '#/components/schemas/Delivery'
+    Delivery:
+      description: >
+        What became of a job's Discord delivery (`deliver_to`). Present
+        only for a job whose verified caller named a target in a tenant
+        with `discord_delivery`; `sent` carries the posted message's id,
+        `failed` a fixed code and its table message — the job's own status
+        is unaffected either way.
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [sent, failed]
+        message_id:
+          type: string
+          description: The Discord id of the posted message (sent only).
+        code:
+          type: string
+          enum: [delivery_refused, delivery_failed, invalid_config]
+          description: >
+            Why delivery failed: `delivery_refused` when Discord did not
+            report the target (or a thread's parent) in the tenant's
+            `discord_channel_ids`, `delivery_failed` when the post itself
+            failed, `invalid_config` when the tenant's delivery token was
+            not configured (failed only).
+        message:
+          type: string
+          description: A fixed message looked up by `code` from the service's message table (failed only).
     JobOrigin:
       description: >
         Where the job claims to come from. The claim is trusted only when

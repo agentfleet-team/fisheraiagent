@@ -9,6 +9,20 @@ git tags on `main`.
 
 ### Added
 
+- A tenant may hold a Discord delivery credential: the tenants document
+  gains an optional `discord_delivery` block naming `token_env`, the
+  environment variable that carries a dedicated file-deliverer bot token.
+  A `POST /v1/jobs` from a caller whose bearer token passes that tenant's
+  caller check may carry `deliver_to` (a Discord channel or thread id);
+  the service posts the result into that target — one summary bounded to
+  2000 characters with the Drive link when saved and the `.txt`
+  transcript attached, or one short line with the fixed error code for a
+  failed job — but only when Discord reports the target, or a thread's
+  parent, in the tenant's `discord_channel_ids`. The job view gains
+  `delivery` (`sent` with the message id, or `failed` with a fixed code);
+  the Drive save is unchanged, and the token reaches only
+  https://discord.com with redirects never followed and is never logged
+  (fisherivco/allen-ai-os#1506).
 - A tenant may hold its own Gemini key: the tenants document gains an
   optional `gemini_key_env` naming an environment variable that carries the
   key. A `POST /v1/jobs` without `X-Gemini-Key`, from a caller whose bearer

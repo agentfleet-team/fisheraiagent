@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { codeOf, messageForCode, TranscriptError, type FixedErrorCode } from './errors.js';
 import type { GeminiCaller } from './gemini.js';
+import type { ChannelId } from './ids.js';
 import { SaveFailedError, type SavedFile } from './save.js';
 import type { SafeText } from './safe-text.js';
 import type { JobOrigin, TenantLimits } from './tenants.js';
@@ -19,6 +20,22 @@ export interface JobError {
   status?: number;
 }
 
+// What the job view reports about a Discord delivery: `sent` carries the
+// posted message's id; `failed` carries a fixed code and its branded
+// message — the same closed set the error bodies draw from, never caught
+// or remote text.
+export type DeliveryView =
+  | { status: 'sent'; message_id: string }
+  | { status: 'failed'; code: FixedErrorCode; message: SafeText };
+
+// What a settled job hands to the delivery hook: the transcript and its
+// saved-file link on success, the job's coded error on failure.
+export interface DeliveryOutcome {
+  transcript?: Transcript;
+  saved?: SavedFile;
+  error?: JobError;
+}
+
 export interface JobView {
   job_id: string;
   status: JobStatus;
@@ -26,6 +43,7 @@ export interface JobView {
   error?: JobError;
   saved?: SavedFile;
   save_error?: JobError;
+  delivery?: DeliveryView;
 }
 
 export interface JobRunnerDeps {
@@ -45,6 +63,17 @@ export interface JobRunnerDeps {
   // saved, and throws on failure — the transcript is still returned either
   // way.
   saveTranscript?: (origin: JobOrigin, transcript: Transcript) => Promise<SavedFile | undefined>;
+  // After a job settles, post its outcome into the Discord channel or
+  // thread its verified caller named (`deliverTo` — already a checked
+  // snowflake). The origin is the same authenticated claim the saver
+  // sees; the hook resolves the tenant, holds the delivery token and
+  // reports what happened as the view's `delivery`. The outcome stands
+  // either way; a throw is folded into delivery.failed.
+  deliverOutcome?: (
+    origin: JobOrigin,
+    deliverTo: ChannelId,
+    outcome: DeliveryOutcome,
+  ) => Promise<DeliveryView | undefined>;
   // A length known before any Gemini call (local metadata such as the
   // transcript cache); used by the video length limit — the tenant's
   // max_video_seconds or the service default — to reject an over-length
@@ -71,6 +100,7 @@ interface JobRecord {
   error?: JobError;
   saved?: SavedFile;
   save_error?: JobError;
+  delivery?: DeliveryView;
 }
 
 // In-process job store. The caller's API key is never part of a record: it
@@ -84,18 +114,20 @@ export class JobStore {
   // `saveBlocked` marks a job whose transcript must not be saved (see
   // SaveBlock): the job still runs and returns the transcript, and the
   // matching fixed error is what the origin sees. `limits` is the resolved
-  // tenant's limits, applied only to the job it came with.
+  // tenant's limits, applied only to the job it came with. `deliverTo` is
+  // the Discord channel or thread a verified caller named for delivery.
   submit(
     videoId: string,
     apiKey: string,
     origin?: JobOrigin,
     saveBlocked?: SaveBlock,
     limits?: TenantLimits,
+    deliverTo?: ChannelId,
   ): string {
     const id = randomUUID();
     this.records.set(id, { status: 'queued' });
     this.prune();
-    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveBlocked, limits));
+    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveBlocked, limits, deliverTo));
     return id;
   }
 
@@ -107,6 +139,7 @@ export class JobStore {
     if (record.error !== undefined) view.error = record.error;
     if (record.saved !== undefined) view.saved = record.saved;
     if (record.save_error !== undefined) view.save_error = record.save_error;
+    if (record.delivery !== undefined) view.delivery = record.delivery;
     return view;
   }
 
@@ -117,11 +150,13 @@ export class JobStore {
     origin?: JobOrigin,
     saveBlocked?: SaveBlock,
     limits?: TenantLimits,
+    deliverTo?: ChannelId,
   ): Promise<void> {
     try {
       const record = this.records.get(id);
       if (!record) return;
       record.status = 'running';
+      let failed: JobError | undefined;
       try {
         const maxVideoSeconds = limits?.max_video_seconds ?? this.deps.defaultMaxVideoSeconds;
         if (maxVideoSeconds !== undefined && this.deps.knownDurationSeconds) {
@@ -151,10 +186,34 @@ export class JobStore {
           const code = saveBlocked === 'unauthorized' ? 'save_unauthorized' : 'no_tenant';
           record.save_error = { code, message: messageForCode(code) };
         }
-        record.status = 'done';
       } catch (err) {
+        failed = toJobError(err);
+      }
+      // Delivery settles before the terminal status lands: a poller sees
+      // 'done' or 'failed' only once `delivery` is final too, so the job
+      // view never reports an outcome without its delivery state.
+      if (deliverTo !== undefined && origin !== undefined && this.deps.deliverOutcome) {
+        let delivery: DeliveryView | undefined;
+        try {
+          delivery = await this.deps.deliverOutcome(origin, deliverTo, {
+            transcript: record.result,
+            saved: record.saved,
+            error: failed,
+          });
+        } catch {
+          delivery = {
+            status: 'failed',
+            code: 'delivery_failed',
+            message: messageForCode('delivery_failed'),
+          };
+        }
+        if (delivery !== undefined) record.delivery = delivery;
+      }
+      if (failed !== undefined) {
         record.status = 'failed';
-        record.error = toJobError(err);
+        record.error = failed;
+      } else {
+        record.status = 'done';
       }
     } finally {
       this.deps.onJobFinished?.(id);
