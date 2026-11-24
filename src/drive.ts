@@ -104,6 +104,37 @@ function loadServiceAccountJson(json: string): ServiceAccount {
   return parseServiceAccount(parsed, 'GOOGLE_CREDENTIALS_JSON');
 }
 
+interface OAuthClient {
+  client_id: string;
+  client_secret: string;
+  refresh_token: string;
+}
+
+// An OAuth refresh token of a human Drive user. A service account owns no
+// storage, so on a consumer My Drive only a user's own token can create files.
+function loadOAuthJson(json: string): OAuthClient {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    throw new TranscriptError('invalid_config', 'GOOGLE_OAUTH_JSON is not valid JSON');
+  }
+  const id = field(parsed, 'client_id');
+  const secret = field(parsed, 'client_secret');
+  const refresh = field(parsed, 'refresh_token');
+  if (
+    typeof id !== 'string' || id === '' ||
+    typeof secret !== 'string' || secret === '' ||
+    typeof refresh !== 'string' || refresh === ''
+  ) {
+    throw new TranscriptError(
+      'invalid_config',
+      'GOOGLE_OAUTH_JSON: needs client_id, client_secret and refresh_token',
+    );
+  }
+  return { client_id: id, client_secret: secret, refresh_token: refresh };
+}
+
 function base64url(input: string | Buffer): string {
   return Buffer.from(input).toString('base64url');
 }
@@ -147,9 +178,9 @@ function driveUrl(file: unknown): StoredFile {
   };
 }
 
-async function readApiError(res: Response): Promise<DriveError> {
+async function readApiError(res: Response, oauth = false): Promise<DriveError> {
   const shareHint =
-    res.status === 403 ? ' — is the folder shared with the service account email?' : '';
+    res.status === 403 && !oauth ? ' — is the folder shared with the service account email?' : '';
   return new DriveError(`Drive API error ${res.status}${shareHint}`, res.status);
 }
 
@@ -158,12 +189,17 @@ export interface DriveStoreOptions {
   // The key JSON inline (from a secrets-manager env var) instead of a
   // mounted file. credentialsPath wins when both are set.
   credentialsJson?: string;
+  // An OAuth client plus refresh token as JSON {client_id, client_secret,
+  // refresh_token}. Used only when no service-account credentials are set.
+  oauthJson?: string;
   fetchImpl?: typeof fetch;
 }
 
-// A service account owns nothing a user can see; the tenant shares its Drive
-// folder with the service account email, so drive.file scope is enough to
-// read and write inside exactly that folder.
+// Service-account mode: the tenant shares its Drive folder with the service
+// account email and drive.file scope reaches exactly that folder; it works
+// only in a shared drive (Workspace), because a service account has no quota.
+// OAuth mode: the refresh token of a user acts as that user, so files land in
+// the user's own My Drive; the scope is whatever the user consented to.
 export function createDriveStore(options: DriveStoreOptions): DriveStore {
   const doFetch = options.fetchImpl ?? fetch;
   let account: ServiceAccount | undefined;
@@ -181,17 +217,35 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
     return account;
   };
 
+  const useOAuth =
+    options.credentialsPath === undefined &&
+    options.credentialsJson === undefined &&
+    options.oauthJson !== undefined;
+  let oauth: OAuthClient | undefined;
+
   async function accessToken(): Promise<string> {
     if (token && Date.now() < token.expiresAt - 60_000) return token.value;
+    let form: URLSearchParams;
+    if (useOAuth) {
+      oauth ??= loadOAuthJson(options.oauthJson ?? '');
+      form = new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: oauth.client_id,
+        client_secret: oauth.client_secret,
+        refresh_token: oauth.refresh_token,
+      });
+    } else {
+      form = new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: signJwt(serviceAccount(), DRIVE_SCOPE),
+      });
+    }
     const res = await doFetch(TOKEN_URL, {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        assertion: signJwt(serviceAccount(), DRIVE_SCOPE),
-      }).toString(),
+      body: form.toString(),
     });
-    if (!res.ok) throw await readApiError(res);
+    if (!res.ok) throw await readApiError(res, useOAuth);
     const body: unknown = await res.json();
     const accessToken = field(body, 'access_token');
     if (typeof accessToken !== 'string' || accessToken === '') {
@@ -209,7 +263,7 @@ export function createDriveStore(options: DriveStoreOptions): DriveStore {
       ...init,
       headers: { authorization: `Bearer ${bearer}`, ...(init.headers ?? {}) },
     });
-    if (!res.ok) throw await readApiError(res);
+    if (!res.ok) throw await readApiError(res, useOAuth);
     return res;
   }
 

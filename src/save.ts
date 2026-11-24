@@ -256,7 +256,7 @@ export function createTranscriptSaver(
       log('file_save_failed', { ...driveFields, code: 'invalid_config' });
       throw new TranscriptError(
         'invalid_config',
-        `tenant ${tenant.id}: a google-drive destination needs GOOGLE_APPLICATION_CREDENTIALS`,
+        `tenant ${tenant.id}: a google-drive destination needs GOOGLE_APPLICATION_CREDENTIALS, GOOGLE_CREDENTIALS_JSON or GOOGLE_OAUTH_JSON`,
       );
     }
     const drive = deps.drive;

@@ -24,10 +24,13 @@ try {
     maxJobsPerHourPerClient: config.maxJobsPerHourPerClient,
     trustedProxies: config.trustedProxyIps,
     drive:
-      config.googleCredentials !== undefined || config.googleCredentialsJson !== undefined
+      config.googleCredentials !== undefined ||
+      config.googleCredentialsJson !== undefined ||
+      config.googleOauthJson !== undefined
         ? createDriveStore({
             credentialsPath: config.googleCredentials,
             credentialsJson: config.googleCredentialsJson,
+            oauthJson: config.googleOauthJson,
           })
         : undefined,
     oidc: config.oidc,
