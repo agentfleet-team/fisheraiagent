@@ -61,6 +61,11 @@ export interface Tenant {
   discord_channel_ids?: string[];
   web_emails?: string[];
   caller?: TenantCaller;
+  // The name of an environment variable holding this tenant's own Gemini
+  // key. A request without X-Gemini-Key spends it only when its bearer
+  // token passes this tenant's caller check — like the webdav password,
+  // the file names the variable and the value never appears in it.
+  gemini_key_env?: string;
   destination?: TenantDestination;
   limits?: TenantLimits;
 }
@@ -229,6 +234,7 @@ function parseLimits(value: unknown, path: string): TenantLimits | undefined {
 //       "discord_guild_id": "111",
 //       "discord_channel_ids": ["222", "333"],
 //       "caller": { "token_env": "BOT_SERVICE_TOKEN" },
+//       "gemini_key_env": "FAMILY_GEMINI_KEY",
 //       "destination": { "type": "google-drive", "folder_id": "0AbC...", "extension": ".md" }
 //     },
 //     {
@@ -301,6 +307,13 @@ function parseTenantsDocument(parsed: unknown, path: string): Tenant[] {
     const emails = stringList(field(entry, 'web_emails'), 'web_emails', path);
     if (emails !== undefined) tenant.web_emails = emails.map((e) => e.toLowerCase());
     tenant.caller = parseCaller(field(entry, 'caller'), path);
+    const keyEnv = field(entry, 'gemini_key_env');
+    if (keyEnv !== undefined) {
+      if (!isNonEmptyString(keyEnv)) {
+        throw new TranscriptError('invalid_config', `${path}: gemini_key_env must be a non-empty env var name`);
+      }
+      tenant.gemini_key_env = keyEnv.trim();
+    }
     tenant.destination = parseDestination(field(entry, 'destination'), path);
     tenant.limits = parseLimits(field(entry, 'limits'), path);
     return tenant;

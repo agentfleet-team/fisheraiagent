@@ -402,11 +402,7 @@ export function createService(options: ServiceOptions): Server {
         return;
       }
       const keyHeader = req.headers['x-gemini-key'];
-      const apiKey = (Array.isArray(keyHeader) ? keyHeader[0] : keyHeader)?.trim() ?? '';
-      if (!apiKey) {
-        sendError(res, 400, 'missing_key');
-        return;
-      }
+      const byokKey = (Array.isArray(keyHeader) ? keyHeader[0] : keyHeader)?.trim() ?? '';
       let videoId: string;
       try {
         videoId = parseYouTubeVideoId(url);
@@ -439,6 +435,11 @@ export function createService(options: ServiceOptions): Server {
       let origin: JobOrigin | undefined;
       let saveBlocked: SaveBlock | undefined;
       let tenant: Tenant | undefined;
+      // True only when the caller's bearer token passed the resolved
+      // tenant's caller check — the one way a request earns the right to
+      // spend that tenant's own Gemini key. A session-resolved tenant is
+      // not caller-verified: web callers stay bring-your-own-key.
+      let callerVerified = false;
       const email = sessionEmail(req);
       if (email !== undefined) {
         const tenants = tryTenants();
@@ -450,9 +451,24 @@ export function createService(options: ServiceOptions): Server {
         if (verdict === 'verified') {
           origin = claimed;
           tenant = resolved;
+          callerVerified = true;
         } else if (verdict === 'denied') {
           saveBlocked = 'unauthorized';
         }
+      }
+      // The key this job spends is the caller's own when it sends one.
+      // A keyless request may instead spend the tenant key its verified
+      // caller credential unlocked; a denied claim never falls back to
+      // it, and neither does an unset variable. The value lives only in
+      // this closure and the Gemini client it builds — never a job
+      // record, a log line or an error.
+      let apiKey = byokKey;
+      if (apiKey === '' && callerVerified && tenant?.gemini_key_env !== undefined) {
+        apiKey = (process.env[tenant.gemini_key_env] ?? '').trim();
+      }
+      if (apiKey === '') {
+        sendError(res, 400, 'missing_key');
+        return;
       }
       // Per-tenant limits apply only to the authenticated caller they came
       // with: an unauthenticated claim never spends a tenant's allowance.

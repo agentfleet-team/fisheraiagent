@@ -7,6 +7,16 @@ git tags on `main`.
 
 ## [Unreleased]
 
+### Added
+
+- A tenant may hold its own Gemini key: the tenants document gains an
+  optional `gemini_key_env` naming an environment variable that carries the
+  key. A `POST /v1/jobs` without `X-Gemini-Key`, from a caller whose bearer
+  token passes that tenant's caller check, is transcribed with the tenant
+  key. Bring-your-own-key requests are unchanged, a failed caller check
+  never falls back to the tenant key, and the key never reaches logs, job
+  views or errors (fisherivco/allen-ai-os#1511).
+
 ## [0.1.1] - 2026-11-23
 
 ### Added
