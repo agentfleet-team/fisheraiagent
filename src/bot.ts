@@ -10,14 +10,22 @@ import { GuildStore } from './bot/store.js';
 
 try {
   const config = loadBotConfig();
-  const store = new GuildStore(config.dataFile, deriveEncryptionKey(config.encryptionSecret));
+  // Tenant listener mode submits with the caller token as the /v1 bearer;
+  // BYOK mode uses the shared service token when the API requires one.
   const api = createApiClient({
     baseUrl: config.apiBaseUrl,
-    serviceToken: config.serviceToken,
+    serviceToken: config.tenant === undefined ? config.serviceToken : config.tenant.callerToken,
     pollIntervalMs: config.pollIntervalMs,
     timeoutMs: config.jobTimeoutMs,
   });
-  const core = createBot({ api, store, log: consoleSink });
+  const core =
+    config.tenant === undefined
+      ? createBot({
+          api,
+          store: new GuildStore(config.dataFile, deriveEncryptionKey(config.encryptionSecret)),
+          log: consoleSink,
+        })
+      : createBot({ api, tenant: config.tenant, log: consoleSink });
   await startDiscordBot(config, core, consoleSink);
 } catch (err) {
   log('startup_failed', { code: codeOf(err) });

@@ -68,9 +68,13 @@ export async function startDiscordBot(
 
   client.once(Events.ClientReady, (ready) => {
     log('discord_ready', { count: ready.guilds.cache.size });
+    // Tenant mode registers no slash commands: there is nothing to set up.
+    if (config.tenant !== undefined) return;
     for (const guild of ready.guilds.cache.values()) void register(guild.id);
   });
-  client.on(Events.GuildCreate, (guild) => void register(guild.id));
+  client.on(Events.GuildCreate, (guild) => {
+    if (config.tenant === undefined) void register(guild.id);
+  });
 
   client.on(Events.MessageCreate, (message) => {
     if (!message.guildId) return;

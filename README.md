@@ -183,12 +183,19 @@ Bot environment variables:
 | Variable | Required | Default | What it does |
 |---|---|---|---|
 | `DISCORD_TOKEN` | yes | — | Bot token from the Developer Portal. |
-| `BOT_ENCRYPTION_KEY` | yes | — | Secret that encrypts every guild's Gemini key at rest (AES-256-GCM). Losing it makes stored keys unreadable. |
+| `BOT_ENCRYPTION_KEY` | BYOK mode | — | Secret that encrypts every guild's Gemini key at rest (AES-256-GCM). Losing it makes stored keys unreadable. Not needed in tenant mode. |
 | `API_BASE_URL` | no | `http://localhost:8080` | Where the bot reaches the HTTP API. Under compose it is `http://api:8080`. |
-| `SERVICE_TOKEN` | no | — | Must match the API's `SERVICE_TOKEN` when the API requires one. |
-| `BOT_DATA_FILE` | no | `./bot-data/bot-data.json` | Local JSON file holding per-guild settings (encrypted keys, enabled channels). Under compose it lives in the `bot-data` volume. |
-| `BOT_POLL_INTERVAL_MS` | no | `2000` | How often the bot polls a job. |
-| `BOT_JOB_TIMEOUT_MS` | no | `1800000` | How long the bot waits for a transcript before giving up. |
+| `SERVICE_TOKEN` | no | — | Must match the API's `SERVICE_TOKEN` when the API requires one (BYOK mode; tenant mode sends `TENANT_CALLER_TOKEN` instead). |
+| `BOT_DATA_FILE` | no | `./bot-data/bot-data.json` | Local JSON file holding per-guild settings (encrypted keys, enabled channels). Under compose it lives in the `bot-data` volume. Not used in tenant mode. |
+| `BOT_POLL_INTERVAL_MS` | no | `2000` | How often the bot polls a job (BYOK mode; tenant mode never polls). |
+| `BOT_JOB_TIMEOUT_MS` | no | `1800000` | How long the bot waits for a transcript before giving up (BYOK mode). |
+| `TENANT_CALLER_TOKEN` | tenant mode | — | Bearer token the bot submits jobs with — the same credential the tenant's `caller` entry names on the service. Setting it (with the two variables below) puts the bot in tenant listener mode. |
+| `TENANT_GUILD_ID` | tenant mode | — | The Discord server (snowflake id) the listener answers in. |
+| `TENANT_CHANNEL_IDS` | tenant mode | — | Comma-separated channel ids the listener answers in; a thread under a listed channel is covered. |
+
+### Tenant listener mode
+
+When `TENANT_CALLER_TOKEN`, `TENANT_GUILD_ID` and `TENANT_CHANNEL_IDS` are set, the bot is a plain listener for one configured tenant instead of a per-server BYOK bot: no slash commands, no per-guild key and no data file. A message with a YouTube URL in a configured channel — or a thread under one — is forwarded to `POST /v1/jobs` once, with the caller token as the bearer, the Discord `origin` (guild and parent channel) and `deliver_to` set to the message's own channel or thread. The service does everything after — transcription with the tenant key, the save, and posting the result into `deliver_to`; the listener sends no replies and adds no reactions. Slash-command setup below applies to BYOK mode only.
 
 ### 3. Set up a server
 
