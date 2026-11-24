@@ -188,3 +188,30 @@ test('a missing or malformed credentials file is invalid_config', async () => {
   const drive2 = createDriveStore({ credentialsPath: bad, fetchImpl: impl });
   await assert.rejects(() => drive2.findFileByVideoId('f', 'n'), /client_email/);
 });
+
+const OAUTH_JSON = JSON.stringify({
+  client_id: 'cid.invalid',
+  client_secret: 'csecret',
+  refresh_token: 'rtoken',
+});
+
+test('OAuth mode: exchanges the refresh token, then uploads into the folder as that user', async () => {
+  const { impl, requests } = fakeFetch((req) => {
+    if (req.url === 'https://oauth2.googleapis.com/token') {
+      const params = new URLSearchParams(req.body);
+      assert.equal(params.get('grant_type'), 'refresh_token');
+      assert.equal(params.get('client_id'), 'cid.invalid');
+      assert.equal(params.get('client_secret'), 'csecret');
+      assert.equal(params.get('refresh_token'), 'rtoken');
+      return json({ access_token: 'tok-oauth', expires_in: 3600 });
+    }
+    assert.equal(req.headers.authorization, 'Bearer tok-oauth');
+    return json({ id: 'f1', name: 'a.md', webViewLink: 'https://drive.google.com/file/d/f1/view' });
+  });
+  const drive = createDriveStore({ oauthJson: OAUTH_JSON, fetchImpl: impl });
+  const file = await drive.createFile('folder-1', 'a.md', 'x', 'text/markdown');
+  assert.equal(file.id, 'f1');
+  const upload = requests.find((r) => r.url.startsWith('https://www.googleapis.com/upload/drive/v3/files'));
+  assert.ok(upload, 'file uploaded');
+  assert.match(upload.body ?? '', /"parents":\["folder-1"\]/);
+});

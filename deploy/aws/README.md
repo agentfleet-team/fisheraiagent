@@ -78,13 +78,15 @@ aws secretsmanager create-secret --name <secret-name> --region <aws-region> \
     "OIDC_CLIENT_SECRET": "<google-client-secret>",
     "SESSION_SECRET": "<session-secret>",
     "TENANTS_JSON": "<tenants-json>",
-    "GOOGLE_CREDENTIALS_JSON": "<google-credentials-json>"
+    "GOOGLE_CREDENTIALS_JSON": "<google-credentials-json>",
+    "GOOGLE_OAUTH_JSON": "<google-oauth-json>"
   }'
 ```
 
 Leave out any key you do not use: no `OIDC_*`/`SESSION_SECRET` means
 anonymous mode; no `TENANTS_JSON` means nothing is saved anywhere; no
-`GOOGLE_CREDENTIALS_JSON` only breaks `google-drive` destinations.
+`GOOGLE_CREDENTIALS_JSON` and no `GOOGLE_OAUTH_JSON` only breaks `google-drive` destinations.
+Use `GOOGLE_CREDENTIALS_JSON` (a service account) only with a Workspace shared drive. For a consumer gmail.com My Drive use `GOOGLE_OAUTH_JSON`, because a service account has no storage quota; see the README `GOOGLE_OAUTH_JSON` row.
 
 The task execution role needs `secretsmanager:GetSecretValue` on this
 secret's ARN — attach an inline policy to `<execution-role-arn>`'s role.

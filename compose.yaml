@@ -30,6 +30,7 @@ services:
       TENANTS_JSON: ${TENANTS_JSON:-}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
       GOOGLE_CREDENTIALS_JSON: ${GOOGLE_CREDENTIALS_JSON:-}
+      GOOGLE_OAUTH_JSON: ${GOOGLE_OAUTH_JSON:-}
       # webdav destinations read the NAS password from the env var named by
       # password_env in the tenants file (e.g. NAS_WEBDAV_PASSWORD); pass it
       # through here. The base_url must be https — reach a LAN NAS through a

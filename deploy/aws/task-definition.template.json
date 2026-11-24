@@ -33,7 +33,8 @@
         { "name": "OIDC_CLIENT_SECRET", "valueFrom": "<secret-arn>:OIDC_CLIENT_SECRET::" },
         { "name": "SESSION_SECRET", "valueFrom": "<secret-arn>:SESSION_SECRET::" },
         { "name": "TENANTS_JSON", "valueFrom": "<secret-arn>:TENANTS_JSON::" },
-        { "name": "GOOGLE_CREDENTIALS_JSON", "valueFrom": "<secret-arn>:GOOGLE_CREDENTIALS_JSON::" }
+        { "name": "GOOGLE_CREDENTIALS_JSON", "valueFrom": "<secret-arn>:GOOGLE_CREDENTIALS_JSON::" },
+        { "name": "GOOGLE_OAUTH_JSON", "valueFrom": "<secret-arn>:GOOGLE_OAUTH_JSON::" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",

@@ -38,6 +38,7 @@ export interface ServiceConfig {
   trustedProxyIps: string[];
   googleCredentials?: string;
   googleCredentialsJson?: string;
+  googleOauthJson?: string;
   oidc?: {
     clientId: string;
     clientSecret: string;
@@ -174,6 +175,7 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
   const tenantsJson = (env.TENANTS_JSON ?? '').trim() || undefined;
   const googleCredentials = (env.GOOGLE_APPLICATION_CREDENTIALS ?? '').trim() || undefined;
   const googleCredentialsJson = (env.GOOGLE_CREDENTIALS_JSON ?? '').trim() || undefined;
+  const googleOauthJson = (env.GOOGLE_OAUTH_JSON ?? '').trim() || undefined;
 
   // Sign-in is off unless all four pieces are configured; a partial setup
   // fails loudly rather than silently running anonymous.
@@ -217,6 +219,7 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
     trustedProxyIps,
     googleCredentials,
     googleCredentialsJson,
+    googleOauthJson,
     oidc,
   };
 }
