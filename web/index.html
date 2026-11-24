@@ -3,30 +3,45 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YouTube Transcript</title>
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#0b2d50">
+  <title>YouTube Transcript · AgentFleet</title>
+  <link rel="icon" href="/brand/agentfleet-mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <div id="topbar">
-    <span id="auth-box" hidden>
-      <a id="signin-link" href="/auth/login" data-i18n="signIn">Sign in</a>
-      <span id="signed-in" hidden>
-        <span id="user-label"></span>
-        <a id="signout-link" href="/auth/logout" data-i18n="signOut">Sign out</a>
+  <header class="site-bar">
+    <a class="brand" href="/">
+      <span class="brand-mark"><img src="/brand/agentfleet-mark.svg" width="30" height="30" alt=""></span>
+      <span class="brand-name">AgentFleet</span>
+    </a>
+    <div class="bar-end">
+      <span id="auth-box" hidden>
+        <a id="signin-link" href="/auth/login" data-i18n="signIn">Sign in</a>
+        <span id="signed-in" hidden>
+          <span id="user-label"></span>
+          <a id="signout-link" href="/auth/logout" data-i18n="signOut">Sign out</a>
+        </span>
       </span>
-    </span>
-    <button id="settings-btn" type="button" aria-haspopup="dialog">⚙ <span data-i18n="settings">Settings</span></button>
-  </div>
+      <button id="settings-btn" type="button" aria-haspopup="dialog">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>
+        </svg>
+        <span data-i18n="settings">Settings</span>
+      </button>
+    </div>
+  </header>
 
   <div id="drawer-backdrop" hidden></div>
   <aside id="settings-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
     <h2 id="drawer-title" data-i18n="settings">Settings</h2>
     <label for="key-input" data-i18n="keyLabel">Gemini API key</label>
     <input id="key-input" type="password" autocomplete="off" spellcheck="false">
-    <p class="hint" data-i18n="keyHint">Your key is kept only in this browser (localStorage) and is sent to the service only when you submit a URL.</p>
+    <p class="hint" data-i18n="keyHint">Your key is kept only in this browser (localStorage). Saving checks it once against Gemini directly; the service sees it only when you submit a URL.</p>
     <p id="key-state" class="hint"></p>
     <div class="drawer-actions">
-      <button id="save-key" type="button" data-i18n="save">Save</button>
+      <button id="save-key" type="button" class="primary" data-i18n="save">Save</button>
       <button id="remove-key" type="button" data-i18n="remove">Remove</button>
       <button id="close-drawer" type="button" data-i18n="close">Close</button>
     </div>
@@ -37,7 +52,7 @@
     <p class="tagline" data-i18n="tagline">Paste a YouTube link. Get the full timed transcript.</p>
     <form id="job-form">
       <input id="url-input" type="text" inputmode="url" autocomplete="off" spellcheck="false" required>
-      <button id="submit-btn" type="submit" data-i18n="submit">Transcribe</button>
+      <button id="submit-btn" type="submit" class="primary" data-i18n="submit">Transcribe</button>
     </form>
     <div id="status" role="status" aria-live="polite" hidden>
       <span id="spinner" class="spinner" hidden></span>
