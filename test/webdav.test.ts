@@ -301,7 +301,7 @@ test(
       assert.equal(job.saved.type, 'webdav');
       const expected = `/transcripts/my-great-video_${VIDEO_A}_20261122.md`;
       assert.equal(job.saved.path, expected);
-      assert.match(nas.files.get(expected) ?? '', /^Title: My Great Video!/);
+      assert.match(nas.files.get(expected) ?? '', /^# My Great Video!/);
       // The folder was missing: exactly one MKCOL, on the configured path.
       assert.deepEqual(
         nas.requests.filter((r) => r.startsWith('MKCOL')),
@@ -530,7 +530,7 @@ test(
       );
       assert.equal(job.saved.path, `/transcripts/first-title_${VIDEO_A}_20261122.md`);
       assert.equal(nas.files.size, 1, 'the existing file is updated, not duplicated');
-      assert.match(nas.files.get(`/transcripts/first-title_${VIDEO_A}_20261122.md`) ?? '', /^Title: Renamed Video/);
+      assert.match(nas.files.get(`/transcripts/first-title_${VIDEO_A}_20261122.md`) ?? '', /^# Renamed Video\n/);
       assert.ok(nas.requests.includes('PROPFIND /transcripts'));
       assert.ok(nas.requests.filter((r) => r === `PUT /transcripts/first-title_${VIDEO_A}_20261122.md`).length === 2);
     } finally {
@@ -579,7 +579,7 @@ test(
       assert.equal(nas.files.size, 1, 'the existing file is updated, not duplicated');
       assert.match(
         nas.files.get(`/dav/transcripts/first-title_${VIDEO_A}_20261122.md`) ?? '',
-        /^Title: Renamed Video/,
+        /^# Renamed Video\n/,
       );
       assert.ok(nas.requests.includes('PROPFIND /dav/transcripts'));
       assert.ok(

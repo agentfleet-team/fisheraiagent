@@ -1,10 +1,23 @@
 import { messageForCode } from './errors.js';
-import { formatDuration, transcriptToTxt } from './bot/format.js';
+import { formatDuration, transcriptToSrt, transcriptToTxt } from './bot/format.js';
 import { parseVideoId, type ChannelId } from './ids.js';
 import type { DeliveryOutcome, DeliveryView } from './jobs.js';
 import { loggerFor, type LogFields, type LogSink } from './log.js';
-import type { SavedFile } from './save.js';
-import { resolveTenant, type JobOrigin, type Tenant } from './tenants.js';
+import {
+  createVideoMetadata,
+  MIME_TYPES,
+  renderTranscriptFile,
+  type SavedFile,
+  type VideoMetadata,
+} from './save.js';
+import {
+  resolveTenant,
+  tenantExtension,
+  type FileExtension,
+  type JobOrigin,
+  type Tenant,
+} from './tenants.js';
+import type { Transcript } from './transcript.js';
 
 // Service-side Discord delivery: after a job settles, the service posts its
 // outcome into the Discord channel or thread the verified caller named,
@@ -39,6 +52,7 @@ export interface DiscordChannel {
 export interface DiscordAttachment {
   name: string;
   data: string;
+  mimeType?: string;
 }
 
 // The Discord surface the deliverer needs, kept this small so the tests run
@@ -119,7 +133,7 @@ export function createDiscordApi(options: {
       if (attachment !== undefined) {
         form.set(
           'files[0]',
-          new Blob([attachment.data], { type: 'text/plain' }),
+          new Blob([attachment.data], { type: attachment.mimeType ?? 'text/plain' }),
           attachment.name,
         );
       }
@@ -155,14 +169,28 @@ function savedLine(saved: SavedFile | undefined): string | undefined {
     : `Saved to NAS: ${saved.path}`;
 }
 
+const ATTACHMENT_FORMAT: Record<
+  FileExtension,
+  (transcript: Transcript, meta: VideoMetadata, now: Date) => string
+> = {
+  '.txt': (t) => transcriptToTxt(t),
+  '.srt': (t) => transcriptToSrt(t),
+  '.md': (t, meta, now) => renderTranscriptFile(t, meta, '.md', now),
+};
+
 // The message plus attachment a settled job becomes. A done job gets one
 // bounded summary — language, covered length and the first transcript
 // lines, with the Drive link when the transcript was saved — and the full
-// `.txt` attached; a failed job gets one short line carrying the fixed
-// error code. Transcript text reaches the message as ordinary post text
-// (the same text the attachment always carried), bounded, whitespace-
-// collapsed and posted with all mentions disabled.
-function renderDelivery(outcome: DeliveryOutcome): {
+// transcript attached in the tenant's destination extension (`.txt` by
+// default); a failed job gets one short line carrying the fixed error code.
+// Transcript text reaches the message as ordinary post text, bounded,
+// whitespace-collapsed and posted with all mentions disabled.
+function renderDelivery(
+  outcome: DeliveryOutcome,
+  extension: FileExtension,
+  meta: VideoMetadata,
+  now: Date,
+): {
   content: string;
   attachment?: DiscordAttachment;
 } {
@@ -196,7 +224,11 @@ function renderDelivery(outcome: DeliveryOutcome): {
   if (link !== undefined) parts.push(link);
   return {
     content: parts.join('\n'),
-    attachment: { name: `${transcript.video_id}.txt`, data: transcriptToTxt(transcript) },
+    attachment: {
+      name: `${transcript.video_id}${extension}`,
+      data: ATTACHMENT_FORMAT[extension](transcript, meta, now),
+      mimeType: MIME_TYPES[extension],
+    },
   };
 }
 
@@ -207,6 +239,8 @@ export interface DelivererDeps {
   // Builds the Discord client from the tenant's delivery token; tests
   // inject a fake. Unset means the real discord.com REST client.
   discord?: DiscordApiFactory;
+  metadata?: (videoId: string) => Promise<VideoMetadata>;
+  now?: () => Date;
   log?: LogSink;
 }
 
@@ -222,6 +256,7 @@ export function createTranscriptDeliverer(
 ): (origin: JobOrigin, deliverTo: ChannelId, outcome: DeliveryOutcome) => Promise<DeliveryView | undefined> {
   const log = loggerFor(deps.log);
   const discord = deps.discord ?? ((token: string) => createDiscordApi({ token }));
+  const metadata = deps.metadata ?? createVideoMetadata();
   const failed = (code: 'delivery_failed' | 'delivery_refused' | 'invalid_config'): DeliveryView => ({
     status: 'failed',
     code,
@@ -260,7 +295,13 @@ export function createTranscriptDeliverer(
       log('delivery_failed', { ...fields, code: 'delivery_refused' });
       return failed('delivery_refused');
     }
-    const { content, attachment } = renderDelivery(outcome);
+    const extension = tenantExtension(tenant);
+    const meta =
+      extension === '.md' && outcome.transcript !== undefined && outcome.error === undefined
+        ? await metadata(outcome.transcript.video_id)
+        : {};
+    const now = deps.now?.() ?? new Date();
+    const { content, attachment } = renderDelivery(outcome, extension, meta, now);
     try {
       const message_id = await api.postMessage(deliverTo, content, attachment);
       log('delivery_sent', {
