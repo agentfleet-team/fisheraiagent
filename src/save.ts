@@ -5,6 +5,7 @@ import { loggerFor, type LogFields, type LogSink } from './log.js';
 import {
   loadTenantsFile,
   resolveTenant,
+  tenantExtension,
   type FileExtension,
   type JobOrigin,
   type Tenant,
@@ -46,7 +47,7 @@ export class SaveFailedError extends Error {
   }
 }
 
-const MIME_TYPES: Record<FileExtension, string> = {
+export const MIME_TYPES: Record<FileExtension, string> = {
   '.txt': 'text/plain',
   '.md': 'text/markdown',
   '.srt': 'application/x-subrip',
@@ -111,6 +112,20 @@ export function renderTranscriptFile(
 ): string {
   const title = meta.title?.trim() || transcript.video_id;
   const channel = meta.channel?.trim() || 'unknown';
+  if (extension === '.md') {
+    const covered = transcript.blocks.reduce((max, b) => Math.max(max, b.end), 0);
+    const head = [
+      `# ${title}`,
+      '',
+      `- Channel: ${channel}`,
+      `- Source: [${transcript.source_url}](${transcript.source_url})`,
+      `- Captured: ${now.toISOString().slice(0, 10)}`,
+      `- Language: ${transcript.language}`,
+      `- Covered: ${clock(covered)}`,
+    ].join('\n');
+    const blocks = transcript.blocks.map((b) => `**[${clock(b.start)}]** ${b.text}`).join('\n\n');
+    return blocks === '' ? `${head}\n` : `${head}\n\n${blocks}\n`;
+  }
   const header =
     `Title: ${title}\n` +
     `Channel: ${channel}\n` +
@@ -211,6 +226,7 @@ export function createTranscriptSaver(
       dest: destination.type,
     };
     const key = `${tenant.id}:${transcript.video_id}`;
+    const extension = tenantExtension(tenant);
     if (destination.type === 'webdav') {
       let store: ReturnType<typeof createWebdavStore>;
       try {
@@ -228,7 +244,6 @@ export function createTranscriptSaver(
       return enqueue(key, async () => {
         const meta = await metadata(transcript.video_id);
         const now = deps.now?.() ?? new Date();
-        const extension = destination.extension ?? '.txt';
         const title = meta.title?.trim() || transcript.video_id;
         const name = transcriptFileName(title, transcript.video_id, extension, now);
         const content = renderTranscriptFile(transcript, meta, extension, now);
@@ -263,7 +278,6 @@ export function createTranscriptSaver(
     return enqueue(key, async () => {
       const meta = await metadata(transcript.video_id);
       const now = deps.now?.() ?? new Date();
-      const extension = destination.extension ?? '.txt';
       const title = meta.title?.trim() || transcript.video_id;
       const name = transcriptFileName(title, transcript.video_id, extension, now);
       const content = renderTranscriptFile(transcript, meta, extension, now);

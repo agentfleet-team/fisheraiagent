@@ -100,7 +100,8 @@ paths:
                     thread's parent channel — among the tenant's
                     `discord_channel_ids`: a done job gets one bounded
                     summary (max 2000 characters, Drive link when saved)
-                    with the `.txt` attached, a failed job one short line
+                    with the transcript attached (in the tenant's destination
+                    extension, `.txt` by default), a failed job one short line
                     with the fixed error code. The job view's `delivery`
                     reports what happened.
                   example: '1567766696058421400'

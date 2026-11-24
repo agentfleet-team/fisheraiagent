@@ -370,6 +370,11 @@ export function callerAuthorized(tenant: Tenant, presentedToken: string | undefi
   return false;
 }
 
+export function tenantExtension(tenant: Tenant): FileExtension {
+  const dest = tenant.destination;
+  return dest !== undefined && dest.type !== 'none' ? (dest.extension ?? '.txt') : '.txt';
+}
+
 // A channel-scoped entry (guild + channel list) claims only the listed
 // channels; a guild-wide entry (guild only) claims every channel that no
 // channel-scoped entry took. A web origin resolves only through the

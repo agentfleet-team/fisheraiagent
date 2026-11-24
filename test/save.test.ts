@@ -793,6 +793,41 @@ test('renderTranscriptFile: .srt carries the header then cues', () => {
   assert.match(out, /2\n00:00:01,500 --> 00:00:03,000\nworld/);
 });
 
+test('renderTranscriptFile: .md renders a heading, metadata list and block lines', () => {
+  const url = `https://www.youtube.com/watch?v=${VIDEO_A}`;
+  const out = renderTranscriptFile(
+    {
+      video_id: VIDEO_A,
+      source_url: url,
+      language: 'en',
+      blocks: [
+        { start: 0, end: 1.5, text: 'hello' },
+        { start: 65, end: 72, text: 'world' },
+      ],
+    },
+    META,
+    '.md',
+    FIXED_NOW,
+  );
+  assert.equal(
+    out,
+    [
+      '# My Great Video!',
+      '',
+      '- Channel: Test Channel',
+      `- Source: [${url}](${url})`,
+      '- Captured: 2026-11-22',
+      '- Language: en',
+      '- Covered: 1:12',
+      '',
+      '**[0:00]** hello',
+      '',
+      '**[1:05]** world',
+      '',
+    ].join('\n'),
+  );
+});
+
 test('resolveTenant: channel-scoped beats guild-wide; web origins resolve only via web_emails', () => {
   const tenants = [
     { id: 'guild-wide', discord_guild_id: 'g', destination: { type: 'none' as const } },

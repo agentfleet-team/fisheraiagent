@@ -131,6 +131,8 @@ export function createService(options: ServiceOptions): Server {
     deps.deliverOutcome = createTranscriptDeliverer({
       loadTenants,
       discord: options.discordApi,
+      metadata: options.videoMetadata ?? createVideoMetadata(),
+      now: options.now,
       log: options.log,
     });
   }

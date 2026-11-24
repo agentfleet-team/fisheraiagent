@@ -56,7 +56,7 @@ interface DiscordRequest {
 interface DiscordPost {
   channelId: string;
   payload: { content?: string };
-  file?: { name: string; data: string };
+  file?: { name: string; data: string; type: string };
 }
 
 const jsonResponse = (body: unknown, status = 200): Response =>
@@ -94,7 +94,7 @@ class FakeDiscord {
       const upload = form?.get('files[0]');
       const file =
         upload instanceof File
-          ? { name: upload.name, data: await upload.text() }
+          ? { name: upload.name, data: await upload.text(), type: upload.type }
           : undefined;
       const id = `discord-msg-${this.posts.length + 1}`;
       this.posts.push({ channelId: decodeURIComponent(postMatch[1]), payload, file });
@@ -600,6 +600,56 @@ test('D12: a long transcript keeps the source, metadata and Drive link in the bo
     assert.match(content, /Saved to Drive: https:\/\/drive\.google\.com\/file\/d\/fake-drive-1\/view/);
     // The excerpt is what gave way — bounded, never the saved link.
     assert.equal(discord.posts[0].file?.name, `${VIDEO_A}.txt`);
+  } finally {
+    clearTenantEnv();
+    await svc.close();
+  }
+});
+
+test('D13: a .md tenant gets a Markdown file in Drive and a .md attachment in Discord', async () => {
+  const discord = new FakeDiscord();
+  discord.channels.set(CHAN, channelInGuild(CHAN));
+  const drive = new FakeDrive();
+  setTenantEnv();
+  const svc = await startService(
+    discord,
+    [
+      tenantWithDelivery({
+        destination: { type: 'google-drive', folder_id: 'folder-fleet', extension: '.md' },
+      }),
+    ],
+    {
+      drive,
+      now: () => new Date('2026-11-22T03:00:00Z'),
+    },
+  );
+  try {
+    const res = await postJob(svc.base, { origin: ORIGIN, token: CALLER_TOKEN, deliverTo: CHAN });
+    assert.equal(res.status, 202);
+    const job = await pollJob(svc.base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.equal(job.delivery.status, 'sent');
+
+    assert.equal(drive.files.length, 1);
+    const driveFile = drive.files[0];
+    assert.equal(driveFile.name, `my-great-video_${VIDEO_A}_20261122.md`);
+    const url = `https://www.youtube.com/watch?v=${VIDEO_A}`;
+    assert.match(driveFile.content, /^# My Great Video!\n\n- Channel: Test Channel\n/);
+    assert.ok(driveFile.content.includes(`- Source: [${url}](${url})\n`));
+    assert.ok(driveFile.content.includes('- Captured: 2026-11-22\n'));
+    assert.ok(driveFile.content.includes('- Language: en\n'));
+    assert.ok(driveFile.content.includes('- Covered: 0:39\n'));
+    assert.match(driveFile.content, /\n\n\*\*\[0:00\]\*\* [^\n]+\n\n\*\*\[0:07\]\*\* /);
+
+    assert.equal(discord.posts.length, 1);
+    const post = discord.posts[0];
+    assert.match(
+      post.payload.content ?? '',
+      /Saved to Drive: https:\/\/drive\.google\.com\/file\/d\/fake-drive-1\/view/,
+    );
+    assert.equal(post.file?.name, `${VIDEO_A}.md`);
+    assert.equal(post.file?.type, 'text/markdown');
+    assert.equal(post.file?.data, driveFile.content);
   } finally {
     clearTenantEnv();
     await svc.close();
