@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -70,7 +71,7 @@ interface HttpResult {
 
 async function postJob(
   base: string,
-  opts: { url?: string; key?: string; token?: string; cfIp?: string } = {},
+  opts: { url?: string; key?: string; token?: string; cfIp?: string; origin?: unknown } = {},
 ): Promise<HttpResult> {
   const headers: Record<string, string> = { 'content-type': 'application/json' };
   if (opts.key !== undefined) headers['x-gemini-key'] = opts.key;
@@ -79,7 +80,10 @@ async function postJob(
   const res = await fetch(`${base}/v1/jobs`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ url: opts.url ?? `https://youtu.be/${VIDEO_A}` }),
+    body: JSON.stringify({
+      url: opts.url ?? `https://youtu.be/${VIDEO_A}`,
+      ...(opts.origin !== undefined ? { origin: opts.origin } : {}),
+    }),
   });
   return { status: res.status, body: await res.json() };
 }
@@ -603,6 +607,175 @@ test('GET /v1/config reports the version and commit the service was built with',
       commit: '011b7680d9a2c1f4a5b6c7d8e9f0a1b2c3d4e5f6',
     });
   } finally {
+    await close();
+  }
+});
+
+// --- allen-ai-os#1511: a tenant may hold the Gemini key its callers spend ---
+
+const TENANT_KEY = 'TEST-KEY-TENANT-z7z7z7';
+const CALLER_TOKEN = 'test-caller-token-tenant';
+const TENANT_KEY_ENV = 'FA_TEST_TENANT_GEMINI_KEY';
+const TENANT_UNSET_ENV = 'FA_TEST_TENANT_GEMINI_UNSET';
+
+const callerSha = (token: string): string =>
+  createHash('sha256').update(token).digest('hex');
+
+// 'keyed' holds a Gemini key its verified callers may spend, 'unset' names
+// one whose variable is never set, and 'plain' has no key field at all.
+const TENANTS_KEYED = JSON.stringify({
+  tenants: [
+    {
+      id: 'keyed',
+      discord_guild_id: 'guild-k',
+      caller: { token_sha256: callerSha(CALLER_TOKEN) },
+      gemini_key_env: TENANT_KEY_ENV,
+      destination: { type: 'none' },
+    },
+    {
+      id: 'unset',
+      discord_guild_id: 'guild-u',
+      caller: { token_sha256: callerSha(CALLER_TOKEN) },
+      gemini_key_env: TENANT_UNSET_ENV,
+      destination: { type: 'none' },
+    },
+    {
+      id: 'plain',
+      discord_guild_id: 'guild-p',
+      caller: { token_sha256: callerSha(CALLER_TOKEN) },
+      destination: { type: 'none' },
+    },
+  ],
+});
+
+const KEYED_ORIGIN = { kind: 'discord', guild_id: 'guild-k', channel_id: 'chan-1' };
+
+test('K1: a verified tenant caller without X-Gemini-Key transcribes on the tenant key', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  const { base, logs, close } = await startService(calls, { tenantsJson: TENANTS_KEYED });
+  try {
+    const res = await postJob(base, { origin: KEYED_ORIGIN, token: CALLER_TOKEN });
+    assert.equal(res.status, 202);
+    const job = await pollJob(base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.equal(job.result.video_id, VIDEO_A);
+    assert.ok(calls.length > 0);
+    assert.deepEqual([...new Set(calls.map((c) => c.apiKey))], [TENANT_KEY]);
+
+    // The tenant key reaches nothing but the Gemini client: not the
+    // response, the job view or the logs.
+    const haystack = `${logs.join('\n')}\n${JSON.stringify(res.body)}\n${JSON.stringify(job)}`;
+    assert.ok(!haystack.includes(TENANT_KEY), `tenant key leaked into: ${haystack}`);
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+test('K2: a keyless request whose caller check fails, or matches no tenant, never spends the tenant key', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  const { base, close } = await startService(calls, { tenantsJson: TENANTS_KEYED });
+  try {
+    for (const token of [undefined, 'wrong-token']) {
+      const res = await postJob(base, {
+        origin: KEYED_ORIGIN,
+        ...(token === undefined ? {} : { token }),
+      });
+      assert.equal(res.status, 400);
+      assert.equal(res.body.error.code, 'missing_key');
+    }
+    // A claim that matches no tenant resolves no key either.
+    const unmatched = await postJob(base, {
+      origin: { kind: 'discord', guild_id: 'stranger', channel_id: 'chan-9' },
+      token: CALLER_TOKEN,
+    });
+    assert.equal(unmatched.status, 400);
+    assert.equal(unmatched.body.error.code, 'missing_key');
+    assert.equal(calls.length, 0, 'an unverified claim must not reach Gemini');
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+test('K3: X-Gemini-Key wins over the tenant key; a denied claim still reports save_unauthorized', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  const { base, close } = await startService(calls, { tenantsJson: TENANTS_KEYED });
+  try {
+    // BYOK with a verified claim spends the caller's own key, not the tenant's.
+    const byok = await postJob(base, { key: KEY_A, origin: KEYED_ORIGIN, token: CALLER_TOKEN });
+    assert.equal(byok.status, 202);
+    assert.equal((await pollJob(base, byok.body.job_id)).status, 'done');
+
+    // BYOK with a wrong token still runs on the caller's key and the save
+    // is denied — today's behavior, unchanged.
+    const denied = await postJob(base, { key: KEY_A, origin: KEYED_ORIGIN, token: 'wrong-token' });
+    assert.equal(denied.status, 202);
+    const job = await pollJob(base, denied.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.equal(job.save_error.code, 'save_unauthorized');
+
+    assert.deepEqual([...new Set(calls.map((c) => c.apiKey))], [KEY_A]);
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+test('K4: a tenant without the field, or with its variable unset, still needs X-Gemini-Key', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  delete process.env[TENANT_UNSET_ENV];
+  const { base, close } = await startService(calls, { tenantsJson: TENANTS_KEYED });
+  try {
+    const plain = await postJob(base, {
+      origin: { kind: 'discord', guild_id: 'guild-p', channel_id: 'chan-1' },
+      token: CALLER_TOKEN,
+    });
+    assert.equal(plain.status, 400);
+    assert.equal(plain.body.error.code, 'missing_key');
+
+    // A verified caller whose tenant names a variable that holds nothing
+    // gets the same fixed missing_key — never a crash or a half-key.
+    const unset = await postJob(base, {
+      origin: { kind: 'discord', guild_id: 'guild-u', channel_id: 'chan-1' },
+      token: CALLER_TOKEN,
+    });
+    assert.equal(unset.status, 400);
+    assert.equal(unset.body.error.code, 'missing_key');
+    assert.equal(calls.length, 0);
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+test('K5: a rejected tenant key fails the job and still never reaches logs, views or errors', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  const { base, logs, close } = await startService(calls, {
+    tenantsJson: TENANTS_KEYED,
+    callerFactory: doubleFactory(
+      calls,
+      // The double even echoes the key in its error message to prove redaction.
+      new Map([[TENANT_KEY, new TranscriptError('key_rejected', `bad key ${TENANT_KEY} rejected`)]]),
+    ),
+  });
+  try {
+    const res = await postJob(base, { origin: KEYED_ORIGIN, token: CALLER_TOKEN });
+    assert.equal(res.status, 202);
+    const job = await pollJob(base, res.body.job_id);
+    assert.equal(job.status, 'failed');
+    assert.equal(job.error.code, 'key_rejected');
+
+    const keyless = await postJob(base, { origin: KEYED_ORIGIN, token: 'wrong-token' });
+    const haystack = `${logs.join('\n')}\n${JSON.stringify(job)}\n${JSON.stringify(keyless.body)}`;
+    assert.ok(!haystack.includes(TENANT_KEY), `tenant key leaked into: ${haystack}`);
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
     await close();
   }
 });

@@ -840,4 +840,7 @@ test('loadTenantsFile rejects bad shapes with invalid_config', () => {
     }),
   );
   assert.throws(() => loadTenantsFile(file), /extension/);
+
+  writeFileSync(file, JSON.stringify({ tenants: [{ id: 'x', gemini_key_env: '  ' }] }));
+  assert.throws(() => loadTenantsFile(file), /gemini_key_env/);
 });

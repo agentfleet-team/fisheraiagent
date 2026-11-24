@@ -66,8 +66,12 @@ paths:
       parameters:
         - name: X-Gemini-Key
           in: header
-          required: true
-          description: The caller's own Gemini API key. Used only for this job.
+          required: false
+          description: >
+            The caller's own Gemini API key. Used only for this job. May be
+            omitted when the request's bearer token passes the resolved
+            tenant's caller check and that tenant names `gemini_key_env` —
+            the tenant's key is used instead.
           schema:
             type: string
       requestBody:
@@ -98,10 +102,10 @@ paths:
                     format: uuid
         '400':
           description: >
-            Bad request. `missing_key` when X-Gemini-Key is absent or empty,
-            `invalid_url` when the URL is not a YouTube URL or video id,
-            `invalid_request` for malformed JSON, a missing `url` field, or a
-            malformed `origin`.
+            Bad request. `missing_key` when X-Gemini-Key is absent or empty
+            and no verified tenant key applies, `invalid_url` when the URL
+            is not a YouTube URL or video id, `invalid_request` for
+            malformed JSON, a missing `url` field, or a malformed `origin`.
           content:
             application/json:
               schema:

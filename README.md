@@ -12,7 +12,7 @@ Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host 
 
 ## Self-host quick start (HTTP service)
 
-One service, many callers: every client sends its own Gemini API key per request (`X-Gemini-Key` header), and jobs run in the background.
+One service, many callers: every client sends its own Gemini API key per request (`X-Gemini-Key` header) — or, when its tenant holds one, just its caller credential — and jobs run in the background.
 
 ```bash
 docker compose up -d          # serves on http://localhost:8080
@@ -100,6 +100,7 @@ Each Discord server/channel — and each allowlisted web sign-in — can pick wh
       "id": "family",
       "discord_guild_id": "111111111111111111",
       "caller": { "token_env": "SERVICE_TOKEN" },
+      "gemini_key_env": "FAMILY_GEMINI_KEY",
       "destination": { "type": "google-drive", "folder_id": "0BabcYourFolderId", "extension": ".md" }
     },
     {
@@ -134,6 +135,7 @@ Each Discord server/channel — and each allowlisted web sign-in — can pick wh
 
 - **Matching.** A job carries its `origin` (the Discord bot sends the guild and configured channel automatically; a signed-in web user's origin is the session's verified email). A tenant `id` is a lowercase slug (`a-z`, `0-9`, `-`, `_`). A tenant with `discord_channel_ids` claims only those channels; a tenant with just `discord_guild_id` claims every channel no channel entry took; a tenant with `web_emails` claims exactly those signed-in emails. First match wins; no match means nothing is saved.
 - **Caller credential.** An origin in the request body is a claim, not proof: the service writes only when the caller's bearer token is the credential the resolved tenant names — `token_env` (an environment variable holding the token, for example the Discord bot's `SERVICE_TOKEN`) or `token_sha256` (the token's lowercase hex SHA-256). A claim that resolves to a tenant but fails the check saves nothing and reports the fixed `save_unauthorized` error; a tenant without `caller` cannot be claimed. For web users the verified sign-in session is the credential: a request's own `web` origin never resolves, and a session email matches a tenant only through `web_emails`.
+- **Tenant-held Gemini key.** `gemini_key_env` names an environment variable that holds the tenant's own Gemini key (like `password_env`, the file names the variable — never the key). A `POST /v1/jobs` without `X-Gemini-Key`, from a caller whose bearer token passes that tenant's caller check, is transcribed with the tenant key; requests that send `X-Gemini-Key` are unchanged, and a failed caller check never falls back to the tenant key — it still gets `missing_key` or `save_unauthorized`. Web sign-in callers stay bring-your-own-key: a tenant resolved through `web_emails` never spends its `gemini_key_env`. The key is read per request, held only in memory for that job, and is never logged, stored or returned.
 - **Limits.** `limits.jobs_per_hour` caps accepted submissions in a sliding hour (a `429` `rate_limited` reply); `limits.max_video_seconds` rejects longer videos with `video_too_long` — before any Gemini call when the length is already known locally (the transcript cache), otherwise on the first model response, which declares the duration.
 - **Destinations.** `"type": "google-drive"` writes into that `folder_id`; `"type": "webdav"` writes into `path` on a WebDAV server (a NAS); `"type": "none"` saves nothing. `extension` is `.txt` (default), `.md` or `.srt`.
 - **Google Drive setup.** Create a service account in Google Cloud, download its key JSON, and set `GOOGLE_APPLICATION_CREDENTIALS` to the file's path. Then share each `folder_id` with the service account's `client_email` (right-click folder → Share → paste the email → Editor). The service account can only reach folders you share with it. Under `docker compose`, bind-mount both files into the container and point the variables at the in-container paths (e.g. `- ./tenants.json:/data/tenants.json:ro` with `TENANTS_FILE=/data/tenants.json`).
@@ -146,7 +148,7 @@ The callers keep working exactly as before: the Discord reply gains a saved-file
 
 Notes:
 
-- **Callers bring their own key.** `GEMINI_API_KEY` is not used by the service; each request's `X-Gemini-Key` lives in memory only for that job and is never logged, stored or returned.
+- **Callers bring their own key, or their tenant holds one.** The service holds no Gemini key of its own except what a tenant's `gemini_key_env` names; each request's `X-Gemini-Key` lives in memory only for that job and is never logged, stored or returned.
 - **Jobs are in-process.** The job store is memory only — a service restart loses every job (`GET /v1/jobs/{id}` then returns 404). The transcript cache on disk survives.
 - The API is described in [openapi.yaml](openapi.yaml).
 - To run it on AWS (ECS Fargate behind an HTTPS load balancer, secrets in Secrets Manager, logs in CloudWatch), see [deploy/aws/](deploy/aws/README.md).
@@ -313,7 +315,7 @@ Develop: `npm test` runs the offline unit tests (no key, no network). `npm run t
      (same page / same Discord thread)      (Google Drive, NAS, or nowhere)
 ```
 
-- **Bring your own key.** Each user or Discord server sets their own Gemini API key. On the web, the key stays in your browser.
+- **Bring your own key.** Each user or Discord server sets their own Gemini API key — or its tenant holds one (`gemini_key_env`) for its verified callers. On the web, the key stays in your browser.
 - **Your destination, your config.** Each user or Discord channel chooses where transcripts are saved. Adding a user is configuration, not code.
 - **One program.** The same container runs on your own machine (`docker compose up`) or on our hosted instance.
 
