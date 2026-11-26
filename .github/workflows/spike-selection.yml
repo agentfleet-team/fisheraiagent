@@ -2,7 +2,7 @@ name: spike-selection
 
 on:
   pull_request:
-    paths: ['spike/selection/**', '.github/workflows/spike-selection.yml']
+    paths: ['spike/selection/**', '!spike/selection/results/**', '.github/workflows/spike-selection.yml']
   workflow_dispatch:
 
 permissions:
