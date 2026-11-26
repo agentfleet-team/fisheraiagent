@@ -1,0 +1,39 @@
+{
+  "videoId": "ZamutZpubdY",
+  "hl": "zh-TW",
+  "status": "OK",
+  "title": "Que faire des cons ?  | Maxime Rovere | TEDxTours",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "fr",
+      "kind": "manual",
+      "vssId": ".fr",
+      "name": "法文"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0
+      ],
+      "defaultCaptionTrackIndex": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "fr",
+      "kind": "manual",
+      "vssId": ".fr",
+      "name": "法文"
+    }
+  ],
+  "hasAsr": false
+}

@@ -1,0 +1,39 @@
+{
+  "videoId": "52uaFgT9jZI",
+  "hl": "en",
+  "status": "OK",
+  "title": "AI 配音怎么选？我用的是哪家：原理、选择、实操全流程",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "zh",
+      "kind": "manual",
+      "vssId": ".zh",
+      "name": "Chinese"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0
+      ],
+      "defaultCaptionTrackIndex": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "zh",
+      "kind": "manual",
+      "vssId": ".zh",
+      "name": "Chinese"
+    }
+  ],
+  "hasAsr": false
+}

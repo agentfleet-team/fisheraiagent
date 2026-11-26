@@ -1,0 +1,86 @@
+{
+  "videoId": "JBRv-EAv2IA",
+  "hl": "zh-TW",
+  "status": "OK",
+  "title": "Die Kraft von Nein: Wie Grenzen setzen mein Leben verändert hat | Michael Buchinger | TEDxDonauinsel",
+  "audioTracks": [
+    {
+      "captionTrackIndices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTracks": [
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "匈牙利文"
+          }
+        ]
+      },
+      "vssId": ".hu",
+      "languageCode": "hu",
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "西班牙文"
+          }
+        ]
+      },
+      "vssId": ".es",
+      "languageCode": "es",
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "阿拉伯文"
+          }
+        ]
+      },
+      "vssId": ".ar",
+      "languageCode": "ar",
+      "rtl": true,
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "荷蘭文"
+          }
+        ]
+      },
+      "vssId": ".nl",
+      "languageCode": "nl",
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "德文"
+          }
+        ]
+      },
+      "vssId": ".de",
+      "languageCode": "de",
+      "isTranslatable": true,
+      "trackName": ""
+    }
+  ]
+}

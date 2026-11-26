@@ -1,0 +1,55 @@
+{
+  "videoId": "XUqrvbsTfck",
+  "hl": "en",
+  "status": "OK",
+  "title": "Cómo hablar: comunica, conecta, y hazte recordar | Adrià Solà Pastor | TEDxESIC University",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "ar",
+      "kind": "manual",
+      "vssId": ".ar",
+      "name": "Arabic"
+    },
+    {
+      "index": 1,
+      "languageCode": "es",
+      "kind": "manual",
+      "vssId": ".es",
+      "name": "Spanish"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0,
+        1
+      ],
+      "defaultCaptionTrackIndex": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0,
+    1
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "ar",
+      "kind": "manual",
+      "vssId": ".ar",
+      "name": "Arabic"
+    },
+    {
+      "index": 1,
+      "languageCode": "es",
+      "kind": "manual",
+      "vssId": ".es",
+      "name": "Spanish"
+    }
+  ],
+  "hasAsr": false
+}
