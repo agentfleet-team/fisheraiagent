@@ -4,7 +4,8 @@
 
 export const MAX_CHUNK_CHARS = 1300;
 
-const SENTENCE_END = /[。！？!?；;…]+["”」』)）]*|\n+/gu;
+// ASCII ., ! and ? end a sentence only before a space or the end of the text.
+const SENTENCE_END = /[。！？；;…]+["”」』)）]*|[.!?]+["”」』)）]*(?=\s|$)|\n+/gu;
 const SOFT_BREAK = /[，、,：:]/u;
 
 function sentencesOf(text: string): string[] {

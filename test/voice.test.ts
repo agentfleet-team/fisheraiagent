@@ -292,3 +292,20 @@ test('chunkText cuts at sentence ends within the limit and loses no text', () =>
   assert.ok(noStop.every((c) => [...c].length <= 30));
   assert.equal(noStop.join(''), '一二三，'.repeat(40));
 });
+
+test('V1: chunks also end at ASCII full stops, never mid-sentence', () => {
+  const sentence = 'This is a complete sentence about the morning news ' +
+    'with supporting detail '.repeat(8) + 'today.';
+  const text = Array(8).fill(sentence).join(' ');
+  assert.ok(parseVoiceRequest({
+    date: '2026-11-28',
+    voice: { engine: 'edge', name: 'zh-TW-HsiaoChenNeural', rate: '-12%' },
+    sections: [{ id: 'opening', text }],
+    expect_seconds: { min: 5, max: 900 },
+  }));
+  const chunks = chunkText(text);
+  assert.ok(chunks.length > 1);
+  assert.ok(chunks.every((chunk) => [...chunk].length <= MAX_CHUNK_CHARS));
+  assert.equal(chunks.join(' ').split(/\s+/).join(' '), text);
+  assert.ok(chunks.every((chunk) => chunk.endsWith('today.')));
+});
