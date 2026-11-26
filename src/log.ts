@@ -16,13 +16,17 @@ import {
   type TenantId,
   type VideoId,
 } from './ids.js';
+import type { GeminiFallbackReason } from './captions.js';
 import type { ModelOutputErrorReason } from './model-output.js';
+import type { TranscriptSource } from './transcript.js';
 
 export type LogEvent =
   | 'http_request'
   | 'http_unhandled_error'
   | 'service_listening'
   | 'cache_hit'
+  | 'captions_read'
+  | 'source_chosen'
   | 'gemini_call'
   | 'gemini_extra_call'
   | 'model_output_error'
@@ -98,6 +102,11 @@ export interface LogFields {
   dest?: 'google-drive' | 'webdav';
   route?: LogRoute;
   code?: LogCode;
+  // What a caption read found (captions_read) — manual, auto, none or
+  // unavailable.
+  kind?: 'manual' | 'auto' | 'none' | 'unavailable';
+  // The transcript source a job's read resolved to (source_chosen).
+  source?: TranscriptSource;
   // The HTTP status of a failed destination call, and Google's reason
   // identifier for it (never free text).
   httpStatus?: number;
@@ -108,7 +117,7 @@ export interface LogFields {
   inputTokens?: number;
   outputTokens?: number;
   totalTokens?: number;
-  reason?: ModelOutputErrorReason | ExtraCallReason;
+  reason?: ModelOutputErrorReason | ExtraCallReason | GeminiFallbackReason;
   windowStart?: number;
   longestBlockSeconds?: number;
 }
@@ -127,6 +136,8 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'dest',
   'route',
   'code',
+  'kind',
+  'source',
   'httpStatus',
   'apiReason',
   'port',
@@ -145,8 +156,10 @@ const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   dest: /^(google-drive|webdav)$/,
   httpStatus: /^[1-5]\d\d$/,
   apiReason: /^[A-Za-z_]{1,64}$/,
+  kind: /^(manual|auto|none|unavailable)$/,
+  source: /^(captions:manual|captions:auto|gemini)$/,
   reason:
-    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation)$/,
+    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation|blocked|timeout|empty|parse|http|auto|none)$/,
 };
 
 export const consoleSink: LogSink = (line) => console.log(line);

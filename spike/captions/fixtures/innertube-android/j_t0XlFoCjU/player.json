@@ -1,0 +1,53 @@
+{
+ "playabilityStatus": {
+  "status": "OK"
+ },
+ "videoDetails": {
+  "videoId": "j_t0XlFoCjU",
+  "lengthSeconds": "531",
+  "title": "別只看「沒有」，向你的困境借東西：火星爺爺(許榮宏)Logan Hsu at TEDxTaipei 2014"
+ },
+ "captions": {
+  "playerCaptionsTracklistRenderer": {
+   "captionTracks": [
+    {
+     "baseUrl": "https://www.youtube.com/api/timedtext?v=j_t0XlFoCjU&ei=HmwIa5jfKZuVpt8P_sTsuQI&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795739278&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=94D8A14AB4B32A7426A4425E69B46683632C16F6.A90F7F4D3A55CCF6463EAF523B933DB3261F8F2F&key=yt8&lang=zh-TW&fmt=srv3",
+     "name": {
+      "runs": [
+       {
+        "text": "Chinese (Taiwan)"
+       }
+      ]
+     },
+     "vssId": ".zh-TW",
+     "languageCode": "zh-TW",
+     "isTranslatable": true,
+     "trackName": ""
+    }
+   ],
+   "audioTracks": [
+    {
+     "captionTrackIndices": [
+      0
+     ]
+    }
+   ],
+   "translationLanguages": [
+    {
+     "languageCode": "en",
+     "languageName": {
+      "runs": [
+       {
+        "text": "English"
+       }
+      ]
+     }
+    }
+   ],
+   "defaultAudioTrackIndex": 0,
+   "defaultTranslationSourceTrackIndices": [
+    0
+   ]
+  }
+ }
+}

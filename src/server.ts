@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createCaptionReader } from './captions.js';
 import { loadServiceConfig } from './config.js';
 import { createDriveStore } from './drive.js';
 import { codeOf } from './errors.js';
@@ -17,6 +18,7 @@ try {
     cacheDir: config.cacheDir,
     windowSeconds: config.windowSeconds,
     defaultMaxVideoSeconds: config.maxVideoSeconds,
+    captionReader: createCaptionReader(),
     serviceToken: config.serviceToken,
     tenantsFile: config.tenantsFile,
     tenantsJson: config.tenantsJson,

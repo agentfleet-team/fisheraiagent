@@ -9,6 +9,18 @@ git tags on `main`.
 
 ### Added
 
+- Transcription reads the video's caption tracks before any Gemini call:
+  a manual track in the spoken language becomes the timed transcript with
+  zero Gemini calls (InnerTube `player` with the ANDROID client, plain
+  fetch, no new dependency — the method T0 proved in
+  agentfleet-team/fisheraiagent#66). Auto-only videos, videos with no
+  usable track and every failed read go to Gemini exactly as before.
+  `Transcript` gains `source` (`captions:manual` or `gemini`;
+  `captions:auto` arrives with the tenant captions setting), the cache
+  format version is bumped once and caption results are never cached. The
+  CLI, the HTTP service and the MCP server all wire the reader; each job
+  logs `captions_read` and `source_chosen`
+  (agentfleet-team/fisheraiagent#68).
 - The Discord bot gains a tenant listener mode: when `TENANT_CALLER_TOKEN`,
   `TENANT_GUILD_ID` and `TENANT_CHANNEL_IDS` are set, the bot takes its
   enabled channels from configuration — no slash commands, no per-guild key,

@@ -10,4 +10,5 @@ await main({
     text: (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD,
     status: 'completed',
   }),
+  captionReader: async () => ({ kind: 'none' }),
 });

@@ -8,4 +8,4 @@ const GOOD = readFileSync(new URL('./model-good.txt', import.meta.url), 'utf8');
 process.exitCode = await main(process.argv[2], async (req) => ({
   text: (req.startOffsetSeconds ?? 0) > 0 ? 'LANGUAGE: en' : GOOD,
   status: 'completed',
-}));
+}), async () => ({ kind: 'none' }));

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { codeOf } from './errors.js';
 import { createLogger, stderrSink } from './log.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
+import { createCaptionReader, type CaptionReader } from './captions.js';
 import { loadConfig } from './config.js';
 import { createGeminiCaller, type GeminiCaller } from './gemini.js';
 import { transcribeYouTube } from './transcribe.js';
@@ -11,7 +12,11 @@ import { transcribeYouTube } from './transcribe.js';
 // stderr; the api and bot services keep consoleSink.
 const log = createLogger(stderrSink);
 
-export async function main(input: string | undefined, caller?: GeminiCaller): Promise<number> {
+export async function main(
+  input: string | undefined,
+  caller?: GeminiCaller,
+  captionReader?: CaptionReader,
+): Promise<number> {
   if (!input) {
     log('startup_failed', { code: 'usage' });
     return 2;
@@ -27,6 +32,7 @@ export async function main(input: string | undefined, caller?: GeminiCaller): Pr
       cacheDir: config.cacheDir,
       windowSeconds: config.windowSeconds,
       defaultMaxVideoSeconds: config.maxVideoSeconds,
+      captionReader: captionReader ?? createCaptionReader(),
       log: stderrSink,
     });
     process.stdout.write(JSON.stringify(transcript, null, 2) + '\n');

@@ -402,7 +402,7 @@ components:
             service (for example 403 from the Drive API).
     Transcript:
       type: object
-      required: [video_id, source_url, language, blocks]
+      required: [video_id, source_url, language, blocks, source]
       properties:
         video_id:
           type: string
@@ -414,6 +414,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TranscriptBlock'
+        source:
+          type: string
+          enum: [captions:manual, captions:auto, gemini]
+          description: >
+            How the transcript was made: from a manual caption track, from
+            an auto caption track, or by Gemini.
     TranscriptBlock:
       type: object
       required: [start, end, text]

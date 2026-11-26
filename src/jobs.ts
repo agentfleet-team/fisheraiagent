@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import type { CaptionReader } from './captions.js';
 import { codeOf, messageForCode, TranscriptError, type FixedErrorCode } from './errors.js';
 import type { GeminiCaller } from './gemini.js';
 import type { ChannelId } from './ids.js';
@@ -56,6 +57,9 @@ export interface JobRunnerDeps {
   // service-wide MAX_VIDEO_SECONDS, so an uncapped video's window loop is
   // still bounded.
   defaultMaxVideoSeconds?: number;
+  // Reads caption tracks before a job's first Gemini call; unset means
+  // the job always goes to Gemini (the pre-captions behavior).
+  captionReader?: CaptionReader;
   log?: (line: string) => void; // sink for allowlisted log lines
   // After a transcript exists, persist it wherever the job's origin resolved
   // to. The origin here is a caller claim the HTTP boundary already
@@ -171,6 +175,7 @@ export class JobStore {
           maxBlockSeconds: this.deps.maxBlockSeconds,
           cacheDir: this.deps.cacheDir,
           windowSeconds: this.deps.windowSeconds,
+          captionReader: this.deps.captionReader,
           log: this.deps.log,
           maxVideoSeconds: limits?.max_video_seconds,
           defaultMaxVideoSeconds: this.deps.defaultMaxVideoSeconds,
