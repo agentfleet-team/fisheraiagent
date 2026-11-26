@@ -14,6 +14,17 @@ export {
   type GeminiVideoResponse,
 } from './gemini.js';
 export { transcribeVideo, transcribeYouTube, type TranscribeDeps } from './transcribe.js';
+export {
+  createCaptionReader,
+  chooseSource,
+  cuesToBlocks,
+  type CaptionRead,
+  type CaptionReader,
+  type CaptionUnavailableReason,
+  type Cue,
+  type GeminiFallbackReason,
+  type SourceDecision,
+} from './captions.js';
 export { readCachedTranscript, writeCachedTranscript, TRANSCRIPT_FORMAT_VERSION } from './cache.js';
 export {
   loadConfig,
@@ -22,7 +33,7 @@ export {
   type Config,
   type ServiceConfig,
 } from './config.js';
-export type { Transcript, TranscriptBlock } from './transcript.js';
+export type { Transcript, TranscriptBlock, TranscriptSource } from './transcript.js';
 export {
   JobStore,
   type DeliveryOutcome,

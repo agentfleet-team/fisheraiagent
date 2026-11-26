@@ -19,6 +19,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { ApiError, createApiClient, type TranscriptApi } from './bot/api.js';
+import { createCaptionReader, type CaptionReader } from './captions.js';
 import { loadConfig } from './config.js';
 import {
   codeOf,
@@ -41,6 +42,9 @@ import { parseYouTubeVideoId } from './youtube-url.js';
 export interface McpDeps {
   env?: NodeJS.ProcessEnv;
   caller?: GeminiCaller;
+  // In-process caption read; tests inject a fake so they never touch the
+  // network. Unset wires the real reader in local mode.
+  captionReader?: CaptionReader;
   api?: TranscriptApi;
   fetchImpl?: typeof fetch;
   log?: LogSink;
@@ -55,6 +59,7 @@ interface ResolvedDeps {
   env: NodeJS.ProcessEnv;
   remote?: { api: TranscriptApi };
   caller?: GeminiCaller;
+  captionReader?: CaptionReader;
   log: LogSink;
 }
 
@@ -120,6 +125,7 @@ async function getTranscript(
     maxBlockSeconds: maxBlockSeconds ?? config.maxBlockSeconds,
     cacheDir: config.cacheDir,
     defaultMaxVideoSeconds: config.maxVideoSeconds,
+    captionReader: deps.captionReader ?? createCaptionReader(),
     log: deps.log,
   });
 }
@@ -166,6 +172,7 @@ export function createMcpServer(deps: McpDeps = {}): McpServer {
     env,
     remote,
     caller: deps.caller,
+    captionReader: deps.captionReader,
     log: deps.log ?? stderrSink,
   };
 

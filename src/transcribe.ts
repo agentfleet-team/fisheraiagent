@@ -1,3 +1,5 @@
+import { captionsTranscript, chooseSource } from './captions.js';
+import type { CaptionRead, CaptionReader } from './captions.js';
 import { TranscriptError } from './errors.js';
 import { parseVideoId } from './ids.js';
 import { loggerFor, type LogSink } from './log.js';
@@ -32,6 +34,12 @@ export interface TranscribeDeps {
   // start and an end offset, so block times re-anchor at a known point per
   // window instead of drifting across a single long generation.
   windowSeconds?: number;
+  // Reads the video's caption tracks before any Gemini call (nodes
+  // N2->N3->N4a of the job workflow). When a manual track in the spoken
+  // language exists it becomes the transcript with zero Gemini calls;
+  // every other outcome is the Gemini path exactly as today. Unset means
+  // "always Gemini" — the behavior before this dependency existed.
+  captionReader?: CaptionReader;
 }
 
 interface RoundResult extends ParsedModelOutput {
@@ -599,6 +607,7 @@ export async function transcribeVideo(videoId: string, deps: TranscribeDeps): Pr
       source_url: videoUrl,
       language,
       blocks,
+      source: 'gemini',
     };
   };
 
@@ -666,6 +675,40 @@ export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): 
     }
     loggerFor(deps.log)('cache_hit', { video: parseVideoId(videoId) });
     return cached;
+  }
+  if (deps.captionReader !== undefined) {
+    const startedAt = Date.now();
+    // The reader contract is "never throw", but the entry point folds a
+    // throwing reader into `unavailable` anyway — a read bug must never
+    // break a job, it only costs the saving.
+    let read: CaptionRead;
+    try {
+      read = await deps.captionReader(videoId);
+    } catch {
+      read = { kind: 'unavailable', reason: 'http' };
+    }
+    loggerFor(deps.log)('captions_read', {
+      video: parseVideoId(videoId),
+      kind: read.kind,
+      reason: read.kind === 'unavailable' ? read.reason : undefined,
+      durationMs: Date.now() - startedAt,
+    });
+    // The player response's duration applies the length limit before any
+    // further work on either path.
+    if ('durationSeconds' in read && read.durationSeconds !== undefined && read.durationSeconds > lengthLimit(deps)) {
+      throw new TranscriptError('video_too_long', 'video exceeds the length limit');
+    }
+    const decision = chooseSource(read);
+    loggerFor(deps.log)('source_chosen', {
+      video: parseVideoId(videoId),
+      source: decision.source,
+      reason: decision.reason,
+    });
+    if (read.kind === 'manual' && decision.source === 'captions:manual') {
+      // A captions result is not cached: the read costs about as much as
+      // a cache hit, so it is fetched fresh on every run.
+      return captionsTranscript(videoId, read, deps.maxBlockSeconds);
+    }
   }
   const transcript = await transcribeVideo(videoId, deps);
   await writeCachedTranscript(

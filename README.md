@@ -8,7 +8,7 @@ Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host 
 
 | Tool | What it does | Status |
 |---|---|---|
-| YouTube transcript | One YouTube URL in, the full timed transcript out. Works for videos with or without captions. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot + web page ready |
+| YouTube transcript | One YouTube URL in, the full timed transcript out. A manual caption track in the spoken language becomes the transcript with zero Gemini calls; every other video goes to Gemini. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot + web page ready |
 
 ## Self-host quick start (HTTP service)
 
@@ -275,7 +275,7 @@ docker compose run --rm -T mcp
 
 ## Self-host quick start (CLI)
 
-One YouTube URL in, the full timed transcript out as JSON — for videos with or without captions. You bring your own Gemini API key; the video URL goes to Gemini as video input. Nothing is downloaded or stored but the transcript cache you choose.
+One YouTube URL in, the full timed transcript out as JSON. You bring your own Gemini API key; the video URL goes to Gemini as video input — but only when the video has no manual caption track in the spoken language, which is read directly at zero Gemini cost. Nothing is downloaded or stored but the transcript cache you choose.
 
 ```bash
 export GEMINI_API_KEY=<your Gemini API key>
@@ -285,8 +285,10 @@ docker compose run --rm transcribe https://youtu.be/hWe-j78vNpc
 The transcript prints to stdout as JSON:
 
 ```json
-{"video_id": "hWe-j78vNpc", "source_url": "https://www.youtube.com/watch?v=hWe-j78vNpc", "language": "en", "blocks": [{"start": 0, "end": 7.48, "text": "..."}]}
+{"video_id": "hWe-j78vNpc", "source_url": "https://www.youtube.com/watch?v=hWe-j78vNpc", "language": "en", "blocks": [{"start": 0, "end": 7.48, "text": "..."}], "source": "gemini"}
 ```
+
+`source` says how the transcript was made: `captions:manual` (a human caption track in the spoken language, no Gemini calls) or `gemini` (`captions:auto` arrives with a per-tenant setting for auto captions).
 
 Environment variables:
 
