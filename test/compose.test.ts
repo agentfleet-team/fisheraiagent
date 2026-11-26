@@ -64,3 +64,16 @@ test('every compose service builds with the shared build args', () => {
     );
   }
 });
+
+// #78: the caption reader is its own compose service on the same image,
+// started through its own entrypoint, with a receipt volume on port 8090.
+test('caption-reader service: same build, own entrypoint, port 8090, receipt volume', () => {
+  const block = blocks.get('caption-reader') ?? [];
+  assert.ok(block.some((line) => line.trim() === 'build: *build-args'));
+  assert.ok(block.some((line) => line.trim() === 'entrypoint: ["node", "dist/caption-reader.js"]'));
+  assert.ok(block.some((line) => /"\$\{CAPTION_READER_PORT:-8090\}:8090"/.test(line)));
+  assert.ok(block.some((line) => /CAPTION_READER_TOKEN: \$\{CAPTION_READER_TOKEN:\?/.test(line)));
+  assert.ok(block.some((line) => /CAPTION_READER_RECEIPT_DIR: \/data\/receipts/.test(line)));
+  assert.ok(block.some((line) => /:\/data\/receipts/.test(line) && line.trim().startsWith('-')));
+  assert.ok(!block.some((line) => /GEMINI|SERVICE_TOKEN|TENANTS|GOOGLE/.test(line)));
+});
