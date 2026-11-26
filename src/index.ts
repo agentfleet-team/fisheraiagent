@@ -25,6 +25,13 @@ export {
   type GeminiFallbackReason,
   type SourceDecision,
 } from './captions.js';
+export {
+  createRemoteCaptionReader,
+  resolveCaptionReader,
+  type CaptionReaderConfig,
+  type RemoteCaptionReaderOptions,
+  type ResolvedCaptionReader,
+} from './captions-remote.js';
 export { readCachedTranscript, writeCachedTranscript, TRANSCRIPT_FORMAT_VERSION } from './cache.js';
 export {
   loadConfig,

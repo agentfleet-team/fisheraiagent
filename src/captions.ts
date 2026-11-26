@@ -22,8 +22,9 @@ export interface Cue {
 }
 
 // The failure classes a caption read can land in. Each one sends the job
-// to Gemini exactly as if the read had never happened.
-export type CaptionUnavailableReason = 'blocked' | 'timeout' | 'empty' | 'parse' | 'http';
+// to Gemini exactly as if the read had never happened. `unreachable` is
+// the remote adapter's class for a reader that cannot be reached at all.
+export type CaptionUnavailableReason = 'blocked' | 'timeout' | 'empty' | 'parse' | 'http' | 'unreachable';
 
 // What one read of the video's caption tracks found. `manual` is a human
 // track proven to be in the spoken language; `auto` is YouTube's own

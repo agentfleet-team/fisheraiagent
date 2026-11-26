@@ -102,6 +102,9 @@ export interface LogFields {
   dest?: 'google-drive' | 'webdav';
   route?: LogRoute;
   code?: LogCode;
+  // Where a caption read ran (captions_read) — the remote reader tool or
+  // the in-process reader.
+  origin?: 'remote' | 'local';
   // What a caption read found (captions_read) — manual, auto, none or
   // unavailable.
   kind?: 'manual' | 'auto' | 'none' | 'unavailable';
@@ -136,6 +139,7 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'dest',
   'route',
   'code',
+  'origin',
   'kind',
   'source',
   'httpStatus',
@@ -157,9 +161,10 @@ const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   httpStatus: /^[1-5]\d\d$/,
   apiReason: /^[A-Za-z_]{1,64}$/,
   kind: /^(manual|auto|none|unavailable)$/,
+  origin: /^(remote|local)$/,
   source: /^(captions:manual|captions:auto|gemini)$/,
   reason:
-    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation|blocked|timeout|empty|parse|http|auto|none)$/,
+    /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation|blocked|timeout|empty|parse|http|unreachable|auto|none)$/,
 };
 
 export const consoleSink: LogSink = (line) => console.log(line);

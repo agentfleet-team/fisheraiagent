@@ -36,6 +36,19 @@ export interface ServiceConfig {
   // Cloudflare Tunnel's connector); a request from anywhere else is keyed
   // on its socket address.
   trustedProxyIps: string[];
+  // N2's remote caption read (spec amendment r4): set only when the
+  // environment supplies a complete remote setup — CAPTIONS_READER_URL
+  // (https only) plus CAPTIONS_READER_TOKEN, the Cloudflare Access
+  // service-token pair together or not at all.
+  captionsReader?: {
+    url: string;
+    token: string;
+    accessId?: string;
+    accessSecret?: string;
+    timeoutMs: number;
+  };
+  // 'local' when CAPTIONS_READ asks for the in-process caption read.
+  captionsRead?: 'local';
   googleCredentials?: string;
   googleCredentialsJson?: string;
   googleOauthJson?: string;
@@ -57,6 +70,9 @@ export const DEFAULT_WINDOW_SECONDS = 120;
 export const DEFAULT_MAX_VIDEO_SECONDS = 12 * 60 * 60;
 const DEFAULT_CACHE_DIR = './transcript-cache';
 const DEFAULT_PORT = 8080;
+// One total budget for a remote caption read before the job falls back to
+// Gemini.
+export const DEFAULT_CAPTIONS_READER_TIMEOUT_MS = 4000;
 // Build identity: the Docker build bakes APP_VERSION/APP_COMMIT in as build
 // args; a local run without them reports the dev defaults.
 export const DEFAULT_VERSION = '0.0.0-dev';
@@ -177,6 +193,9 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
   const googleCredentialsJson = (env.GOOGLE_CREDENTIALS_JSON ?? '').trim() || undefined;
   const googleOauthJson = (env.GOOGLE_OAUTH_JSON ?? '').trim() || undefined;
 
+  const captionsReader = parseCaptionsReader(env);
+  const captionsRead = parseCaptionsRead(env);
+
   // Sign-in is off unless all four pieces are configured; a partial setup
   // fails loudly rather than silently running anonymous.
   const oidcClientId = (env.OIDC_CLIENT_ID ?? '').trim();
@@ -220,8 +239,64 @@ export function loadServiceConfig(env: NodeJS.ProcessEnv = process.env): Service
     googleCredentials,
     googleCredentialsJson,
     googleOauthJson,
+    captionsReader,
+    captionsRead,
     oidc,
   };
+}
+
+// CAPTIONS_READER_URL picks the remote caption reader (the tool behind
+// its tunnel). It is https-only and needs the bearer token the reader
+// checks; the optional Cloudflare Access service-token pair must be
+// complete or absent. Credentials without the URL fail startup like every
+// other partial configuration.
+function parseCaptionsReader(env: NodeJS.ProcessEnv): ServiceConfig['captionsReader'] {
+  const url = (env.CAPTIONS_READER_URL ?? '').trim();
+  const token = (env.CAPTIONS_READER_TOKEN ?? '').trim() || undefined;
+  const accessId = (env.CAPTIONS_READER_ACCESS_ID ?? '').trim() || undefined;
+  const accessSecret = (env.CAPTIONS_READER_ACCESS_SECRET ?? '').trim() || undefined;
+  const timeoutMs = parsePositiveInteger(
+    env.CAPTIONS_READER_TIMEOUT_MS,
+    'CAPTIONS_READER_TIMEOUT_MS',
+    DEFAULT_CAPTIONS_READER_TIMEOUT_MS,
+  );
+  if (url === '') {
+    if (token !== undefined || accessId !== undefined || accessSecret !== undefined) {
+      throw new TranscriptError('invalid_config', 'CAPTIONS_READER credentials need CAPTIONS_READER_URL');
+    }
+    return undefined;
+  }
+  let https: boolean;
+  try {
+    https = new URL(url).protocol === 'https:';
+  } catch {
+    https = false;
+  }
+  if (!https) {
+    throw new TranscriptError('invalid_config', 'CAPTIONS_READER_URL must be a valid https URL');
+  }
+  if (token === undefined) {
+    throw new TranscriptError('invalid_config', 'CAPTIONS_READER_URL needs CAPTIONS_READER_TOKEN');
+  }
+  if ((accessId === undefined) !== (accessSecret === undefined)) {
+    throw new TranscriptError(
+      'invalid_config',
+      'CAPTIONS_READER_ACCESS_ID and CAPTIONS_READER_ACCESS_SECRET must be set together',
+    );
+  }
+  return { url, token, accessId, accessSecret, timeoutMs };
+}
+
+// CAPTIONS_READ names the non-remote mode: exactly "local" keeps the
+// in-process read for self-hosters; any other value fails loudly rather
+// than silently turning the read off.
+function parseCaptionsRead(env: NodeJS.ProcessEnv): 'local' | undefined {
+  const raw = (env.CAPTIONS_READ ?? '').trim();
+  if (raw === '') return undefined;
+  if (raw !== 'local') {
+    throw new TranscriptError('invalid_config', `CAPTIONS_READ must be "local" or unset, got: ${raw}`);
+  }
+  return 'local';
 }
 
 // A count from the environment: unset means the default; a set-but-bad
