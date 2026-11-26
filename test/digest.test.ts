@@ -160,6 +160,24 @@ test('D3: an output outside the length band triggers one repair call; a second f
   });
 });
 
+test('D3: the band fixtures at 2,400 and 2,800 characters each trigger the one repair call; the 2,600 fixture passes check', async () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const at2600 = checkModelOutput(request, profile, fixture('model-good.json'));
+  assert.ok(at2600.ok);
+  assert.equal(at2600.script.char_count, 2600);
+  for (const bad of ['model-band-low.json', 'model-band-high.json']) {
+    const llm = stubLlm([fixture(bad), fixture('model-good.json')]);
+    await withService({ llmFactory: llm.factory }, async (base) => {
+      const sent = await post(base, requestBody);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.equal(llm.calls.length, 2);
+      assert.ok(llm.calls[1].prompt.includes('必須在 2500 到 2700 字之間'));
+    });
+  }
+});
+
 test('D3: output that is not JSON counts as a failed check and gets one repair call', async () => {
   const llm = stubLlm(['not json at all', fixture('model-no-ref.json')]);
   await withService({ llmFactory: llm.factory }, async (base) => {

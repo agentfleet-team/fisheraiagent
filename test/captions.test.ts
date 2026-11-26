@@ -10,6 +10,7 @@ import {
   type CaptionRead,
   type Cue,
 } from '../src/captions.js';
+import { parseTenantsJson } from '../src/tenants.js';
 import { transcribeYouTube, type TranscribeDeps } from '../src/transcribe.js';
 import type { GeminiCaller, GeminiVideoRequest } from '../src/gemini.js';
 import { TranscriptError } from '../src/errors.js';
@@ -87,9 +88,81 @@ test('chooseSource: manual read blocks as captions:manual; every other kind fall
     [{ kind: 'unavailable', reason: 'empty' }, 'gemini', 'empty'],
     [{ kind: 'unavailable', reason: 'parse' }, 'gemini', 'parse'],
     [{ kind: 'unavailable', reason: 'http' }, 'gemini', 'http'],
+    [{ kind: 'unavailable', reason: 'unreachable' }, 'gemini', 'unreachable'],
   ];
   for (const [read, source, reason] of table) {
     assert.deepEqual(chooseSource(read), reason === undefined ? { source } : { source, reason });
+  }
+});
+
+// --- N3 extended (T2, #69): chooseSource over every policy x read kind ---
+
+test('chooseSource under manual-or-auto: an auto read becomes captions:auto; the rest is unchanged', () => {
+  const table: Array<[CaptionRead, string, string | undefined]> = [
+    [{ kind: 'manual', language: 'en', durationSeconds: 10, cues: [] }, 'captions:manual', undefined],
+    [{ kind: 'auto', language: 'en', durationSeconds: 10, cues: [] }, 'captions:auto', undefined],
+    [{ kind: 'none' }, 'gemini', 'none'],
+    [{ kind: 'unavailable', reason: 'blocked' }, 'gemini', 'blocked'],
+    [{ kind: 'unavailable', reason: 'timeout' }, 'gemini', 'timeout'],
+    [{ kind: 'unavailable', reason: 'empty' }, 'gemini', 'empty'],
+    [{ kind: 'unavailable', reason: 'parse' }, 'gemini', 'parse'],
+    [{ kind: 'unavailable', reason: 'http' }, 'gemini', 'http'],
+    [{ kind: 'unavailable', reason: 'unreachable' }, 'gemini', 'unreachable'],
+  ];
+  for (const [read, source, reason] of table) {
+    assert.deepEqual(
+      chooseSource(read, 'manual-or-auto'),
+      reason === undefined ? { source } : { source, reason },
+    );
+  }
+});
+
+test('chooseSource under off: every read kind goes to gemini with no reason', () => {
+  const table: Array<[CaptionRead, string, string | undefined]> = [
+    [{ kind: 'manual', language: 'en', durationSeconds: 10, cues: [] }, 'gemini', undefined],
+    [{ kind: 'auto', language: 'en', durationSeconds: 10, cues: [] }, 'gemini', undefined],
+    [{ kind: 'none' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'blocked' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'timeout' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'empty' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'parse' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'http' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'unreachable' }, 'gemini', undefined],
+  ];
+  for (const [read, source, reason] of table) {
+    assert.deepEqual(
+      chooseSource(read, 'off'),
+      reason === undefined ? { source } : { source, reason },
+    );
+  }
+});
+
+// --- N1 extended: the tenant captions field parses like every other field ---
+
+test('the tenant captions field parses manual, manual-or-auto and off; absent stays undefined', () => {
+  const doc = (captions?: unknown) =>
+    JSON.stringify({
+      tenants: [
+        { id: 'cap-one', discord_guild_id: 'g1', ...(captions === undefined ? {} : { captions }) },
+      ],
+    });
+  assert.equal(parseTenantsJson(doc(), 'test')[0].captions, undefined);
+  assert.equal(parseTenantsJson(doc('manual'), 'test')[0].captions, 'manual');
+  assert.equal(parseTenantsJson(doc('manual-or-auto'), 'test')[0].captions, 'manual-or-auto');
+  assert.equal(parseTenantsJson(doc('off'), 'test')[0].captions, 'off');
+});
+
+test('an unknown captions value fails the tenants document load with invalid_config', () => {
+  for (const captions of ['auto', 'always', '', 3, true, null, { mode: 'manual' }, ['manual']]) {
+    assert.throws(
+      () =>
+        parseTenantsJson(
+          JSON.stringify({ tenants: [{ id: 'cap-one', captions }] }),
+          'test',
+        ),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      JSON.stringify(captions),
+    );
   }
 });
 
@@ -311,6 +384,70 @@ test('a reader that throws is treated as unavailable and the job still goes to G
   const t = await transcribeYouTube('hWe-j78vNpc', d);
   assert.equal(t.source, 'gemini');
   assert.equal(calls.length, 2);
+});
+
+test('manual-or-auto: an auto read becomes the transcript with source captions:auto and zero Gemini calls', async () => {
+  const { calls, caller } = geminiDouble([]);
+  const logs: string[] = [];
+  const read: CaptionRead = {
+    kind: 'auto',
+    language: 'en',
+    durationSeconds: 16,
+    cues: [
+      { start: 0, end: 8, text: 'auto one' },
+      { start: 8, end: 16, text: 'auto two' },
+    ],
+  };
+  const d = deps(caller, async () => read);
+  d.captionsPolicy = 'manual-or-auto';
+  d.log = (line) => logs.push(line);
+  const t = await transcribeYouTube('hWe-j78vNpc', d);
+  assert.equal(calls.length, 0, 'an accepted auto track must not spend a Gemini call');
+  assert.equal(t.source, 'captions:auto');
+  assert.equal(t.language, 'en');
+  assert.deepEqual(t.blocks, [
+    { start: 0, end: 8, text: 'auto one' },
+    { start: 8, end: 16, text: 'auto two' },
+  ]);
+  assert.ok(logs.some((l) => l.startsWith('captions_read') && l.includes('kind=auto')));
+  assert.ok(logs.some((l) => l.startsWith('source_chosen') && l.includes('source=captions:auto')));
+});
+
+test('manual-or-auto keeps none and unavailable reads on the Gemini path', async () => {
+  for (const read of [
+    { kind: 'none', durationSeconds: 60 },
+    { kind: 'unavailable', reason: 'blocked' },
+  ] as CaptionRead[]) {
+    const { calls, caller } = geminiDouble([{ text: ONE_BLOCK }, { text: EMPTY }]);
+    const d = deps(caller, async () => read);
+    d.captionsPolicy = 'manual-or-auto';
+    const t = await transcribeYouTube('hWe-j78vNpc', d);
+    assert.equal(t.source, 'gemini', JSON.stringify(read));
+    assert.equal(calls.length, 2);
+  }
+});
+
+test('captions off: the reader is never called and the job goes to Gemini', async () => {
+  const { calls, caller } = geminiDouble([{ text: ONE_BLOCK }, { text: EMPTY }]);
+  const logs: string[] = [];
+  let reads = 0;
+  const d = deps(caller, async () => {
+    reads += 1;
+    return {
+      kind: 'manual',
+      language: 'en',
+      durationSeconds: 4,
+      cues: [{ start: 0, end: 4, text: 'hi' }],
+    };
+  });
+  d.captionsPolicy = 'off';
+  d.log = (line) => logs.push(line);
+  const t = await transcribeYouTube('dQw4w9WgXcQ', d);
+  assert.equal(reads, 0, 'policy off must skip the read entirely');
+  assert.equal(t.source, 'gemini');
+  assert.equal(calls.length, 2);
+  assert.ok(logs.some((l) => l.startsWith('captions_skipped') && l.includes('policy=off')));
+  assert.ok(!logs.some((l) => l.startsWith('captions_read')), 'a skipped read logs no captions_read');
 });
 
 test('the reader duration enforces max_video_seconds before any work', async () => {

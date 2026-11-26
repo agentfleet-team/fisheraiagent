@@ -3,8 +3,8 @@
 // `read(videoId)` — returns what the video's caption tracks prove: a human
 // track in the spoken language, only speech-recognition tracks, nothing
 // usable, or a failed read. The entry point then decides the transcript
-// source (`chooseSource`, the default `manual` policy) and, for a human
-// track, turns its cues into blocks (`cuesToBlocks`).
+// source (`chooseSource` under the job's captions policy) and, for an
+// accepted track, turns its cues into blocks (`cuesToBlocks`).
 //
 // Method (T0, #66): an InnerTube `player` POST with the ANDROID client
 // identity returns a `captions` block whose track `baseUrl`s serve the
@@ -37,6 +37,18 @@ export type CaptionRead =
 
 export type CaptionReader = (videoId: string) => Promise<CaptionRead>;
 
+// How a job treats the caption read — the tenant's `captions` field and
+// the CLI's `--accept` values share this vocabulary
+// (agentfleet-team/fisheraiagent#69, #89). `manual`, the default, accepts
+// only a human track in the spoken language; `manual-or-auto` also accepts
+// the spoken-language speech-recognition track; `off` skips the read so
+// the job always uses Gemini.
+export type CaptionsPolicy = 'manual' | 'manual-or-auto' | 'off';
+
+export function isCaptionsPolicy(value: unknown): value is CaptionsPolicy {
+  return value === 'manual' || value === 'manual-or-auto' || value === 'off';
+}
+
 // Why a job fell back to Gemini after the read: the read's own kind, or
 // its failure reason.
 export type GeminiFallbackReason = 'auto' | 'none' | CaptionUnavailableReason;
@@ -46,15 +58,19 @@ export interface SourceDecision {
   reason?: GeminiFallbackReason;
 }
 
-// N3, the default `manual` policy: only a human track in the spoken
-// language becomes the transcript. Auto captions, no usable track and
-// every read failure go to Gemini, carrying the reason for the log line.
-export function chooseSource(read: CaptionRead): SourceDecision {
+// N3, table-driven over the job's captions policy: under `manual` (the
+// default) only a human track in the spoken language becomes the
+// transcript; `manual-or-auto` also accepts the speech-recognition track;
+// `off` goes to Gemini whatever the read would have said — a job under
+// `off` skips the read before this node runs. No usable track and every
+// read failure go to Gemini too, carrying the reason for the log line.
+export function chooseSource(read: CaptionRead, policy: CaptionsPolicy = 'manual'): SourceDecision {
+  if (policy === 'off') return { source: 'gemini' };
   switch (read.kind) {
     case 'manual':
       return { source: 'captions:manual' };
     case 'auto':
-      return { source: 'gemini', reason: 'auto' };
+      return policy === 'manual-or-auto' ? { source: 'captions:auto' } : { source: 'gemini', reason: 'auto' };
     case 'none':
       return { source: 'gemini', reason: 'none' };
     case 'unavailable':

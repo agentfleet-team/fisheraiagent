@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type { CaptionReader } from './captions.js';
+import type { CaptionReader, CaptionsPolicy } from './captions.js';
 import { codeOf, messageForCode, TranscriptError, type FixedErrorCode } from './errors.js';
 import type { GeminiCaller } from './gemini.js';
 import type { ChannelId } from './ids.js';
@@ -123,6 +123,8 @@ export class JobStore {
   // matching fixed error is what the origin sees. `limits` is the resolved
   // tenant's limits, applied only to the job it came with. `deliverTo` is
   // the Discord channel or thread a verified caller named for delivery.
+  // `captions` is the resolved tenant's captions policy; a job with no
+  // tenant runs the default 'manual'.
   submit(
     videoId: string,
     apiKey: string,
@@ -130,11 +132,12 @@ export class JobStore {
     saveBlocked?: SaveBlock,
     limits?: TenantLimits,
     deliverTo?: ChannelId,
+    captions?: CaptionsPolicy,
   ): string {
     const id = randomUUID();
     this.records.set(id, { status: 'queued' });
     this.prune();
-    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveBlocked, limits, deliverTo));
+    setImmediate(() => void this.run(id, videoId, apiKey, origin, saveBlocked, limits, deliverTo, captions));
     return id;
   }
 
@@ -158,6 +161,7 @@ export class JobStore {
     saveBlocked?: SaveBlock,
     limits?: TenantLimits,
     deliverTo?: ChannelId,
+    captions?: CaptionsPolicy,
   ): Promise<void> {
     try {
       const record = this.records.get(id);
@@ -180,6 +184,7 @@ export class JobStore {
           windowSeconds: this.deps.windowSeconds,
           captionReader: this.deps.captionReader,
           captionReadOrigin: this.deps.captionReadOrigin,
+          captionsPolicy: captions,
           log: this.deps.log,
           maxVideoSeconds: limits?.max_video_seconds,
           defaultMaxVideoSeconds: this.deps.defaultMaxVideoSeconds,
