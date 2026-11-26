@@ -188,16 +188,11 @@ test('no tracks at all reads as none and still carries the player duration', asy
   assert.equal(read.durationSeconds, 635);
 });
 
-test('no asr track: a single manual track is the original; two or more is ambiguous and stays none', async () => {
-  const single = await reader('j_t0XlFoCjU')('j_t0XlFoCjU');
-  assert.equal(single.kind, 'manual');
-  if (single.kind === 'manual') {
-    assert.equal(single.language, 'zh-TW');
-    assert.equal(single.cues.length, 246);
-  }
-  for (const videoId of ['snZ811wvjjw', '6i7RcP39NB0', 'tx6of5YHqCA', 'kJQP7kiw5Fk'] as const) {
+test('no asr track: every recorded no-asr video reads as none, even with a lone manual track', async () => {
+  // TLgAJgYqIZk is spoken Korean whose only track is an English translation.
+  for (const videoId of ['TLgAJgYqIZk', 'j_t0XlFoCjU', 'snZ811wvjjw', '6i7RcP39NB0', 'tx6of5YHqCA', 'kJQP7kiw5Fk'] as const) {
     const read = await reader(videoId)(videoId);
-    assert.equal(read.kind, 'none', `${videoId} must stay none: no signal names the original among several manual tracks`);
+    assert.equal(read.kind, 'none', `${videoId} must be none: no player field proves the spoken language without asr`);
   }
 });
 

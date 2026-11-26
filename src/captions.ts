@@ -187,22 +187,18 @@ interface TrackListing {
 const primary = (code: string | undefined): string => (code ?? '').split('-')[0].toLowerCase();
 
 // Which track — if any — the player response proves is in the spoken
-// language. T0's rule plus the T1 amendment for the no-ASR case; no
-// language is ever named, the spoken language always comes out of the
-// response itself.
+// language. No language is ever named; the spoken language always comes
+// out of the response itself.
 function chooseTrack(listing: TrackListing): { kind: 'manual' | 'auto'; track: CaptionTrack } | undefined {
   const manual = listing.tracks.filter((t) => t.kind === 'manual');
   const asr = listing.tracks.filter((t) => t.kind === 'asr');
-  if (asr.length === 0) {
-    // With no ASR track nothing in the response names the spoken
-    // language: the per-audio default caption index follows the viewer's
-    // locale, and the declared translation source can itself be a
-    // translated track — both measured on the recorded fixtures. A lone
-    // manual track is the original (no sibling exists it could be a
-    // translation of); two or more stay ambiguous and unread.
-    if (manual.length === 1) return { kind: 'manual', track: manual[0] };
-    return undefined;
-  }
+  // With no ASR track nothing in the response names the spoken language:
+  // the per-audio default caption index follows the viewer's locale, the
+  // declared translation source can itself be a translated track, and a
+  // lone manual track can be a translation (TLgAJgYqIZk is spoken Korean
+  // with one English track). So the answer is none, whatever manual
+  // tracks exist.
+  if (asr.length === 0) return undefined;
   let original: CaptionTrack | undefined;
   const audio = listing.audioTracks;
   const defaultAudio = listing.defaultAudioTrackIndex === undefined ? undefined : audio[listing.defaultAudioTrackIndex];
