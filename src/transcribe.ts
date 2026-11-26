@@ -1,5 +1,5 @@
 import { captionsTranscript, chooseSource } from './captions.js';
-import type { CaptionRead, CaptionReader } from './captions.js';
+import type { CaptionRead, CaptionReader, CaptionsPolicy } from './captions.js';
 import { TranscriptError } from './errors.js';
 import { parseVideoId } from './ids.js';
 import { loggerFor, type LogSink } from './log.js';
@@ -44,6 +44,11 @@ export interface TranscribeDeps {
   // line — the remote reader tool or the in-process reader. Unset leaves
   // the field off the line.
   captionReadOrigin?: 'remote' | 'local';
+  // The job's captions policy (the resolved tenant's `captions` field):
+  // 'manual', the default, takes only a human track; 'manual-or-auto' also
+  // accepts the speech-recognition track; 'off' skips the read so the job
+  // always uses Gemini. A job with no tenant leaves this unset.
+  captionsPolicy?: CaptionsPolicy;
 }
 
 interface RoundResult extends ParsedModelOutput {
@@ -680,7 +685,13 @@ export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): 
     loggerFor(deps.log)('cache_hit', { video: parseVideoId(videoId) });
     return cached;
   }
-  if (deps.captionReader !== undefined) {
+  const captionsPolicy = deps.captionsPolicy ?? 'manual';
+  if (deps.captionReader !== undefined && captionsPolicy === 'off') {
+    // The read is gated per job: `off` skips it for this tenant only, at
+    // no YouTube cost, and the job goes to Gemini exactly as if the
+    // service ran no reader.
+    loggerFor(deps.log)('captions_skipped', { video: parseVideoId(videoId), policy: 'off' });
+  } else if (deps.captionReader !== undefined) {
     const startedAt = Date.now();
     // The reader contract is "never throw", but the entry point folds a
     // throwing reader into `unavailable` anyway — a read bug must never
@@ -703,13 +714,13 @@ export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): 
     if ('durationSeconds' in read && read.durationSeconds !== undefined && read.durationSeconds > lengthLimit(deps)) {
       throw new TranscriptError('video_too_long', 'video exceeds the length limit');
     }
-    const decision = chooseSource(read);
+    const decision = chooseSource(read, captionsPolicy);
     loggerFor(deps.log)('source_chosen', {
       video: parseVideoId(videoId),
       source: decision.source,
       reason: decision.reason,
     });
-    if (read.kind === 'manual' && decision.source === 'captions:manual') {
+    if ((read.kind === 'manual' || read.kind === 'auto') && decision.source !== 'gemini') {
       // A captions result is not cached: the read costs about as much as
       // a cache hit, so it is fetched fresh on every run.
       return captionsTranscript(videoId, read, deps.maxBlockSeconds);

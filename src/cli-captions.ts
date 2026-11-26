@@ -9,11 +9,13 @@
 import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { loadServiceConfig } from './config.js';
-import { captionsTranscript, type CaptionReader, type CaptionRead } from './captions.js';
+import { captionsTranscript, chooseSource, type CaptionReader, type CaptionRead, type CaptionsPolicy } from './captions.js';
 import { parseYouTubeVideoId } from './youtube-url.js';
 import type { TranscriptBlock } from './transcript.js';
 
-export type AcceptPolicy = 'manual' | 'manual-or-auto';
+// The --accept vocabulary is the job's captions policy minus `off` — this
+// command exists to read captions, so refusing the read is meaningless.
+export type AcceptPolicy = Exclude<CaptionsPolicy, 'off'>;
 
 export interface CaptionsIo {
   reader: CaptionReader;
@@ -83,11 +85,12 @@ export async function captionsMain(args: string[], io: CaptionsIo): Promise<numb
   const ms = Date.now() - started;
 
   const accepted =
-    read.kind === 'manual' || (read.kind === 'auto' && parsed.accept === 'manual-or-auto') ? read : undefined;
-  const transcript =
-    accepted !== undefined && (accepted.kind === 'manual' || accepted.kind === 'auto')
-      ? captionsTranscript(parsed.videoId, accepted, maxBlockSeconds)
+    (read.kind === 'manual' || read.kind === 'auto') &&
+    chooseSource(read, parsed.accept).source !== 'gemini'
+      ? read
       : undefined;
+  const transcript =
+    accepted !== undefined ? captionsTranscript(parsed.videoId, accepted, maxBlockSeconds) : undefined;
 
   if (parsed.receipt !== undefined) {
     const d = describe(read);

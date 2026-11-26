@@ -16,7 +16,7 @@ import {
   type TenantId,
   type VideoId,
 } from './ids.js';
-import type { GeminiFallbackReason } from './captions.js';
+import type { CaptionsPolicy, GeminiFallbackReason } from './captions.js';
 import type { ModelOutputErrorReason } from './model-output.js';
 import type { TranscriptSource } from './transcript.js';
 
@@ -26,6 +26,7 @@ export type LogEvent =
   | 'service_listening'
   | 'cache_hit'
   | 'captions_read'
+  | 'captions_skipped'
   | 'source_chosen'
   | 'gemini_call'
   | 'gemini_extra_call'
@@ -110,6 +111,9 @@ export interface LogFields {
   kind?: 'manual' | 'auto' | 'none' | 'unavailable';
   // The transcript source a job's read resolved to (source_chosen).
   source?: TranscriptSource;
+  // The job's captions policy (captions_skipped) — `off` is the only
+  // policy that skips the read.
+  policy?: CaptionsPolicy;
   // The HTTP status of a failed destination call, and Google's reason
   // identifier for it (never free text).
   httpStatus?: number;
@@ -142,6 +146,7 @@ const FIELD_ORDER: readonly (keyof LogFields)[] = [
   'origin',
   'kind',
   'source',
+  'policy',
   'httpStatus',
   'apiReason',
   'port',
@@ -163,6 +168,7 @@ const ID_FIELD_FORMATS: Partial<Record<keyof LogFields, RegExp>> = {
   kind: /^(manual|auto|none|unavailable)$/,
   origin: /^(remote|local)$/,
   source: /^(captions:manual|captions:auto|gemini)$/,
+  policy: /^(manual|manual-or-auto|off)$/,
   reason:
     /^(invalid_timestamp|block_too_long|end_before_start|out_of_order|no_blocks|strict_retry|empty_full_window|subclip|tail_reask|media_retry|continuation|blocked|timeout|empty|parse|http|unreachable|auto|none)$/,
 };
