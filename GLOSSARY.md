@@ -40,6 +40,10 @@ _Avoid_: video language, default language
 How a transcript was made: from a manual track, from an auto track, or by Gemini.
 _Avoid_: method, origin (origin is the caller's channel or session)
 
+**Caption reader**:
+The separate tool, run on a residential host, that reads a video's caption tracks for the service.
+_Avoid_: caption proxy, caption service
+
 **Window**:
 One clipped stretch of the video sent to Gemini in one call.
 _Avoid_: chunk, part
