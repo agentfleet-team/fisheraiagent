@@ -1,6 +1,6 @@
 # digest (tool 2)
 
-Turns N transcripts (tool 1's `Transcript` JSON) and their video metadata into one episode script for a named profile. Same job API as the transcript tool. Status: built, not deployed. Contract: RFC-002 in `fisherivco/allen-ai-os` (`docs/morning-podcast/rfc/`), ticket `agentfleet-team/fisheraiagent#83`.
+Turns N transcripts (tool 1's `Transcript` JSON) and their video metadata into one episode script for a named profile. Same job API as the transcript tool. Status: built, not deployed. Contract: RFC-002 in `fisherivco/allen-ai-os` (the morning podcast RFC set, PRD allen-ai-os#1878), ticket `agentfleet-team/fisheraiagent#83`.
 
 Run it: `npm run build && node dist/digest/server.js`. It reads the transcript service's variables: `PORT`, `SERVICE_TOKEN`, `GEMINI_MODEL`, `TENANTS_FILE` and `TENANTS_JSON`. The API is in `openapi.yaml` next to this file.
 
