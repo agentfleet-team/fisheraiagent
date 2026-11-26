@@ -90,7 +90,15 @@ for (const { doc } of runs) {
 if (errs.length === 0) {
   md += 'None.\n';
 } else {
-  for (const e of errs) md += `- **${e.where}**:\n  \`\`\`\n  ${e.text}\n  \`\`\`\n`;
+  const groups = new Map(); // normalized text -> {text, wheres}
+  for (const e of errs) {
+    const k = (e.text || 'unknown').replace(/\[youtube\] [\w-]{11}:/g, '[youtube] <id>:');
+    if (!groups.has(k)) groups.set(k, { text: e.text || 'unknown', wheres: [] });
+    groups.get(k).wheres.push(e.where);
+  }
+  for (const { text, wheres } of groups.values()) {
+    md += `- **${wheres.length} call(s)** — ${wheres.slice(0, 6).join('; ')}${wheres.length > 6 ? `; … (${wheres.length - 6} more, same text)` : ''}:\n  \`\`\`\n  ${text}\n  \`\`\`\n`;
+  }
 }
 
 const notes = join(here, 'notes.md');
