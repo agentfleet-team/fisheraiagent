@@ -369,7 +369,7 @@ GET /healthz                  200 ok
 
 Every `/v1/captions` request appends one JSON line to `receipts-YYYY-MM-DD.jsonl`: `ts`, `video_id`, `status`, `kind`, `reason`, `language`, `cue_count`, `cues_sha256`, `ms`, `caller` (first 8 hex characters of the token's sha256, `null` when the token was missing or wrong).
 
-Run it: `CAPTION_READER_TOKEN=<token> npm run build && node dist/caption-reader.js`, or `docker compose --profile caption-reader up -d caption-reader` (same image, entrypoint `node dist/caption-reader.js`, port 8090, receipts in the `CAPTION_READER_RECEIPT_HOST_DIR` volume).
+Run it: `npm run build && CAPTION_READER_TOKEN=<token> node dist/caption-reader.js`, or `docker compose --profile caption-reader up -d caption-reader` (same image, entrypoint `node dist/caption-reader.js`, port 8090, receipts in the `CAPTION_READER_RECEIPT_HOST_DIR` volume).
 
 ## Limits (from Google)
 
