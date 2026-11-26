@@ -1,0 +1,32 @@
+{
+  "description": "Allen's three nightly topics (owner, 2026-11-25). Two English and one Traditional Chinese query per topic. Config, not code.",
+  "topics": [
+    {
+      "id": "agent-workflows",
+      "title": "Agent workflows",
+      "queries": [
+        "AI agent workflow",
+        "build AI agent workflow tutorial",
+        "AI 代理人 工作流程"
+      ]
+    },
+    {
+      "id": "practical-cases",
+      "title": "Practical cases",
+      "queries": [
+        "AI agent case study production",
+        "AI agent real world example",
+        "AI 代理人 實戰 案例"
+      ]
+    },
+    {
+      "id": "memory-reliability",
+      "title": "Memory and reliability",
+      "queries": [
+        "LLM agent memory reliability",
+        "LLM agent long term memory design",
+        "LLM 代理人 記憶 可靠性"
+      ]
+    }
+  ]
+}

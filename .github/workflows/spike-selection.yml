@@ -1,0 +1,28 @@
+name: spike-selection
+
+on:
+  pull_request:
+    paths: ['spike/selection/**', '!spike/selection/results/**', '.github/workflows/spike-selection.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  search-supply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: astral-sh/setup-uv@v10.3.0
+      - name: Run selection spike (one cloud run)
+        run: node spike/selection/run.mjs --place gha --run "${{ github.run_number }}-${{ github.run_attempt }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spike-selection-results-${{ github.run_number }}-${{ github.run_attempt }}
+          path: spike/selection/results/
+          retention-days: 30
