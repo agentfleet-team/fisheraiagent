@@ -1,0 +1,25 @@
+{
+  "method": "innertube-mweb",
+  "videoId": "dQw4w9WgXcQ",
+  "runs": [
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability UNPLAYABLE: The page needs to be reloaded."
+    },
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability UNPLAYABLE: The page needs to be reloaded."
+    },
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability UNPLAYABLE: The page needs to be reloaded."
+    }
+  ],
+  "okRuns": 0,
+  "medianP1Ms": null,
+  "medianP2Ms": null,
+  "medianTotalMs": null
+}

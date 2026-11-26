@@ -1,0 +1,14 @@
+{
+  "videoId": "hWe-j78vNpc",
+  "asrTrackCount": 21,
+  "spokenLanguage": "en",
+  "originalAsrTrack": {
+    "index": 3,
+    "languageCode": "en",
+    "vssId": "a.en"
+  },
+  "manualTrack": null,
+  "kind": "auto",
+  "rule": "multi-audio: default audio track en-US.4 -> asr track with language en",
+  "tracksSha256": "347809b7857d3b66f90e145ebe2cb698963239f181a9338a966115363779013b"
+}

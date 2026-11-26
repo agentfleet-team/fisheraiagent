@@ -1,0 +1,25 @@
+{
+  "method": "innertube-android-vr",
+  "videoId": "dQw4w9WgXcQ",
+  "runs": [
+    {
+      "p1Ms": 118,
+      "p2Ms": 43,
+      "error": null
+    },
+    {
+      "p1Ms": 67,
+      "p2Ms": 39,
+      "error": null
+    },
+    {
+      "p1Ms": 74,
+      "p2Ms": 40,
+      "error": null
+    }
+  ],
+  "okRuns": 3,
+  "medianP1Ms": 74,
+  "medianP2Ms": 40,
+  "medianTotalMs": 114
+}

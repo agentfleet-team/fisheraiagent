@@ -1,0 +1,2439 @@
+{
+  "asr": {
+    "index": 3,
+    "languageCode": "en",
+    "vssId": "a.en",
+    "bytes": 150843,
+    "cueCount": 255,
+    "first3": [
+      {
+        "start": 0,
+        "end": 3.7,
+        "text": "There's this technique that I've been"
+      },
+      {
+        "start": 1,
+        "end": 6.5,
+        "text": "using for a while that I thought was"
+      },
+      {
+        "start": 3.7,
+        "end": 8.600000000000001,
+        "text": "kind of just too boring and obvious to"
+      }
+    ],
+    "cues": [
+      {
+        "start": 0,
+        "end": 3.7,
+        "text": "There's this technique that I've been"
+      },
+      {
+        "start": 1,
+        "end": 6.5,
+        "text": "using for a while that I thought was"
+      },
+      {
+        "start": 3.7,
+        "end": 8.600000000000001,
+        "text": "kind of just too boring and obvious to"
+      },
+      {
+        "start": 6.5,
+        "end": 10.9,
+        "text": "post about. And then in an office hours"
+      },
+      {
+        "start": 8.6,
+        "end": 13,
+        "text": "in the cohort I was running this week, I"
+      },
+      {
+        "start": 10.9,
+        "end": 14.9,
+        "text": "just showed it off and people went, wow,"
+      },
+      {
+        "start": 13,
+        "end": 16.6,
+        "text": "that's really cool. I never thought it"
+      },
+      {
+        "start": 14.9,
+        "end": 19.1,
+        "text": "could be so simple. And then I posted"
+      },
+      {
+        "start": 16.6,
+        "end": 20.6,
+        "text": "about it on Twitter and it went nuts. So"
+      },
+      {
+        "start": 19.1,
+        "end": 22.8,
+        "text": "obviously this is something people need"
+      },
+      {
+        "start": 20.6,
+        "end": 24.8,
+        "text": "to hear about. And this technique solves"
+      },
+      {
+        "start": 22.8,
+        "end": 27.700000000000003,
+        "text": "a problem which is how do you work with"
+      },
+      {
+        "start": 24.8,
+        "end": 29.4,
+        "text": "agents in multiple repos at once? So"
+      },
+      {
+        "start": 27.7,
+        "end": 31.5,
+        "text": "let's set this up. Imagine that your"
+      },
+      {
+        "start": 29.4,
+        "end": 33.8,
+        "text": "organization looks like this, which most"
+      },
+      {
+        "start": 31.5,
+        "end": 35.7,
+        "text": "organizations do. They have lots of"
+      },
+      {
+        "start": 33.8,
+        "end": 37.8,
+        "text": "different repos that all have different"
+      },
+      {
+        "start": 35.7,
+        "end": 39.900000000000006,
+        "text": "concerns. We have one that is a"
+      },
+      {
+        "start": 37.8,
+        "end": 42.099999999999994,
+        "text": "storefront, one that is a payments API,"
+      },
+      {
+        "start": 39.9,
+        "end": 43.9,
+        "text": "one that's an admin dashboard, and 20"
+      },
+      {
+        "start": 42.1,
+        "end": 45.6,
+        "text": "more repos that you might occasionally"
+      },
+      {
+        "start": 43.9,
+        "end": 47.199999999999996,
+        "text": "need to dip in and out of. This is easy"
+      },
+      {
+        "start": 45.6,
+        "end": 49,
+        "text": "when you need to make changes to only"
+      },
+      {
+        "start": 47.2,
+        "end": 51.1,
+        "text": "one of these repos, so you just run the"
+      },
+      {
+        "start": 49,
+        "end": 53.1,
+        "text": "agent inside the storefront. It's even"
+      },
+      {
+        "start": 51.1,
+        "end": 54.7,
+        "text": "pretty easy if you realize when you're"
+      },
+      {
+        "start": 53.1,
+        "end": 56.800000000000004,
+        "text": "working in the storefront you need to"
+      },
+      {
+        "start": 54.7,
+        "end": 58.6,
+        "text": "make changes to the payments API because"
+      },
+      {
+        "start": 56.8,
+        "end": 60.599999999999994,
+        "text": "you can actually just get your agent to"
+      },
+      {
+        "start": 58.6,
+        "end": 62,
+        "text": "work in multiple directories at once."
+      },
+      {
+        "start": 60.6,
+        "end": 63.5,
+        "text": "And so this means that you would end up"
+      },
+      {
+        "start": 62,
+        "end": 64.699,
+        "text": "with a pull request inside Acme"
+      },
+      {
+        "start": 63.5,
+        "end": 67.2,
+        "text": "storefront and then a pull request"
+      },
+      {
+        "start": 64.699,
+        "end": 69.1,
+        "text": "inside payments API, all from the same"
+      },
+      {
+        "start": 67.2,
+        "end": 71.3,
+        "text": "session. Now that's fine and that works,"
+      },
+      {
+        "start": 69.1,
+        "end": 74.39999999999999,
+        "text": "but the issue becomes what do you do"
+      },
+      {
+        "start": 71.3,
+        "end": 76.39999999999999,
+        "text": "with the data, with the steering files,"
+      },
+      {
+        "start": 74.4,
+        "end": 78.5,
+        "text": "and with the stuff that you want the"
+      },
+      {
+        "start": 76.4,
+        "end": 80,
+        "text": "agent to have in every single session?"
+      },
+      {
+        "start": 78.5,
+        "end": 81.7,
+        "text": "What often happens is you will have your"
+      },
+      {
+        "start": 80,
+        "end": 84.4,
+        "text": "skills and your tooling and your"
+      },
+      {
+        "start": 81.7,
+        "end": 87.2,
+        "text": "agents.md and maybe even like wiki links"
+      },
+      {
+        "start": 84.4,
+        "end": 89.4,
+        "text": "and stuff all inside duplicated over"
+      },
+      {
+        "start": 87.2,
+        "end": 91.3,
+        "text": "multiple repos. This means that whenever"
+      },
+      {
+        "start": 89.4,
+        "end": 93.2,
+        "text": "you start an agent session you are going"
+      },
+      {
+        "start": 91.3,
+        "end": 95,
+        "text": "to have access to those things. So if"
+      },
+      {
+        "start": 93.2,
+        "end": 96.2,
+        "text": "you start it in storefront you're going"
+      },
+      {
+        "start": 95,
+        "end": 97.8,
+        "text": "to still have the same skills and"
+      },
+      {
+        "start": 96.2,
+        "end": 99.60000000000001,
+        "text": "tooling. But this is a massive pain"
+      },
+      {
+        "start": 97.8,
+        "end": 101.7,
+        "text": "because you then need to keep all of"
+      },
+      {
+        "start": 99.6,
+        "end": 104.1,
+        "text": "those skills, all of that tooling in"
+      },
+      {
+        "start": 101.7,
+        "end": 106.60000000000001,
+        "text": "sync across different repos and across"
+      },
+      {
+        "start": 104.1,
+        "end": 109.1,
+        "text": "maybe 30 40 repos. You could put all of"
+      },
+      {
+        "start": 106.6,
+        "end": 111,
+        "text": "these skills and tooling inside people's"
+      },
+      {
+        "start": 109.1,
+        "end": 113.5,
+        "text": "local machine, so in their user"
+      },
+      {
+        "start": 111,
+        "end": 115.5,
+        "text": "directory so it's accessible from every"
+      },
+      {
+        "start": 113.5,
+        "end": 117,
+        "text": "single one of these repos. But then"
+      },
+      {
+        "start": 115.5,
+        "end": 119.5,
+        "text": "because it's kind of invisible to the"
+      },
+      {
+        "start": 117,
+        "end": 121.892,
+        "text": "user it means that they won't be updated"
+      },
+      {
+        "start": 119.5,
+        "end": 123.792,
+        "text": "over time they'll probably fall behind"
+      },
+      {
+        "start": 121.892,
+        "end": 125.49199999999999,
+        "text": "what the global setup is. And also, I"
+      },
+      {
+        "start": 123.792,
+        "end": 128.092,
+        "text": "think of the users directory as the"
+      },
+      {
+        "start": 125.492,
+        "end": 130.49200000000002,
+        "text": "place where the user can make changes to"
+      },
+      {
+        "start": 128.092,
+        "end": 132.292,
+        "text": "their setup that suits how they work"
+      },
+      {
+        "start": 130.492,
+        "end": 133.892,
+        "text": "instead of how the team wants them to"
+      },
+      {
+        "start": 132.292,
+        "end": 135.892,
+        "text": "work. And so none of these solutions"
+      },
+      {
+        "start": 133.892,
+        "end": 137.492,
+        "text": "particularly feel great, and it means"
+      },
+      {
+        "start": 135.892,
+        "end": 139.692,
+        "text": "that people who work in multi-repo"
+      },
+      {
+        "start": 137.492,
+        "end": 141.392,
+        "text": "setups feel like they have no good"
+      },
+      {
+        "start": 139.692,
+        "end": 144.49200000000002,
+        "text": "choices. And so the solution that I"
+      },
+      {
+        "start": 141.392,
+        "end": 145.892,
+        "text": "propose is called the home repo. This is"
+      },
+      {
+        "start": 144.492,
+        "end": 148.09199999999998,
+        "text": "a technique I've been using for a while"
+      },
+      {
+        "start": 145.892,
+        "end": 150.09199999999998,
+        "text": "where I have a single repo, so which is"
+      },
+      {
+        "start": 148.092,
+        "end": 152.192,
+        "text": "the home where all of my skills, all my"
+      },
+      {
+        "start": 150.092,
+        "end": 154.49200000000002,
+        "text": "steering files, I have a wiki in there"
+      },
+      {
+        "start": 152.192,
+        "end": 156.092,
+        "text": "and a load of custom tooling, all that"
+      },
+      {
+        "start": 154.492,
+        "end": 158.392,
+        "text": "live in that one repo. This means that"
+      },
+      {
+        "start": 156.092,
+        "end": 161.092,
+        "text": "whenever I run my agent, I'm running my"
+      },
+      {
+        "start": 158.392,
+        "end": 162.992,
+        "text": "agent always inside the home repo. That"
+      },
+      {
+        "start": 161.092,
+        "end": 164.39200000000002,
+        "text": "means that the agent operating inside"
+      },
+      {
+        "start": 162.992,
+        "end": 166.992,
+        "text": "the home repo, which is just like a"
+      },
+      {
+        "start": 164.392,
+        "end": 169.492,
+        "text": "normal repo, is able to reach the"
+      },
+      {
+        "start": 166.992,
+        "end": 171.59199999999998,
+        "text": "storefront and the payments API and just"
+      },
+      {
+        "start": 169.492,
+        "end": 173.292,
+        "text": "operate across lots of different repos"
+      },
+      {
+        "start": 171.592,
+        "end": 174.592,
+        "text": "at once and pull in all the context that"
+      },
+      {
+        "start": 173.292,
+        "end": 176.492,
+        "text": "it needs to. And so you're probably"
+      },
+      {
+        "start": 174.592,
+        "end": 179.292,
+        "text": "thinking, please can we look at your"
+      },
+      {
+        "start": 176.492,
+        "end": 180.69199999999998,
+        "text": "home repo? Well, here it is. The main"
+      },
+      {
+        "start": 179.292,
+        "end": 183.192,
+        "text": "things we need to pay attention to in"
+      },
+      {
+        "start": 180.692,
+        "end": 184.792,
+        "text": "here are of course the claw.md inside"
+      },
+      {
+        "start": 183.192,
+        "end": 187.292,
+        "text": "here, which we'll get to in a minute,"
+      },
+      {
+        "start": 184.792,
+        "end": 190.292,
+        "text": "but also crucially the skills up the top"
+      },
+      {
+        "start": 187.292,
+        "end": 192.292,
+        "text": "here, so in clawed skills. These skills"
+      },
+      {
+        "start": 190.292,
+        "end": 194.092,
+        "text": "are private skills. In other words,"
+      },
+      {
+        "start": 192.292,
+        "end": 196.392,
+        "text": "these are skills that I do not want to"
+      },
+      {
+        "start": 194.092,
+        "end": 198.39200000000002,
+        "text": "release for whatever reason because they"
+      },
+      {
+        "start": 196.392,
+        "end": 200.292,
+        "text": "are extremely good and extremely"
+      },
+      {
+        "start": 198.392,
+        "end": 202.792,
+        "text": "sensitive to my business. And this means"
+      },
+      {
+        "start": 200.292,
+        "end": 204.492,
+        "text": "that these are available in every single"
+      },
+      {
+        "start": 202.792,
+        "end": 206.392,
+        "text": "session. So if your organization has a"
+      },
+      {
+        "start": 204.492,
+        "end": 208.09199999999998,
+        "text": "list of skills that you want to add,"
+      },
+      {
+        "start": 206.392,
+        "end": 209.792,
+        "text": "then you should add them inside the home"
+      },
+      {
+        "start": 208.092,
+        "end": 211.792,
+        "text": "repo just here. This is also a place"
+      },
+      {
+        "start": 209.792,
+        "end": 213.992,
+        "text": "that you can configure settings in a"
+      },
+      {
+        "start": 211.792,
+        "end": 215.992,
+        "text": "versioned way too. So if you're running"
+      },
+      {
+        "start": 213.992,
+        "end": 217.992,
+        "text": "a consistent agent in here, you can have"
+      },
+      {
+        "start": 215.992,
+        "end": 220.292,
+        "text": "settings in your settings.json that"
+      },
+      {
+        "start": 217.992,
+        "end": 221.992,
+        "text": "spill out over across your entire"
+      },
+      {
+        "start": 220.292,
+        "end": 225.092,
+        "text": "organization immediately. The main"
+      },
+      {
+        "start": 221.992,
+        "end": 227.392,
+        "text": "structural things come from the claw.md"
+      },
+      {
+        "start": 225.092,
+        "end": 228.89200000000002,
+        "text": "here or agents.md. And inside here, you"
+      },
+      {
+        "start": 227.392,
+        "end": 231.192,
+        "text": "can see that there are navigation"
+      },
+      {
+        "start": 228.892,
+        "end": 233.492,
+        "text": "pointers to all of the important repos"
+      },
+      {
+        "start": 231.192,
+        "end": 234.892,
+        "text": "that I on a day-to-day basis touch. So"
+      },
+      {
+        "start": 233.492,
+        "end": 237.69199999999998,
+        "text": "if there are any skill changes for"
+      },
+      {
+        "start": 234.892,
+        "end": 239.392,
+        "text": "instance, then it's at repos AI skills."
+      },
+      {
+        "start": 237.692,
+        "end": 241.192,
+        "text": "Anything that needs updating in my"
+      },
+      {
+        "start": 239.392,
+        "end": 243.394,
+        "text": "course video manager, which is probably"
+      },
+      {
+        "start": 241.192,
+        "end": 245.594,
+        "text": "my hottest repo in terms of commits,"
+      },
+      {
+        "start": 243.394,
+        "end": 247.594,
+        "text": "then that goes there. Anything for the"
+      },
+      {
+        "start": 245.594,
+        "end": 249.094,
+        "text": "cohort 05 project, anything for the AI"
+      },
+      {
+        "start": 247.594,
+        "end": 250.594,
+        "text": "coding crash course repo. So when I'm"
+      },
+      {
+        "start": 249.094,
+        "end": 253.194,
+        "text": "talking about these links then from the"
+      },
+      {
+        "start": 250.594,
+        "end": 255.29399999999998,
+        "text": "home repo to other repos, this is how"
+      },
+      {
+        "start": 253.194,
+        "end": 257.394,
+        "text": "they're done. Literally just a path"
+      },
+      {
+        "start": 255.294,
+        "end": 259.494,
+        "text": "inside the agents.md. On a fresh"
+      },
+      {
+        "start": 257.394,
+        "end": 261.094,
+        "text": "machine, the agent what it does is if"
+      },
+      {
+        "start": 259.494,
+        "end": 263.394,
+        "text": "sandcastle doesn't exist at this"
+      },
+      {
+        "start": 261.094,
+        "end": 264.894,
+        "text": "location, then it clones it down. And"
+      },
+      {
+        "start": 263.394,
+        "end": 267.794,
+        "text": "then if there are several agents running"
+      },
+      {
+        "start": 264.894,
+        "end": 270.294,
+        "text": "at once, it will just use a work tree"
+      },
+      {
+        "start": 267.794,
+        "end": 272.594,
+        "text": "within that same repo. So it's zero"
+      },
+      {
+        "start": 270.294,
+        "end": 274.094,
+        "text": "setup basically. It just works on its"
+      },
+      {
+        "start": 272.594,
+        "end": 276.194,
+        "text": "own and then, you know, eventually you"
+      },
+      {
+        "start": 274.094,
+        "end": 277.694,
+        "text": "have to do some normal work tree cleanup"
+      },
+      {
+        "start": 276.194,
+        "end": 279.394,
+        "text": "as you go. If I wanted to add another"
+      },
+      {
+        "start": 277.694,
+        "end": 281.494,
+        "text": "repo to the list, then I just edit"
+      },
+      {
+        "start": 279.394,
+        "end": 284.094,
+        "text": "agents.md and then it just goes into the"
+      },
+      {
+        "start": 281.494,
+        "end": 287.09400000000005,
+        "text": "same setup. This setup works for maybe"
+      },
+      {
+        "start": 284.094,
+        "end": 289.99399999999997,
+        "text": "20 30 40 repos possibly. It wouldn't"
+      },
+      {
+        "start": 287.094,
+        "end": 291.49399999999997,
+        "text": "scale to like 400 repos. But for those"
+      },
+      {
+        "start": 289.994,
+        "end": 293.194,
+        "text": "situations, I would just add a bit of"
+      },
+      {
+        "start": 291.494,
+        "end": 295.494,
+        "text": "progressive disclosure. Inside your"
+      },
+      {
+        "start": 293.194,
+        "end": 297.394,
+        "text": "agents.md, instead of linking to the raw"
+      },
+      {
+        "start": 295.494,
+        "end": 299.394,
+        "text": "repos, you would just say, okay, here"
+      },
+      {
+        "start": 297.394,
+        "end": 300.694,
+        "text": "are the front end repos, here are the"
+      },
+      {
+        "start": 299.394,
+        "end": 303.394,
+        "text": "back end repos, and here are the"
+      },
+      {
+        "start": 300.694,
+        "end": 305.594,
+        "text": "internal repos for internal tooling. And"
+      },
+      {
+        "start": 303.394,
+        "end": 307.294,
+        "text": "then inside there, you can just link to"
+      },
+      {
+        "start": 305.594,
+        "end": 308.294,
+        "text": "the repos from there. So this means that"
+      },
+      {
+        "start": 307.294,
+        "end": 309.794,
+        "text": "the"
+      },
+      {
+        "start": 308.294,
+        "end": 312.094,
+        "text": "agent would just be able to find the"
+      },
+      {
+        "start": 309.794,
+        "end": 313.99399999999997,
+        "text": "right repo based on just simple file"
+      },
+      {
+        "start": 312.094,
+        "end": 316.294,
+        "text": "system tactics. And by the way, it's"
+      },
+      {
+        "start": 313.994,
+        "end": 318.59400000000005,
+        "text": "worth saying that I love mono repos."
+      },
+      {
+        "start": 316.294,
+        "end": 320.69399999999996,
+        "text": "Like if all of this stuff could live in"
+      },
+      {
+        "start": 318.594,
+        "end": 322.394,
+        "text": "one repo, I would do it. You know, I"
+      },
+      {
+        "start": 320.694,
+        "end": 324.494,
+        "text": "used to be employed at Vercel as the"
+      },
+      {
+        "start": 322.394,
+        "end": 326.894,
+        "text": "turbo repo dev rel. You know, I'm very"
+      },
+      {
+        "start": 324.494,
+        "end": 328.494,
+        "text": "into mono repos. But you can't always do"
+      },
+      {
+        "start": 326.894,
+        "end": 329.794,
+        "text": "them, especially if you need a mix of"
+      },
+      {
+        "start": 328.494,
+        "end": 331.694,
+        "text": "like some of these repos need to be"
+      },
+      {
+        "start": 329.794,
+        "end": 333.99399999999997,
+        "text": "public, some of them need to be private."
+      },
+      {
+        "start": 331.694,
+        "end": 336.894,
+        "text": "So what I'd say is that if you can move"
+      },
+      {
+        "start": 333.994,
+        "end": 339.79400000000004,
+        "text": "all this stuff into a single repo, then"
+      },
+      {
+        "start": 336.894,
+        "end": 342.194,
+        "text": "great. If you can and most likely you"
+      },
+      {
+        "start": 339.794,
+        "end": 343.894,
+        "text": "can't just because of political will,"
+      },
+      {
+        "start": 342.194,
+        "end": 345.194,
+        "text": "then a home repo is the way to go."
+      },
+      {
+        "start": 343.894,
+        "end": 347.494,
+        "text": "There's one more thing to say about home"
+      },
+      {
+        "start": 345.194,
+        "end": 349.494,
+        "text": "repos, which is that I have noticed I've"
+      },
+      {
+        "start": 347.494,
+        "end": 351.59400000000005,
+        "text": "been able to be much more ambitious with"
+      },
+      {
+        "start": 349.494,
+        "end": 353.494,
+        "text": "the tooling I've created for my agents"
+      },
+      {
+        "start": 351.594,
+        "end": 356.294,
+        "text": "since adopting a home repo. I call my"
+      },
+      {
+        "start": 353.494,
+        "end": 359.894,
+        "text": "home repo my personal wiki because it is"
+      },
+      {
+        "start": 356.294,
+        "end": 361.69399999999996,
+        "text": "an enormous wiki of all of the data that"
+      },
+      {
+        "start": 359.894,
+        "end": 363.794,
+        "text": "is kind of sensitive to my business. It"
+      },
+      {
+        "start": 361.694,
+        "end": 367.295,
+        "text": "lives inside here inside wiki and it's"
+      },
+      {
+        "start": 363.794,
+        "end": 369.09499999999997,
+        "text": "essentially a LLM Wiki, Carpathy style,"
+      },
+      {
+        "start": 367.295,
+        "end": 371.595,
+        "text": "with a bunch of markdown files of"
+      },
+      {
+        "start": 369.095,
+        "end": 373.495,
+        "text": "interesting stuff that my audience finds"
+      },
+      {
+        "start": 371.595,
+        "end": 375.19500000000005,
+        "text": "cool or finds interesting. I will talk"
+      },
+      {
+        "start": 373.495,
+        "end": 376.795,
+        "text": "about how I generate this Wiki and how I"
+      },
+      {
+        "start": 375.195,
+        "end": 378.395,
+        "text": "keep it up to date in a future video"
+      },
+      {
+        "start": 376.795,
+        "end": 379.39500000000004,
+        "text": "because people are obsessed with this"
+      },
+      {
+        "start": 378.395,
+        "end": 381.59499999999997,
+        "text": "idea."
+      },
+      {
+        "start": 379.395,
+        "end": 383.395,
+        "text": "But I mean, it's just very important to"
+      },
+      {
+        "start": 381.595,
+        "end": 386.495,
+        "text": "my business because I'm able to query"
+      },
+      {
+        "start": 383.395,
+        "end": 388.29499999999996,
+        "text": "it, able to extract really, really rich"
+      },
+      {
+        "start": 386.495,
+        "end": 390.295,
+        "text": "data from it that goes into course"
+      },
+      {
+        "start": 388.295,
+        "end": 391.89500000000004,
+        "text": "creation, goes into content creation,"
+      },
+      {
+        "start": 390.295,
+        "end": 394.095,
+        "text": "etc. And because I've got this home"
+      },
+      {
+        "start": 391.895,
+        "end": 396.09499999999997,
+        "text": "repo, it just makes it the obvious spot"
+      },
+      {
+        "start": 394.095,
+        "end": 398.095,
+        "text": "to house this Wiki. I've also been kind"
+      },
+      {
+        "start": 396.095,
+        "end": 400.69500000000005,
+        "text": "of burying the lead on tooling as well"
+      },
+      {
+        "start": 398.095,
+        "end": 403.495,
+        "text": "because tooling is absolutely essential,"
+      },
+      {
+        "start": 400.695,
+        "end": 405.195,
+        "text": "giving your agent like custom tools that"
+      },
+      {
+        "start": 403.495,
+        "end": 407.095,
+        "text": "it can use to interface with the stuff"
+      },
+      {
+        "start": 405.195,
+        "end": 409.295,
+        "text": "you use for your business. If I run Wiki"
+      },
+      {
+        "start": 407.095,
+        "end": 411.595,
+        "text": "help inside my personal Wiki directory,"
+      },
+      {
+        "start": 409.295,
+        "end": 413.295,
+        "text": "we can see that there is a ton of stuff"
+      },
+      {
+        "start": 411.595,
+        "end": 414.89500000000004,
+        "text": "here integrating with Gmail, with Slack,"
+      },
+      {
+        "start": 413.295,
+        "end": 418.695,
+        "text": "with Discord, with YouTube, with GitHub,"
+      },
+      {
+        "start": 414.895,
+        "end": 421.495,
+        "text": "Gcal, AI Hero, cold turkey to like uh do"
+      },
+      {
+        "start": 418.695,
+        "end": 424.195,
+        "text": "my blocks, things like this. I publish"
+      },
+      {
+        "start": 421.495,
+        "end": 426.195,
+        "text": "one-off HTML reports, append to butter a"
+      },
+      {
+        "start": 424.195,
+        "end": 428.795,
+        "text": "butter buffer. This stuff has been able"
+      },
+      {
+        "start": 426.195,
+        "end": 431.795,
+        "text": "to grow up organically inside the"
+      },
+      {
+        "start": 428.795,
+        "end": 434.995,
+        "text": "personal Wiki and add to this huge great"
+      },
+      {
+        "start": 431.795,
+        "end": 436.595,
+        "text": "ecosystem that I'm able to build on"
+      },
+      {
+        "start": 434.995,
+        "end": 438.295,
+        "text": "based on the fact that I've got it all"
+      },
+      {
+        "start": 436.595,
+        "end": 439.89500000000004,
+        "text": "centralized, that I always run in one"
+      },
+      {
+        "start": 438.295,
+        "end": 442.39500000000004,
+        "text": "location. This means that I'm able to do"
+      },
+      {
+        "start": 439.895,
+        "end": 444.995,
+        "text": "crazy things like say, okay, look up"
+      },
+      {
+        "start": 442.395,
+        "end": 448.495,
+        "text": "this message in Discord, then go to the"
+      },
+      {
+        "start": 444.995,
+        "end": 450.695,
+        "text": "crash course repo, let's say, make a fix"
+      },
+      {
+        "start": 448.495,
+        "end": 452.495,
+        "text": "there using all of the existing skills"
+      },
+      {
+        "start": 450.695,
+        "end": 455.295,
+        "text": "that you've already got. From there, you"
+      },
+      {
+        "start": 452.495,
+        "end": 457.195,
+        "text": "can use my CVM skill inside my course"
+      },
+      {
+        "start": 455.295,
+        "end": 460.295,
+        "text": "video manager, wherever it is just up"
+      },
+      {
+        "start": 457.195,
+        "end": 462.09499999999997,
+        "text": "here, and use this to go and actually"
+      },
+      {
+        "start": 460.295,
+        "end": 463.695,
+        "text": "edit the course to make the fix. In"
+      },
+      {
+        "start": 462.095,
+        "end": 466.39500000000004,
+        "text": "other words, the home repo becomes the"
+      },
+      {
+        "start": 463.695,
+        "end": 468.795,
+        "text": "tooling that links all different parts"
+      },
+      {
+        "start": 466.395,
+        "end": 471.29499999999996,
+        "text": "of your business up together, not only"
+      },
+      {
+        "start": 468.795,
+        "end": 473.89500000000004,
+        "text": "the code, but giving access to the agent"
+      },
+      {
+        "start": 471.295,
+        "end": 476.39500000000004,
+        "text": "to really rich data sources and rich"
+      },
+      {
+        "start": 473.895,
+        "end": 478.495,
+        "text": "tooling that it can use to actually do"
+      },
+      {
+        "start": 476.395,
+        "end": 480.895,
+        "text": "better work. So how do you set one up"
+      },
+      {
+        "start": 478.495,
+        "end": 483.095,
+        "text": "for yourself? Well, I have written an"
+      },
+      {
+        "start": 480.895,
+        "end": 484.695,
+        "text": "article called the home repo pattern."
+      },
+      {
+        "start": 483.095,
+        "end": 486.995,
+        "text": "And in this article, I've included a"
+      },
+      {
+        "start": 484.695,
+        "end": 488.79699999999997,
+        "text": "prompt down here that you can use to set"
+      },
+      {
+        "start": 486.995,
+        "end": 491.497,
+        "text": "one up. It essentially just grills you"
+      },
+      {
+        "start": 488.797,
+        "end": 493.39700000000005,
+        "text": "about your own setup, looks at all of"
+      },
+      {
+        "start": 491.497,
+        "end": 495.897,
+        "text": "the repos that you need to care about,"
+      },
+      {
+        "start": 493.397,
+        "end": 497.597,
+        "text": "and then it will start to move things"
+      },
+      {
+        "start": 495.897,
+        "end": 499.597,
+        "text": "into a home repo. And of course, the"
+      },
+      {
+        "start": 497.597,
+        "end": 501.197,
+        "text": "link to this is down below. And by the"
+      },
+      {
+        "start": 499.597,
+        "end": 503.49699999999996,
+        "text": "way, if you dig what I'm putting out"
+      },
+      {
+        "start": 501.197,
+        "end": 505.797,
+        "text": "here, then you would really enjoy my"
+      },
+      {
+        "start": 503.497,
+        "end": 507.997,
+        "text": "self-paced AI coding crash course. This"
+      },
+      {
+        "start": 505.797,
+        "end": 510.297,
+        "text": "is the perfect introduction to if you"
+      },
+      {
+        "start": 507.997,
+        "end": 512.797,
+        "text": "want to learn about agents, if you have"
+      },
+      {
+        "start": 510.297,
+        "end": 513.9970000000001,
+        "text": "never tried using agents before maybe,"
+      },
+      {
+        "start": 512.797,
+        "end": 515.9970000000001,
+        "text": "or you just feel like you're falling"
+      },
+      {
+        "start": 513.997,
+        "end": 518.097,
+        "text": "behind in this big, exciting world. But"
+      },
+      {
+        "start": 515.997,
+        "end": 520.2969999999999,
+        "text": "anyway, that is the home repo, the"
+      },
+      {
+        "start": 518.097,
+        "end": 522.8969999999999,
+        "text": "pattern that I thought was kind of too"
+      },
+      {
+        "start": 520.297,
+        "end": 524.597,
+        "text": "basic to post, but now I talk about it,"
+      },
+      {
+        "start": 522.897,
+        "end": 525.797,
+        "text": "I realize, okay, it actually solves a"
+      },
+      {
+        "start": 524.597,
+        "end": 527.697,
+        "text": "bunch of problems that people are"
+      },
+      {
+        "start": 525.797,
+        "end": 529.097,
+        "text": "actually having. So enjoy it. Enjoy"
+      },
+      {
+        "start": 527.697,
+        "end": 531.597,
+        "text": "setting it up and"
+      },
+      {
+        "start": 529.097,
+        "end": 534.697,
+        "text": "enjoy your new home, I guess. Nice work,"
+      },
+      {
+        "start": 531.597,
+        "end": 534.697,
+        "text": "and I will see you in the next one."
+      }
+    ]
+  },
+  "asr-other": {
+    "index": 0,
+    "languageCode": "ar",
+    "vssId": "a.ar",
+    "bytes": 138244,
+    "cueCount": 222,
+    "first3": [
+      {
+        "start": 0.1,
+        "end": 6.004,
+        "text": "هناك تقنية أستخدمها منذ فترة واعتقدت"
+      },
+      {
+        "start": 2.988,
+        "end": 8.251,
+        "text": "أنها مملة وبديهية للغاية بحيث لا تستحق"
+      },
+      {
+        "start": 6.004,
+        "end": 10.466,
+        "text": "النشر عنها. ثم خلال ساعات العمل في"
+      }
+    ],
+    "cues": [
+      {
+        "start": 0.1,
+        "end": 6.004,
+        "text": "هناك تقنية أستخدمها منذ فترة واعتقدت"
+      },
+      {
+        "start": 2.988,
+        "end": 8.251,
+        "text": "أنها مملة وبديهية للغاية بحيث لا تستحق"
+      },
+      {
+        "start": 6.004,
+        "end": 10.466,
+        "text": "النشر عنها. ثم خلال ساعات العمل في"
+      },
+      {
+        "start": 8.251,
+        "end": 12.617999999999999,
+        "text": "المجموعة التي كنت أديرها هذا الأسبوع،"
+      },
+      {
+        "start": 10.466,
+        "end": 14.879999999999999,
+        "text": "استعرضتها فقط وكان رد فعل الناس: واو،"
+      },
+      {
+        "start": 12.618,
+        "end": 17.106,
+        "text": "هذا رائع حقاً. لم أتخيل أبداً أنها يمكن"
+      },
+      {
+        "start": 14.88,
+        "end": 19.21,
+        "text": "أن تكون بهذه البساطة. ثم نشرت عنها على"
+      },
+      {
+        "start": 17.106,
+        "end": 21.564,
+        "text": "تويتر ولقيت تفاعلاً هائلاً. لذا من"
+      },
+      {
+        "start": 19.21,
+        "end": 24.349,
+        "text": "الواضح أن هذا شيء يحتاج الناس إلى معرفته"
+      },
+      {
+        "start": 21.564,
+        "end": 27.076999999999998,
+        "text": ". وهذه التقنية تحل مشكلة وهي كيفية العمل"
+      },
+      {
+        "start": 24.349,
+        "end": 30.003,
+        "text": "مع الوكلاء في مستودعات متعددة في آن واحد"
+      },
+      {
+        "start": 27.077,
+        "end": 33.064,
+        "text": ". دعونا نعد هذا الإعداد. تخيل أن مؤسستك"
+      },
+      {
+        "start": 30.003,
+        "end": 35.782,
+        "text": "تبدو هكذا، وهو حال معظم المؤسسات. لديهم"
+      },
+      {
+        "start": 33.064,
+        "end": 38.228,
+        "text": "الكثير من المستودعات المختلفة التي تهتم"
+      },
+      {
+        "start": 35.782,
+        "end": 40.315,
+        "text": "بمسائل متنوعة. لدينا مستودع لمتجر، وآخر"
+      },
+      {
+        "start": 38.228,
+        "end": 42.553000000000004,
+        "text": "لواجهة برمجة تطبيقات المدفوعات، وآخر"
+      },
+      {
+        "start": 40.315,
+        "end": 44.489,
+        "text": "للوحة تحكم الإدارة، وعشرون مستودعاً آخر"
+      },
+      {
+        "start": 42.553,
+        "end": 46.608999999999995,
+        "text": "قد تحتاج للدخول إليها والخروج منها"
+      },
+      {
+        "start": 44.489,
+        "end": 48.726,
+        "text": "أحياناً. هذا سهل عندما تحتاج إلى إجراء"
+      },
+      {
+        "start": 46.609,
+        "end": 50.885000000000005,
+        "text": "تغييرات على واحد فقط من هذه المستودعات،"
+      },
+      {
+        "start": 48.726,
+        "end": 52.903999999999996,
+        "text": "لذا تقوم فقط بتشغيل الوكيل داخل المتجر."
+      },
+      {
+        "start": 50.885,
+        "end": 55.104,
+        "text": "الأمر سهل جداً أيضاً إذا أدركت أثناء"
+      },
+      {
+        "start": 52.904,
+        "end": 57.334,
+        "text": "عملك في المتجر أنك بحاجة لإجراء تغييرات"
+      },
+      {
+        "start": 55.104,
+        "end": 59.414,
+        "text": "على واجهة برمجة تطبيقات المدفوعات، لأنه"
+      },
+      {
+        "start": 57.334,
+        "end": 61.893,
+        "text": "يمكنك فعلياً جعل وكيلك يعمل في مجلدات"
+      },
+      {
+        "start": 59.414,
+        "end": 64.211,
+        "text": "متعددة في وقت واحد. وهذا يعني أنك ستنتهي"
+      },
+      {
+        "start": 61.893,
+        "end": 66.778,
+        "text": "بطلب سحب داخل متجر Acme ثم طلب سحب آخر"
+      },
+      {
+        "start": 64.211,
+        "end": 69.585,
+        "text": "داخل واجهة برمجة تطبيقات المدفوعات، كل"
+      },
+      {
+        "start": 66.778,
+        "end": 72.533,
+        "text": "ذلك من نفس الجلسة. هذا جيد ويعمل، لكن"
+      },
+      {
+        "start": 69.585,
+        "end": 75.942,
+        "text": "المشكلة تصبح: ماذا تفعل بالبيانات،"
+      },
+      {
+        "start": 72.533,
+        "end": 78.983,
+        "text": "وبملفات التوجيه، وبالأشياء التي تريد أن"
+      },
+      {
+        "start": 75.942,
+        "end": 81.86099999999999,
+        "text": "تتوفر لدى الوكيل في كل جلسة؟ ما يحدث"
+      },
+      {
+        "start": 78.983,
+        "end": 84.569,
+        "text": "غالباً هو أنك ستمتلك مهاراتك وأدواتك"
+      },
+      {
+        "start": 81.861,
+        "end": 87.446,
+        "text": "وملف agents.md الخاص بك وربما حتى روابط"
+      },
+      {
+        "start": 84.569,
+        "end": 90.242,
+        "text": "ويكي وأشياء أخرى مكررة داخل مستودعات"
+      },
+      {
+        "start": 87.446,
+        "end": 92.969,
+        "text": "متعددة. هذا يعني أنه كلما بدأت جلسة وكيل"
+      },
+      {
+        "start": 90.242,
+        "end": 95.40700000000001,
+        "text": "، سيكون بإمكانك الوصول إلى تلك الأشياء."
+      },
+      {
+        "start": 92.969,
+        "end": 97.758,
+        "text": "لذا إذا بدأتها في المتجر، فستظل تمتلك"
+      },
+      {
+        "start": 95.407,
+        "end": 100.237,
+        "text": "نفس المهارات والأدوات. لكن هذا يمثل"
+      },
+      {
+        "start": 97.758,
+        "end": 102.75099999999999,
+        "text": "إزعاجاً كبيراً لأنك ستحتاج بعد ذلك إلى"
+      },
+      {
+        "start": 100.237,
+        "end": 105.05499999999999,
+        "text": "إبقاء كل تلك المهارات والأدوات متزامنة"
+      },
+      {
+        "start": 102.751,
+        "end": 107.33500000000001,
+        "text": "عبر مستودعات مختلفة، ربما عبر 30 أو 40"
+      },
+      {
+        "start": 105.055,
+        "end": 109.90100000000001,
+        "text": "مستودعاً. يمكنك وضع كل هذه المهارات"
+      },
+      {
+        "start": 107.335,
+        "end": 112.19699999999999,
+        "text": "والأدوات داخل الأجهزة المحلية للمستخدمين"
+      },
+      {
+        "start": 109.901,
+        "end": 114.35799999999999,
+        "text": "، أي في مجلد المستخدم الخاص بهم، بحيث"
+      },
+      {
+        "start": 112.197,
+        "end": 116.62100000000001,
+        "text": "يمكن الوصول إليها من كل واحد من هذه"
+      },
+      {
+        "start": 114.358,
+        "end": 119.416,
+        "text": "المستودعات. ولكن لأنها غير مرئية"
+      },
+      {
+        "start": 116.621,
+        "end": 122.09599999999999,
+        "text": "للمستخدم، فهذا يعني أنها لن يتم تحديثها"
+      },
+      {
+        "start": 119.416,
+        "end": 124.517,
+        "text": "بمرور الوقت، وربما ستصبح قديمة مقارنة"
+      },
+      {
+        "start": 122.096,
+        "end": 127.086,
+        "text": "بالإعداد العام. وأيضاً، أعتبر مجلد"
+      },
+      {
+        "start": 124.517,
+        "end": 129.761,
+        "text": "المستخدم المكان الذي يمكن فيه للمستخدم"
+      },
+      {
+        "start": 127.086,
+        "end": 132.046,
+        "text": "إجراء تغييرات على إعداده بما يناسب طريقة"
+      },
+      {
+        "start": 129.761,
+        "end": 134.04999999999998,
+        "text": "عمله، بدلاً من الطريقة التي يريدها"
+      },
+      {
+        "start": 132.046,
+        "end": 136,
+        "text": "الفريق. لذا لا يبدو أي من هذه الحلول"
+      },
+      {
+        "start": 134.05,
+        "end": 138.119,
+        "text": "رائعاً بشكل خاص، وهذا يعني أن الأشخاص"
+      },
+      {
+        "start": 136,
+        "end": 140.209,
+        "text": "الذين يعملون في بيئات تعتمد على مستودعات"
+      },
+      {
+        "start": 138.119,
+        "end": 143.158,
+        "text": "متعددة يشعرون بأنه ليس لديهم خيارات جيدة"
+      },
+      {
+        "start": 140.209,
+        "end": 145.53900000000002,
+        "text": ". لذا، الحل الذي أقترحه يسمى \"المستودع"
+      },
+      {
+        "start": 143.158,
+        "end": 147.993,
+        "text": "الرئيسي\"(home repo). هذه تقنية أستخدمها"
+      },
+      {
+        "start": 145.539,
+        "end": 150.47899999999998,
+        "text": "منذ فترة، حيث أمتلك مستودعاً واحداً يمثل"
+      },
+      {
+        "start": 147.993,
+        "end": 152.54,
+        "text": "موطناً لكل مهاراتي وملفات التوجيه الخاصة"
+      },
+      {
+        "start": 150.479,
+        "end": 154.92800000000003,
+        "text": "بي، كما أحتفظ فيه بويكي ومجموعة من"
+      },
+      {
+        "start": 152.54,
+        "end": 157.123,
+        "text": "الأدوات المخصصة التي تعيش جميعها في ذلك"
+      },
+      {
+        "start": 154.928,
+        "end": 159.62,
+        "text": "المستودع. هذا يعني أنني عندما أشغل"
+      },
+      {
+        "start": 157.123,
+        "end": 161.73399999999998,
+        "text": "الوكيل الخاص بي، فأنا أشغله دائماً داخل"
+      },
+      {
+        "start": 159.62,
+        "end": 163.924,
+        "text": "هذا المستودع الرئيسي. وهذا يعني أن"
+      },
+      {
+        "start": 161.734,
+        "end": 165.847,
+        "text": "الوكيل الذي يعمل داخل المستودع الرئيسي،"
+      },
+      {
+        "start": 163.924,
+        "end": 167.859,
+        "text": "تماماً مثل أي مستودع عادي، قادر على"
+      },
+      {
+        "start": 165.847,
+        "end": 170.049,
+        "text": "الوصول إلى واجهة المتجر وواجهة برمجة"
+      },
+      {
+        "start": 167.859,
+        "end": 172.268,
+        "text": "تطبيقات المدفوعات، والعمل عبر الكثير من"
+      },
+      {
+        "start": 170.049,
+        "end": 174.428,
+        "text": "المستودعات المختلفة في وقت واحد، وجلب كل"
+      },
+      {
+        "start": 172.268,
+        "end": 176.834,
+        "text": "السياقات التي يحتاجها. لذا ربما تفكر"
+      },
+      {
+        "start": 174.428,
+        "end": 179.535,
+        "text": "الآن، هل يمكننا إلقاء نظرة على مستودعك"
+      },
+      {
+        "start": 176.834,
+        "end": 181.881,
+        "text": "الرئيسي؟ حسناً، ها هو ذا. الأشياء"
+      },
+      {
+        "start": 179.535,
+        "end": 183.9,
+        "text": "الرئيسية التي نحتاج إلى الانتباه إليها"
+      },
+      {
+        "start": 181.881,
+        "end": 186.213,
+        "text": "هنا هي بالطبع ملف claw.md الموجود هنا"
+      },
+      {
+        "start": 183.9,
+        "end": 188.526,
+        "text": "والذي سنتطرق إليه بعد قليل، ولكن الأهم"
+      },
+      {
+        "start": 186.213,
+        "end": 190.909,
+        "text": "من ذلك هو المهارات الموجودة في الأعلى،"
+      },
+      {
+        "start": 188.526,
+        "end": 194.08,
+        "text": "هنا في \"clawed skills\". هذه المهارات هي"
+      },
+      {
+        "start": 190.909,
+        "end": 197.284,
+        "text": "مهارات خاصة. بمعنى آخر، هذه مهارات لا"
+      },
+      {
+        "start": 194.08,
+        "end": 200.73700000000002,
+        "text": "أريد إصدارها لأي سبب من الأسباب، لأنها"
+      },
+      {
+        "start": 197.284,
+        "end": 203.759,
+        "text": "جيدة للغاية وحساسة جداً لعملي. وهذا يعني"
+      },
+      {
+        "start": 200.737,
+        "end": 206.035,
+        "text": "أنها متاحة في كل جلسة عمل. لذا إذا كانت"
+      },
+      {
+        "start": 203.759,
+        "end": 208.33999999999997,
+        "text": "مؤسستك تمتلك قائمة من المهارات التي تريد"
+      },
+      {
+        "start": 206.035,
+        "end": 210.674,
+        "text": "إضافتها، فيجب عليك إضافتها داخل المستودع"
+      },
+      {
+        "start": 208.34,
+        "end": 213.284,
+        "text": "الرئيسي هنا. هذا أيضاً مكان يمكنك فيه"
+      },
+      {
+        "start": 210.674,
+        "end": 215.81,
+        "text": "تهيئة الإعدادات بطريقة ذات إصدارات أيضاً"
+      },
+      {
+        "start": 213.284,
+        "end": 217.944,
+        "text": ". لذا إذا كنت تشغل وكيلاً متسقاً هنا،"
+      },
+      {
+        "start": 215.81,
+        "end": 220.114,
+        "text": "يمكنك الحصول على إعدادات في ملف"
+      },
+      {
+        "start": 217.944,
+        "end": 222.89,
+        "text": "settings.json الخاص بك والتي تنتشر عبر"
+      },
+      {
+        "start": 220.114,
+        "end": 225.84,
+        "text": "مؤسستك بأكملها على الفور. تأتي الأمور"
+      },
+      {
+        "start": 222.89,
+        "end": 228.83399999999997,
+        "text": "الهيكلية الرئيسية من ملف claw.md هنا أو"
+      },
+      {
+        "start": 225.84,
+        "end": 231.873,
+        "text": "agents.md، وداخله يمكنك رؤية مؤشرات تنقل"
+      },
+      {
+        "start": 228.834,
+        "end": 234.142,
+        "text": "إلى كل المستودعات المهمة التي أتعامل"
+      },
+      {
+        "start": 231.873,
+        "end": 236.319,
+        "text": "معها يومياً. لذا إذا كانت هناك أي"
+      },
+      {
+        "start": 234.142,
+        "end": 238.043,
+        "text": "تغييرات في المهارات على سبيل المثال،"
+      },
+      {
+        "start": 236.319,
+        "end": 239.777,
+        "text": "فإنها تكون في repos AI skills. أي شيء"
+      },
+      {
+        "start": 238.043,
+        "end": 241.71800000000002,
+        "text": "يحتاج إلى تحديث في مدير فيديو الدورة"
+      },
+      {
+        "start": 239.777,
+        "end": 243.426,
+        "text": "التدريبية الخاص بي، والذي ربما يكون أكثر"
+      },
+      {
+        "start": 241.718,
+        "end": 245.03099999999998,
+        "text": "مستودعاتي نشاطاً من حيث الالتزامات ("
+      },
+      {
+        "start": 243.426,
+        "end": 246.988,
+        "text": "commits)، فإنه يذهب إلى هناك. أي شيء"
+      },
+      {
+        "start": 245.031,
+        "end": 249.09900000000002,
+        "text": "لمشروع الدفعة 05، وأي شيء لمستودع دورة"
+      },
+      {
+        "start": 246.988,
+        "end": 251.088,
+        "text": "البرمجة بالذكاء الاصطناعي المكثفة. لذا"
+      },
+      {
+        "start": 249.099,
+        "end": 253.189,
+        "text": "عندما أتحدث عن هذه الروابط من المستودع"
+      },
+      {
+        "start": 251.088,
+        "end": 256.372,
+        "text": "الرئيسي إلى مستودعات أخرى، فهذه هي كيفية"
+      },
+      {
+        "start": 253.189,
+        "end": 258.476,
+        "text": "القيام بها. حرفياً مجرد مسار داخل ملف"
+      },
+      {
+        "start": 256.372,
+        "end": 260.42,
+        "text": "agents.md. على جهاز جديد، ما يفعله"
+      },
+      {
+        "start": 258.476,
+        "end": 262.466,
+        "text": "الوكيل هو أنه إذا لم يكن \"sandcastle\""
+      },
+      {
+        "start": 260.42,
+        "end": 264.648,
+        "text": "موجوداً في هذا الموقع، فإنه يقوم"
+      },
+      {
+        "start": 262.466,
+        "end": 266.76800000000003,
+        "text": "باستنساخه. ثم إذا كان هناك العديد من"
+      },
+      {
+        "start": 264.648,
+        "end": 268.545,
+        "text": "الوكلاء يعملون في وقت واحد، فسيستخدم"
+      },
+      {
+        "start": 266.768,
+        "end": 271.27099999999996,
+        "text": "ببساطة شجرة عمل (work tree) داخل نفس"
+      },
+      {
+        "start": 268.545,
+        "end": 272.962,
+        "text": "المستودع. لذا فهو إعداد صفري أساساً."
+      },
+      {
+        "start": 271.271,
+        "end": 274.57800000000003,
+        "text": "يعمل الأمر من تلقاء نفسه، وكما تعلم،"
+      },
+      {
+        "start": 272.962,
+        "end": 276.44599999999997,
+        "text": "سيتعين عليك في النهاية القيام ببعض"
+      },
+      {
+        "start": 274.578,
+        "end": 278.404,
+        "text": "التنظيف المعتاد لشجرة العمل أثناء المضي"
+      },
+      {
+        "start": 276.446,
+        "end": 280.101,
+        "text": "قدماً. إذا أردت إضافة مستودع آخر إلى"
+      },
+      {
+        "start": 278.404,
+        "end": 281.973,
+        "text": "القائمة، فما عليّ سوى تعديل ملف"
+      },
+      {
+        "start": 280.101,
+        "end": 284.528,
+        "text": "agents.md، وسيدخل تلقائياً ضمن الإعداد"
+      },
+      {
+        "start": 281.973,
+        "end": 287.15500000000003,
+        "text": "نفسه. هذا الإعداد يعمل ربما مع 20 أو 30"
+      },
+      {
+        "start": 284.528,
+        "end": 289.523,
+        "text": "أو 40 مستودعاً على الأرجح. لكنه لن يكون"
+      },
+      {
+        "start": 287.155,
+        "end": 291.375,
+        "text": "مناسباً للتوسع ليصل إلى 400 مستودع مثلاً"
+      },
+      {
+        "start": 289.523,
+        "end": 293.377,
+        "text": ". ولكن في تلك الحالات، سأقوم ببساطة"
+      },
+      {
+        "start": 291.375,
+        "end": 294.895,
+        "text": "بإضافة القليل من الكشف التدريجي. داخل"
+      },
+      {
+        "start": 293.377,
+        "end": 297.096,
+        "text": "ملف agents.md الخاص بك، بدلاً من"
+      },
+      {
+        "start": 294.895,
+        "end": 299.268,
+        "text": "الارتباط بالمستودعات الخام، يمكنك القول"
+      },
+      {
+        "start": 297.096,
+        "end": 301.262,
+        "text": ": حسناً، هنا مستودعات الواجهة الأمامية،"
+      },
+      {
+        "start": 299.268,
+        "end": 303.63,
+        "text": "وهنا مستودعات الواجهة الخلفية، وهنا"
+      },
+      {
+        "start": 301.262,
+        "end": 306.05,
+        "text": "المستودعات الداخلية للأدوات. ومن هناك،"
+      },
+      {
+        "start": 303.63,
+        "end": 308.207,
+        "text": "يمكنك ببساطة وضع روابط للمستودعات"
+      },
+      {
+        "start": 306.05,
+        "end": 310.39300000000003,
+        "text": "المطلوبة. هذا يعني أن الوكيل سيكون"
+      },
+      {
+        "start": 308.207,
+        "end": 312.679,
+        "text": "قادراً على العثور على المستودع الصحيح"
+      },
+      {
+        "start": 310.393,
+        "end": 314.844,
+        "text": "بناءً على تكتيكات بسيطة لنظام الملفات."
+      },
+      {
+        "start": 312.679,
+        "end": 316.90299999999996,
+        "text": "وبالمناسبة، تجدر الإشارة إلى أنني أحب"
+      },
+      {
+        "start": 314.844,
+        "end": 319.084,
+        "text": "المستودعات الموحدة (Mono repos). إذا كان"
+      },
+      {
+        "start": 316.903,
+        "end": 321.12,
+        "text": "بإمكان كل هذه الأشياء العيش في مستودع"
+      },
+      {
+        "start": 319.084,
+        "end": 322.696,
+        "text": "واحد، فسأفعل ذلك. كما تعلم، كنت أعمل"
+      },
+      {
+        "start": 321.12,
+        "end": 324.647,
+        "text": "سابقاً في Vercel كمسؤول عن علاقات"
+      },
+      {
+        "start": 322.696,
+        "end": 327.11800000000005,
+        "text": "المطورين لـ Turbo repo. وأنا مهتم جداً"
+      },
+      {
+        "start": 324.647,
+        "end": 329.235,
+        "text": "بالمستودعات الموحدة. لكن لا يمكنك دائماً"
+      },
+      {
+        "start": 327.118,
+        "end": 331.442,
+        "text": "استخدامها، خاصة إذا كنت بحاجة إلى مزيج"
+      },
+      {
+        "start": 329.235,
+        "end": 333.707,
+        "text": "حيث يجب أن يكون بعضها عاماً وبعضها الآخر"
+      },
+      {
+        "start": 331.442,
+        "end": 336.295,
+        "text": "خاصاً. لذا ما أقوله هو أنه إذا كان"
+      },
+      {
+        "start": 333.707,
+        "end": 338.666,
+        "text": "بإمكانك نقل كل هذه الأشياء إلى مستودع"
+      },
+      {
+        "start": 336.295,
+        "end": 341.276,
+        "text": "واحد، فهذا رائع. وإذا لم تستطع، وهو"
+      },
+      {
+        "start": 338.666,
+        "end": 343.26,
+        "text": "الأرجح لأسباب تتعلق بالسياسات والإدارة،"
+      },
+      {
+        "start": 341.276,
+        "end": 345.622,
+        "text": "فإن \"المستودع الرئيسي\"(Home repo) هو"
+      },
+      {
+        "start": 343.26,
+        "end": 347.901,
+        "text": "الحل الأمثل. هناك شيء آخر يجب قوله عن"
+      },
+      {
+        "start": 345.622,
+        "end": 350.418,
+        "text": "المستودعات الرئيسية، وهو أنني لاحظت"
+      },
+      {
+        "start": 347.901,
+        "end": 352.66200000000003,
+        "text": "قدرتي على أن أكون أكثر طموحاً في الأدوات"
+      },
+      {
+        "start": 350.418,
+        "end": 355.718,
+        "text": "التي أنشأتها لوكلائي منذ اعتماد هذا"
+      },
+      {
+        "start": 352.662,
+        "end": 358.553,
+        "text": "النهج. أسمي مستودعي الرئيسي \"ويكي الشخصي"
+      },
+      {
+        "start": 355.718,
+        "end": 361.675,
+        "text": "\" لأنه عبارة عن موسوعة ضخمة تحتوي على"
+      },
+      {
+        "start": 358.553,
+        "end": 364.452,
+        "text": "جميع البيانات الحساسة لعملي التجاري. هي"
+      },
+      {
+        "start": 361.675,
+        "end": 366.967,
+        "text": "تعيش هنا داخل الويكي، وهي في الأساس ويكي"
+      },
+      {
+        "start": 364.452,
+        "end": 369.669,
+        "text": "للنماذج اللغوية الكبيرة (LLM) على غرار"
+      },
+      {
+        "start": 366.967,
+        "end": 372.296,
+        "text": "أسلوب كارباثي، مع مجموعة من ملفات \"مارك"
+      },
+      {
+        "start": 369.669,
+        "end": 374.722,
+        "text": "داون\" التي يجدها جمهوري رائعة أو مثيرة"
+      },
+      {
+        "start": 372.296,
+        "end": 377.236,
+        "text": "للاهتمام. سأتحدث عن كيفية إنشاء هذا"
+      },
+      {
+        "start": 374.722,
+        "end": 380.084,
+        "text": "الويكي وكيفية تحديثه في فيديو مستقبلي"
+      },
+      {
+        "start": 377.236,
+        "end": 383.303,
+        "text": "لأن الناس مهووسون بهذه الفكرة. أعني أنها"
+      },
+      {
+        "start": 380.084,
+        "end": 386.221,
+        "text": "مهمة جداً لعملي لأنني قادر على الاستعلام"
+      },
+      {
+        "start": 383.303,
+        "end": 389.311,
+        "text": "عنها، واستخراج بيانات غنية جداً منها"
+      },
+      {
+        "start": 386.221,
+        "end": 392.239,
+        "text": "تذهب في إنشاء الدورات، وصناعة المحتوى،"
+      },
+      {
+        "start": 389.311,
+        "end": 395.274,
+        "text": "إلخ. وبما أن لدي هذا المستودع الرئيسي،"
+      },
+      {
+        "start": 392.239,
+        "end": 397.94399999999996,
+        "text": "فهو المكان البديهي لاستضافة هذا الويكي."
+      },
+      {
+        "start": 395.274,
+        "end": 400.974,
+        "text": "لقد كنت أخفي الجانب الأهم فيما يتعلق"
+      },
+      {
+        "start": 397.944,
+        "end": 403.844,
+        "text": "بالأدوات، لأن الأدوات ضرورية للغاية، فهي"
+      },
+      {
+        "start": 400.974,
+        "end": 406.586,
+        "text": "تمنح وكيلك أدوات مخصصة يمكنه استخدامها"
+      },
+      {
+        "start": 403.844,
+        "end": 409.203,
+        "text": "للتفاعل مع كل ما تستخدمه في عملك. إذا"
+      },
+      {
+        "start": 406.586,
+        "end": 412.151,
+        "text": "قمت بتشغيل \"wiki help\" داخل دليل الويكي"
+      },
+      {
+        "start": 409.203,
+        "end": 414.80899999999997,
+        "text": "الشخصي الخاص بي، يمكننا رؤية الكثير من"
+      },
+      {
+        "start": 412.151,
+        "end": 416.802,
+        "text": "الأشياء التي تتكامل مع Gmail، و Slack، و"
+      },
+      {
+        "start": 414.809,
+        "end": 418.92,
+        "text": "Discord، و YouTube، و GitHub، و Gcal، و"
+      },
+      {
+        "start": 416.802,
+        "end": 421.968,
+        "text": "AI Hero، و Cold Turkey لحظر المواقع،"
+      },
+      {
+        "start": 418.92,
+        "end": 424.618,
+        "text": "وأشياء من هذا القبيل. أقوم بنشر تقارير"
+      },
+      {
+        "start": 421.968,
+        "end": 427.21500000000003,
+        "text": "HTML لمرة واحدة، وأضيفها إلى \"Butter\"،"
+      },
+      {
+        "start": 424.618,
+        "end": 429.92,
+        "text": "أو مؤقت \"Butter\". لقد تمكنت هذه الأشياء"
+      },
+      {
+        "start": 427.215,
+        "end": 432.513,
+        "text": "من النمو بشكل طبيعي داخل الويكي الشخصي،"
+      },
+      {
+        "start": 429.92,
+        "end": 435.033,
+        "text": "وإضافتها إلى هذا النظام البيئي الرائع"
+      },
+      {
+        "start": 432.513,
+        "end": 437.515,
+        "text": "والكبير الذي يمكنني البناء عليه بفضل"
+      },
+      {
+        "start": 435.033,
+        "end": 440.148,
+        "text": "حقيقة أن كل شيء مركزي، وأقوم بتشغيله"
+      },
+      {
+        "start": 437.515,
+        "end": 442.722,
+        "text": "دائماً في مكان واحد. هذا يعني أنني قادر"
+      },
+      {
+        "start": 440.148,
+        "end": 444.803,
+        "text": "على القيام بأشياء مذهلة مثل القول: حسناً"
+      },
+      {
+        "start": 442.722,
+        "end": 447.13,
+        "text": "، ابحث عن هذه الرسالة في Discord، ثم"
+      },
+      {
+        "start": 444.803,
+        "end": 449.67,
+        "text": "اذهب إلى مستودع الدورة المكثفة، وقم"
+      },
+      {
+        "start": 447.13,
+        "end": 452.255,
+        "text": "بإجراء إصلاح هناك باستخدام كل المهارات"
+      },
+      {
+        "start": 449.67,
+        "end": 454.716,
+        "text": "الحالية التي تمتلكها بالفعل. ومن هناك،"
+      },
+      {
+        "start": 452.255,
+        "end": 457.322,
+        "text": "يمكنك استخدام مهارة CVM الخاصة بي داخل"
+      },
+      {
+        "start": 454.716,
+        "end": 460,
+        "text": "مدير فيديو الدورة التدريبية، أينما كان"
+      },
+      {
+        "start": 457.322,
+        "end": 462.681,
+        "text": "هنا في الأعلى، واستخدامها للذهاب وتعديل"
+      },
+      {
+        "start": 460,
+        "end": 464.747,
+        "text": "الدورة فعلياً لإجراء الإصلاح. بمعنى آخر"
+      },
+      {
+        "start": 462.681,
+        "end": 466.96,
+        "text": "، يصبح المستودع الرئيسي (home repo)"
+      },
+      {
+        "start": 464.747,
+        "end": 469.357,
+        "text": "الأداة التي تربط جميع أجزاء عملك"
+      },
+      {
+        "start": 466.96,
+        "end": 471.93899999999996,
+        "text": "المختلفة ببعضها، ليس فقط التعليمات"
+      },
+      {
+        "start": 469.357,
+        "end": 474.70500000000004,
+        "text": "البرمجية، بل أيضاً منح الوكيل إمكانية"
+      },
+      {
+        "start": 471.939,
+        "end": 477.547,
+        "text": "الوصول إلى مصادر بيانات غنية وأدوات قوية"
+      },
+      {
+        "start": 474.705,
+        "end": 480.318,
+        "text": "يمكنه استخدامها لإنجاز عمل أفضل. إذن كيف"
+      },
+      {
+        "start": 477.547,
+        "end": 482.46700000000004,
+        "text": "تقوم بإعداد واحد لنفسك؟ حسناً، لقد كتبت"
+      },
+      {
+        "start": 480.318,
+        "end": 484.252,
+        "text": "مقالاً بعنوان \"نمط المستودع الرئيسي\"("
+      },
+      {
+        "start": 482.467,
+        "end": 486.375,
+        "text": "The home repo pattern). وفي هذا المقال،"
+      },
+      {
+        "start": 484.252,
+        "end": 488.738,
+        "text": "قمت بتضمين أمر (prompt) في الأسفل يمكنك"
+      },
+      {
+        "start": 486.375,
+        "end": 491.411,
+        "text": "استخدامه لإعداد واحد. إنه يسألك بشكل"
+      },
+      {
+        "start": 488.738,
+        "end": 494.121,
+        "text": "أساسي عن إعداداتك الخاصة، وينظر في جميع"
+      },
+      {
+        "start": 491.411,
+        "end": 496.721,
+        "text": "المستودعات التي تحتاج إلى الاهتمام بها،"
+      },
+      {
+        "start": 494.121,
+        "end": 499.518,
+        "text": "ثم يبدأ في نقل الأشياء إلى مستودع رئيسي"
+      },
+      {
+        "start": 496.721,
+        "end": 501.661,
+        "text": ". وبالطبع، الرابط لهذا موجود في الأسفل."
+      },
+      {
+        "start": 499.518,
+        "end": 503.93499999999995,
+        "text": "وبالمناسبة، إذا أعجبك ما أقدمه هنا،"
+      },
+      {
+        "start": 501.661,
+        "end": 506.254,
+        "text": "فستستمتع حقاً بدورتي المكثفة في برمجة"
+      },
+      {
+        "start": 503.935,
+        "end": 508.684,
+        "text": "الذكاء الاصطناعي ذاتية التعلم. هذه هي"
+      },
+      {
+        "start": 506.254,
+        "end": 511.18100000000004,
+        "text": "المقدمة المثالية إذا كنت ترغب في التعرف"
+      },
+      {
+        "start": 508.684,
+        "end": 513.4780000000001,
+        "text": "على الوكلاء، إذا لم تجرب استخدام الوكلاء"
+      },
+      {
+        "start": 511.181,
+        "end": 515.875,
+        "text": "من قبل، أو إذا كنت تشعر فقط بأنك تتخلف"
+      },
+      {
+        "start": 513.478,
+        "end": 517.861,
+        "text": "عن الركب في هذا العالم المثير والكبير."
+      },
+      {
+        "start": 515.875,
+        "end": 519.846,
+        "text": "على أية حال، هذا هو المستودع الرئيسي،"
+      },
+      {
+        "start": 517.861,
+        "end": 521.86,
+        "text": "وهو النمط الذي اعتقدت أنه بسيط للغاية"
+      },
+      {
+        "start": 519.846,
+        "end": 523.672,
+        "text": "لدرجة لا تستحق النشر، ولكن الآن بعد أن"
+      },
+      {
+        "start": 521.86,
+        "end": 525.686,
+        "text": "تحدثت عنه، أدركت أنه يحل في الواقع"
+      },
+      {
+        "start": 523.672,
+        "end": 528.288,
+        "text": "مجموعة من المشكلات التي يواجهها الناس"
+      },
+      {
+        "start": 525.686,
+        "end": 530.971,
+        "text": "فعلياً. لذا استمتع به. استمتع بإعداده"
+      },
+      {
+        "start": 528.288,
+        "end": 535.121,
+        "text": "واستمتع بمنزلك الجديد، على ما أعتقد. عمل"
+      },
+      {
+        "start": 530.971,
+        "end": 535.121,
+        "text": "رائع، وأراكم في المرة القادمة."
+      }
+    ]
+  }
+}

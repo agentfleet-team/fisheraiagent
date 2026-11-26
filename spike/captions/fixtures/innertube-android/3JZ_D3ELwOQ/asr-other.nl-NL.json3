@@ -1,0 +1,4272 @@
+{
+  "wireMagic": "pb3",
+  "pens": [ {
+  
+  } ],
+  "wsWinStyles": [ {
+  
+  }, {
+    "mhModeHint": 2,
+    "juJustifCode": 0,
+    "sdScrollDir": 3
+  } ],
+  "wpWinPositions": [ {
+  
+  }, {
+    "apPoint": 6,
+    "ahHorPos": 20,
+    "avVerPos": 100,
+    "rcRows": 2,
+    "ccCols": 40
+  } ],
+  "events": [ {
+    "tStartMs": 0,
+    "dDurationMs": 254736,
+    "id": 1,
+    "wpWinPosId": 1,
+    "wsWinStyleId": 1
+  }, {
+    "tStartMs": 2788,
+    "dDurationMs": 2809,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "Gaan"
+    }, {
+      "utf8": " jullie",
+      "tOffsetMs": 229
+    }, {
+      "utf8": " naar",
+      "tOffsetMs": 551
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 780
+    }, {
+      "utf8": " sportschool",
+      "tOffsetMs": 918
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1424
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 1570
+    }, {
+      "utf8": " ga",
+      "tOffsetMs": 1713
+    } ]
+  }, {
+    "tStartMs": 4597,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 4644,
+    "dDurationMs": 2813,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " naar"
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 239
+    }, {
+      "utf8": " sportschool",
+      "tOffsetMs": 383
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 909
+    }, {
+      "utf8": " Maar",
+      "tOffsetMs": 1057
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 1309
+    }, {
+      "utf8": " wisten",
+      "tOffsetMs": 1511
+    } ]
+  }, {
+    "tStartMs": 6457,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 6508,
+    "dDurationMs": 2685,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " jullie"
+    }, {
+      "utf8": " al",
+      "tOffsetMs": 353
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 454
+    }, {
+      "utf8": " Maar",
+      "tOffsetMs": 605
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 830
+    }, {
+      "utf8": " denk",
+      "tOffsetMs": 965
+    }, {
+      "utf8": " niet",
+      "tOffsetMs": 1190
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 1415
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1595
+    } ]
+  }, {
+    "tStartMs": 8193,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 8238,
+    "dDurationMs": 2350,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " ooit"
+    }, {
+      "utf8": " zo",
+      "tOffsetMs": 225
+    }, {
+      "utf8": " gespierd",
+      "tOffsetMs": 360
+    }, {
+      "utf8": " word",
+      "tOffsetMs": 765
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 990
+    }, {
+      "utf8": " deze",
+      "tOffsetMs": 1170
+    } ]
+  }, {
+    "tStartMs": 9588,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 9633,
+    "dDurationMs": 5893,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " kangoeroe"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 405
+    }, {
+      "utf8": " Kijk",
+      "tOffsetMs": 1917
+    }, {
+      "utf8": " daar",
+      "tOffsetMs": 2151
+    }, {
+      "utf8": " eens",
+      "tOffsetMs": 2386
+    }, {
+      "utf8": " naar",
+      "tOffsetMs": 2621
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2809
+    }, {
+      "utf8": " Oh",
+      "tOffsetMs": 4426
+    }, {
+      "utf8": " mijn",
+      "tOffsetMs": 4626
+    } ]
+  }, {
+    "tStartMs": 14526,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 14593,
+    "dDurationMs": 10224,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " god"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 200
+    }, {
+      "utf8": " Hij",
+      "tOffsetMs": 5473
+    }, {
+      "utf8": " lijkt",
+      "tOffsetMs": 5684
+    }, {
+      "utf8": " wel",
+      "tOffsetMs": 6000
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 6212
+    }, {
+      "utf8": " alien",
+      "tOffsetMs": 6423
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 6687
+    }, {
+      "utf8": " Heilige",
+      "tOffsetMs": 8750
+    } ]
+  }, {
+    "tStartMs": 23817,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 23885,
+    "dDurationMs": 2976,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " poep"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 271
+    }, {
+      "utf8": " Hij",
+      "tOffsetMs": 439
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 693
+    }, {
+      "utf8": " echt",
+      "tOffsetMs": 885
+    }, {
+      "utf8": " enorm",
+      "tOffsetMs": 1203
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1522
+    }, {
+      "utf8": " Zou",
+      "tOffsetMs": 1686
+    }, {
+      "utf8": " hij",
+      "tOffsetMs": 1852
+    } ]
+  }, {
+    "tStartMs": 25861,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 25903,
+    "dDurationMs": 2770,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " stiekem"
+    }, {
+      "utf8": " aan",
+      "tOffsetMs": 332
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 499
+    }, {
+      "utf8": " middeltjes",
+      "tOffsetMs": 623
+    }, {
+      "utf8": " zitten",
+      "tOffsetMs": 1081
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1330
+    }, {
+      "utf8": " Train",
+      "tOffsetMs": 1472
+    } ]
+  }, {
+    "tStartMs": 27673,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 27732,
+    "dDurationMs": 3393,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " je"
+    }, {
+      "utf8": " wel",
+      "tOffsetMs": 179
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 358
+    }, {
+      "utf8": " bro",
+      "tOffsetMs": 477
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 656
+    }, {
+      "utf8": " Ja",
+      "tOffsetMs": 816
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1058
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 1280
+    }, {
+      "utf8": " ben",
+      "tOffsetMs": 1431
+    }, {
+      "utf8": " geïntimideerd",
+      "tOffsetMs": 1634
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2342
+    } ]
+  }, {
+    "tStartMs": 30125,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 30225,
+    "dDurationMs": 2352,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Ik"
+    }, {
+      "utf8": " heb",
+      "tOffsetMs": 106
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 249
+    }, {
+      "utf8": " gevoel",
+      "tOffsetMs": 391
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 640
+    }, {
+      "utf8": " hij",
+      "tOffsetMs": 783
+    }, {
+      "utf8": " me",
+      "tOffsetMs": 925
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 1032
+    }, {
+      "utf8": " elkaar",
+      "tOffsetMs": 1139
+    } ]
+  }, {
+    "tStartMs": 31577,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 31613,
+    "dDurationMs": 2567,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " gaat"
+    }, {
+      "utf8": " slaan",
+      "tOffsetMs": 178
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 356
+    }, {
+      "utf8": " Zo",
+      "tOffsetMs": 492
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 616
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 740
+    }, {
+      "utf8": " hé",
+      "tOffsetMs": 822
+    }, {
+      "utf8": " bro",
+      "tOffsetMs": 988
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1112
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1195
+    }, {
+      "utf8": " ruk",
+      "tOffsetMs": 1319
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1484
+    } ]
+  }, {
+    "tStartMs": 33180,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 33221,
+    "dDurationMs": 2614,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " kop"
+    }, {
+      "utf8": " eraf",
+      "tOffsetMs": 166
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 373
+    }, {
+      "utf8": " stop",
+      "tOffsetMs": 497
+    }, {
+      "utf8": " hem",
+      "tOffsetMs": 704
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 869
+    }, {
+      "utf8": " mijn",
+      "tOffsetMs": 993
+    }, {
+      "utf8": " buidel",
+      "tOffsetMs": 1200
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 1490
+    } ]
+  }, {
+    "tStartMs": 34835,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 34876,
+    "dDurationMs": 2723,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " trofee"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 248
+    }, {
+      "utf8": " [ __ ]",
+      "tOffsetMs": 331
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 662
+    }, {
+      "utf8": " De",
+      "tOffsetMs": 804
+    }, {
+      "utf8": " versie",
+      "tOffsetMs": 941
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 1263
+    }, {
+      "utf8": " jullie",
+      "tOffsetMs": 1447
+    } ]
+  }, {
+    "tStartMs": 36599,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 36645,
+    "dDurationMs": 2656,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " me"
+    }, {
+      "utf8": " stuurden",
+      "tOffsetMs": 138
+    }, {
+      "utf8": " heeft",
+      "tOffsetMs": 552
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 828
+    }, {
+      "utf8": " 12.000",
+      "tOffsetMs": 1058
+    }, {
+      "utf8": " views",
+      "tOffsetMs": 1380
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1610
+    } ]
+  }, {
+    "tStartMs": 38301,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 38401,
+    "dDurationMs": 2934,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Dus"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 152
+    }, {
+      "utf8": " tenzij",
+      "tOffsetMs": 254
+    }, {
+      "utf8": " er",
+      "tOffsetMs": 610
+    }, {
+      "utf8": " ergens",
+      "tOffsetMs": 763
+    }, {
+      "utf8": " anders",
+      "tOffsetMs": 1119
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 1476
+    }, {
+      "utf8": " kopie",
+      "tOffsetMs": 1679
+    } ]
+  }, {
+    "tStartMs": 40335,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 40386,
+    "dDurationMs": 2884,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " is"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 102
+    }, {
+      "utf8": " denk",
+      "tOffsetMs": 204
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 458
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 611
+    }, {
+      "utf8": " dit",
+      "tOffsetMs": 814
+    }, {
+      "utf8": " heel",
+      "tOffsetMs": 1018
+    }, {
+      "utf8": " erg",
+      "tOffsetMs": 1273
+    }, {
+      "utf8": " vers",
+      "tOffsetMs": 1476
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1731
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1833
+    } ]
+  }, {
+    "tStartMs": 42270,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 42370,
+    "dDurationMs": 2613,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Kijk"
+    }, {
+      "utf8": " daar",
+      "tOffsetMs": 229
+    }, {
+      "utf8": " eens",
+      "tOffsetMs": 459
+    }, {
+      "utf8": " naar",
+      "tOffsetMs": 689
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 873
+    }, {
+      "utf8": " Oh",
+      "tOffsetMs": 1019
+    }, {
+      "utf8": " mijn",
+      "tOffsetMs": 1146
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1316
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 1401
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1528
+    } ]
+  }, {
+    "tStartMs": 43983,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 44025,
+    "dDurationMs": 2613,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " neem"
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 212
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 382
+    }, {
+      "utf8": " cameraman",
+      "tOffsetMs": 510
+    }, {
+      "utf8": " niet",
+      "tOffsetMs": 934
+    }, {
+      "utf8": " kwalijk",
+      "tOffsetMs": 1146
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 1486
+    } ]
+  }, {
+    "tStartMs": 45638,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 45681,
+    "dDurationMs": 2505,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " hij"
+    }, {
+      "utf8": " dubbel",
+      "tOffsetMs": 169
+    }, {
+      "utf8": " ligt",
+      "tOffsetMs": 467
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 679
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 849
+    }, {
+      "utf8": " lachen",
+      "tOffsetMs": 1018
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1273
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 1416
+    } ]
+  }, {
+    "tStartMs": 47186,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 47231,
+    "dDurationMs": 2698,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " bedoel"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 268
+    }, {
+      "utf8": " hoe",
+      "tOffsetMs": 357
+    }, {
+      "utf8": " word",
+      "tOffsetMs": 536
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 759
+    }, {
+      "utf8": " zelfs",
+      "tOffsetMs": 893
+    }, {
+      "utf8": " zo",
+      "tOffsetMs": 1161
+    }, {
+      "utf8": " gespierd",
+      "tOffsetMs": 1295
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1653
+    } ]
+  }, {
+    "tStartMs": 48929,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 49029,
+    "dDurationMs": 2761,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Ja"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 90
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 180
+    }, {
+      "utf8": " heb",
+      "tOffsetMs": 316
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 496
+    }, {
+      "utf8": " hele",
+      "tOffsetMs": 632
+    }, {
+      "utf8": " dag",
+      "tOffsetMs": 857
+    }, {
+      "utf8": " koalaberen",
+      "tOffsetMs": 1038
+    }, {
+      "utf8": " lopen",
+      "tOffsetMs": 1535
+    } ]
+  }, {
+    "tStartMs": 50790,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 50835,
+    "dDurationMs": 2570,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " bankdrukken"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 496
+    }, {
+      "utf8": " Weet",
+      "tOffsetMs": 642
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 843
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 924
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1005
+    }, {
+      "utf8": " eet",
+      "tOffsetMs": 1126
+    }, {
+      "utf8": " normaal",
+      "tOffsetMs": 1287
+    } ]
+  }, {
+    "tStartMs": 52405,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 52445,
+    "dDurationMs": 2534,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " gesproken"
+    }, {
+      "utf8": " planten",
+      "tOffsetMs": 404
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 727
+    }, {
+      "utf8": " bessen",
+      "tOffsetMs": 848
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1090
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 1170
+    }, {
+      "utf8": " geen",
+      "tOffsetMs": 1372
+    } ]
+  }, {
+    "tStartMs": 53979,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 54019,
+    "dDurationMs": 2487,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " transvetten"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 444
+    }, {
+      "utf8": " weet",
+      "tOffsetMs": 525
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 726
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 807
+    }, {
+      "utf8": " Kun",
+      "tOffsetMs": 948
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1144
+    }, {
+      "utf8": " even",
+      "tOffsetMs": 1291
+    } ]
+  }, {
+    "tStartMs": 55506,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 55555,
+    "dDurationMs": 2832,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " spotten"
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 343
+    }, {
+      "utf8": " Weet",
+      "tOffsetMs": 492
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 746
+    }, {
+      "utf8": " wat",
+      "tOffsetMs": 898
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1051
+    }, {
+      "utf8": " Hij",
+      "tOffsetMs": 1202
+    }, {
+      "utf8": " lijkt",
+      "tOffsetMs": 1370
+    }, {
+      "utf8": " zelfs",
+      "tOffsetMs": 1622
+    } ]
+  }, {
+    "tStartMs": 57387,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 57429,
+    "dDurationMs": 2639,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " naar"
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 210
+    }, {
+      "utf8": " excuus",
+      "tOffsetMs": 378
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 672
+    }, {
+      "utf8": " zoeken",
+      "tOffsetMs": 798
+    }, {
+      "utf8": " om",
+      "tOffsetMs": 1092
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 1218
+    }, {
+      "utf8": " flexen",
+      "tOffsetMs": 1344
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1596
+    } ]
+  }, {
+    "tStartMs": 59068,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 59168,
+    "dDurationMs": 2555,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Zo"
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 145
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 291
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 388
+    }, {
+      "utf8": "Yep",
+      "tOffsetMs": 437
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 583
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 680
+    }, {
+      "utf8": " moet",
+      "tOffsetMs": 826
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 1069
+    }, {
+      "utf8": " andere",
+      "tOffsetMs": 1263
+    } ]
+  }, {
+    "tStartMs": 60723,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 60771,
+    "dDurationMs": 3097,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " verblijven"
+    }, {
+      "utf8": " daar",
+      "tOffsetMs": 535
+    }, {
+      "utf8": " eens",
+      "tOffsetMs": 778
+    }, {
+      "utf8": " bekijken",
+      "tOffsetMs": 1021
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1409
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 1458
+    }, {
+      "utf8": " Dus",
+      "tOffsetMs": 1870
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 2040
+    } ]
+  }, {
+    "tStartMs": 62868,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 62925,
+    "dDurationMs": 3213,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " deze"
+    }, {
+      "utf8": " volgende",
+      "tOffsetMs": 284
+    }, {
+      "utf8": " video",
+      "tOffsetMs": 795
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1136
+    }, {
+      "utf8": " geweldig",
+      "tOffsetMs": 1307
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1762
+    }, {
+      "utf8": " Het",
+      "tOffsetMs": 1919
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 2115
+    } ]
+  }, {
+    "tStartMs": 65138,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 65187,
+    "dDurationMs": 2519,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " echt"
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 245
+    }, {
+      "utf8": " eekhoorn",
+      "tOffsetMs": 441
+    }, {
+      "utf8": "!",
+      "tOffsetMs": 833
+    }, {
+      "utf8": " Dit",
+      "tOffsetMs": 983
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1136
+    }, {
+      "utf8": " iemands",
+      "tOffsetMs": 1251
+    } ]
+  }, {
+    "tStartMs": 66706,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 66744,
+    "dDurationMs": 2225,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " huisdier-eekhoorn"
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 689
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 842
+    }, {
+      "utf8": " nootje",
+      "tOffsetMs": 995
+    } ]
+  }, {
+    "tStartMs": 67969,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 68007,
+    "dDurationMs": 2379,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " probeert"
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 345
+    }, {
+      "utf8": " begraven",
+      "tOffsetMs": 460
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 804
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 919
+    }, {
+      "utf8": " vacht",
+      "tOffsetMs": 1034
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 1264
+    } ]
+  }, {
+    "tStartMs": 69386,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 69424,
+    "dDurationMs": 11193,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " een"
+    }, {
+      "utf8": " hond",
+      "tOffsetMs": 153
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 306
+    }, {
+      "utf8": " Aw",
+      "tOffsetMs": 8790
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 8886
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 8983
+    }, {
+      "utf8": " heb",
+      "tOffsetMs": 9128
+    }, {
+      "utf8": " hier",
+      "tOffsetMs": 9322
+    }, {
+      "utf8": " niets",
+      "tOffsetMs": 9564
+    }, {
+      "utf8": " over",
+      "tOffsetMs": 9854
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 10096
+    } ]
+  }, {
+    "tStartMs": 79617,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 79665,
+    "dDurationMs": 2887,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " zeggen"
+    }, {
+      "utf8": " behalve",
+      "tOffsetMs": 339
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 726
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 919
+    }, {
+      "utf8": " verdomd",
+      "tOffsetMs": 1113
+    }, {
+      "utf8": " schattig",
+      "tOffsetMs": 1500
+    } ]
+  }, {
+    "tStartMs": 81552,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 81600,
+    "dDurationMs": 3672,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " is"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 97
+    }, {
+      "utf8": " Het",
+      "tOffsetMs": 963
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1158
+    }, {
+      "utf8": " schattig",
+      "tOffsetMs": 1304
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1695
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 1793
+    }, {
+      "utf8": " hij",
+      "tOffsetMs": 2037
+    }, {
+      "utf8": " doet",
+      "tOffsetMs": 2233
+    }, {
+      "utf8": " echt",
+      "tOffsetMs": 2477
+    } ]
+  }, {
+    "tStartMs": 84272,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 84321,
+    "dDurationMs": 2759,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " een"
+    }, {
+      "utf8": " serieuze",
+      "tOffsetMs": 196
+    }, {
+      "utf8": " poging",
+      "tOffsetMs": 635
+    }, {
+      "utf8": " om",
+      "tOffsetMs": 977
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 1124
+    }, {
+      "utf8": " nootje",
+      "tOffsetMs": 1319
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 1661
+    } ]
+  }, {
+    "tStartMs": 86080,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 86129,
+    "dDurationMs": 3118,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " bedekken"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 391
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 540
+    }, {
+      "utf8": "Nee",
+      "tOffsetMs": 594
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 757
+    }, {
+      "utf8": " niemand",
+      "tOffsetMs": 866
+    }, {
+      "utf8": " zal",
+      "tOffsetMs": 1301
+    }, {
+      "utf8": " hier",
+      "tOffsetMs": 1519
+    }, {
+      "utf8": " zoeken",
+      "tOffsetMs": 1791
+    } ]
+  }, {
+    "tStartMs": 88247,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 88247,
+    "dDurationMs": 3425,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 54
+    }, {
+      "utf8": " Dus",
+      "tOffsetMs": 698
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 846
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 944
+    }, {
+      "utf8": " vond",
+      "tOffsetMs": 1092
+    }, {
+      "utf8": " dit",
+      "tOffsetMs": 1339
+    }, {
+      "utf8": " op",
+      "tOffsetMs": 1537
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 1685
+    }, {
+      "utf8": " blog",
+      "tOffsetMs": 1882
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 2129
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 2327
+    } ]
+  }, {
+    "tStartMs": 90672,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 90722,
+    "dDurationMs": 2826,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " soms"
+    }, {
+      "utf8": " lees",
+      "tOffsetMs": 246
+    }, {
+      "utf8": " genaamd",
+      "tOffsetMs": 493
+    }, {
+      "utf8": " io9",
+      "tOffsetMs": 888
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1036
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 1135
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 1283
+    }, {
+      "utf8": " heeft",
+      "tOffsetMs": 1481
+    }, {
+      "utf8": " 4",
+      "tOffsetMs": 1777
+    } ]
+  }, {
+    "tStartMs": 92548,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 92597,
+    "dDurationMs": 2677,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " miljoen"
+    }, {
+      "utf8": " views",
+      "tOffsetMs": 395
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 642
+    }, {
+      "utf8": " Damn",
+      "tOffsetMs": 792
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 988
+    }, {
+      "utf8": " dus",
+      "tOffsetMs": 1087
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 1283
+    }, {
+      "utf8": " gaat",
+      "tOffsetMs": 1480
+    } ]
+  }, {
+    "tStartMs": 94274,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 94323,
+    "dDurationMs": 2699,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " helemaal"
+    }, {
+      "utf8": " viraal",
+      "tOffsetMs": 442
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 737
+    }, {
+      "utf8": " En",
+      "tOffsetMs": 887
+    }, {
+      "utf8": " waarom",
+      "tOffsetMs": 1015
+    }, {
+      "utf8": " hebben",
+      "tOffsetMs": 1314
+    }, {
+      "utf8": " ze",
+      "tOffsetMs": 1614
+    } ]
+  }, {
+    "tStartMs": 96022,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 96065,
+    "dDurationMs": 2713,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " een"
+    }, {
+      "utf8": " tamme",
+      "tOffsetMs": 171
+    }, {
+      "utf8": " eekhoorn",
+      "tOffsetMs": 428
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 770
+    }, {
+      "utf8": " En",
+      "tOffsetMs": 913
+    }, {
+      "utf8": " waarom",
+      "tOffsetMs": 1039
+    }, {
+      "utf8": " maakt",
+      "tOffsetMs": 1334
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 1587
+    } ]
+  }, {
+    "tStartMs": 97778,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 97820,
+    "dDurationMs": 2720,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " hond"
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 211
+    }, {
+      "utf8": " eekhoorn",
+      "tOffsetMs": 379
+    }, {
+      "utf8": " niet",
+      "tOffsetMs": 758
+    }, {
+      "utf8": " af",
+      "tOffsetMs": 969
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1053
+    }, {
+      "utf8": " Kijk",
+      "tOffsetMs": 1196
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1370
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1458
+    }, {
+      "utf8": " zeg",
+      "tOffsetMs": 1589
+    } ]
+  }, {
+    "tStartMs": 99540,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 99584,
+    "dDurationMs": 2444,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " niet"
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 219
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 394
+    }, {
+      "utf8": " hond",
+      "tOffsetMs": 525
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 744
+    }, {
+      "utf8": " eekhoorn",
+      "tOffsetMs": 875
+    }, {
+      "utf8": " moet",
+      "tOffsetMs": 1269
+    } ]
+  }, {
+    "tStartMs": 101028,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 101071,
+    "dDurationMs": 2907,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " vermoorden"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 438
+    }, {
+      "utf8": " Het",
+      "tOffsetMs": 582
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 802
+    }, {
+      "utf8": " gewoon",
+      "tOffsetMs": 968
+    }, {
+      "utf8": "...",
+      "tOffsetMs": 1300
+    }, {
+      "utf8": "Oké",
+      "tOffsetMs": 1465
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1686
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1797
+    } ]
+  }, {
+    "tStartMs": 102978,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 103033,
+    "dDurationMs": 3155,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " heb"
+    }, {
+      "utf8": " vier",
+      "tOffsetMs": 221
+    }, {
+      "utf8": " katten",
+      "tOffsetMs": 498
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 884
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 1050
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 1271
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 1492
+    }, {
+      "utf8": " eekhoorn",
+      "tOffsetMs": 1713
+    } ]
+  }, {
+    "tStartMs": 105188,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 105243,
+    "dDurationMs": 4798,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " zien"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 221
+    }, {
+      "utf8": " zijn",
+      "tOffsetMs": 331
+    }, {
+      "utf8": " ze",
+      "tOffsetMs": 608
+    }, {
+      "utf8": " zo",
+      "tOffsetMs": 773
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 939
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 1105
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 1215
+    }, {
+      "utf8": "Aw",
+      "tOffsetMs": 1271
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1381
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 1436
+    }, {
+      "utf8": " En",
+      "tOffsetMs": 3386
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 3523
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 3706
+    } ]
+  }, {
+    "tStartMs": 109041,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 109087,
+    "dDurationMs": 2466,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " naar"
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 229
+    }, {
+      "utf8": " hond",
+      "tOffsetMs": 366
+    }, {
+      "utf8": " kijkt",
+      "tOffsetMs": 595
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 824
+    }, {
+      "utf8": " hij",
+      "tOffsetMs": 916
+    }, {
+      "utf8": " had",
+      "tOffsetMs": 1099
+    }, {
+      "utf8": " niet",
+      "tOffsetMs": 1283
+    } ]
+  }, {
+    "tStartMs": 110553,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 110599,
+    "dDurationMs": 2765,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " apathischer"
+    }, {
+      "utf8": " kunnen",
+      "tOffsetMs": 550
+    }, {
+      "utf8": " zijn",
+      "tOffsetMs": 870
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1054
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 1200
+    }, {
+      "utf8": " bedoel",
+      "tOffsetMs": 1321
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1563
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 1644
+    } ]
+  }, {
+    "tStartMs": 112364,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 112404,
+    "dDurationMs": 2519,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " kan"
+    }, {
+      "utf8": " hem",
+      "tOffsetMs": 162
+    }, {
+      "utf8": " gewoon",
+      "tOffsetMs": 324
+    }, {
+      "utf8": " niks",
+      "tOffsetMs": 606
+    }, {
+      "utf8": " schelen",
+      "tOffsetMs": 808
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1091
+    }, {
+      "utf8": " Hij",
+      "tOffsetMs": 1232
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1359
+    }, {
+      "utf8": " zo",
+      "tOffsetMs": 1455
+    } ]
+  }, {
+    "tStartMs": 113923,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 113955,
+    "dDurationMs": 2213,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " van"
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 96
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 159
+    }, {
+      "utf8": "Weet",
+      "tOffsetMs": 191
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 351
+    }, {
+      "utf8": " al",
+      "tOffsetMs": 447
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 543
+    }, {
+      "utf8": " dingen",
+      "tOffsetMs": 670
+    }, {
+      "utf8": " waar",
+      "tOffsetMs": 894
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1053
+    }, {
+      "utf8": " me",
+      "tOffsetMs": 1149
+    } ]
+  }, {
+    "tStartMs": 115168,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 115200,
+    "dDurationMs": 2809,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " druk"
+    }, {
+      "utf8": " om",
+      "tOffsetMs": 160
+    }, {
+      "utf8": " moet",
+      "tOffsetMs": 255
+    }, {
+      "utf8": " maken",
+      "tOffsetMs": 415
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 575
+    }, {
+      "utf8": " Die",
+      "tOffsetMs": 707
+    }, {
+      "utf8": " heb",
+      "tOffsetMs": 939
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1171
+    }, {
+      "utf8": " begraven",
+      "tOffsetMs": 1345
+    } ]
+  }, {
+    "tStartMs": 117009,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 117067,
+    "dDurationMs": 2825,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " in"
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 174
+    }, {
+      "utf8": " achtertuin",
+      "tOffsetMs": 348
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 928
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 986
+    }, {
+      "utf8": " En",
+      "tOffsetMs": 1144
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 1257
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1408
+    }, {
+      "utf8": " benieuwd",
+      "tOffsetMs": 1522
+    } ]
+  }, {
+    "tStartMs": 118892,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 118929,
+    "dDurationMs": 2362,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " bent"
+    }, {
+      "utf8": " hoe",
+      "tOffsetMs": 190
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 341
+    }, {
+      "utf8": " video",
+      "tOffsetMs": 454
+    }, {
+      "utf8": " afloopt",
+      "tOffsetMs": 681
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 946
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 1022
+    }, {
+      "utf8": " lijkt",
+      "tOffsetMs": 1173
+    } ]
+  }, {
+    "tStartMs": 120291,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 120329,
+    "dDurationMs": 2249,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " erop"
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 189
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 341
+    }, {
+      "utf8": " eekhoorn",
+      "tOffsetMs": 454
+    }, {
+      "utf8": " zijn",
+      "tOffsetMs": 795
+    }, {
+      "utf8": " nootjes",
+      "tOffsetMs": 984
+    } ]
+  }, {
+    "tStartMs": 121578,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 121616,
+    "dDurationMs": 2362,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " uiteindelijk"
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 491
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 605
+    }, {
+      "utf8": " wasmand",
+      "tOffsetMs": 718
+    }, {
+      "utf8": " verstopt",
+      "tOffsetMs": 1021
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1324
+    } ]
+  }, {
+    "tStartMs": 122978,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 123142,
+    "dDurationMs": 2608,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " High-speed"
+    }, {
+      "utf8": " achtervolgingen",
+      "tOffsetMs": 520
+    }, {
+      "utf8": " blijven",
+      "tOffsetMs": 1277
+    } ]
+  }, {
+    "tStartMs": 124750,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 124798,
+    "dDurationMs": 2798,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " altijd"
+    }, {
+      "utf8": " spannend",
+      "tOffsetMs": 331
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 709
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 804
+    }, {
+      "utf8": " dit",
+      "tOffsetMs": 1041
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1230
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1372
+    }, {
+      "utf8": " eerste",
+      "tOffsetMs": 1514
+    } ]
+  }, {
+    "tStartMs": 126596,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 126643,
+    "dDurationMs": 2845,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " keer"
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 236
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 426
+    }, {
+      "utf8": " er",
+      "tOffsetMs": 568
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 710
+    }, {
+      "utf8": " zie",
+      "tOffsetMs": 899
+    }, {
+      "utf8": " waarbij",
+      "tOffsetMs": 1088
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1467
+    }, {
+      "utf8": " agent",
+      "tOffsetMs": 1609
+    } ]
+  }, {
+    "tStartMs": 128488,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 128536,
+    "dDurationMs": 13675,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " echt"
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 236
+    }, {
+      "utf8": " camera",
+      "tOffsetMs": 425
+    }, {
+      "utf8": " droeg",
+      "tOffsetMs": 757
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 993
+    }, {
+      "utf8": " Nou",
+      "tOffsetMs": 11954
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 12098
+    }, {
+      "utf8": " deze",
+      "tOffsetMs": 12194
+    }, {
+      "utf8": " agent",
+      "tOffsetMs": 12435
+    } ]
+  }, {
+    "tStartMs": 141211,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 141259,
+    "dDurationMs": 2444,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " is"
+    }, {
+      "utf8": " eigenlijk",
+      "tOffsetMs": 145
+    }, {
+      "utf8": " geen",
+      "tOffsetMs": 626
+    }, {
+      "utf8": " traditionele",
+      "tOffsetMs": 866
+    } ]
+  }, {
+    "tStartMs": 142703,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 142751,
+    "dDurationMs": 2758,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " politieagent"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 577
+    }, {
+      "utf8": " Hij",
+      "tOffsetMs": 726
+    }, {
+      "utf8": " hoort",
+      "tOffsetMs": 905
+    }, {
+      "utf8": " blijkbaar",
+      "tOffsetMs": 1174
+    }, {
+      "utf8": " bij",
+      "tOffsetMs": 1623
+    } ]
+  }, {
+    "tStartMs": 144509,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 144554,
+    "dDurationMs": 2661,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " de"
+    }, {
+      "utf8": " Arkansas",
+      "tOffsetMs": 134
+    }, {
+      "utf8": " Game",
+      "tOffsetMs": 538
+    }, {
+      "utf8": " and",
+      "tOffsetMs": 763
+    }, {
+      "utf8": " Fish",
+      "tOffsetMs": 942
+    }, {
+      "utf8": " Commission",
+      "tOffsetMs": 1167
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1616
+    } ]
+  }, {
+    "tStartMs": 146215,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 146315,
+    "dDurationMs": 2529,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Dus"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 131
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 218
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 393
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 524
+    }, {
+      "utf8": " plan",
+      "tOffsetMs": 699
+    }, {
+      "utf8": " bent",
+      "tOffsetMs": 917
+    }, {
+      "utf8": " om",
+      "tOffsetMs": 1136
+    }, {
+      "utf8": " zonder",
+      "tOffsetMs": 1267
+    } ]
+  }, {
+    "tStartMs": 147844,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 147888,
+    "dDurationMs": 2660,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " vergunning"
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 480
+    }, {
+      "utf8": " vissen",
+      "tOffsetMs": 612
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 874
+    }, {
+      "utf8": " dan",
+      "tOffsetMs": 961
+    }, {
+      "utf8": " maakt",
+      "tOffsetMs": 1136
+    }, {
+      "utf8": " hij",
+      "tOffsetMs": 1398
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1573
+    } ]
+  }, {
+    "tStartMs": 149548,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 149592,
+    "dDurationMs": 2415,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " helemaal"
+    }, {
+      "utf8": " af",
+      "tOffsetMs": 393
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 481
+    }, {
+      "utf8": " De",
+      "tOffsetMs": 625
+    }, {
+      "utf8": " video",
+      "tOffsetMs": 764
+    }, {
+      "utf8": " wordt",
+      "tOffsetMs": 1043
+    }, {
+      "utf8": " nu",
+      "tOffsetMs": 1322
+    } ]
+  }, {
+    "tStartMs": 151007,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 151053,
+    "dDurationMs": 2721,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " onbedoeld"
+    }, {
+      "utf8": " grappig",
+      "tOffsetMs": 465
+    }, {
+      "utf8": " wanneer",
+      "tOffsetMs": 837
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1209
+    }, {
+      "utf8": " agent",
+      "tOffsetMs": 1349
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1628
+    } ]
+  }, {
+    "tStartMs": 152774,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 152820,
+    "dDurationMs": 2721,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " verdachte"
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 465
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 605
+    }, {
+      "utf8": " kraag",
+      "tOffsetMs": 744
+    }, {
+      "utf8": " grijpt",
+      "tOffsetMs": 1023
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1302
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 1395
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 1581
+    } ]
+  }, {
+    "tStartMs": 154541,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 154587,
+    "dDurationMs": 14287,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " totale"
+    }, {
+      "utf8": " meth-junk",
+      "tOffsetMs": 326
+    }, {
+      "utf8": " lijkt",
+      "tOffsetMs": 791
+    }, {
+      "utf8": " te",
+      "tOffsetMs": 1070
+    }, {
+      "utf8": " zijn",
+      "tOffsetMs": 1209
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1395
+    }, {
+      "utf8": " Dit",
+      "tOffsetMs": 13106
+    } ]
+  }, {
+    "tStartMs": 167874,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 167935,
+    "dDurationMs": 3239,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " hele"
+    }, {
+      "utf8": " voorval",
+      "tOffsetMs": 302
+    }, {
+      "utf8": " vond",
+      "tOffsetMs": 786
+    }, {
+      "utf8": " blijkbaar",
+      "tOffsetMs": 1089
+    }, {
+      "utf8": " plaats",
+      "tOffsetMs": 1694
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 2118
+    } ]
+  }, {
+    "tStartMs": 170174,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 170234,
+    "dDurationMs": 3374,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " augustus"
+    }, {
+      "utf8": " 2012",
+      "tOffsetMs": 545
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 847
+    }, {
+      "utf8": " gaat",
+      "tOffsetMs": 1029
+    }, {
+      "utf8": " nu",
+      "tOffsetMs": 1331
+    }, {
+      "utf8": " pas",
+      "tOffsetMs": 1513
+    }, {
+      "utf8": " viraal",
+      "tOffsetMs": 1755
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2118
+    }, {
+      "utf8": " Of",
+      "tOffsetMs": 2279
+    } ]
+  }, {
+    "tStartMs": 172608,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 172656,
+    "dDurationMs": 2765,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " het"
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 191
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 334
+    }, {
+      "utf8": " geraffineerde",
+      "tOffsetMs": 525
+    }, {
+      "utf8": " reclame",
+      "tOffsetMs": 1193
+    }, {
+      "utf8": " voor",
+      "tOffsetMs": 1575
+    } ]
+  }, {
+    "tStartMs": 174421,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 174469,
+    "dDurationMs": 2648,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Google"
+    }, {
+      "utf8": " Glass",
+      "tOffsetMs": 334
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 573
+    }, {
+      "utf8": " Voor",
+      "tOffsetMs": 721
+    }, {
+      "utf8": " mij",
+      "tOffsetMs": 952
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1138
+    }, {
+      "utf8": " dit",
+      "tOffsetMs": 1277
+    }, {
+      "utf8": " echt",
+      "tOffsetMs": 1463
+    } ]
+  }, {
+    "tStartMs": 176117,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 176164,
+    "dDurationMs": 2553,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Breaking"
+    }, {
+      "utf8": " Bad",
+      "tOffsetMs": 417
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 603
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 742
+    }, {
+      "utf8": " echt",
+      "tOffsetMs": 928
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1113
+    }, {
+      "utf8": " Mensen",
+      "tOffsetMs": 1260
+    } ]
+  }, {
+    "tStartMs": 177717,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 177766,
+    "dDurationMs": 2909,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " fantaseren"
+    }, {
+      "utf8": " over",
+      "tOffsetMs": 538
+    }, {
+      "utf8": " zo'n",
+      "tOffsetMs": 783
+    }, {
+      "utf8": " Breaking",
+      "tOffsetMs": 1028
+    }, {
+      "utf8": " Bad-leven",
+      "tOffsetMs": 1468
+    } ]
+  }, {
+    "tStartMs": 179675,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 179675,
+    "dDurationMs": 2761,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": ","
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 97
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 342
+    }, {
+      "utf8": " werkelijkheid",
+      "tOffsetMs": 489
+    }, {
+      "utf8": " zou",
+      "tOffsetMs": 1174
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1370
+    }, {
+      "utf8": " echte",
+      "tOffsetMs": 1517
+    } ]
+  }, {
+    "tStartMs": 181436,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 181485,
+    "dDurationMs": 2851,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Jesse"
+    }, {
+      "utf8": " Pinkman",
+      "tOffsetMs": 294
+    }, {
+      "utf8": " er",
+      "tOffsetMs": 685
+    }, {
+      "utf8": " zo",
+      "tOffsetMs": 832
+    }, {
+      "utf8": " uitzien",
+      "tOffsetMs": 979
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1322
+    }, {
+      "utf8": " Er",
+      "tOffsetMs": 1471
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1585
+    }, {
+      "utf8": " veel",
+      "tOffsetMs": 1699
+    } ]
+  }, {
+    "tStartMs": 183336,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 183374,
+    "dDurationMs": 2143,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " discussie"
+    }, {
+      "utf8": " over",
+      "tOffsetMs": 381
+    }, {
+      "utf8": " hoe",
+      "tOffsetMs": 572
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 724
+    }, {
+      "utf8": " agent",
+      "tOffsetMs": 838
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1067
+    } ]
+  }, {
+    "tStartMs": 184517,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 184555,
+    "dDurationMs": 2142,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " arrestatie"
+    }, {
+      "utf8": " afhandelde",
+      "tOffsetMs": 419
+    }, {
+      "utf8": " nadat",
+      "tOffsetMs": 837
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1066
+    } ]
+  }, {
+    "tStartMs": 185697,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 185735,
+    "dDurationMs": 2485,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " verdachte"
+    }, {
+      "utf8": " uit",
+      "tOffsetMs": 381
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 533
+    }, {
+      "utf8": " auto",
+      "tOffsetMs": 647
+    }, {
+      "utf8": " stapte",
+      "tOffsetMs": 838
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1066
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 1142
+    }, {
+      "utf8": " weet",
+      "tOffsetMs": 1333
+    } ]
+  }, {
+    "tStartMs": 187220,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 187258,
+    "dDurationMs": 2295,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " je"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 76
+    }, {
+      "utf8": " als",
+      "tOffsetMs": 153
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 305
+    }, {
+      "utf8": " aan",
+      "tOffsetMs": 419
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 571
+    }, {
+      "utf8": " meth",
+      "tOffsetMs": 686
+    }, {
+      "utf8": " zit",
+      "tOffsetMs": 876
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 990
+    }, {
+      "utf8": " aan",
+      "tOffsetMs": 1066
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1219
+    } ]
+  }, {
+    "tStartMs": 188553,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 188591,
+    "dDurationMs": 2447,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " verkeerde"
+    }, {
+      "utf8": " kant",
+      "tOffsetMs": 381
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 571
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 723
+    }, {
+      "utf8": " snelweg",
+      "tOffsetMs": 838
+    }, {
+      "utf8": " rijdt",
+      "tOffsetMs": 1142
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 1371
+    } ]
+  }, {
+    "tStartMs": 190038,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 190076,
+    "dDurationMs": 2485,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " levens"
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 266
+    }, {
+      "utf8": " gevaar",
+      "tOffsetMs": 381
+    }, {
+      "utf8": " brengt",
+      "tOffsetMs": 647
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 876
+    }, {
+      "utf8": " dan",
+      "tOffsetMs": 952
+    }, {
+      "utf8": " zeg",
+      "tOffsetMs": 1104
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1256
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 1371
+    } ]
+  }, {
+    "tStartMs": 191561,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 191599,
+    "dDurationMs": 2485,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " uitgescholden"
+    }, {
+      "utf8": " worden",
+      "tOffsetMs": 533
+    }, {
+      "utf8": " met",
+      "tOffsetMs": 800
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 952
+    }, {
+      "utf8": " pistool",
+      "tOffsetMs": 1104
+    }, {
+      "utf8": " op",
+      "tOffsetMs": 1409
+    } ]
+  }, {
+    "tStartMs": 193084,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 193122,
+    "dDurationMs": 2402,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " je"
+    }, {
+      "utf8": " nek",
+      "tOffsetMs": 114
+    }, {
+      "utf8": " best",
+      "tOffsetMs": 267
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 457
+    }, {
+      "utf8": " mogelijkheid",
+      "tOffsetMs": 609
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 1104
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1180
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 1319
+    } ]
+  }, {
+    "tStartMs": 194524,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 194566,
+    "dDurationMs": 2546,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " moet"
+    }, {
+      "utf8": " medelijden",
+      "tOffsetMs": 209
+    }, {
+      "utf8": " hebben",
+      "tOffsetMs": 669
+    }, {
+      "utf8": " met",
+      "tOffsetMs": 961
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 1128
+    }, {
+      "utf8": " gozer",
+      "tOffsetMs": 1295
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1504
+    } ]
+  }, {
+    "tStartMs": 196112,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 196154,
+    "dDurationMs": 2546,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " maar"
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 209
+    }, {
+      "utf8": " heb",
+      "tOffsetMs": 376
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 543
+    }, {
+      "utf8": " met",
+      "tOffsetMs": 669
+    }, {
+      "utf8": " 80",
+      "tOffsetMs": 836
+    }, {
+      "utf8": "%",
+      "tOffsetMs": 919
+    }, {
+      "utf8": "van",
+      "tOffsetMs": 961
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1128
+    }, {
+      "utf8": " video's",
+      "tOffsetMs": 1254
+    } ]
+  }, {
+    "tStartMs": 197700,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 197742,
+    "dDurationMs": 2710,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " die"
+    }, {
+      "utf8": " jullie",
+      "tOffsetMs": 167
+    }, {
+      "utf8": " me",
+      "tOffsetMs": 460
+    }, {
+      "utf8": " sturen",
+      "tOffsetMs": 585
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 836
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 978
+    }, {
+      "utf8": " heb",
+      "tOffsetMs": 1107
+    }, {
+      "utf8": " medelijden",
+      "tOffsetMs": 1279
+    } ]
+  }, {
+    "tStartMs": 199452,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 199495,
+    "dDurationMs": 2507,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " met"
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 172
+    }, {
+      "utf8": " persoon",
+      "tOffsetMs": 301
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 603
+    }, {
+      "utf8": " maar",
+      "tOffsetMs": 689
+    }, {
+      "utf8": " tegelijkertijd",
+      "tOffsetMs": 904
+    } ]
+  }, {
+    "tStartMs": 201002,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 201045,
+    "dDurationMs": 2680,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " denk"
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 216
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 302
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 388
+    }, {
+      "utf8": "Gast",
+      "tOffsetMs": 431
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 603
+    }, {
+      "utf8": " waar",
+      "tOffsetMs": 689
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 905
+    }, {
+      "utf8": " [ __ ]",
+      "tOffsetMs": 1034
+    }, {
+      "utf8": " was",
+      "tOffsetMs": 1249
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1422
+    }, {
+      "utf8": " mee",
+      "tOffsetMs": 1551
+    } ]
+  }, {
+    "tStartMs": 202725,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 202768,
+    "dDurationMs": 2748,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " bezig"
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 215
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 258
+    }, {
+      "utf8": " En",
+      "tOffsetMs": 402
+    }, {
+      "utf8": " nu",
+      "tOffsetMs": 546
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 690
+    }, {
+      "utf8": " deze",
+      "tOffsetMs": 834
+    }, {
+      "utf8": " gast",
+      "tOffsetMs": 1075
+    }, {
+      "utf8": " gepakt",
+      "tOffsetMs": 1315
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 1652
+    } ]
+  }, {
+    "tStartMs": 204516,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 204564,
+    "dDurationMs": 2395,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " moet"
+    }, {
+      "utf8": " hij",
+      "tOffsetMs": 240
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 433
+    }, {
+      "utf8": " cel",
+      "tOffsetMs": 577
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 769
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 865
+    }, {
+      "utf8": " Dit",
+      "tOffsetMs": 1014
+    }, {
+      "utf8": " wordt",
+      "tOffsetMs": 1183
+    } ]
+  }, {
+    "tStartMs": 205959,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 206001,
+    "dDurationMs": 2669,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " waarschijnlijk"
+    }, {
+      "utf8": " zijn",
+      "tOffsetMs": 636
+    }, {
+      "utf8": " celgenoot",
+      "tOffsetMs": 848
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1229
+    }, {
+      "utf8": " [ __ ]",
+      "tOffsetMs": 1372
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1584
+    } ]
+  }, {
+    "tStartMs": 207670,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 207713,
+    "dDurationMs": 2710,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " überhaupt"
+    }, {
+      "utf8": " wel",
+      "tOffsetMs": 468
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 595
+    }, {
+      "utf8": " bro",
+      "tOffsetMs": 680
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 808
+    }, {
+      "utf8": " En",
+      "tOffsetMs": 951
+    }, {
+      "utf8": " weet",
+      "tOffsetMs": 1077
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1288
+    }, {
+      "utf8": " wat",
+      "tOffsetMs": 1415
+    }, {
+      "utf8": " nog",
+      "tOffsetMs": 1584
+    } ]
+  }, {
+    "tStartMs": 209423,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 209465,
+    "dDurationMs": 2344,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " meer"
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 169
+    }, {
+      "utf8": " Na",
+      "tOffsetMs": 312
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 431
+    }, {
+      "utf8": " zien",
+      "tOffsetMs": 590
+    }, {
+      "utf8": " van",
+      "tOffsetMs": 788
+    }, {
+      "utf8": " deze",
+      "tOffsetMs": 947
+    }, {
+      "utf8": " video",
+      "tOffsetMs": 1146
+    } ]
+  }, {
+    "tStartMs": 210809,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 210849,
+    "dDurationMs": 2430,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " twijfel"
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 318
+    }, {
+      "utf8": " serieus",
+      "tOffsetMs": 437
+    }, {
+      "utf8": " of",
+      "tOffsetMs": 755
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 874
+    }, {
+      "utf8": " ooit",
+      "tOffsetMs": 993
+    }, {
+      "utf8": " aan",
+      "tOffsetMs": 1192
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 1351
+    } ]
+  }, {
+    "tStartMs": 212279,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 212319,
+    "dDurationMs": 2522,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " meth"
+    }, {
+      "utf8": " moet",
+      "tOffsetMs": 198
+    }, {
+      "utf8": " gaan",
+      "tOffsetMs": 397
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 556
+    }, {
+      "utf8": " Maar",
+      "tOffsetMs": 696
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 892
+    }, {
+      "utf8": " was",
+      "tOffsetMs": 1050
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 1207
+    }, {
+      "utf8": " voor",
+      "tOffsetMs": 1365
+    } ]
+  }, {
+    "tStartMs": 213841,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 213880,
+    "dDurationMs": 2592,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " mij"
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 118
+    }, {
+      "utf8": " mensen",
+      "tOffsetMs": 197
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 433
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 573
+    }, {
+      "utf8": " zie",
+      "tOffsetMs": 700
+    }, {
+      "utf8": " jullie",
+      "tOffsetMs": 870
+    }, {
+      "utf8": " later",
+      "tOffsetMs": 1167
+    }, {
+      "utf8": " deze",
+      "tOffsetMs": 1422
+    } ]
+  }, {
+    "tStartMs": 215472,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 215514,
+    "dDurationMs": 2561,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " week"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 170
+    }, {
+      "utf8": " Vergeet",
+      "tOffsetMs": 313
+    }, {
+      "utf8": " niet",
+      "tOffsetMs": 615
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 804
+    }, {
+      "utf8": " volledige",
+      "tOffsetMs": 918
+    }, {
+      "utf8": " video's",
+      "tOffsetMs": 1296
+    } ]
+  }, {
+    "tStartMs": 217075,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 217113,
+    "dDurationMs": 2518,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " te"
+    }, {
+      "utf8": " bekijken",
+      "tOffsetMs": 113
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 416
+    }, {
+      "utf8": " Links",
+      "tOffsetMs": 554
+    }, {
+      "utf8": " staan",
+      "tOffsetMs": 795
+    }, {
+      "utf8": " hieronder",
+      "tOffsetMs": 1036
+    }, {
+      "utf8": " in",
+      "tOffsetMs": 1438
+    } ]
+  }, {
+    "tStartMs": 218631,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 218671,
+    "dDurationMs": 2538,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " de"
+    }, {
+      "utf8": " beschrijving",
+      "tOffsetMs": 121
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 603
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 744
+    }, {
+      "utf8": " ben",
+      "tOffsetMs": 876
+    }, {
+      "utf8": " Ray",
+      "tOffsetMs": 1052
+    }, {
+      "utf8": " William",
+      "tOffsetMs": 1229
+    } ]
+  }, {
+    "tStartMs": 220209,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 220253,
+    "dDurationMs": 8355,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Johnson"
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 353
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 485
+    }, {
+      "utf8": " keur",
+      "tOffsetMs": 618
+    }, {
+      "utf8": " dit",
+      "tOffsetMs": 838
+    }, {
+      "utf8": " bericht",
+      "tOffsetMs": 1015
+    }, {
+      "utf8": " goed",
+      "tOffsetMs": 1368
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1544
+    }, {
+      "utf8": " Ja",
+      "tOffsetMs": 7262
+    } ]
+  }, {
+    "tStartMs": 227608,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 227608,
+    "dDurationMs": 2684,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": ","
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 94
+    }, {
+      "utf8": " ben",
+      "tOffsetMs": 234
+    }, {
+      "utf8": " de",
+      "tOffsetMs": 421
+    }, {
+      "utf8": " hele",
+      "tOffsetMs": 561
+    }, {
+      "utf8": " dag",
+      "tOffsetMs": 795
+    }, {
+      "utf8": " koala's",
+      "tOffsetMs": 982
+    }, {
+      "utf8": " aan",
+      "tOffsetMs": 1357
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 1544
+    } ]
+  }, {
+    "tStartMs": 229292,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 229339,
+    "dDurationMs": 2597,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " bankdrukken"
+    }, {
+      "utf8": " geweest",
+      "tOffsetMs": 561
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 889
+    }, {
+      "utf8": " Weet",
+      "tOffsetMs": 1036
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1223
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1298
+    }, {
+      "utf8": " ik",
+      "tOffsetMs": 1373
+    }, {
+      "utf8": " eet",
+      "tOffsetMs": 1485
+    } ]
+  }, {
+    "tStartMs": 230936,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 230974,
+    "dDurationMs": 2348,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " normaal"
+    }, {
+      "utf8": " gesproken",
+      "tOffsetMs": 299
+    }, {
+      "utf8": " planten",
+      "tOffsetMs": 674
+    }, {
+      "utf8": " en",
+      "tOffsetMs": 974
+    }, {
+      "utf8": " bessen",
+      "tOffsetMs": 1086
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 1311
+    } ]
+  }, {
+    "tStartMs": 232322,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 232359,
+    "dDurationMs": 2530,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " maar"
+    }, {
+      "utf8": " geen",
+      "tOffsetMs": 188
+    }, {
+      "utf8": " transvetten",
+      "tOffsetMs": 375
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 787
+    }, {
+      "utf8": " weet",
+      "tOffsetMs": 862
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1049
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1124
+    }, {
+      "utf8": " Kun",
+      "tOffsetMs": 1262
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1441
+    } ]
+  }, {
+    "tStartMs": 233889,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 233934,
+    "dDurationMs": 2467,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " me"
+    }, {
+      "utf8": " zekeren",
+      "tOffsetMs": 134
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 448
+    }, {
+      "utf8": " Kun",
+      "tOffsetMs": 593
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 745
+    }, {
+      "utf8": " me",
+      "tOffsetMs": 859
+    }, {
+      "utf8": " even",
+      "tOffsetMs": 973
+    }, {
+      "utf8": " zekeren",
+      "tOffsetMs": 1163
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1429
+    } ]
+  }, {
+    "tStartMs": 235401,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 235501,
+    "dDurationMs": 2248,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Moet"
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 161
+    }, {
+      "utf8": " gezekerd",
+      "tOffsetMs": 258
+    }, {
+      "utf8": " worden",
+      "tOffsetMs": 548
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 742
+    }, {
+      "utf8": " Kun",
+      "tOffsetMs": 875
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1010
+    }, {
+      "utf8": " even",
+      "tOffsetMs": 1112
+    } ]
+  }, {
+    "tStartMs": 236749,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 236783,
+    "dDurationMs": 2305,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " zekeren"
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 238
+    }, {
+      "utf8": " Zeker",
+      "tOffsetMs": 372
+    }, {
+      "utf8": " me",
+      "tOffsetMs": 576
+    }, {
+      "utf8": " daar",
+      "tOffsetMs": 678
+    }, {
+      "utf8": " even",
+      "tOffsetMs": 848
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 984
+    }, {
+      "utf8": " Moet",
+      "tOffsetMs": 1118
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1251
+    } ]
+  }, {
+    "tStartMs": 238088,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 238115,
+    "dDurationMs": 1956,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " gezekerd"
+    }, {
+      "utf8": " worden",
+      "tOffsetMs": 240
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 401
+    }, {
+      "utf8": " Moet",
+      "tOffsetMs": 528
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 661
+    }, {
+      "utf8": " gezekerd",
+      "tOffsetMs": 742
+    } ]
+  }, {
+    "tStartMs": 239071,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 239097,
+    "dDurationMs": 2318,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " worden"
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 161
+    }, {
+      "utf8": " Zeker",
+      "tOffsetMs": 288
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 521
+    }, {
+      "utf8": " me",
+      "tOffsetMs": 638
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 716
+    }, {
+      "utf8": " Moet",
+      "tOffsetMs": 855
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 999
+    }, {
+      "utf8": " gezekerd",
+      "tOffsetMs": 1086
+    } ]
+  }, {
+    "tStartMs": 240415,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 240444,
+    "dDurationMs": 2634,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " worden"
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 174
+    }, {
+      "utf8": " Zeker",
+      "tOffsetMs": 303
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 555
+    }, {
+      "utf8": " hem",
+      "tOffsetMs": 682
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 808
+    }, {
+      "utf8": " Ik",
+      "tOffsetMs": 951
+    }, {
+      "utf8": " zal",
+      "tOffsetMs": 1071
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 1232
+    }, {
+      "utf8": " zekeren",
+      "tOffsetMs": 1353
+    } ]
+  }, {
+    "tStartMs": 242078,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 242078,
+    "dDurationMs": 2349,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " Vlek",
+      "tOffsetMs": 141
+    }, {
+      "utf8": ",",
+      "tOffsetMs": 279
+    }, {
+      "utf8": " dat",
+      "tOffsetMs": 348
+    }, {
+      "utf8": " is",
+      "tOffsetMs": 486
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 589
+    }, {
+      "utf8": " vlek",
+      "tOffsetMs": 727
+    }, {
+      "utf8": " op",
+      "tOffsetMs": 900
+    }, {
+      "utf8": " mijn",
+      "tOffsetMs": 1003
+    }, {
+      "utf8": " muur",
+      "tOffsetMs": 1176
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1314
+    } ]
+  }, {
+    "tStartMs": 243427,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 243527,
+    "dDurationMs": 2462,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Ik"
+    }, {
+      "utf8": " had",
+      "tOffsetMs": 112
+    }, {
+      "utf8": " een",
+      "tOffsetMs": 262
+    }, {
+      "utf8": " hond",
+      "tOffsetMs": 413
+    }, {
+      "utf8": " die",
+      "tOffsetMs": 601
+    }, {
+      "utf8": " Spot",
+      "tOffsetMs": 751
+    }, {
+      "utf8": " heette",
+      "tOffsetMs": 939
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1164
+    }, {
+      "utf8": " Weet",
+      "tOffsetMs": 1302
+    } ]
+  }, {
+    "tStartMs": 244989,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 245029,
+    "dDurationMs": 2560,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " iemand"
+    }, {
+      "utf8": " soms",
+      "tOffsetMs": 280
+    }, {
+      "utf8": " niet",
+      "tOffsetMs": 480
+    }, {
+      "utf8": " hoe",
+      "tOffsetMs": 680
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 840
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 960
+    }, {
+      "utf8": " toilet",
+      "tOffsetMs": 1120
+    }, {
+      "utf8": " moet",
+      "tOffsetMs": 1400
+    } ]
+  }, {
+    "tStartMs": 246589,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 246629,
+    "dDurationMs": 5502,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " doortrekken"
+    }, {
+      "utf8": " nadat",
+      "tOffsetMs": 480
+    }, {
+      "utf8": " je",
+      "tOffsetMs": 720
+    }, {
+      "utf8": " gepoept",
+      "tOffsetMs": 840
+    }, {
+      "utf8": " hebt",
+      "tOffsetMs": 1160
+    }, {
+      "utf8": "?",
+      "tOffsetMs": 1320
+    }, {
+      "utf8": " Oh",
+      "tOffsetMs": 4239
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 4414
+    } ]
+  }, {
+    "tStartMs": 251131,
+    "dDurationMs": 1000,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 251738,
+    "dDurationMs": 2998,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": " Jij"
+    }, {
+      "utf8": " bent",
+      "tOffsetMs": 234
+    }, {
+      "utf8": " het",
+      "tOffsetMs": 527
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 703
+    }, {
+      "utf8": " Hey",
+      "tOffsetMs": 1648
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1910
+    } ]
+  } ]
+}

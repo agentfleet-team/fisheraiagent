@@ -1,0 +1,63 @@
+{
+  "videoId": "dQw4w9WgXcQ",
+  "title": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)",
+  "durationSeconds": 213,
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en",
+      "name": "English",
+      "isTranslatable": true
+    },
+    {
+      "index": 1,
+      "languageCode": "en",
+      "kind": "asr",
+      "vssId": "a.en",
+      "name": "English (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 2,
+      "languageCode": "de-DE",
+      "kind": "manual",
+      "vssId": ".de-DE",
+      "name": "German (Germany)",
+      "isTranslatable": true
+    },
+    {
+      "index": 3,
+      "languageCode": "ja",
+      "kind": "manual",
+      "vssId": ".ja",
+      "name": "Japanese",
+      "isTranslatable": true
+    },
+    {
+      "index": 4,
+      "languageCode": "pt-BR",
+      "kind": "manual",
+      "vssId": ".pt-BR",
+      "name": "Portuguese (Brazil)",
+      "isTranslatable": true
+    },
+    {
+      "index": 5,
+      "languageCode": "es-419",
+      "kind": "manual",
+      "vssId": ".es-419",
+      "name": "Spanish (Latin America)",
+      "isTranslatable": true
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "translationLanguageCount": 0
+}
