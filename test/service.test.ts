@@ -8,6 +8,7 @@ import { createConnection, type AddressInfo } from 'node:net';
 import { request, type ClientRequest, type Server } from 'node:http';
 import { createService, type ServiceOptions } from '../src/service.js';
 import { TranscriptError } from '../src/errors.js';
+import type { CaptionRead } from '../src/captions.js';
 import type { GeminiCaller, GeminiVideoRequest } from '../src/gemini.js';
 
 const GOOD = readFileSync(new URL('./fixtures/model-good.txt', import.meta.url), 'utf8');
@@ -776,6 +777,156 @@ test('K5: a rejected tenant key fails the job and still never reaches logs, view
     assert.ok(!haystack.includes(TENANT_KEY), `tenant key leaked into: ${haystack}`);
   } finally {
     delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+// --- T2 (agentfleet-team/fisheraiagent#69): the per-tenant captions policy ---
+
+const CAPTIONS_CALLER = 'test-caller-token-captions';
+
+// Three tenants, one per policy value plus one without the field, all
+// caller-verified through the same bearer token.
+const TENANTS_CAPTIONS = JSON.stringify({
+  tenants: [
+    {
+      id: 'cap-auto',
+      discord_guild_id: 'guild-auto',
+      caller: { token_sha256: callerSha(CAPTIONS_CALLER) },
+      captions: 'manual-or-auto',
+      destination: { type: 'none' },
+    },
+    {
+      id: 'cap-off',
+      discord_guild_id: 'guild-off',
+      caller: { token_sha256: callerSha(CAPTIONS_CALLER) },
+      captions: 'off',
+      destination: { type: 'none' },
+    },
+    {
+      id: 'cap-default',
+      discord_guild_id: 'guild-def',
+      caller: { token_sha256: callerSha(CAPTIONS_CALLER) },
+      destination: { type: 'none' },
+    },
+  ],
+});
+
+const AUTO_READ: CaptionRead = {
+  kind: 'auto',
+  language: 'en',
+  durationSeconds: 16,
+  cues: [
+    { start: 0, end: 8, text: 'auto one' },
+    { start: 8, end: 16, text: 'auto two' },
+  ],
+};
+
+const guildOrigin = (guild: string) => ({ kind: 'discord', guild_id: guild, channel_id: 'chan-1' });
+
+function countingReader(reads: { n: number }, read: CaptionRead) {
+  return async (): Promise<CaptionRead> => {
+    reads.n += 1;
+    return read;
+  };
+}
+
+test('C1: a manual-or-auto tenant gets source captions:auto from an auto read with zero Gemini calls', async () => {
+  const calls: GeminiCall[] = [];
+  const reads = { n: 0 };
+  const { base, logs, close } = await startService(calls, {
+    tenantsJson: TENANTS_CAPTIONS,
+    captionReader: countingReader(reads, AUTO_READ),
+  });
+  try {
+    const res = await postJob(base, { key: KEY_A, origin: guildOrigin('guild-auto'), token: CAPTIONS_CALLER });
+    assert.equal(res.status, 202);
+    const job = await pollJob(base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.equal(job.result.source, 'captions:auto');
+    assert.equal(reads.n, 1);
+    assert.equal(calls.length, 0, 'an accepted auto track spends no Gemini call');
+    assert.ok(logs.some((l) => l.startsWith('source_chosen') && l.includes('source=captions:auto')));
+  } finally {
+    await close();
+  }
+});
+
+test('C2: an off tenant never reaches the reader — the job goes to Gemini', async () => {
+  const calls: GeminiCall[] = [];
+  const reads = { n: 0 };
+  const { base, logs, close } = await startService(calls, {
+    tenantsJson: TENANTS_CAPTIONS,
+    captionReader: countingReader(reads, AUTO_READ),
+  });
+  try {
+    const res = await postJob(base, { key: KEY_A, origin: guildOrigin('guild-off'), token: CAPTIONS_CALLER });
+    assert.equal(res.status, 202);
+    const job = await pollJob(base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.equal(job.result.source, 'gemini');
+    assert.equal(reads.n, 0, 'policy off must skip the caption read');
+    assert.ok(calls.length > 0, 'the Gemini path runs');
+    assert.ok(logs.some((l) => l.startsWith('captions_skipped') && l.includes('policy=off')));
+    assert.ok(!logs.some((l) => l.startsWith('captions_read')), 'a skipped read logs no captions_read');
+  } finally {
+    await close();
+  }
+});
+
+test('C3: a tenant without the field, and a job with no tenant, keep the default manual policy', async () => {
+  const calls: GeminiCall[] = [];
+  const reads = { n: 0 };
+  const { base, close } = await startService(calls, {
+    tenantsJson: TENANTS_CAPTIONS,
+    captionReader: countingReader(reads, AUTO_READ),
+  });
+  try {
+    const tenanted = await postJob(base, { key: KEY_A, origin: guildOrigin('guild-def'), token: CAPTIONS_CALLER });
+    const j1 = await pollJob(base, tenanted.body.job_id);
+    assert.equal(j1.status, 'done');
+    assert.equal(j1.result.source, 'gemini', 'absent field: an auto read still falls back (T1)');
+
+    // A different video: a cache hit would skip the read before any policy.
+    const anonymous = await postJob(base, { key: KEY_A, url: `https://youtu.be/${VIDEO_B}` });
+    const j2 = await pollJob(base, anonymous.body.job_id);
+    assert.equal(j2.status, 'done');
+    assert.equal(j2.result.source, 'gemini', 'a job with no tenant uses the default');
+    assert.equal(reads.n, 2, 'the read still runs under the default policy');
+  } finally {
+    await close();
+  }
+});
+
+test('C4: a tenants document with an unknown captions value loads no tenant at all', async () => {
+  const calls: GeminiCall[] = [];
+  const reads = { n: 0 };
+  const broken = JSON.stringify({
+    tenants: [
+      {
+        id: 'cap-auto',
+        discord_guild_id: 'guild-auto',
+        caller: { token_sha256: callerSha(CAPTIONS_CALLER) },
+        captions: 'auto',
+        destination: { type: 'none' },
+      },
+    ],
+  });
+  const { base, logs, close } = await startService(calls, {
+    tenantsJson: broken,
+    captionReader: countingReader(reads, AUTO_READ),
+  });
+  try {
+    const res = await postJob(base, { key: KEY_A, origin: guildOrigin('guild-auto'), token: CAPTIONS_CALLER });
+    const job = await pollJob(base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    // The document failed to load, so the claim resolves no tenant: the job
+    // runs under the default policy and nothing of the tenant applies.
+    assert.equal(job.result.source, 'gemini');
+    assert.equal(job.saved, undefined);
+    assert.equal(job.save_error, undefined);
+    assert.ok(!logs.some((l) => l.startsWith('captions_skipped')), 'no tenant, no tenant policy');
+  } finally {
     await close();
   }
 });
