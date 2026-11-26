@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { createCaptionReader } from './captions.js';
+import { resolveCaptionReader } from './captions-remote.js';
 import { loadServiceConfig } from './config.js';
 import { createDriveStore } from './drive.js';
 import { codeOf } from './errors.js';
@@ -9,6 +9,9 @@ import { createService } from './service.js';
 
 try {
   const config = loadServiceConfig();
+  // N2 mode: remote over the tunnel, local in-process on request, off —
+  // no YouTube call at all — by default.
+  const captions = resolveCaptionReader(config);
   const server = createService({
     callerFactory: (apiKey) => createGeminiCaller({ apiKey, model: config.model, log: consoleSink }),
     model: config.model,
@@ -18,7 +21,8 @@ try {
     cacheDir: config.cacheDir,
     windowSeconds: config.windowSeconds,
     defaultMaxVideoSeconds: config.maxVideoSeconds,
-    captionReader: createCaptionReader(),
+    captionReader: captions?.reader,
+    captionReadOrigin: captions?.origin,
     serviceToken: config.serviceToken,
     tenantsFile: config.tenantsFile,
     tenantsJson: config.tenantsJson,

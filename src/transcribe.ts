@@ -40,6 +40,10 @@ export interface TranscribeDeps {
   // every other outcome is the Gemini path exactly as today. Unset means
   // "always Gemini" — the behavior before this dependency existed.
   captionReader?: CaptionReader;
+  // Where the read runs, recorded as `origin` on the captions_read log
+  // line — the remote reader tool or the in-process reader. Unset leaves
+  // the field off the line.
+  captionReadOrigin?: 'remote' | 'local';
 }
 
 interface RoundResult extends ParsedModelOutput {
@@ -689,6 +693,7 @@ export async function transcribeYouTube(videoId: string, deps: TranscribeDeps): 
     }
     loggerFor(deps.log)('captions_read', {
       video: parseVideoId(videoId),
+      origin: deps.captionReadOrigin,
       kind: read.kind,
       reason: read.kind === 'unavailable' ? read.reason : undefined,
       durationMs: Date.now() - startedAt,

@@ -60,6 +60,9 @@ export interface JobRunnerDeps {
   // Reads caption tracks before a job's first Gemini call; unset means
   // the job always goes to Gemini (the pre-captions behavior).
   captionReader?: CaptionReader;
+  // Where the read runs, recorded as `origin` on the captions_read log
+  // line; mirrors TranscribeDeps.captionReadOrigin.
+  captionReadOrigin?: 'remote' | 'local';
   log?: (line: string) => void; // sink for allowlisted log lines
   // After a transcript exists, persist it wherever the job's origin resolved
   // to. The origin here is a caller claim the HTTP boundary already
@@ -176,6 +179,7 @@ export class JobStore {
           cacheDir: this.deps.cacheDir,
           windowSeconds: this.deps.windowSeconds,
           captionReader: this.deps.captionReader,
+          captionReadOrigin: this.deps.captionReadOrigin,
           log: this.deps.log,
           maxVideoSeconds: limits?.max_video_seconds,
           defaultMaxVideoSeconds: this.deps.defaultMaxVideoSeconds,

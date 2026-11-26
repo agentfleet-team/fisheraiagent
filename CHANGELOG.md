@@ -14,6 +14,20 @@ git tags on `main`.
   `GET /v1/captions/{videoId}` with a bearer token, a concurrency cap and
   one JSONL receipt per request, for the Mac mini. See README "Caption
   reader (Mac mini)" (agentfleet-team/fisheraiagent#78).
+- The caption read can run remotely: `CAPTIONS_READER_URL` (https only,
+  with `CAPTIONS_READER_TOKEN` as the bearer credential) points the
+  service at a caption-reader tool over HTTP — on the hosted instance,
+  the reader running on the Mac mini behind its own Cloudflare tunnel —
+  with an optional `CAPTIONS_READER_ACCESS_ID` /
+  `CAPTIONS_READER_ACCESS_SECRET` Cloudflare Access service-token pair
+  and a `CAPTIONS_READER_TIMEOUT_MS` budget (default 4000).
+  `CAPTIONS_READ=local` keeps the in-process read for self-hosters; with
+  neither set the read is off and the service makes no YouTube call at
+  all — the new default, replacing the always-local reader wired in #68.
+  A remote read that times out, is unreachable, refuses or answers badly
+  falls back to Gemini with the mapped reason; the adapter never throws,
+  never retries and never logs a credential. `captions_read` gains
+  `origin=remote|local` (agentfleet-team/fisheraiagent#80).
 - Transcription reads the video's caption tracks before any Gemini call:
   a manual track in the spoken language becomes the timed transcript with
   zero Gemini calls (InnerTube `player` with the ANDROID client, plain
