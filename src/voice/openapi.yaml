@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: fisheraiagent voice
+  version: 0.1.0
+  description: Tool 3. Script sections in, one MP3 and sentence time marks out. Same job API as the transcript tool.
+paths:
+  /healthz:
+    get:
+      summary: Liveness
+      responses:
+        '200': { description: ok }
+  /v1/jobs:
+    post:
+      summary: Submit a VoiceRequest
+      parameters:
+        - { name: Idempotency-Key, in: header, required: false, schema: { type: string, maxLength: 200 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VoiceRequest' }
+      responses:
+        '202':
+          description: Accepted, or a replay of an earlier job with the same Idempotency-Key and request.
+          content:
+            application/json:
+              schema: { type: object, required: [job_id], properties: { job_id: { type: string } } }
+        '400': { description: invalid_request, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+        '401': { description: unauthorized, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+        '409': { description: idempotency_conflict, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+  /v1/jobs/{job_id}:
+    get:
+      summary: Poll a job
+      parameters:
+        - { name: job_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: The job view.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JobView' }
+        '404': { description: not_found, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+  /v1/jobs/{job_id}/audio:
+    get:
+      summary: The MP3 of a done job (kept in memory for the newest jobs only)
+      parameters:
+        - { name: job_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: The joined MP3.
+          content:
+            audio/mpeg:
+              schema: { type: string, format: binary }
+        '404': { description: not_found, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+components:
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [invalid_request, render_failed, duration_out_of_band, idempotency_conflict, save_failed, unauthorized, not_found, internal_error]
+        message: { type: string }
+        section_id: { type: string, description: 'Set on render_failed: the section that failed.' }
+    ErrorBody:
+      type: object
+      required: [error]
+      properties:
+        error: { $ref: '#/components/schemas/Error' }
+    VoiceRequest:
+      type: object
+      required: [date, voice, sections, expect_seconds]
+      properties:
+        date: { type: string, example: '2026-11-28' }
+        voice:
+          type: object
+          required: [engine, name, rate]
+          properties:
+            engine: { type: string, enum: [edge] }
+            name: { type: string, example: zh-TW-HsiaoChenNeural }
+            rate: { type: string, example: '-12%' }
+        sections:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            type: object
+            required: [id, text]
+            properties:
+              id: { type: string, description: 'Unique; letters, digits, _ and -.' }
+              text: { type: string, maxLength: 20000 }
+        expect_seconds:
+          type: object
+          required: [min, max]
+          properties:
+            min: { type: number }
+            max: { type: number }
+    Mark:
+      type: object
+      required: [section_id, index, start_ms, end_ms, text]
+      properties:
+        section_id: { type: string }
+        index: { type: integer, description: 'Sentence number inside its section, from 0.' }
+        start_ms: { type: integer }
+        end_ms: { type: integer }
+        text: { type: string }
+    VoiceResult:
+      type: object
+      required: [duration_s, bytes, sha256, format, marks]
+      properties:
+        duration_s: { type: number }
+        bytes: { type: integer }
+        sha256: { type: string }
+        format: { type: string, enum: [audio-24khz-48kbitrate-mono-mp3] }
+        marks:
+          type: array
+          items: { $ref: '#/components/schemas/Mark' }
+        saved:
+          type: object
+          required: [audio_file_id, marks_file_id, names]
+          properties:
+            audio_file_id: { type: string }
+            marks_file_id: { type: string }
+            names: { type: array, items: { type: string }, minItems: 2, maxItems: 2 }
+    JobView:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id: { type: string }
+        status: { type: string, enum: [queued, running, done, failed] }
+        result: { $ref: '#/components/schemas/VoiceResult' }
+        error: { $ref: '#/components/schemas/Error' }
+        save_error: { $ref: '#/components/schemas/Error' }

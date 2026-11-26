@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-28",
+  "voice": { "engine": "edge", "name": "zh-TW-HsiaoChenNeural", "rate": "-12%" },
+  "sections": [
+    { "id": "opening", "text": "早安，歡迎收聽今天的晨間節目。今天我們聊兩件事。先從第一件開始。" },
+    { "id": "s1", "text": "第一個主題是工作流程的設計。講者認為，不要一開始就追求全自動。先把每一步寫清楚，再逐步交給機器。" },
+    { "id": "closing", "text": "以上就是今天的內容。謝謝收聽，明天見。" }
+  ],
+  "expect_seconds": { "min": 10, "max": 40 }
+}

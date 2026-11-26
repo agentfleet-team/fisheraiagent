@@ -22,12 +22,14 @@
     "serve": "tsx src/server.ts",
     "bot": "tsx src/bot.ts",
     "smoke": "node scripts/smoke.mjs",
-    "mcp": "tsx src/mcp.ts"
+    "mcp": "tsx src/mcp.ts",
+    "voice:probe": "tsx src/voice/probe.ts"
   },
   "dependencies": {
     "@google/genai": "3.3.0",
     "@modelcontextprotocol/sdk": "1.32.2",
     "discord.js": "^14.28.1",
+    "msedge-tts": "2.1.1",
     "zod": "3.25.76"
   },
   "devDependencies": {
