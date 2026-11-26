@@ -1,0 +1,226 @@
+{
+  "profile": "podcast-zh-tw-10min",
+  "date": "2026-11-28",
+  "sources": [
+    {
+      "slot": 1,
+      "title": "How the Rust compiler gets faster",
+      "channel": "Systems Weekly",
+      "url": "https://youtu.be/aaaaaaaaaaa",
+      "published": "2026-11-26",
+      "transcript": {
+        "video_id": "aaaaaaaaaaa",
+        "language": "en",
+        "blocks": [
+          {
+            "start": 0.0,
+            "end": 28.0,
+            "text": "Block 0 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 30.0,
+            "end": 58.0,
+            "text": "Block 1 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 60.0,
+            "end": 88.0,
+            "text": "Block 2 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 90.0,
+            "end": 118.0,
+            "text": "Block 3 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 120.0,
+            "end": 148.0,
+            "text": "Block 4 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 150.0,
+            "end": 178.0,
+            "text": "Block 5 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 180.0,
+            "end": 208.0,
+            "text": "Block 6 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 210.0,
+            "end": 238.0,
+            "text": "Block 7 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 240.0,
+            "end": 268.0,
+            "text": "Block 8 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 270.0,
+            "end": 298.0,
+            "text": "Block 9 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 300.0,
+            "end": 328.0,
+            "text": "Block 10 of source 1: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 330.0,
+            "end": 358.0,
+            "text": "Block 11 of source 1: a transcript sentence in English about the topic."
+          }
+        ]
+      }
+    },
+    {
+      "slot": 2,
+      "title": "Postgres indexes in practice",
+      "channel": "Database Notes",
+      "url": "https://youtu.be/bbbbbbbbbbb",
+      "published": "2026-11-26",
+      "transcript": {
+        "video_id": "bbbbbbbbbbb",
+        "language": "en",
+        "blocks": [
+          {
+            "start": 0.0,
+            "end": 28.0,
+            "text": "Block 0 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 30.0,
+            "end": 58.0,
+            "text": "Block 1 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 60.0,
+            "end": 88.0,
+            "text": "Block 2 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 90.0,
+            "end": 118.0,
+            "text": "Block 3 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 120.0,
+            "end": 148.0,
+            "text": "Block 4 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 150.0,
+            "end": 178.0,
+            "text": "Block 5 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 180.0,
+            "end": 208.0,
+            "text": "Block 6 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 210.0,
+            "end": 238.0,
+            "text": "Block 7 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 240.0,
+            "end": 268.0,
+            "text": "Block 8 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 270.0,
+            "end": 298.0,
+            "text": "Block 9 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 300.0,
+            "end": 328.0,
+            "text": "Block 10 of source 2: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 330.0,
+            "end": 358.0,
+            "text": "Block 11 of source 2: a transcript sentence in English about the topic."
+          }
+        ]
+      }
+    },
+    {
+      "slot": 3,
+      "title": "Evaluating LLM agents",
+      "channel": "Eval Lab",
+      "url": "https://youtu.be/ccccccccccc",
+      "published": "2026-11-26",
+      "transcript": {
+        "video_id": "ccccccccccc",
+        "language": "en",
+        "blocks": [
+          {
+            "start": 0.0,
+            "end": 28.0,
+            "text": "Block 0 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 30.0,
+            "end": 58.0,
+            "text": "Block 1 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 60.0,
+            "end": 88.0,
+            "text": "Block 2 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 90.0,
+            "end": 118.0,
+            "text": "Block 3 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 120.0,
+            "end": 148.0,
+            "text": "Block 4 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 150.0,
+            "end": 178.0,
+            "text": "Block 5 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 180.0,
+            "end": 208.0,
+            "text": "Block 6 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 210.0,
+            "end": 238.0,
+            "text": "Block 7 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 240.0,
+            "end": 268.0,
+            "text": "Block 8 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 270.0,
+            "end": 298.0,
+            "text": "Block 9 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 300.0,
+            "end": 328.0,
+            "text": "Block 10 of source 3: a transcript sentence in English about the topic."
+          },
+          {
+            "start": 330.0,
+            "end": 358.0,
+            "text": "Block 11 of source 3: a transcript sentence in English about the topic."
+          }
+        ]
+      }
+    }
+  ],
+  "missing_slots": []
+}
