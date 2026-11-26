@@ -9,10 +9,10 @@ export interface Profile {
   system: string;
 }
 
-// PLACEHOLDER band until fisheraiagent#74 publishes the character count that
-// makes about ten minutes of audio; then these two numbers come from that
-// count. Nothing else in the tool depends on them.
-const PODCAST_ZH_TW_10MIN_BAND = { min: 2600, max: 3000 };
+// The band comes from the tool-3 TTS spike (PR #82, spike/tts/REPORT.md): at
+// -12% speech rate 262 characters make one audio minute in 12 of 12 runs, so
+// 2,500 to 2,700 characters of spoken text render to about ten minutes.
+const PODCAST_ZH_TW_10MIN_BAND = { min: 2500, max: 2700 };
 
 const PODCAST_SYSTEM = [
   '你是一位台灣的 podcast 腳本作者。你把幾支 YouTube 影片的逐字稿，整理成一集約十分鐘的口語節目腳本。',
