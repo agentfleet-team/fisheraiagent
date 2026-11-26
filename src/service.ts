@@ -511,7 +511,7 @@ export function createService(options: ServiceOptions): Server {
       // exactly like no target at all.
       const deliver =
         callerVerified && tenant?.discord_delivery !== undefined ? deliverTo : undefined;
-      const jobId = jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits, deliver);
+      const jobId = jobs.submit(videoId, apiKey, origin, saveBlocked, tenant?.limits, deliver, tenant?.captions);
       // The booking is now the job's: the hourly hit stays, and the
       // in-flight half returns via deps.onJobFinished when the store
       // settles the job.

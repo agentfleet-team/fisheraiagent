@@ -4,9 +4,9 @@ export interface TranscriptBlock {
   text: string;
 }
 
-// How a transcript was made: from a manual caption track, from an auto
-// track, or by Gemini. T1 produces `captions:manual` and `gemini`;
-// `captions:auto` arrives with the tenant captions setting (T2).
+// How a transcript was made: from a manual caption track, from the
+// speech-recognition track (a job whose tenant sets `captions` to
+// "manual-or-auto"), or by Gemini.
 export type TranscriptSource = 'captions:manual' | 'captions:auto' | 'gemini';
 
 export interface Transcript {

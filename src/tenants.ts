@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { isCaptionsPolicy, type CaptionsPolicy } from './captions.js';
 import { TranscriptError } from './errors.js';
 import {
   parseDriveFolderId,
@@ -81,6 +82,13 @@ export interface Tenant {
   discord_delivery?: TenantDiscordDelivery;
   destination?: TenantDestination;
   limits?: TenantLimits;
+  // How this tenant's jobs treat the caption read (when the service runs
+  // one): "manual", the default, takes only a human track in the spoken
+  // language; "manual-or-auto" also accepts the speech-recognition track
+  // (source captions:auto, zero Gemini calls); "off" skips the read so the
+  // job always uses Gemini. Validated at load like every other field — an
+  // unknown value fails the document.
+  captions?: CaptionsPolicy;
 }
 
 // File data is unknown until checked; this narrows fields by name so no
@@ -346,6 +354,16 @@ function parseTenantsDocument(parsed: unknown, path: string): Tenant[] {
     tenant.discord_delivery = parseDiscordDelivery(field(entry, 'discord_delivery'), path);
     tenant.destination = parseDestination(field(entry, 'destination'), path);
     tenant.limits = parseLimits(field(entry, 'limits'), path);
+    const captions = field(entry, 'captions');
+    if (captions !== undefined) {
+      if (!isCaptionsPolicy(captions)) {
+        throw new TranscriptError(
+          'invalid_config',
+          `${path}: captions must be "manual", "manual-or-auto" or "off"`,
+        );
+      }
+      tenant.captions = captions;
+    }
     return tenant;
   });
 }

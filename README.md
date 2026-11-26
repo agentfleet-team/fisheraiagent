@@ -84,6 +84,8 @@ Before any Gemini call the service can read the video's caption tracks: a manual
 - **Local** — `CAPTIONS_READ=local`: the read runs inside the service. YouTube may refuse datacenter IPs, so this fits self-hosting on a residential connection.
 - **Off** — neither set (the default): no caption read and no YouTube call at all.
 
+Each tenant gates the read for its own jobs with the `captions` field (see "Per-tenant destinations"): `"manual"` (the default) is the behavior above, `"manual-or-auto"` also accepts the spoken-language speech-recognition track, and `"off"` skips the read for that tenant's jobs — logged `captions_skipped policy=off`.
+
 ### Web sign-in (optional, off by default)
 
 When `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `OIDC_REDIRECT_URI` and
@@ -125,6 +127,7 @@ Each Discord server/channel — and each allowlisted web sign-in — can pick wh
       "discord_channel_ids": ["222222222222222222"],
       "caller": { "token_sha256": "<hex sha256 of the caller's bearer token>" },
       "discord_delivery": { "token_env": "FILE_DELIVERER_TOKEN" },
+      "captions": "manual-or-auto",
       "destination": { "type": "google-drive", "folder_id": "0CdefAnotherFolderId" }
     },
     {
@@ -155,6 +158,7 @@ Each Discord server/channel — and each allowlisted web sign-in — can pick wh
 - **Tenant-held Gemini key.** `gemini_key_env` names an environment variable that holds the tenant's own Gemini key (like `password_env`, the file names the variable — never the key). A `POST /v1/jobs` without `X-Gemini-Key`, from a caller whose bearer token passes that tenant's caller check, is transcribed with the tenant key; requests that send `X-Gemini-Key` are unchanged, and a failed caller check never falls back to the tenant key — it still gets `missing_key` or `save_unauthorized`. Web sign-in callers stay bring-your-own-key: a tenant resolved through `web_emails` never spends its `gemini_key_env`. The key is read per request, held only in memory for that job, and is never logged, stored or returned.
 - **Discord delivery.** `discord_delivery.token_env` names an environment variable holding a dedicated file-deliverer bot token — the file names the variable, never the token, and a caller's bot never holds it. A verified caller of such a tenant may add `"deliver_to": "<channel or thread id>"` to `POST /v1/jobs`; after the job the service posts into that target with the deliverer bot: one summary bounded to Discord's 2000-character limit (source URL, language, covered length, the first transcript lines, the Drive link when saved) with the transcript attached in the tenant's destination extension (`.txt` by default), or one short line carrying the fixed error code for a failed job. The target counts only when Discord reports it — or a thread's parent channel — among the tenant's `discord_channel_ids` (in the tenant's guild when `discord_guild_id` is set); anything else is refused and nothing is posted. An unauthenticated `deliver_to`, or one on a tenant without `discord_delivery`, is ignored. The job view's `delivery` reports `sent` with the message id or `failed` with a fixed code (`delivery_refused`, `delivery_failed`, `invalid_config`) — the transcript and the Drive save are unaffected either way. The deliverer speaks only https to `discord.com` and never follows a redirect, so the token can travel nowhere else; it is never logged.
 - **Limits.** `limits.jobs_per_hour` caps accepted submissions in a sliding hour (a `429` `rate_limited` reply); `limits.max_video_seconds` rejects longer videos with `video_too_long` — before any Gemini call when the length is already known locally (the transcript cache), otherwise on the first model response, which declares the duration.
+- **Captions.** `captions` picks how a job uses the caption read (when the service runs one — see "Caption read"): `"manual"` (the default, same as no field) takes only a human track in the spoken language; `"manual-or-auto"` also accepts the spoken-language speech-recognition track — its `source` is `captions:auto`, and T0 measured that track's text against the same video's human track at bag-of-words F1 0.96–0.97 on the two speech videos probed (0.65 on a music video, where ASR restates lyrics loosely); `"off"` skips the read so the job always uses Gemini. Any other value fails the tenants-document load.
 - **Destinations.** `"type": "google-drive"` writes into that `folder_id`; `"type": "webdav"` writes into `path` on a WebDAV server (a NAS); `"type": "none"` saves nothing. `extension` is `.txt` (default), `.md` or `.srt`.
 - **Google Drive setup.** Create a service account in Google Cloud, download its key JSON, and set `GOOGLE_APPLICATION_CREDENTIALS` to the file's path. Then share each `folder_id` with the service account's `client_email` (right-click folder → Share → paste the email → Editor). The service account can only reach folders you share with it. Under `docker compose`, bind-mount both files into the container and point the variables at the in-container paths (e.g. `- ./tenants.json:/data/tenants.json:ro` with `TENANTS_FILE=/data/tenants.json`).
 - **NAS (WebDAV) setup.** Enable the NAS's HTTPS WebDAV service (Synology: WebDAV Server package; Nextcloud: its WebDAV endpoint) and create a user for this service. `base_url` must be `https://` — plain HTTP is refused at config load. The file holds only `password_env`: the name of an environment variable that carries the password (e.g. `NAS_WEBDAV_PASSWORD`), never the password itself; set that variable where the api process runs (under `docker compose`, add it to the api service's `environment:`).
@@ -303,7 +307,7 @@ The transcript prints to stdout as JSON:
 {"video_id": "hWe-j78vNpc", "source_url": "https://www.youtube.com/watch?v=hWe-j78vNpc", "language": "en", "blocks": [{"start": 0, "end": 7.48, "text": "..."}], "source": "gemini"}
 ```
 
-`source` says how the transcript was made: `captions:manual` (a human caption track in the spoken language, no Gemini calls) or `gemini` (`captions:auto` arrives with a per-tenant setting for auto captions).
+`source` says how the transcript was made: `captions:manual` (a human caption track in the spoken language, no Gemini calls), `captions:auto` (the speech-recognition track, when the job's tenant sets `captions: "manual-or-auto"`) or `gemini`.
 
 Environment variables:
 
