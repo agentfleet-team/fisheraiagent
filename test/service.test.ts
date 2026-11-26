@@ -898,7 +898,7 @@ test('C3: a tenant without the field, and a job with no tenant, keep the default
   }
 });
 
-test('C4: a tenants document with an unknown captions value loads no tenant at all', async () => {
+test('C4: a tenants document with an unknown captions value fails submits with invalid_config', async () => {
   const calls: GeminiCall[] = [];
   const reads = { n: 0 };
   const broken = JSON.stringify({
@@ -912,20 +912,26 @@ test('C4: a tenants document with an unknown captions value loads no tenant at a
       },
     ],
   });
-  const { base, logs, close } = await startService(calls, {
+  const { base, close } = await startService(calls, {
     tenantsJson: broken,
     captionReader: countingReader(reads, AUTO_READ),
   });
   try {
-    const res = await postJob(base, { key: KEY_A, origin: guildOrigin('guild-auto'), token: CAPTIONS_CALLER });
-    const job = await pollJob(base, res.body.job_id);
-    assert.equal(job.status, 'done');
-    // The document failed to load, so the claim resolves no tenant: the job
-    // runs under the default policy and nothing of the tenant applies.
-    assert.equal(job.result.source, 'gemini');
-    assert.equal(job.saved, undefined);
-    assert.equal(job.save_error, undefined);
-    assert.ok(!logs.some((l) => l.startsWith('captions_skipped')), 'no tenant, no tenant policy');
+    // The document cannot load, so no job may be submitted at all — a
+    // claimed origin or an anonymous BYOK request alike gets the fixed
+    // config error, and nothing transcribes on a silently tenantless guess.
+    for (const opts of [
+      { key: KEY_A, origin: guildOrigin('guild-auto'), token: CAPTIONS_CALLER },
+      { key: KEY_A },
+    ]) {
+      const res = await postJob(base, opts);
+      assert.equal(res.status, 500);
+      assert.equal(res.body.error.code, 'invalid_config');
+      assert.equal(res.body.error.message, 'the service configuration is invalid');
+      assert.equal(res.body.job_id, undefined, 'no job is created under a broken tenants document');
+    }
+    assert.equal(reads.n, 0, 'no caption read may run under a broken tenants document');
+    assert.equal(calls.length, 0, 'no Gemini call may run under a broken tenants document');
   } finally {
     await close();
   }

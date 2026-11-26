@@ -88,6 +88,7 @@ test('chooseSource: manual read blocks as captions:manual; every other kind fall
     [{ kind: 'unavailable', reason: 'empty' }, 'gemini', 'empty'],
     [{ kind: 'unavailable', reason: 'parse' }, 'gemini', 'parse'],
     [{ kind: 'unavailable', reason: 'http' }, 'gemini', 'http'],
+    [{ kind: 'unavailable', reason: 'unreachable' }, 'gemini', 'unreachable'],
   ];
   for (const [read, source, reason] of table) {
     assert.deepEqual(chooseSource(read), reason === undefined ? { source } : { source, reason });
@@ -116,16 +117,23 @@ test('chooseSource under manual-or-auto: an auto read becomes captions:auto; the
   }
 });
 
-test('chooseSource under off: every read kind goes to gemini', () => {
-  const reads: CaptionRead[] = [
-    { kind: 'manual', language: 'en', durationSeconds: 10, cues: [] },
-    { kind: 'auto', language: 'en', durationSeconds: 10, cues: [] },
-    { kind: 'none' },
-    { kind: 'unavailable', reason: 'blocked' },
-    { kind: 'unavailable', reason: 'unreachable' },
+test('chooseSource under off: every read kind goes to gemini with no reason', () => {
+  const table: Array<[CaptionRead, string, string | undefined]> = [
+    [{ kind: 'manual', language: 'en', durationSeconds: 10, cues: [] }, 'gemini', undefined],
+    [{ kind: 'auto', language: 'en', durationSeconds: 10, cues: [] }, 'gemini', undefined],
+    [{ kind: 'none' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'blocked' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'timeout' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'empty' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'parse' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'http' }, 'gemini', undefined],
+    [{ kind: 'unavailable', reason: 'unreachable' }, 'gemini', undefined],
   ];
-  for (const read of reads) {
-    assert.deepEqual(chooseSource(read, 'off'), { source: 'gemini' });
+  for (const [read, source, reason] of table) {
+    assert.deepEqual(
+      chooseSource(read, 'off'),
+      reason === undefined ? { source } : { source, reason },
+    );
   }
 });
 
