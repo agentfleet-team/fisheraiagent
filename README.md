@@ -60,6 +60,12 @@ Service environment variables:
 | `MAX_CONCURRENT_JOBS_PER_CLIENT` | no | `2` | In-flight jobs one client may hold at once (see "Per-client job limits"). |
 | `MAX_JOBS_PER_HOUR_PER_CLIENT` | no | `20` | Accepted job submissions one client may make in a sliding hour. |
 | `TRUSTED_PROXY_IPS` | no | `127.0.0.1,::1` | Peers allowed to supply the client IP via `CF-Connecting-IP` — the Cloudflare Tunnel connector's address, as a comma-separated list of IPs or IPv4 CIDRs. `none` disables header trust entirely. |
+| `CAPTIONS_READER_URL` | no | — | `https://` base URL of a remote caption-reader tool — the service calls `GET <url>/v1/captions/<videoId>` before any Gemini call (see "Caption read"). Needs `CAPTIONS_READER_TOKEN`; anything but a valid https URL fails startup. |
+| `CAPTIONS_READER_TOKEN` | with `CAPTIONS_READER_URL` | — | Bearer token sent on every reader request; never logged. |
+| `CAPTIONS_READER_ACCESS_ID` | no | — | Cloudflare Access service-token id, sent as `CF-Access-Client-Id` when the reader's tunnel edge is guarded. Must be set together with `CAPTIONS_READER_ACCESS_SECRET`. |
+| `CAPTIONS_READER_ACCESS_SECRET` | no | — | The secret half of the Access service-token pair, sent as `CF-Access-Client-Secret`; never logged. |
+| `CAPTIONS_READER_TIMEOUT_MS` | no | `4000` | Total budget for one remote caption read, in milliseconds; past it the job falls back to Gemini. |
+| `CAPTIONS_READ` | no | — | `local` runs the caption read in-process instead (see "Caption read"). Ignored when `CAPTIONS_READER_URL` is set; any other value fails startup. |
 | `APP_VERSION` | no | `0.0.0-dev` | Build identity reported by `GET /v1/config` and shown in the page footer. The Docker build bakes it in via `--build-arg APP_VERSION` (see "Release checklist"). |
 | `APP_COMMIT` | no | `unknown` | Commit the running image was built from, reported next to `APP_VERSION`; baked in via `--build-arg APP_COMMIT`. |
 
@@ -68,6 +74,14 @@ Service environment variables:
 When `SERVICE_TOKEN` is unset — the public page — `POST /v1/jobs` limits each client to `MAX_CONCURRENT_JOBS_PER_CLIENT` jobs in flight and `MAX_JOBS_PER_HOUR_PER_CLIENT` accepted submissions in a sliding hour; over either cap the reply is `429` `rate_limited`, which the page shows as a "too many jobs" message. `/healthz` and job polling are never limited.
 
 A client is its source IP: `CF-Connecting-IP` when the request's own peer is listed in `TRUSTED_PROXY_IPS`, its socket address otherwise. Behind a Cloudflare Tunnel the connector (cloudflared) overwrites `CF-Connecting-IP` with the real client IP, so point `TRUSTED_PROXY_IPS` at the connector — the loopback default fits a connector running in the same task or host. A request that did not come through the tunnel can forge the header, so its value is trusted only from those peers; any other caller is counted on the address it connects from. Limits are in-process: a restart resets the counters. When `SERVICE_TOKEN` is set, authenticated callers are trusted infrastructure (the Discord bot, an MCP client) and are not limited.
+
+### Caption read (optional, off by default)
+
+Before any Gemini call the service can read the video's caption tracks: a manual track in the spoken language becomes the transcript with zero Gemini calls, and everything else goes to Gemini exactly as today. Where the read runs is a deployment choice:
+
+- **Remote** — `CAPTIONS_READER_URL` set: the service calls a caption-reader tool over HTTPS with a short timeout. A read that times out, is unreachable, answers a non-200 or returns an unusable body falls back to Gemini, logged once as `captions_read origin=remote kind=unavailable reason=<timeout|unreachable|http|parse>` — the reader can never break a job.
+- **Local** — `CAPTIONS_READ=local`: the read runs inside the service. YouTube may refuse datacenter IPs, so this fits self-hosting on a residential connection.
+- **Off** — neither set (the default): no caption read and no YouTube call at all.
 
 ### Web sign-in (optional, off by default)
 

@@ -25,6 +25,7 @@
         { "name": "MAX_CONCURRENT_JOBS_PER_CLIENT", "value": "2" },
         { "name": "MAX_JOBS_PER_HOUR_PER_CLIENT", "value": "20" },
         { "name": "TRUSTED_PROXY_IPS", "value": "127.0.0.1,::1" },
+        { "name": "CAPTIONS_READER_URL", "value": "https://<captions-reader-host>" },
         { "name": "CACHE_DIR", "value": "/data/cache" }
       ],
       "secrets": [
@@ -34,7 +35,10 @@
         { "name": "SESSION_SECRET", "valueFrom": "<secret-arn>:SESSION_SECRET::" },
         { "name": "TENANTS_JSON", "valueFrom": "<secret-arn>:TENANTS_JSON::" },
         { "name": "GOOGLE_CREDENTIALS_JSON", "valueFrom": "<secret-arn>:GOOGLE_CREDENTIALS_JSON::" },
-        { "name": "GOOGLE_OAUTH_JSON", "valueFrom": "<secret-arn>:GOOGLE_OAUTH_JSON::" }
+        { "name": "GOOGLE_OAUTH_JSON", "valueFrom": "<secret-arn>:GOOGLE_OAUTH_JSON::" },
+        { "name": "CAPTIONS_READER_TOKEN", "valueFrom": "<secret-arn>:CAPTIONS_READER_TOKEN::" },
+        { "name": "CAPTIONS_READER_ACCESS_ID", "valueFrom": "<secret-arn>:CAPTIONS_READER_ACCESS_ID::" },
+        { "name": "CAPTIONS_READER_ACCESS_SECRET", "valueFrom": "<secret-arn>:CAPTIONS_READER_ACCESS_SECRET::" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
