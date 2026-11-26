@@ -315,6 +315,23 @@ Environment variables:
 | `MAX_VIDEO_SECONDS` | no | `43200` | Video length cap, in seconds; a video known or discovered to be longer fails with `video_too_long`. Also the hard bound on transcription windows when nothing else limits the video. The default is YouTube's documented 12-hour upload maximum. |
 | `CACHE_DIR` | no | `./transcript-cache` | Where transcripts are cached. Under `docker compose` this is the host directory bind-mounted to `/data/cache` in the container. |
 
+### Captions only (`transcribe captions`)
+
+`transcribe captions <url-or-id> [--accept manual|manual-or-auto] [--receipt <file>]` prints the same transcript JSON built from the video's caption track alone. It never calls Gemini and needs no key (agentfleet-team/fisheraiagent#89). `--accept` defaults to `manual`; `manual-or-auto` also takes the spoken-language speech-recognition track (`source` is `captions:auto`).
+
+| Exit | Meaning |
+|---|---|
+| `0` | A track was accepted; the transcript JSON is on stdout (`source` is `captions:manual` or `captions:auto`). |
+| `3` | No acceptable track: none, or only an auto track under the default `manual`. Nothing on stdout. |
+| `1` | The read failed (including a bot wall). One stderr line: `captions_unavailable reason=<blocked\|timeout\|empty\|parse\|http\|unreachable>`. |
+| `2` | Usage error. |
+
+`--receipt <file>` writes one JSON object (`video_id`, `kind`, `reason`, `language`, `cue_count`, `blocks_sha256`, `ms`, `method`, `fetched_at` in UTC); a rerun overwrites it. `MAX_BLOCK_SECONDS` applies as for the other commands.
+
+```bash
+npm start -- captions dQw4w9WgXcQ --receipt receipt.json
+```
+
 Without Docker, on Node 22 or newer:
 
 ```bash

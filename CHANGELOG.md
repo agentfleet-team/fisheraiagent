@@ -9,6 +9,11 @@ git tags on `main`.
 
 ### Added
 
+- `transcribe captions <url-or-id> [--accept manual|manual-or-auto]
+  [--receipt <file>]` prints a Transcript from the caption track alone, with
+  no Gemini call and no key. Exit 0 found, 3 no acceptable track, 1 read
+  failed (`captions_unavailable reason=<r>` on stderr). See README "Captions
+  only" (agentfleet-team/fisheraiagent#89).
 - Caption reader tool (`dist/caption-reader.js`, compose service
   `caption-reader`, profile `caption-reader`): the caption reader behind
   `GET /v1/captions/{videoId}` with a bearer token, a concurrency cap and
