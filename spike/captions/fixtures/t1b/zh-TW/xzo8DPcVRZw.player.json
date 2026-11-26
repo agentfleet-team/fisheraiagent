@@ -1,0 +1,44 @@
+{
+  "videoId": "xzo8DPcVRZw",
+  "hl": "zh-TW",
+  "status": "OK",
+  "title": "Korku, Kaygı ve Endişe: Zihnimiz Bize Ne Anlatıyor? | Hakan Türkçapar | TEDxIstanbul",
+  "audioTracks": [
+    {
+      "captionTrackIndices": [
+        0,
+        1
+      ]
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTracks": [
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "土耳其文"
+          }
+        ]
+      },
+      "vssId": ".tr",
+      "languageCode": "tr",
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "阿拉伯文"
+          }
+        ]
+      },
+      "vssId": ".ar",
+      "languageCode": "ar",
+      "rtl": true,
+      "isTranslatable": true,
+      "trackName": ""
+    }
+  ]
+}

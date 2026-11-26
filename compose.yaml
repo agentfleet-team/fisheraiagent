@@ -99,3 +99,23 @@ services:
       CACHE_DIR: /data/cache
     volumes:
       - ${CACHE_DIR:-./transcript-cache}:/data/cache
+
+  # Caption reader tool for the Mac mini (OrbStack): reads a video's caption
+  # tracks over HTTP for the cloud service, behind a Cloudflare tunnel. Same
+  # image, own entrypoint, no Gemini or tenant settings. Not started by a
+  # plain `docker compose up`: docker compose --profile caption-reader up -d.
+  # Startup fails without CAPTION_READER_TOKEN. See README "Caption reader".
+  caption-reader:
+    build: *build-args
+    profiles: ['caption-reader']
+    entrypoint: ["node", "dist/caption-reader.js"]
+    ports:
+      - "${CAPTION_READER_PORT:-8090}:8090"
+    environment:
+      PORT: 8090
+      CAPTION_READER_TOKEN: ${CAPTION_READER_TOKEN:-}
+      CAPTION_READER_MAX_CONCURRENT: ${CAPTION_READER_MAX_CONCURRENT:-}
+      CAPTION_READER_RECEIPT_DIR: /data/receipts
+    volumes:
+      - ${CAPTION_READER_RECEIPT_HOST_DIR:-./caption-receipts}:/data/receipts
+    restart: unless-stopped

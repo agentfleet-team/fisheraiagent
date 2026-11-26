@@ -346,6 +346,31 @@ Develop: `npm test` runs the offline unit tests (no key, no network). `npm run t
 - **Your destination, your config.** Each user or Discord channel chooses where transcripts are saved. Adding a user is configuration, not code.
 - **One program.** The same container runs on your own machine (`docker compose up`) or on our hosted instance.
 
+## Caption reader (Mac mini)
+
+A small tool that reads a video's caption tracks and returns them over HTTP, so the cloud service can get captions from a residential IP without a Gemini call (agentfleet-team/fisheraiagent#65, #78). It reuses the caption reader module unchanged and has no tenant, Gemini or Drive code. The cloud calls it through a Cloudflare tunnel; the tunnel, Access and the real token are set up outside this repo.
+
+```text
+GET /v1/captions/{videoId}    Authorization: Bearer <CAPTION_READER_TOKEN>
+  200  the caption read: {"kind":"manual"|"auto"|"none"|"unavailable", ...}
+       (a YouTube-side failure is 200 with kind "unavailable" and a reason)
+  400  {"error":"invalid_video_id"}
+  401  {"error":"unauthorized"}
+  429  {"error":"busy"}          (concurrency cap reached)
+GET /healthz                  200 ok
+```
+
+| Env | Meaning |
+|---|---|
+| `CAPTION_READER_TOKEN` | Required. Startup exits non-zero without it. Compared as sha256 digests in constant time; never logged. |
+| `CAPTION_READER_MAX_CONCURRENT` | Concurrent reads allowed (default 4). Over the cap returns 429. |
+| `CAPTION_READER_RECEIPT_DIR` | Where receipts go (default `./receipts`; `/data/receipts` in compose). |
+| `PORT` | Listen port (default 8090). |
+
+Every `/v1/captions` request appends one JSON line to `receipts-YYYY-MM-DD.jsonl`: `ts`, `video_id`, `status`, `kind`, `reason`, `language`, `cue_count`, `cues_sha256`, `ms`, `caller` (first 8 hex characters of the token's sha256, `null` when the token was missing or wrong).
+
+Run it: `CAPTION_READER_TOKEN=<token> npm run build && node dist/caption-reader.js`, or `docker compose --profile caption-reader up -d caption-reader` (same image, entrypoint `node dist/caption-reader.js`, port 8090, receipts in the `CAPTION_READER_RECEIPT_HOST_DIR` volume).
+
 ## Limits (from Google)
 
 Gemini reads public or unlisted YouTube videos only, one video per request. See [Gemini video understanding](https://ai.google.dev/gemini-api/docs/video-understanding).

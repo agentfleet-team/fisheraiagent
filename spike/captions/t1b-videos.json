@@ -1,0 +1,15 @@
+[
+ {"videoId":"52uaFgT9jZI","spoken":["zh"],"basis":"title is Mandarin; the only track is zh"},
+ {"videoId":"snZ811wvjjw","spoken":["zh"],"basis":"TEDxTaipei talk, title Chinese; zh-TW cues read as the speech"},
+ {"videoId":"6i7RcP39NB0","spoken":["zh"],"basis":"TEDxTaipei talk by Chiang Hsun, title Chinese; zh-TW is the original, en is a translation"},
+ {"videoId":"tx6of5YHqCA","spoken":["zh"],"basis":"TEDxTaipei talk by Ko Wen-je (Taipei mayor); zh-TW is the original, en is a translation"},
+ {"videoId":"j_t0XlFoCjU","spoken":["zh"],"basis":"TEDxTaipei talk, title Chinese; single zh-TW track"},
+ {"videoId":"TLgAJgYqIZk","spoken":["ko"],"basis":"Talk To Me In Korean; native Korean speakers; the only track is en (translation)"},
+ {"videoId":"24kbywok2Hw","spoken":["nan","zh"],"basis":"Hou Hsiao-hsien film, Taiwanese Hokkien and Mandarin dialogue; the only track is en (translation); no track in the spoken language exists"},
+ {"videoId":"zQwx_1SCya4","spoken":["ja"],"basis":"Japanese speech contest; the ja cues read as the speech of a Brazilian Japanese learner; pt-BR is a translation"},
+ {"videoId":"ZamutZpubdY","spoken":["fr"],"basis":"TEDxTours talk, French title and cues"},
+ {"videoId":"JBRv-EAv2IA","spoken":["de"],"basis":"TEDxDonauinsel talk, German title; five tracks, ar sorts first"},
+ {"videoId":"XUqrvbsTfck","spoken":["es"],"basis":"TEDxESIC University talk, Spanish title; ar sorts before es"},
+ {"videoId":"xzo8DPcVRZw","spoken":["tr"],"basis":"TEDxIstanbul talk, Turkish title; ar sorts before tr"},
+ {"videoId":"DcZxMNb0IDQ","spoken":["th"],"basis":"TEDxBangKhunThian talk, Thai title; single th track"}
+]

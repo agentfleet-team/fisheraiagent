@@ -1,0 +1,39 @@
+{
+  "videoId": "TLgAJgYqIZk",
+  "hl": "en",
+  "status": "OK",
+  "title": "Learn Korean with Subtitles - Daily Conversations with Native Koreans",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en",
+      "name": "English"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0
+      ],
+      "defaultCaptionTrackIndex": 0
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en",
+      "name": "English"
+    }
+  ],
+  "hasAsr": false
+}

@@ -7,3 +7,5 @@ transcript-cache
 .env
 *.log
 bot-data
+caption-receipts
+receipts

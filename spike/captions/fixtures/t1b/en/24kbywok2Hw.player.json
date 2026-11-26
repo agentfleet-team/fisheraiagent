@@ -1,0 +1,32 @@
+{
+  "videoId": "24kbywok2Hw",
+  "hl": "en",
+  "status": "OK",
+  "title": "The Puppetmaster [1993]",
+  "audioTracks": [
+    {
+      "captionTrackIndices": [
+        0
+      ],
+      "defaultCaptionTrackIndex": 0,
+      "hasDefaultTrack": true,
+      "captionsInitialState": "CAPTIONS_INITIAL_STATE_OFF_RECOMMENDED"
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTracks": [
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "English"
+          }
+        ]
+      },
+      "vssId": ".en",
+      "languageCode": "en",
+      "isTranslatable": true,
+      "trackName": ""
+    }
+  ]
+}

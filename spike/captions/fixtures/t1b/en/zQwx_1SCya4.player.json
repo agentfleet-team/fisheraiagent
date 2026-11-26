@@ -1,0 +1,43 @@
+{
+  "videoId": "zQwx_1SCya4",
+  "hl": "en",
+  "status": "OK",
+  "title": "第１６回東北伯日本語スピーチ大会　「日伯」（字幕付け）",
+  "audioTracks": [
+    {
+      "captionTrackIndices": [
+        0,
+        1
+      ]
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTracks": [
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "Japanese"
+          }
+        ]
+      },
+      "vssId": ".ja",
+      "languageCode": "ja",
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "Portuguese (Brazil)"
+          }
+        ]
+      },
+      "vssId": ".pt-BR",
+      "languageCode": "pt-BR",
+      "isTranslatable": true,
+      "trackName": ""
+    }
+  ]
+}

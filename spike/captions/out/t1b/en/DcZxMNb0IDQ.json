@@ -1,0 +1,39 @@
+{
+  "videoId": "DcZxMNb0IDQ",
+  "hl": "en",
+  "status": "OK",
+  "title": "ภาษาไทยนำมาซึ่งความรักได้อย่างไร? | ถนิมรักษ์ อัญชันบุตร | TEDxBangKhunThian",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "th",
+      "kind": "manual",
+      "vssId": ".th",
+      "name": "Thai"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0
+      ],
+      "defaultCaptionTrackIndex": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "th",
+      "kind": "manual",
+      "vssId": ".th",
+      "name": "Thai"
+    }
+  ],
+  "hasAsr": false
+}

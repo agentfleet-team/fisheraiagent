@@ -9,6 +9,11 @@ git tags on `main`.
 
 ### Added
 
+- Caption reader tool (`dist/caption-reader.js`, compose service
+  `caption-reader`, profile `caption-reader`): the caption reader behind
+  `GET /v1/captions/{videoId}` with a bearer token, a concurrency cap and
+  one JSONL receipt per request, for the Mac mini. See README "Caption
+  reader (Mac mini)" (agentfleet-team/fisheraiagent#78).
 - The caption read can run remotely: `CAPTIONS_READER_URL` (https only,
   with `CAPTIONS_READER_TOKEN` as the bearer credential) points the
   service at a caption-reader tool over HTTP — on the hosted instance,

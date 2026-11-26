@@ -1,0 +1,55 @@
+{
+  "videoId": "tx6of5YHqCA",
+  "hl": "zh-TW",
+  "status": "OK",
+  "title": "A trauma physician's view on life and death | Wen-Je Ko (柯文哲) | TEDxTaipei 2013",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "zh-TW",
+      "kind": "manual",
+      "vssId": ".zh-TW",
+      "name": "中文（台灣）"
+    },
+    {
+      "index": 1,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en",
+      "name": "英文"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0,
+        1
+      ],
+      "defaultCaptionTrackIndex": 0
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0,
+    1
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "zh-TW",
+      "kind": "manual",
+      "vssId": ".zh-TW",
+      "name": "中文（台灣）"
+    },
+    {
+      "index": 1,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en",
+      "name": "英文"
+    }
+  ],
+  "hasAsr": false
+}
