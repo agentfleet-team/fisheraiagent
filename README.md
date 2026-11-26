@@ -6,10 +6,12 @@ Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host 
 
 ## Tools
 
-| Tool | What it does | Status |
-|---|---|---|
-| YouTube transcript | One YouTube URL in, the full timed transcript out. A manual caption track in the spoken language becomes the transcript with zero Gemini calls; every other video goes to Gemini. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot + web page ready |
-| Digest | N transcripts and their video metadata in, one episode script out for a named profile (first: `podcast-zh-tw-10min`). Same job API as the transcript tool; code and API in `src/digest/`. | built, not deployed |
+The directory page [tools.agentfleet.team](https://tools.agentfleet.team/) is generated from this table (`node tools-site/render.mjs`, folder `tools-site/`). Each row needs an https link in the Link column.
+
+| Tool | What it does | Status | Link |
+|---|---|---|---|
+| YouTube transcript | One YouTube URL in, the full timed transcript out. A manual caption track in the spoken language becomes the transcript with zero Gemini calls; every other video goes to Gemini. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot + web page ready | [transcripts.agentfleet.team](https://transcripts.agentfleet.team/) |
+| Digest | N transcripts and their video metadata in, one episode script out for a named profile (first: `podcast-zh-tw-10min`). Same job API as the transcript tool; code and API in `src/digest/`. | built, not deployed | [Digest code](https://github.com/agentfleet-team/fisheraiagent/tree/main/src/digest) |
 
 ## Self-host quick start (HTTP service)
 
