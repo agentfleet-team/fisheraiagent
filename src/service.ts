@@ -196,7 +196,9 @@ export function createService(options: ServiceOptions): Server {
 
   // The tenants document as configured, or undefined when tenants are not
   // configured or the document cannot be read — a broken tenant source
-  // resolves nothing rather than guessing.
+  // resolves nothing rather than guessing. Only read-only reporting
+  // (/auth/me) may degrade like this; the job submit refuses the request
+  // instead (see submitJob).
   const tryTenants = (): Tenant[] | undefined => {
     if (!hasTenants) return undefined;
     try {
@@ -240,8 +242,8 @@ export function createService(options: ServiceOptions): Server {
   const verifyClaim = (
     req: IncomingMessage,
     claimed: JobOrigin,
+    tenants: Tenant[] | undefined,
   ): { verdict: 'verified' | 'denied' | 'none'; tenant?: Tenant } => {
-    const tenants = tryTenants();
     if (!tenants) return { verdict: 'none' };
     const tenant = resolveTenant(tenants, claimed);
     if (!tenant) return { verdict: 'none' };
@@ -404,6 +406,21 @@ export function createService(options: ServiceOptions): Server {
     }
     let submitted = false;
     try {
+      // A configured tenants source that cannot be loaded fails the submit
+      // with the fixed invalid_config error before any job exists — never
+      // silently tenantless: a broken document (an unknown captions value,
+      // any malformed field) would drop every tenant field the job depends
+      // on — its captions policy, caller key and limits. Tenants
+      // unconfigured means the service legitimately runs without them.
+      let tenants: Tenant[] | undefined;
+      if (hasTenants) {
+        try {
+          tenants = loadTenants();
+        } catch (err) {
+          sendError(res, 500, codeOf(err));
+          return;
+        }
+      }
       let body: unknown;
       try {
         body = await readJsonBody(req);
@@ -470,12 +487,11 @@ export function createService(options: ServiceOptions): Server {
       let callerVerified = false;
       const email = sessionEmail(req);
       if (email !== undefined) {
-        const tenants = tryTenants();
         tenant = tenants ? resolveTenant(tenants, { kind: 'web', identity: email }) : undefined;
         if (tenant) origin = { kind: 'web', identity: email };
         else saveBlocked = 'no_tenant';
       } else if (claimed?.kind === 'discord') {
-        const { verdict, tenant: resolved } = verifyClaim(req, claimed);
+        const { verdict, tenant: resolved } = verifyClaim(req, claimed, tenants);
         if (verdict === 'verified') {
           origin = claimed;
           tenant = resolved;
