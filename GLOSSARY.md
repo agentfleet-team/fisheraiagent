@@ -33,19 +33,19 @@ A caption track YouTube derived from another track in a different language.
 _Avoid_: auto-translate captions
 
 **Spoken language**:
-The language of the video's audio, taken from YouTube's original auto track.
+The language of the video's audio.
 _Avoid_: video language, default language
 
 **Transcript source**:
 How a transcript was made: from a manual track, from an auto track, or by Gemini.
-_Avoid_: method, origin (origin is the caller's channel or session)
+_Avoid_: method, origin
 
 **Caption reader**:
-The separate tool, run on a residential host, that reads a video's caption tracks for the service.
+The tool that reads a video's caption tracks for the service.
 _Avoid_: caption proxy, caption service
 
 **Window**:
-One clipped stretch of the video sent to Gemini in one call.
+One clipped stretch of the video that Gemini transcribes apart from the others; it can take more than one call.
 _Avoid_: chunk, part
 
 **Tenant**:
