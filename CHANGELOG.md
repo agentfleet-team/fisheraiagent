@@ -9,6 +9,11 @@ git tags on `main`.
 
 ### Added
 
+- Caption reader tool (`dist/caption-reader.js`, compose service
+  `caption-reader`, profile `caption-reader`): the caption reader behind
+  `GET /v1/captions/{videoId}` with a bearer token, a concurrency cap and
+  one JSONL receipt per request, for the Mac mini. See README "Caption
+  reader (Mac mini)" (agentfleet-team/fisheraiagent#78).
 - Transcription reads the video's caption tracks before any Gemini call:
   a manual track in the spoken language becomes the timed transcript with
   zero Gemini calls (InnerTube `player` with the ANDROID client, plain
