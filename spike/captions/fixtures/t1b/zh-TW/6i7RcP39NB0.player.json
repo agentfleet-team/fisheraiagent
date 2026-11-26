@@ -1,0 +1,46 @@
+{
+  "videoId": "6i7RcP39NB0",
+  "hl": "zh-TW",
+  "status": "OK",
+  "title": "留十八分鐘給自己：蔣勳 (Chiang Hsun) at TEDxTaipei 2012",
+  "audioTracks": [
+    {
+      "captionTrackIndices": [
+        0,
+        1
+      ],
+      "defaultCaptionTrackIndex": 0,
+      "hasDefaultTrack": true,
+      "captionsInitialState": "CAPTIONS_INITIAL_STATE_OFF_RECOMMENDED"
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTracks": [
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "中文（台灣）"
+          }
+        ]
+      },
+      "vssId": ".zh-TW",
+      "languageCode": "zh-TW",
+      "isTranslatable": true,
+      "trackName": ""
+    },
+    {
+      "name": {
+        "runs": [
+          {
+            "text": "英文"
+          }
+        ]
+      },
+      "vssId": ".en",
+      "languageCode": "en",
+      "isTranslatable": true,
+      "trackName": ""
+    }
+  ]
+}

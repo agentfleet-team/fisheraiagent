@@ -8,6 +8,7 @@
     "verify": "node run.mjs innertube-android dQw4w9WgXcQ hWe-j78vNpc aqz-KE-bpKQ UF8uR6Z6KLc arj7oStGLkU 3JZ_D3ELwOQ kJQP7kiw5Fk",
     "attempts": "for m in innertube-android-old innertube-android-vr innertube-mweb innertube-web-creator innertube-tv innertube-web; do node run.mjs $m dQw4w9WgXcQ hWe-j78vNpc aqz-KE-bpKQ; done",
     "report": "node report.mjs",
-    "all": "npm run verify && npm run attempts && npm run report"
+    "all": "npm run verify && npm run attempts && npm run report",
+    "t1b": "node t1b.mjs && node t1b-report.mjs"
   }
 }

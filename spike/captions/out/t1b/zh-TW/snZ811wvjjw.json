@@ -1,0 +1,55 @@
+{
+  "videoId": "snZ811wvjjw",
+  "hl": "zh-TW",
+  "status": "OK",
+  "title": "如何不讓人生留下遺憾? | Breaking the power of guilt | 陳永儀 May Chen | TEDxTaipei",
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "zh-TW",
+      "kind": "manual",
+      "vssId": ".zh-TW",
+      "name": "中文（台灣）"
+    },
+    {
+      "index": 1,
+      "languageCode": "ko",
+      "kind": "manual",
+      "vssId": ".ko",
+      "name": "韓文"
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null,
+      "captionTrackIndices": [
+        0,
+        1
+      ],
+      "defaultCaptionTrackIndex": 0
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "captionTrackIndices": [
+    0,
+    1
+  ],
+  "named": [
+    {
+      "index": 0,
+      "languageCode": "zh-TW",
+      "kind": "manual",
+      "vssId": ".zh-TW",
+      "name": "中文（台灣）"
+    },
+    {
+      "index": 1,
+      "languageCode": "ko",
+      "kind": "manual",
+      "vssId": ".ko",
+      "name": "韓文"
+    }
+  ],
+  "hasAsr": false
+}
