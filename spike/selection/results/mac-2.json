@@ -1,0 +1,3066 @@
+{
+  "tool": "yt-dlp 2026.11.23 via 'uv run --with yt-dlp yt-dlp'",
+  "place": "mac",
+  "run": "2",
+  "started_at": "2026-11-26T17:46:22.282Z",
+  "per_search": 20,
+  "top_n": 3,
+  "queries": [
+    {
+      "topic_id": "agent-workflows",
+      "query": "AI agent workflow",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=AI%20agent%20workflow&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.05,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "FwOTs4UxQS4",
+            "title": "AI Agents, Clearly Explained",
+            "duration": 609,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5833344,
+            "channel": "Jeff Su",
+            "live_status": null
+          },
+          {
+            "id": "HdI_aYzgJIg",
+            "title": "Personal Agents, Clearly Explained",
+            "duration": 921,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 365450,
+            "channel": "Jeff Su",
+            "live_status": null
+          },
+          {
+            "id": "3_BbMHwNLzc",
+            "title": "How to Use AI Agents to Automate Your Entire Workflow in 2026",
+            "duration": 525,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 15978,
+            "channel": "AI Master",
+            "live_status": null
+          },
+          {
+            "id": "F8jidmEkIeM",
+            "title": "Claude Code: Build Your First AI Agent in 20 Minutes (100% No Coding)",
+            "duration": 1201,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 393726,
+            "channel": "Grace Leung",
+            "live_status": null
+          },
+          {
+            "id": "wpxvQi7mpno",
+            "title": "AI Agents, AI Workflow - Explained",
+            "duration": 620,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 19671,
+            "channel": "Codemify",
+            "live_status": null
+          },
+          {
+            "id": "ZVPlLaehjLk",
+            "title": "Agentic AI Frameworks Explained: Workflows, Multi-Agent, & Production",
+            "duration": 714,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 154547,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "TL8V41Ea6oM",
+            "title": "4 AI Agents To Automate 99% Of Your Life",
+            "duration": 1247,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2672572,
+            "channel": "Sandeep Swadia",
+            "live_status": null
+          },
+          {
+            "id": "bJ70Grz2ydM",
+            "title": "How to Build an AI Agent Team for Automated Workflows (AI Agents Tutorial)",
+            "duration": 624,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 15458,
+            "channel": "AI Master",
+            "live_status": null
+          },
+          {
+            "id": "VxGIopUQVKo",
+            "title": "Anthropic's Engineers Stopped Building AI Agents. Here's What They Build Instead.",
+            "duration": 970,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 568434,
+            "channel": "Sharbel A.",
+            "live_status": null
+          },
+          {
+            "id": "8rVQuZlRaqo",
+            "title": "A Practical AI Agent Workflow For Companies In 2027 (Guide)",
+            "duration": 1162,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 71732,
+            "channel": "Nick Saraev",
+            "live_status": null
+          },
+          {
+            "id": "Lg-meK5IU8Q",
+            "title": "What AI Agent Skills Are and How They Work",
+            "duration": 745,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 614533,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "BrLU6BS_JFo",
+            "title": "AI Agents vs Workflows: What Changed (2026)",
+            "duration": 193,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 8109,
+            "channel": "KodeKloud",
+            "live_status": null
+          },
+          {
+            "id": "4Vg2aVtrX8k",
+            "title": "Building AI Agents for Real-World Problems & Workflows",
+            "duration": 473,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 19800,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "SJywU4UQryQ",
+            "title": "How to Build an AI Agent for Every Part of Your Life",
+            "duration": 1671,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 584354,
+            "channel": "Dan Martell",
+            "live_status": null
+          },
+          {
+            "id": "ZaPbP9DwBOE",
+            "title": "Don't learn AI Agents without Learning these Fundamentals",
+            "duration": 3400,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1503994,
+            "channel": "KodeKloud",
+            "live_status": null
+          },
+          {
+            "id": "OFq_CvRCpA0",
+            "title": "Orchestrating Complex AI Workflows with AI Agents & LLMs",
+            "duration": 1192,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 116904,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "eSP7PLTXNy8",
+            "title": "Build a proactive agent workflow with Claude Code",
+            "duration": 1324,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 407697,
+            "channel": "Claude",
+            "live_status": null
+          },
+          {
+            "id": "Qd6anWv0mv0",
+            "title": "Agentic AI: Workflows vs. agents",
+            "duration": 330,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 140266,
+            "channel": "Google Cloud Tech",
+            "live_status": null
+          },
+          {
+            "id": "0jg2g3sNvgw",
+            "title": "AI Agents vs. workflows, clearly explained with realistic examples",
+            "duration": 442,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 18580,
+            "channel": "Mastra",
+            "live_status": null
+          },
+          {
+            "id": "Bm84BAtOfQw",
+            "title": "You’re Not Behind (Yet): How to Build Your First AI Agent (Full Guide)",
+            "duration": 1345,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1042041,
+            "channel": "Dan Martell",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "FwOTs4UxQS4",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=FwOTs4UxQS4",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.28,
+          "error": null,
+          "upload_date": "20250408",
+          "timestamp": 1744117228,
+          "duration": 609,
+          "view_count": 5833344,
+          "channel": "Jeff Su",
+          "channel_follower_count": 1960000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "HdI_aYzgJIg",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=HdI_aYzgJIg",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.33,
+          "error": null,
+          "upload_date": "20261013",
+          "timestamp": 1791896411,
+          "duration": 920,
+          "view_count": 365450,
+          "channel": "Jeff Su",
+          "channel_follower_count": 1960000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "3_BbMHwNLzc",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=3_BbMHwNLzc",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.4,
+          "error": null,
+          "upload_date": "20260518",
+          "timestamp": 1779127817,
+          "duration": 525,
+          "view_count": 15977,
+          "channel": "AI Master",
+          "channel_follower_count": 352000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "agent-workflows",
+      "query": "build AI agent workflow tutorial",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=build%20AI%20agent%20workflow%20tutorial&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.08,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "F8jidmEkIeM",
+            "title": "Claude Code: Build Your First AI Agent in 20 Minutes (100% No Coding)",
+            "duration": 1201,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 393726,
+            "channel": "Grace Leung",
+            "live_status": null
+          },
+          {
+            "id": "FwOTs4UxQS4",
+            "title": "AI Agents, Clearly Explained",
+            "duration": 609,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5833344,
+            "channel": "Jeff Su",
+            "live_status": null
+          },
+          {
+            "id": "EH5jx5qPabU",
+            "title": "From Zero to Your First AI Agent in 25 Minutes (No Coding)",
+            "duration": 1558,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 4675648,
+            "channel": "Futurepedia and AI Agent Lab",
+            "live_status": null
+          },
+          {
+            "id": "bcM9dP_uXJU",
+            "title": "How to Build an AI Agent with Claude Code (Claude AI Agent Tutorial)",
+            "duration": 1328,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1133663,
+            "channel": "AI Master",
+            "live_status": null
+          },
+          {
+            "id": "Bm84BAtOfQw",
+            "title": "You’re Not Behind (Yet): How to Build Your First AI Agent (Full Guide)",
+            "duration": 1345,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1042041,
+            "channel": "Dan Martell",
+            "live_status": null
+          },
+          {
+            "id": "B8pK94kYCTg",
+            "title": "Build Your First AI Agent with Claude Code(No Coding)",
+            "duration": 1063,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 80701,
+            "channel": "Ishan Sharma",
+            "live_status": null
+          },
+          {
+            "id": "SJywU4UQryQ",
+            "title": "How to Build an AI Agent for Every Part of Your Life",
+            "duration": 1671,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 584354,
+            "channel": "Dan Martell",
+            "live_status": null
+          },
+          {
+            "id": "fFQM0LHOGBc",
+            "title": "Build Your Own Legal AI Agents with Harvey Workflow Builder",
+            "duration": 177,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 19605,
+            "channel": "Harvey",
+            "live_status": null
+          },
+          {
+            "id": "bJ70Grz2ydM",
+            "title": "How to Build an AI Agent Team for Automated Workflows (AI Agents Tutorial)",
+            "duration": 624,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 15458,
+            "channel": "AI Master",
+            "live_status": null
+          },
+          {
+            "id": "eA9Zf2-qYYM",
+            "title": "Building AI Agents that actually work (Full Course)",
+            "duration": 3536,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 905271,
+            "channel": "Greg Isenberg",
+            "live_status": null
+          },
+          {
+            "id": "8rVQuZlRaqo",
+            "title": "A Practical AI Agent Workflow For Companies In 2027 (Guide)",
+            "duration": 1162,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 71732,
+            "channel": "Nick Saraev",
+            "live_status": null
+          },
+          {
+            "id": "eSP7PLTXNy8",
+            "title": "Build a proactive agent workflow with Claude Code",
+            "duration": 1324,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 407697,
+            "channel": "Claude",
+            "live_status": null
+          },
+          {
+            "id": "ZVPlLaehjLk",
+            "title": "Agentic AI Frameworks Explained: Workflows, Multi-Agent, & Production",
+            "duration": 714,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 154547,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "UyoVmQLekBc",
+            "title": "How I Built an AI Agent in 14 minutes as A Beginner (2026)",
+            "duration": 1082,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 53448,
+            "channel": "Mikey No Code",
+            "live_status": null
+          },
+          {
+            "id": "vFepZE_wrfg",
+            "title": "How to Build $10,000 Agentic Workflows (Claude Code Tutorial)",
+            "duration": 1495,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 164295,
+            "channel": "Nate Herk | AI Automation",
+            "live_status": null
+          },
+          {
+            "id": "ZvDkJsKE80k",
+            "title": "AI Agents Explained - What Is an AI Agent and how to build one? (Real Examples, Not Hype)",
+            "duration": 1294,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 520504,
+            "channel": "Tech With Tim",
+            "live_status": null
+          },
+          {
+            "id": "qYNs80FKIVc",
+            "title": "5 Best Practices for Building AI Agent Skills",
+            "duration": 802,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 125770,
+            "channel": "IBM Technology and IBM Developer",
+            "live_status": null
+          },
+          {
+            "id": "EsTrWCV0Ph4",
+            "title": "AI Agents FULL COURSE 2027 (2 Hours, 100% FREE)",
+            "duration": 7995,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1164233,
+            "channel": "Nick Saraev",
+            "live_status": null
+          },
+          {
+            "id": "-QFHIoCo-Ko",
+            "title": "Full Walkthrough: Workflow for AI Coding — Matt Pocock",
+            "duration": 5790,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2182574,
+            "channel": "AI Engineer and Matt Pocock",
+            "live_status": null
+          },
+          {
+            "id": "ZaPbP9DwBOE",
+            "title": "Don't learn AI Agents without Learning these Fundamentals",
+            "duration": 3400,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1503994,
+            "channel": "KodeKloud",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "F8jidmEkIeM",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=F8jidmEkIeM",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.92,
+          "error": null,
+          "upload_date": "20261030",
+          "timestamp": 1793365210,
+          "duration": 1201,
+          "view_count": 393726,
+          "channel": "Grace Leung",
+          "channel_follower_count": 153000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "FwOTs4UxQS4",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=FwOTs4UxQS4",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.24,
+          "error": null,
+          "upload_date": "20250408",
+          "timestamp": 1744117228,
+          "duration": 609,
+          "view_count": 5833344,
+          "channel": "Jeff Su",
+          "channel_follower_count": 1960000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "EH5jx5qPabU",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=EH5jx5qPabU",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.25,
+          "error": null,
+          "upload_date": "20250521",
+          "timestamp": 1747826940,
+          "duration": 1557,
+          "view_count": 4675648,
+          "channel": "Futurepedia",
+          "channel_follower_count": 774,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "agent-workflows",
+      "query": "AI 代理人 工作流程",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=AI%20%E4%BB%A3%E7%90%86%E4%BA%BA%20%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.08,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "wDk6OVRLtPs",
+            "title": "多AI Agent架構怎麼用、如何判斷該不該用？用對才能省時又省錢！｜Kelly Tsai ft. @creao-ai",
+            "duration": 969,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 57267,
+            "channel": "Kelly Tsai",
+            "live_status": null
+          },
+          {
+            "id": "xRzHnDLO6OM",
+            "title": "[1] What is an AI Agent? | What is an AI Agent? | AI Agent | AI Agent | Artificial Intelligence |...",
+            "duration": 312,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 449,
+            "channel": "KYC AI LABS",
+            "live_status": null
+          },
+          {
+            "id": "ozcn2Z_d3xU",
+            "title": "AI Agent 到底差在哪？從聊天到自己的工作流程",
+            "duration": 158,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 357,
+            "channel": "老墨 Mofi",
+            "live_status": null
+          },
+          {
+            "id": "So6xDR449W0",
+            "title": "AI Agent Beginner's Guide: 6 Ways to Automate Work & Make Money with Manus AI 🔥",
+            "duration": 1154,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 28842,
+            "channel": "蘋果妹",
+            "live_status": null
+          },
+          {
+            "id": "_hG0pcBnPQw",
+            "title": "AI Agent是什麼？一口氣了解AI技術演進！LLM、Workflow、Agent到底差在哪？",
+            "duration": 906,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 339000,
+            "channel": "Kelly Tsai",
+            "live_status": null
+          },
+          {
+            "id": "96-rR_vXKRs",
+            "title": "AI 代理才是真正的智慧：AI Agent 究竟如何完成你的工作！？",
+            "duration": 495,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1727,
+            "channel": "A.I. Tomorrow",
+            "live_status": null
+          },
+          {
+            "id": "GRhg_ZZswmQ",
+            "title": "How to Train an AI Agent? Dual-Memory Systems with Claude Code and Codex, Conversation Management...",
+            "duration": 881,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 39537,
+            "channel": "柚智夫妻 X 雷蒙三十",
+            "live_status": null
+          },
+          {
+            "id": "Yzpx4Xaigms",
+            "title": "The most essential design skill for non-technical people in the AI ​​era: Transforming Human Stan...",
+            "duration": 1300,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 85624,
+            "channel": "Gary Chen",
+            "live_status": null
+          },
+          {
+            "id": "tfeCwDT-5m0",
+            "title": "Codex保姆級完整教學：從入門到進階，自動生成內容、網頁、影片和App，快速學會指揮你的超級AI Agent #chatgpt #codex",
+            "duration": 1795,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 421979,
+            "channel": "學長Ethan",
+            "live_status": null
+          },
+          {
+            "id": "3ZGRRyF4Oyg",
+            "title": "AI Agent強在哪？從聊天AI到自動完成工作，一次搞懂3種AI工作模式",
+            "duration": 584,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1082,
+            "channel": "iPAS自學路",
+            "live_status": null
+          },
+          {
+            "id": "8h_B_SrgdIw",
+            "title": "AI Agent完整解析！一支影片搞懂LLM、Workflow、RAG、Function calling、MCP｜Genspark實測  @GensparkProduct​",
+            "duration": 843,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 25493,
+            "channel": "哈佛姐夢遊矽谷 AliceInSiliconWonderland",
+            "live_status": null
+          },
+          {
+            "id": "fwdzsY9KWKk",
+            "title": "15分鐘學會AI Agent｜完整講解",
+            "duration": 897,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 330486,
+            "channel": "李厂长来了",
+            "live_status": null
+          },
+          {
+            "id": "0X5CVapfqPQ",
+            "title": "我給自己招了4個AI員工，每週省下8小時！",
+            "duration": 930,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 269641,
+            "channel": "李厂长来了",
+            "live_status": null
+          },
+          {
+            "id": "51FTHyEczek",
+            "title": "上班族必備：零基礎 10 分鐘用 Copilot 搭建 AI 代理！",
+            "duration": 722,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 152489,
+            "channel": "李厂长来了",
+            "live_status": null
+          },
+          {
+            "id": "7qO8-kx3gW8",
+            "title": "从 LLM 到 Agent Skill，一期视频带你打通底层逻辑！",
+            "duration": 1951,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 996970,
+            "channel": "马克的技术工作坊",
+            "live_status": null
+          },
+          {
+            "id": "3mReSySmJ8E",
+            "title": "Build an Automated AI Team for SEO & Content | AI Agent Workflow Tutorial 2026 🚀",
+            "duration": 614,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2098,
+            "channel": "exitplanID",
+            "live_status": null
+          },
+          {
+            "id": "LXPQE8cnhXU",
+            "title": "〖AI Agent〗你仲淨係用AI問問題？｜AI已經可以幫你做埋份工？｜點解用最強Model，都未必做到你想要嘅效果？#AI教學",
+            "duration": 800,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 60131,
+            "channel": "諗深一層",
+            "live_status": null
+          },
+          {
+            "id": "hw2_fc4suqE",
+            "title": "一人公司革命❗️我用AI Agent，48小時搞定自動化全流程｜Genspark教程",
+            "duration": 492,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2737046,
+            "channel": "木子AI研究所 and Genspark Products & Guides",
+            "live_status": null
+          },
+          {
+            "id": "4w_RK3hZtWo",
+            "title": "別再死磕 n8n 了！ 2026 年自動化新趨勢：Agent工作流程完整教學",
+            "duration": 849,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 10134,
+            "channel": "李哈利Harry",
+            "live_status": null
+          },
+          {
+            "id": "xFPiU5sit7g",
+            "title": "Codex 新手教學，非技術人員也能上手的 AI Agent 新手指南",
+            "duration": 1077,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 574772,
+            "channel": "Gary Chen",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "wDk6OVRLtPs",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=wDk6OVRLtPs",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.26,
+          "error": null,
+          "upload_date": "20261011",
+          "timestamp": 1791720022,
+          "duration": 968,
+          "view_count": 57269,
+          "channel": "Kelly Tsai",
+          "channel_follower_count": 254000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [],
+              "en": []
+            },
+            "has_zh": false,
+            "has_en": false
+          }
+        },
+        {
+          "id": "xRzHnDLO6OM",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=xRzHnDLO6OM",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.27,
+          "error": null,
+          "upload_date": "20261011",
+          "timestamp": 1791736154,
+          "duration": 311,
+          "view_count": 449,
+          "channel": "KYC AI LABS",
+          "channel_follower_count": 677,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "ozcn2Z_d3xU",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=ozcn2Z_d3xU",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.12,
+          "error": null,
+          "upload_date": "20261101",
+          "timestamp": 1793530835,
+          "duration": 157,
+          "view_count": 356,
+          "channel": "老墨 Mofi",
+          "channel_follower_count": 17700,
+          "captions": {
+            "subtitles": {
+              "zh": [
+                "zh-TW"
+              ],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-TW"
+              ],
+              "en": []
+            },
+            "has_zh": true,
+            "has_en": false
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "practical-cases",
+      "query": "AI agent case study production",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=AI%20agent%20case%20study%20production&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.13,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "Ts42JTye-AI",
+            "title": "10 Use Cases for AI Agents: IoT, RAG, & Disaster Response Explained",
+            "duration": 552,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 197523,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "FwOTs4UxQS4",
+            "title": "AI Agents, Clearly Explained",
+            "duration": 609,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5833344,
+            "channel": "Jeff Su",
+            "live_status": null
+          },
+          {
+            "id": "BKVDdL1InsA",
+            "title": "How Google engineers build AI agents in production (complete roadmap)",
+            "duration": 1651,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 53015,
+            "channel": "Google Cloud Tech",
+            "live_status": null
+          },
+          {
+            "id": "GDm_uH6VxPY",
+            "title": "AI agent design patterns",
+            "duration": 501,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 476875,
+            "channel": "Google Cloud Tech",
+            "live_status": null
+          },
+          {
+            "id": "ZVPlLaehjLk",
+            "title": "Agentic AI Frameworks Explained: Workflows, Multi-Agent, & Production",
+            "duration": 714,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 154547,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "CyLYY_xb5bQ",
+            "title": "You Can Learn AI Agent System Design In 19 Min | RAG, Vector Database, Evals, Function Calling",
+            "duration": 1169,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 198996,
+            "channel": "Sean‘s AI Stories and Waku Agent",
+            "live_status": null
+          },
+          {
+            "id": "BdjkVb4MvqA",
+            "title": "AI Agents based operational transformation in the production supply chain",
+            "duration": 154,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 567,
+            "channel": "Fujitsu",
+            "live_status": null
+          },
+          {
+            "id": "HzGOWq5UyjY",
+            "title": "How AI Agents Actually Work (Every Piece Explained & Built)",
+            "duration": 1168,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 361065,
+            "channel": "Tech With Tim",
+            "live_status": null
+          },
+          {
+            "id": "qNIm3XF9zf0",
+            "title": "Agentic AI in Manufacturing: How Bosch Makes the Shop Floor Smarter",
+            "duration": 260,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 8636,
+            "channel": "Bosch Global",
+            "live_status": null
+          },
+          {
+            "id": "bwvfdFWR1RI",
+            "title": "How to Use Agentic AI: LLMs, AI Agents & Prompt Engineering in Action",
+            "duration": 392,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 81839,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "5Igexz7kzMo",
+            "title": "AI Agents: Transforming Anomaly Detection & Resolution",
+            "duration": 705,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 32793,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "ZaPbP9DwBOE",
+            "title": "Don't learn AI Agents without Learning these Fundamentals",
+            "duration": 3400,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1503994,
+            "channel": "KodeKloud",
+            "live_status": null
+          },
+          {
+            "id": "W4Zr_9XyonU",
+            "title": "Building Production-Ready AI Agents",
+            "duration": 894,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2713,
+            "channel": "Snowflake Developers",
+            "live_status": null
+          },
+          {
+            "id": "WnzR5aOElvw",
+            "title": "Why AI Agents are either the best or worst thing we’ve ever built",
+            "duration": 1219,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2800411,
+            "channel": "Hannah Fry",
+            "live_status": null
+          },
+          {
+            "id": "AZDSpS5v57w",
+            "title": "AI Agents For Beginners – OpenClaw Case Study",
+            "duration": 11158,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 253515,
+            "channel": "freeCodeCamp.org",
+            "live_status": null
+          },
+          {
+            "id": "VlOli2XK1Ko",
+            "title": "How AI Agents Cut Unplanned Downtime by 31% | Manufacturing Case Study",
+            "duration": 276,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 76,
+            "channel": "GroupBWT",
+            "live_status": null
+          },
+          {
+            "id": "Zqno_vux6d8",
+            "title": "AI agents explained: Build your first agent in 8 minutes",
+            "duration": 509,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 681821,
+            "channel": "Google Cloud Tech and Smitha Kolan - Machine Learning Engineer",
+            "live_status": null
+          },
+          {
+            "id": "DQBqh6gcx7U",
+            "title": "What Is Loop Engineering? Building Better AI Agents",
+            "duration": 648,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 161198,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "Tbsr3TEhSSQ",
+            "title": "The Future of AI in Manufacturing: How AI Agents Are Transforming Factory Workflows | Apprentice.io",
+            "duration": 2631,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2083,
+            "channel": "Manufacturing Happy Hour",
+            "live_status": null
+          },
+          {
+            "id": "Lg-meK5IU8Q",
+            "title": "What AI Agent Skills Are and How They Work",
+            "duration": 745,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 614533,
+            "channel": "IBM Technology",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "Ts42JTye-AI",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=Ts42JTye-AI",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.27,
+          "error": null,
+          "upload_date": "20250714",
+          "timestamp": 1752492280,
+          "duration": 552,
+          "view_count": 197518,
+          "channel": "IBM Technology",
+          "channel_follower_count": 1850000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "FwOTs4UxQS4",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=FwOTs4UxQS4",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.2,
+          "error": null,
+          "upload_date": "20250408",
+          "timestamp": 1744117228,
+          "duration": 609,
+          "view_count": 5833344,
+          "channel": "Jeff Su",
+          "channel_follower_count": 1960000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "BKVDdL1InsA",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=BKVDdL1InsA",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.39,
+          "error": null,
+          "upload_date": "20261123",
+          "timestamp": 1795453445,
+          "duration": 1651,
+          "view_count": 53015,
+          "channel": "Google Cloud Tech",
+          "channel_follower_count": 1470000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en-US"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-US",
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "practical-cases",
+      "query": "AI agent real world example",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=AI%20agent%20real%20world%20example&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.01,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "FwOTs4UxQS4",
+            "title": "AI Agents, Clearly Explained",
+            "duration": 609,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5833344,
+            "channel": "Jeff Su",
+            "live_status": null
+          },
+          {
+            "id": "fXizBc03D7E",
+            "title": "5 Types of AI Agents: Autonomous Functions & Real-World Applications",
+            "duration": 622,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 441753,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "TL8V41Ea6oM",
+            "title": "4 AI Agents To Automate 99% Of Your Life",
+            "duration": 1247,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2672572,
+            "channel": "Sandeep Swadia",
+            "live_status": null
+          },
+          {
+            "id": "SJywU4UQryQ",
+            "title": "How to Build an AI Agent for Every Part of Your Life",
+            "duration": 1671,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 584354,
+            "channel": "Dan Martell",
+            "live_status": null
+          },
+          {
+            "id": "bDgRa74DpJE",
+            "title": "What do AI agents do when humans aren’t watching? - BBC World Service",
+            "duration": 381,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 246693,
+            "channel": "BBC World Service",
+            "live_status": null
+          },
+          {
+            "id": "HzGOWq5UyjY",
+            "title": "How AI Agents Actually Work (Every Piece Explained & Built)",
+            "duration": 1168,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 361065,
+            "channel": "Tech With Tim",
+            "live_status": null
+          },
+          {
+            "id": "EDb37y_MhRw",
+            "title": "Generative vs Agentic AI: Shaping the Future of AI Collaboration",
+            "duration": 439,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1562646,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "XV2PAHWnJN0",
+            "title": "I Left 10 AI Agents Alone for 3 Days. Here's What I Came Back To.",
+            "duration": 415,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 229812,
+            "channel": "Tristen O'Brien",
+            "live_status": null
+          },
+          {
+            "id": "ZaPbP9DwBOE",
+            "title": "Don't learn AI Agents without Learning these Fundamentals",
+            "duration": 3400,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1503994,
+            "channel": "KodeKloud",
+            "live_status": null
+          },
+          {
+            "id": "YGgErBnx6po",
+            "title": "Real-time voice AI agents, explained (before you build one)",
+            "duration": 386,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 17757,
+            "channel": "Google Cloud Tech",
+            "live_status": null
+          },
+          {
+            "id": "sqbpstk5e_Q",
+            "title": "How AI is Transforming Government | 5 Real-World AI Agent Use Cases",
+            "duration": 212,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 835,
+            "channel": "StackAI",
+            "live_status": null
+          },
+          {
+            "id": "WnzR5aOElvw",
+            "title": "Why AI Agents are either the best or worst thing we’ve ever built",
+            "duration": 1219,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2800411,
+            "channel": "Hannah Fry",
+            "live_status": null
+          },
+          {
+            "id": "EH5jx5qPabU",
+            "title": "From Zero to Your First AI Agent in 25 Minutes (No Coding)",
+            "duration": 1558,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 4675648,
+            "channel": "Futurepedia and AI Agent Lab",
+            "live_status": null
+          },
+          {
+            "id": "YD8uRumP8cM",
+            "title": "How to Build a 1-Person Business with AI Agents",
+            "duration": 1861,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 231251,
+            "channel": "Dan Martell",
+            "live_status": null
+          },
+          {
+            "id": "exjhaHmZk8g",
+            "title": "99% of Developers Don't Understand AI Agents!",
+            "duration": 228,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 62429,
+            "channel": "CodeHead",
+            "live_status": null
+          },
+          {
+            "id": "bwvfdFWR1RI",
+            "title": "How to Use Agentic AI: LLMs, AI Agents & Prompt Engineering in Action",
+            "duration": 392,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 81839,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "Ts42JTye-AI",
+            "title": "10 Use Cases for AI Agents: IoT, RAG, & Disaster Response Explained",
+            "duration": 552,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 197523,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "pFc-HcUgFgY",
+            "title": "Build a real-time voice AI agent with Gemini Live API",
+            "duration": 433,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 132251,
+            "channel": "Google Cloud Tech",
+            "live_status": null
+          },
+          {
+            "id": "CyLYY_xb5bQ",
+            "title": "You Can Learn AI Agent System Design In 19 Min | RAG, Vector Database, Evals, Function Calling",
+            "duration": 1169,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 198996,
+            "channel": "Sean‘s AI Stories and Waku Agent",
+            "live_status": null
+          },
+          {
+            "id": "eur8dUO9mvE",
+            "title": "What is MCP? Integrate AI Agents with Databases & APIs",
+            "duration": 226,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 835434,
+            "channel": "IBM Technology",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "FwOTs4UxQS4",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=FwOTs4UxQS4",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.23,
+          "error": null,
+          "upload_date": "20250408",
+          "timestamp": 1744117228,
+          "duration": 609,
+          "view_count": 5833344,
+          "channel": "Jeff Su",
+          "channel_follower_count": 1960000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "fXizBc03D7E",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=fXizBc03D7E",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.17,
+          "error": null,
+          "upload_date": "20250428",
+          "timestamp": 1745838067,
+          "duration": 621,
+          "view_count": 441753,
+          "channel": "IBM Technology",
+          "channel_follower_count": 1850000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [],
+              "en": [
+                "en"
+              ]
+            },
+            "has_zh": false,
+            "has_en": true
+          }
+        },
+        {
+          "id": "TL8V41Ea6oM",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=TL8V41Ea6oM",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.22,
+          "error": null,
+          "upload_date": "20260730",
+          "timestamp": 1785413912,
+          "duration": 1246,
+          "view_count": 2672572,
+          "channel": "Sandeep Swadia",
+          "channel_follower_count": 1740000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "practical-cases",
+      "query": "AI 代理人 實戰 案例",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=AI%20%E4%BB%A3%E7%90%86%E4%BA%BA%20%E5%AF%A6%E6%88%B0%20%E6%A1%88%E4%BE%8B&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.08,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "fwdzsY9KWKk",
+            "title": "15分鐘學會AI Agent｜完整講解",
+            "duration": 897,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 330486,
+            "channel": "李厂长来了",
+            "live_status": null
+          },
+          {
+            "id": "jQvHumkxPAM",
+            "title": "最好上手的 AI Agent！自動上網爬資料、AI 做簡報、寫網頁工具，Manus AI 比 ChatGPT 好用嗎？實測應用案例",
+            "duration": 1686,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 86348,
+            "channel": "柚智夫妻 X 雷蒙三十",
+            "live_status": null
+          },
+          {
+            "id": "tlq5zp-L_dg",
+            "title": "還在用 AI 聊天，你可能會錯過一整支 AI 團隊｜《AI Agent 智能工作流設計與自動化全實戰》",
+            "duration": 1479,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 86,
+            "channel": "我幫你讀",
+            "live_status": null
+          },
+          {
+            "id": "DFuwSgVyd94",
+            "title": "【全 500 集】目前YouTube最詳細AI Agent開發全套教程，手把手教你搭建企業級Agent智能體！從入門到實戰，學完即就業，帶你玩轉AI Agent！存下吧！(附資料，敲666領取)",
+            "duration": 12027,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 104,
+            "channel": "大模型干货姐",
+            "live_status": null
+          },
+          {
+            "id": "2rcJdFuNbZQ",
+            "title": "Dissecting the Lobster: How AI Agents Work, Featuring OpenClaw",
+            "duration": 4997,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1111294,
+            "channel": "Hung-yi Lee",
+            "live_status": null
+          },
+          {
+            "id": "h4JymtdG1QI",
+            "title": "AI Agent 原理解析＋實戰案例｜25 分鐘一次講透！",
+            "duration": 1519,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 351,
+            "channel": "AI知識派對",
+            "live_status": null
+          },
+          {
+            "id": "Hw-QGcL6zFM",
+            "title": "Google Gemini 真的開始做事了！新 AI 代理人能改文件、串 Slack、跨工具完成任務｜Gemini at Work 2026",
+            "duration": 531,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 54891,
+            "channel": "島讀世界",
+            "live_status": null
+          },
+          {
+            "id": "LVaSjF9j69g",
+            "title": "AI 開始會分身工作了！Manus 2026 最新 5 大技術｜AI Agent 實戰教學",
+            "duration": 507,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 609,
+            "channel": "小兵AI 工作效率實驗室",
+            "live_status": null
+          },
+          {
+            "id": "ng0r3dJ18Ew",
+            "title": "【快閃直播】MCP + Agent AI 實戰解密：打造真正的\"建築 AI 代理人\"｜加號設計數位工程xTYarchistudioBIM #AgentAI #BIM #MCP #數位轉型 #AI代理人",
+            "duration": 4542,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1824,
+            "channel": "TYarchistudioBIM ",
+            "live_status": "was_live"
+          },
+          {
+            "id": "wDk6OVRLtPs",
+            "title": "多AI Agent架構怎麼用、如何判斷該不該用？用對才能省時又省錢！｜Kelly Tsai ft. @creao-ai",
+            "duration": 969,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 57267,
+            "channel": "Kelly Tsai",
+            "live_status": null
+          },
+          {
+            "id": "-jWVlLKi4Vw",
+            "title": "12款超強的AI Agent工具炸裂更新，快速打造一人公司AI員工，構建長期個人事業系統",
+            "duration": 1555,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 72083,
+            "channel": "學長Ethan",
+            "live_status": null
+          },
+          {
+            "id": "0-Rr2iho6CI",
+            "title": "These 6 AI Agent Trends Will Revolutionize the Way You Work in the Coming Year!",
+            "duration": 797,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 84148,
+            "channel": "李厂长来了",
+            "live_status": null
+          },
+          {
+            "id": "htjqGK4smHY",
+            "title": "🎯 研究人都在用！AI寫國科會計畫全攻略【Gemini × GEM × Spark × AI Agent 實戰教學】-提示詞見說明欄",
+            "duration": 3061,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 6902,
+            "channel": "YS Class",
+            "live_status": null
+          },
+          {
+            "id": "UrFrDJ-G6h8",
+            "title": "快來領免費AI Agent！Meta Muse 免費又簡單好用",
+            "duration": 1111,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 23956,
+            "channel": "Gary Chen",
+            "live_status": null
+          },
+          {
+            "id": "s5J-oL2OSNY",
+            "title": "最重要的 20 個 AI Agent 實戰案例精彩直播 DM2682",
+            "duration": 19,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 109,
+            "channel": "深智數位 IT Inside Out",
+            "live_status": null
+          },
+          {
+            "id": "96-rR_vXKRs",
+            "title": "AI 代理才是真正的智慧：AI Agent 究竟如何完成你的工作！？",
+            "duration": 495,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1727,
+            "channel": "A.I. Tomorrow",
+            "live_status": null
+          },
+          {
+            "id": "hH2HkAqOPxE",
+            "title": "#黃仁勳 也看好的AI Agent一次看懂！#ai 大咖口中的未來趨勢｜Tech Away",
+            "duration": 286,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 53963,
+            "channel": "數位時代Official",
+            "live_status": null
+          },
+          {
+            "id": "cJ6UcSnCy_0",
+            "title": "兩個人也能做到大團隊？中小企業必懂 AI Agent 實戰 | 小團隊也能打大公司？Michael Shek 教你用 AI Agent 放大生產力 | 專家說 AI - AI 來了 ep10",
+            "duration": 793,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 14013,
+            "channel": "優視 • AI新時代 // AI NEW ERA UCH ",
+            "live_status": null
+          },
+          {
+            "id": "xFPiU5sit7g",
+            "title": "Codex 新手教學，非技術人員也能上手的 AI Agent 新手指南",
+            "duration": 1077,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 574772,
+            "channel": "Gary Chen",
+            "live_status": null
+          },
+          {
+            "id": "8h_B_SrgdIw",
+            "title": "AI Agent完整解析！一支影片搞懂LLM、Workflow、RAG、Function calling、MCP｜Genspark實測  @GensparkProduct​",
+            "duration": 843,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 25493,
+            "channel": "哈佛姐夢遊矽谷 AliceInSiliconWonderland",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "fwdzsY9KWKk",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=fwdzsY9KWKk",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.41,
+          "error": null,
+          "upload_date": "20260606",
+          "timestamp": 1780714802,
+          "duration": 897,
+          "view_count": 330486,
+          "channel": "李厂长来了",
+          "channel_follower_count": 113000,
+          "captions": {
+            "subtitles": {
+              "zh": [
+                "zh-Hant"
+              ],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hant"
+              ],
+              "en": []
+            },
+            "has_zh": true,
+            "has_en": false
+          }
+        },
+        {
+          "id": "jQvHumkxPAM",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=jQvHumkxPAM",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.44,
+          "error": null,
+          "upload_date": "20251214",
+          "timestamp": 1765705963,
+          "duration": 1686,
+          "view_count": 86348,
+          "channel": "柚智夫妻 X 雷蒙三十",
+          "channel_follower_count": 136000,
+          "captions": {
+            "subtitles": {
+              "zh": [
+                "zh-TW"
+              ],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-TW"
+              ],
+              "en": []
+            },
+            "has_zh": true,
+            "has_en": false
+          }
+        },
+        {
+          "id": "tlq5zp-L_dg",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=tlq5zp-L_dg",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.11,
+          "error": null,
+          "upload_date": "20260730",
+          "timestamp": 1785393906,
+          "duration": 1479,
+          "view_count": 86,
+          "channel": "我幫你讀",
+          "channel_follower_count": 6,
+          "captions": {
+            "subtitles": {
+              "zh": [
+                "zh-TW"
+              ],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-TW"
+              ],
+              "en": []
+            },
+            "has_zh": true,
+            "has_en": false
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "memory-reliability",
+      "query": "LLM agent memory reliability",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=LLM%20agent%20memory%20reliability&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.06,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "X11YRkc0y9Q",
+            "title": "SuperLocalMemory Relaunch: AI Agent Memory That Never Bluffs | Claude Code | Codex | Cursor",
+            "duration": 144,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1223,
+            "channel": "Qualixar",
+            "live_status": null
+          },
+          {
+            "id": "mo77yb68h74",
+            "title": "AI Agent Memory: Why Your Agent Forgets & How to Fix It",
+            "duration": 674,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2139,
+            "channel": "Oxylabs",
+            "live_status": null
+          },
+          {
+            "id": "W2HVdB4Jbjs",
+            "title": "Architecting Agent Memory: Principles, Patterns, and Best Practices — Richmond Alake, MongoDB",
+            "duration": 1057,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 144458,
+            "channel": "AI Engineer",
+            "live_status": null
+          },
+          {
+            "id": "ICwve_yFZr4",
+            "title": "Agent memory trade-offs and failure modes explained",
+            "duration": 161,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2,
+            "channel": "LinguAgent",
+            "live_status": null
+          },
+          {
+            "id": "HFwNvcBBoJw",
+            "title": "Agent Memory Beyond Vectors: Queryable Context Graphs for Reliable AI Systems",
+            "duration": 1771,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 368,
+            "channel": "Neo4j",
+            "live_status": null
+          },
+          {
+            "id": "1LvYMj1NZBY",
+            "title": "AI s Giant Memory is a Lie:  Why LLM Performance Degrades in Long Context (GPT-4.1, Claude 4 Tested)",
+            "duration": 397,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 40,
+            "channel": "Usama Ai Dev",
+            "live_status": null
+          },
+          {
+            "id": "BwXremQ-i6I",
+            "title": "Context Engineering for AI Agents: 4 Failure Modes to Avoid",
+            "duration": 621,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 359557,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "cXKQkrgn-TE",
+            "title": "Temporal & AI | Agent Memory & State",
+            "duration": 794,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2364,
+            "channel": "Temporal",
+            "live_status": null
+          },
+          {
+            "id": "18iIHQtIPmc",
+            "title": "4 Levels of Agent Memory Explained by a Senior AI Engineer",
+            "duration": 1089,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5165,
+            "channel": "Mastra",
+            "live_status": null
+          },
+          {
+            "id": "nx2x87BsQuQ",
+            "title": "AI Agent Memory Explained in 12 Minutes (Working, Semantic, Episodic)",
+            "duration": 752,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 537,
+            "channel": "Anas Riad",
+            "live_status": null
+          },
+          {
+            "id": "DMUOmrpw95A",
+            "title": "LLM Wiki Explained: Karpathy’s Big Idea That Fixes AI Memory",
+            "duration": 495,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 302,
+            "channel": "TecAdRise",
+            "live_status": null
+          },
+          {
+            "id": "xs-ob87TTzg",
+            "title": "Total Recall: Agent Memory and Harness Engineering — Ignacio Martinez, Oracle",
+            "duration": 3647,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 41906,
+            "channel": "AI Engineer",
+            "live_status": null
+          },
+          {
+            "id": "4KGd4idtWsU",
+            "title": "Context Engineering vs Memory Engineering: How AI Agents Actually Remember | TAB 47",
+            "duration": 818,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 849,
+            "channel": "Tab 47 by upGrad and upGrad",
+            "live_status": null
+          },
+          {
+            "id": "TjvT9sI5mLE",
+            "title": "What Is Agentic Storage? Solving AI’s Limits with LLMs & MCP",
+            "duration": 466,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 91179,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "WsGVXiWzTpI",
+            "title": "Build Hour: Agent Memory Patterns",
+            "duration": 3464,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 30161,
+            "channel": "OpenAI",
+            "live_status": null
+          },
+          {
+            "id": "UHVFcUzAGlM",
+            "title": "Every Claude Code Memory System Compared (So You Don't Have To)",
+            "duration": 2481,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 173420,
+            "channel": "Simon Scrapes",
+            "live_status": null
+          },
+          {
+            "id": "-JIbYO08cK4",
+            "title": "How to Design AI Agent Memory System — Explained in 8 Minutes",
+            "duration": 512,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1250,
+            "channel": "Amine DALY",
+            "live_status": null
+          },
+          {
+            "id": "miAMWiTMoGM",
+            "title": "Why AI Agents Keep Forgetting (And How to Fix It)",
+            "duration": 539,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 3,
+            "channel": "Weirdly Automated",
+            "live_status": null
+          },
+          {
+            "id": "esY99nYXxR4",
+            "title": "How we solved Context Management in Agents — Sally-Ann Delucia",
+            "duration": 977,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 58109,
+            "channel": "AI Engineer",
+            "live_status": null
+          },
+          {
+            "id": "8FOLUR0Sc1s",
+            "title": "China Just Solved Human-like Memory for AI Agents ( Opensource )",
+            "duration": 242,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 11173,
+            "channel": "Code Bear",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "X11YRkc0y9Q",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=X11YRkc0y9Q",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.88,
+          "error": null,
+          "upload_date": "20261013",
+          "timestamp": 1791919457,
+          "duration": 143,
+          "view_count": 1223,
+          "channel": "Qualixar",
+          "channel_follower_count": 2600,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "mo77yb68h74",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=mo77yb68h74",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 2.06,
+          "error": null,
+          "upload_date": "20261120",
+          "timestamp": 1795194017,
+          "duration": 673,
+          "view_count": 2139,
+          "channel": "Oxylabs",
+          "channel_follower_count": 15600,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "W2HVdB4Jbjs",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=W2HVdB4Jbjs",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.24,
+          "error": null,
+          "upload_date": "20250627",
+          "timestamp": 1751018206,
+          "duration": 1056,
+          "view_count": 144460,
+          "channel": "AI Engineer",
+          "channel_follower_count": 1070000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en-orig",
+                "en"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "memory-reliability",
+      "query": "LLM agent long term memory design",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=LLM%20agent%20long%20term%20memory%20design&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.05,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "8C4bh59FtsI",
+            "title": "AI Agent Memory Architecture: Structured SQL, Semantic Vector Search & Memory Bank",
+            "duration": 747,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 91051,
+            "channel": "Google Cloud Tech",
+            "live_status": null
+          },
+          {
+            "id": "aYfZN8t6AQs",
+            "title": "Agent Memory EXPLAINED - Complete Architecture",
+            "duration": 1714,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 75907,
+            "channel": "Hugging Face and Alejandro AO",
+            "live_status": null
+          },
+          {
+            "id": "R1TNGOZAOZs",
+            "title": "Improved AI Memory? 🧠 Full Hermes Tutorial (Mnemosyne & Hindsight)",
+            "duration": 1585,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 175568,
+            "channel": "Wanderloots",
+            "live_status": null
+          },
+          {
+            "id": "qh5tP6PBZ6U",
+            "title": "How AI Agent Memory Works: MemGPT & Memory Types | Stanford CS329Z Lecture 7 with Michael Ryan",
+            "duration": 4735,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 45657,
+            "channel": "Stanford Online",
+            "live_status": null
+          },
+          {
+            "id": "4KvVWNUTd9g",
+            "title": "The AI Agent Memory Architecture Explained - From State to Long-Term Memory",
+            "duration": 980,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 50175,
+            "channel": "Applied with AI - Sanjay Kumar",
+            "live_status": null
+          },
+          {
+            "id": "BacJ6sEhqMo",
+            "title": "The Four Types of Memory Every AI Agent Needs",
+            "duration": 641,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 173040,
+            "channel": "IBM Technology",
+            "live_status": null
+          },
+          {
+            "id": "vWHMCrT8CI8",
+            "title": "Mem0: Long-Term Memory for AI Agents — Full Paper Breakdown + Local RTX 4090 Demo",
+            "duration": 1038,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2564,
+            "channel": "Omar Kamal",
+            "live_status": null
+          },
+          {
+            "id": "072eNztI06k",
+            "title": "You Can Learn AI Agent Memory Layers | Graph RAG, Vector DB, SQLite, Hermes, Waku",
+            "duration": 1827,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 48405,
+            "channel": "Sean‘s AI Stories and Waku Agent",
+            "live_status": null
+          },
+          {
+            "id": "jw67V_gBzR0",
+            "title": "Agentic Long-Term Memory for LLMs — Why Not to Rely on LangChain or Letta",
+            "duration": 9993,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 8129,
+            "channel": "AI RoundTable",
+            "live_status": null
+          },
+          {
+            "id": "f5xRFWRdyKA",
+            "title": "Build an LLM Wiki for Agent Long-Term Memory - @itsdecodingai",
+            "duration": 5725,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 12260,
+            "channel": "DataTalksClub ⬛",
+            "live_status": "was_live"
+          },
+          {
+            "id": "U_sA6S_jBxE",
+            "title": "Road to NODES AI: Graph-Based Long-Term Memory: How Agentic Workflows Adapt Through Experience",
+            "duration": 7729,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1384,
+            "channel": "Neo4j",
+            "live_status": null
+          },
+          {
+            "id": "mY3bR9qjZr4",
+            "title": "You Can Learn AI Agent Memory System In 12 Min | Semantic & Episodic Memory, RAG, Vector Database",
+            "duration": 725,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 68723,
+            "channel": "Sean‘s AI Stories and Waku Agent",
+            "live_status": null
+          },
+          {
+            "id": "W2HVdB4Jbjs",
+            "title": "Architecting Agent Memory: Principles, Patterns, and Best Practices — Richmond Alake, MongoDB",
+            "duration": 1057,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 144458,
+            "channel": "AI Engineer",
+            "live_status": null
+          },
+          {
+            "id": "R3-anFK1YM8",
+            "title": "Memory Harnesses for Long-Running Research Agents — Stefania Druga, Sakana.ai",
+            "duration": 784,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 32987,
+            "channel": "AI Engineer",
+            "live_status": null
+          },
+          {
+            "id": "n4GPdsQnHqc",
+            "title": "How to build your own long-term Agentic Memory System for LLMs | Mem0 from scratch in DSPy",
+            "duration": 3118,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 20579,
+            "channel": "Neural Breakdown with AVB",
+            "live_status": null
+          },
+          {
+            "id": "RtywqDFBYnQ",
+            "title": "Memory and dreaming for self-learning agents",
+            "duration": 1469,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 99637,
+            "channel": "Claude",
+            "live_status": null
+          },
+          {
+            "id": "WWTngf_OqaY",
+            "title": "Memory management | LLM Context Engineering | Lecture 6",
+            "duration": 8087,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5421,
+            "channel": "Vizuara",
+            "live_status": null
+          },
+          {
+            "id": "cHQyugatz6M",
+            "title": "Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory // May 2025 Reading Group",
+            "duration": 3505,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 3777,
+            "channel": "AAIF Live",
+            "live_status": null
+          },
+          {
+            "id": "8dDZqRd6xsE",
+            "title": "Agent Memory Explained: How AI Reads, Writes, and Forgets",
+            "duration": 1412,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 4,
+            "channel": "W-AI",
+            "live_status": null
+          },
+          {
+            "id": "7LWTZqksmSg",
+            "title": "Unlock AI Agent real power?! Long term memory & Self improving",
+            "duration": 1330,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 67511,
+            "channel": "AI Jason",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "8C4bh59FtsI",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=8C4bh59FtsI",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 2.06,
+          "error": null,
+          "upload_date": "20261028",
+          "timestamp": 1793203207,
+          "duration": 746,
+          "view_count": 91050,
+          "channel": "Google Cloud Tech",
+          "channel_follower_count": 1470000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en-j3PyPqV-e1s"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "aYfZN8t6AQs",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=aYfZN8t6AQs",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.76,
+          "error": null,
+          "upload_date": "20260817",
+          "timestamp": 1786936535,
+          "duration": 1713,
+          "view_count": 75909,
+          "channel": "Hugging Face",
+          "channel_follower_count": 152,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": [
+                "en-eEY6OEpapPo"
+              ]
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        },
+        {
+          "id": "R1TNGOZAOZs",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=R1TNGOZAOZs",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.96,
+          "error": null,
+          "upload_date": "20260807",
+          "timestamp": 1786109164,
+          "duration": 1585,
+          "view_count": 175568,
+          "channel": "Wanderloots",
+          "channel_follower_count": 116000,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-Hans",
+                "zh-Hant"
+              ],
+              "en": [
+                "en",
+                "en-orig"
+              ]
+            },
+            "has_zh": true,
+            "has_en": true
+          }
+        }
+      ]
+    },
+    {
+      "topic_id": "memory-reliability",
+      "query": "LLM 代理人 記憶 可靠性",
+      "search": {
+        "url": "https://www.youtube.com/results?search_query=LLM%20%E4%BB%A3%E7%90%86%E4%BA%BA%20%E8%A8%98%E6%86%B6%20%E5%8F%AF%E9%9D%A0%E6%80%A7&sp=EgIQAQ==",
+        "args": [
+          "--flat-playlist",
+          "--playlist-end",
+          20,
+          "-J"
+        ],
+        "status": "ok",
+        "exit_code": 0,
+        "wall_s": 1.14,
+        "error": null,
+        "result_count": 20,
+        "fields_present": {
+          "id": 20,
+          "title": 20,
+          "channel": 20,
+          "upload_date_or_ts": 0,
+          "duration": 20,
+          "view_count": 20
+        },
+        "entries": [
+          {
+            "id": "JixRJiN_Up0",
+            "title": "Agent 记忆安全：从输入过滤到状态污染的工程锚点",
+            "duration": 256,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1,
+            "channel": "智用AI",
+            "live_status": null
+          },
+          {
+            "id": "cay0b4vMUSw",
+            "title": "LLM Agent 记忆污染：你忽略了哪个生命周期环节？",
+            "duration": 268,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5,
+            "channel": "智用AI",
+            "live_status": null
+          },
+          {
+            "id": "jwJtnSo2lvI",
+            "title": "MemLens 怎麼測 AI 的多模態長期記憶？從長上下文、檢索到混合記憶架構（2026-05-14）",
+            "duration": 924,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 6,
+            "channel": "TodayShip",
+            "live_status": null
+          },
+          {
+            "id": "uGY9O-oYeJ0",
+            "title": "本地 Agent 记忆：EverOS 如何打破黑箱难题",
+            "duration": 155,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 39,
+            "channel": "智用AI",
+            "live_status": null
+          },
+          {
+            "id": "PI58GDctRng",
+            "title": "AI Agent 可靠嗎？先看 Harness（2026-05-18）",
+            "duration": 884,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 5,
+            "channel": "TodayShip",
+            "live_status": null
+          },
+          {
+            "id": "ETxiAdHkChk",
+            "title": "大语言模型 Agent 应该在何时遗忘？查询关键解析错误下的内存过滤机制研究 2026-11-16",
+            "duration": 307,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 6,
+            "channel": "Hi Ai Perf",
+            "live_status": null
+          },
+          {
+            "id": "dXft-iozyWQ",
+            "title": "从聊天机器人到AI员工：Agent正在重新定义人工智能，Jev或成为下一块关键拼图",
+            "duration": 663,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 28,
+            "channel": "AIRosetta",
+            "live_status": null
+          },
+          {
+            "id": "bzdWPOxSdJk",
+            "title": "Why More Memory Makes Agents Dumber: The 4 Core Mechanisms of Agent Memory | Agent Continual Lear...",
+            "duration": 542,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 1827,
+            "channel": "唐国梁Tommy",
+            "live_status": null
+          },
+          {
+            "id": "PlsoPlwCAoU",
+            "title": "【Agent 快報】| 2026-05-09 | AI Agent 的「永恆記憶」：從上下文窗口到持久化記憶層 (Stash & Mirage)",
+            "duration": 771,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 32,
+            "channel": "Agent 快報",
+            "live_status": null
+          },
+          {
+            "id": "U9jFYSaalIc",
+            "title": "7种主流AI Agent架构深度解析",
+            "duration": 581,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 17911,
+            "channel": "白白说大模型",
+            "live_status": null
+          },
+          {
+            "id": "Ahnnn2BK8NE",
+            "title": "Agent记忆的进化：从记忆记录到自我优化",
+            "duration": 199,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 20,
+            "channel": "智用AI",
+            "live_status": null
+          },
+          {
+            "id": "spRP6b9jKFY",
+            "title": "唯一通关三大动态演化评测：新国大联手提出补丁记忆架构解决AI失忆",
+            "duration": 695,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 91,
+            "channel": "Agent 创世纪",
+            "live_status": null
+          },
+          {
+            "id": "2FZQEdbqNGE",
+            "title": "如何打造會自我進化的 AI Agent？LangChain 執行長解析三大核心：模型、框架與上下文｜演講精華總結",
+            "duration": 1033,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 34,
+            "channel": "PP科技筆記 Podcast",
+            "live_status": null
+          },
+          {
+            "id": "I3bnBM4vNnY",
+            "title": "三年前旧文高赞冲上HN，AI是什么？ 读心术？如何用好AI？",
+            "duration": 595,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 2159,
+            "channel": "为什么叫QQ",
+            "live_status": null
+          },
+          {
+            "id": "-DlLxwkoHnU",
+            "title": "From LLM to Agent Skills: The Complete AI Architecture Map",
+            "duration": 752,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 8,
+            "channel": "一画搞懂AI",
+            "live_status": null
+          },
+          {
+            "id": "RCBTwt4yN5o",
+            "title": "Chatbot 跟 AI Agent 差在哪？R.P.M. 推理、規劃、記憶一次看懂",
+            "duration": 432,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 92,
+            "channel": "Roger 的 AI 策略觀 | 柏瀚國際 ",
+            "live_status": null
+          },
+          {
+            "id": "GzGHqyhs2HE",
+            "title": "如何打造安全的 AI 代理？Google 工程師解析 AI Harness 架構、ADK 與 MCP 實戰指南",
+            "duration": 1283,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 145,
+            "channel": "PP科技筆記 Podcast",
+            "live_status": null
+          },
+          {
+            "id": "EOyIGFyK_fA",
+            "title": "35 種 AI 代理模式全解析：Daniel Walsh 教你打造可靠 AI 系統",
+            "duration": 1576,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 487,
+            "channel": "PP科技筆記 Podcast",
+            "live_status": null
+          },
+          {
+            "id": "gXsSm83wYZ4",
+            "title": "What Is an AI Agent? Stanford CS329Z Lecture 1: From ReAct to MCP, the Five Key Components and Ri...",
+            "duration": 1904,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 110,
+            "channel": "Markluce AI",
+            "live_status": null
+          },
+          {
+            "id": "3m2X0-97MSw",
+            "title": "AI记忆术曝光！附送成本暴降92%的Agent模型（附：基础设施降本秘籍）",
+            "duration": 541,
+            "timestamp": null,
+            "upload_date": null,
+            "view_count": 27,
+            "channel": "智用AI",
+            "live_status": null
+          }
+        ]
+      },
+      "videos": [
+        {
+          "id": "JixRJiN_Up0",
+          "rank": 1,
+          "url": "https://www.youtube.com/watch?v=JixRJiN_Up0",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.14,
+          "error": null,
+          "upload_date": "20260615",
+          "timestamp": 1781484446,
+          "duration": 255,
+          "view_count": 1,
+          "channel": "智用AI",
+          "channel_follower_count": 726,
+          "captions": {
+            "subtitles": {
+              "zh": [
+                "zh-CN-lyBO1AxS1LE"
+              ],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-CN"
+              ],
+              "en": []
+            },
+            "has_zh": true,
+            "has_en": false
+          }
+        },
+        {
+          "id": "cay0b4vMUSw",
+          "rank": 2,
+          "url": "https://www.youtube.com/watch?v=cay0b4vMUSw",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.23,
+          "error": null,
+          "upload_date": "20260614",
+          "timestamp": 1781473803,
+          "duration": 267,
+          "view_count": 5,
+          "channel": "智用AI",
+          "channel_follower_count": 726,
+          "captions": {
+            "subtitles": {
+              "zh": [
+                "zh-CN-lyBO1AxS1LE"
+              ],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [
+                "zh-CN"
+              ],
+              "en": []
+            },
+            "has_zh": true,
+            "has_en": false
+          }
+        },
+        {
+          "id": "jwJtnSo2lvI",
+          "rank": 3,
+          "url": "https://www.youtube.com/watch?v=jwJtnSo2lvI",
+          "args": [
+            "-J",
+            "--skip-download"
+          ],
+          "status": "ok",
+          "exit_code": 0,
+          "wall_s": 1.14,
+          "error": null,
+          "upload_date": "20260516",
+          "timestamp": 1778968618,
+          "duration": 924,
+          "view_count": 6,
+          "channel": "TodayShip",
+          "channel_follower_count": 33,
+          "captions": {
+            "subtitles": {
+              "zh": [],
+              "en": []
+            },
+            "automatic_captions": {
+              "zh": [],
+              "en": []
+            },
+            "has_zh": false,
+            "has_en": false
+          }
+        }
+      ]
+    }
+  ]
+}

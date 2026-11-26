@@ -1,0 +1,12 @@
+{
+  "name": "selection-spike",
+  "private": true,
+  "type": "module",
+  "description": "Selection spike for agentfleet-team/fisheraiagent#75. Not part of the service. No dependencies.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "mac": "node run.mjs --place mac --runs 2 --gap-s 600",
+    "run": "node run.mjs",
+    "report": "node report.mjs"
+  }
+}
