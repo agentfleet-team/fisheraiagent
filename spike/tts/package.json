@@ -1,0 +1,18 @@
+{
+  "name": "tts-spike",
+  "private": true,
+  "type": "module",
+  "description": "Spike for agentfleet-team/fisheraiagent#74. Not part of the service.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "mac": "node run.mjs mac && node report.mjs",
+    "gha": "node run.mjs gha",
+    "report": "node report.mjs"
+  },
+  "dependencies": {
+    "edge-tts-universal": "1.4.0",
+    "msedge-tts": "2.1.1"
+  }
+}
