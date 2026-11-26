@@ -1,0 +1,10 @@
+{
+  "videoId": "kJQP7kiw5Fk",
+  "asrTrackCount": 0,
+  "spokenLanguage": null,
+  "originalAsrTrack": null,
+  "manualTrack": null,
+  "kind": "none",
+  "rule": "no-asr-track: spoken language unknown, manual tracks ignored",
+  "tracksSha256": "57ea6edeaf16537a15296527a9e9e288ad177efa74bfae09d6ca65307a5ee571"
+}

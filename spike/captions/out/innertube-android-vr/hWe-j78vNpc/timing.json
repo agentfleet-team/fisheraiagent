@@ -1,0 +1,25 @@
+{
+  "method": "innertube-android-vr",
+  "videoId": "hWe-j78vNpc",
+  "runs": [
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability LOGIN_REQUIRED: Sign in to confirm you’re not a bot"
+    },
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability LOGIN_REQUIRED: Sign in to confirm you’re not a bot"
+    },
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability LOGIN_REQUIRED: Sign in to confirm you’re not a bot"
+    }
+  ],
+  "okRuns": 0,
+  "medianP1Ms": null,
+  "medianP2Ms": null,
+  "medianTotalMs": null
+}

@@ -1,0 +1,2979 @@
+{
+  "asr": {
+    "index": 1,
+    "languageCode": "en",
+    "vssId": "a.en",
+    "bytes": 246829,
+    "cueCount": 341,
+    "first3": [
+      {
+        "start": 1.57,
+        "end": 8.959999999999999,
+        "text": "[Music]"
+      },
+      {
+        "start": 7.52,
+        "end": 11.879999999999999,
+        "text": "this program is brought to you by"
+      },
+      {
+        "start": 8.96,
+        "end": 14.88,
+        "text": "Stanford University please visit us at"
+      }
+    ],
+    "cues": [
+      {
+        "start": 1.57,
+        "end": 8.959999999999999,
+        "text": "[Music]"
+      },
+      {
+        "start": 7.52,
+        "end": 11.879999999999999,
+        "text": "this program is brought to you by"
+      },
+      {
+        "start": 8.96,
+        "end": 14.88,
+        "text": "Stanford University please visit us at"
+      },
+      {
+        "start": 11.88,
+        "end": 14.88,
+        "text": "stanford.edu"
+      },
+      {
+        "start": 20.519,
+        "end": 23.519,
+        "text": "thank"
+      },
+      {
+        "start": 26.08,
+        "end": 30.4,
+        "text": "you I'm uh honored to be with you today"
+      },
+      {
+        "start": 29.08,
+        "end": 33.4,
+        "text": "for your commencement from one of the"
+      },
+      {
+        "start": 30.4,
+        "end": 34.8,
+        "text": "finest universities in the"
+      },
+      {
+        "start": 33.4,
+        "end": 37.399,
+        "text": "[Applause]"
+      },
+      {
+        "start": 34.8,
+        "end": 40.239,
+        "text": "world truth be"
+      },
+      {
+        "start": 37.399,
+        "end": 43.52,
+        "text": "told uh I never graduated from"
+      },
+      {
+        "start": 40.239,
+        "end": 46.64,
+        "text": "college and uh this is the closest I've"
+      },
+      {
+        "start": 43.52,
+        "end": 46.64,
+        "text": "ever gotten to a college"
+      },
+      {
+        "start": 46.92,
+        "end": 52.079,
+        "text": "graduation today I want to tell you"
+      },
+      {
+        "start": 49.36,
+        "end": 54.76,
+        "text": "three stories from my life that's it no"
+      },
+      {
+        "start": 52.079,
+        "end": 57.76,
+        "text": "big deal just three"
+      },
+      {
+        "start": 54.76,
+        "end": 60.76,
+        "text": "stories the first story is about"
+      },
+      {
+        "start": 57.76,
+        "end": 62.8,
+        "text": "connecting the dots"
+      },
+      {
+        "start": 60.76,
+        "end": 64.79899999999999,
+        "text": "I dropped out of Reed College after the"
+      },
+      {
+        "start": 62.8,
+        "end": 66.92,
+        "text": "first 6 months but then stayed around as"
+      },
+      {
+        "start": 64.799,
+        "end": 68.2,
+        "text": "a drop in for another 18 months or so"
+      },
+      {
+        "start": 66.92,
+        "end": 71.159,
+        "text": "before I really"
+      },
+      {
+        "start": 68.2,
+        "end": 74.119,
+        "text": "quit so why' I drop"
+      },
+      {
+        "start": 71.159,
+        "end": 77.4,
+        "text": "out it started before I was"
+      },
+      {
+        "start": 74.119,
+        "end": 79.759,
+        "text": "born my biological mother was a young"
+      },
+      {
+        "start": 77.4,
+        "end": 81.159,
+        "text": "unwed graduate student and she decided"
+      },
+      {
+        "start": 79.759,
+        "end": 83.72,
+        "text": "to put me up for"
+      },
+      {
+        "start": 81.159,
+        "end": 86,
+        "text": "adoption she felt very strongly that I"
+      },
+      {
+        "start": 83.72,
+        "end": 88.15899999999999,
+        "text": "should be adopted by college graduates"
+      },
+      {
+        "start": 86,
+        "end": 90.72,
+        "text": "so everything was all set for me to be"
+      },
+      {
+        "start": 88.159,
+        "end": 93.64,
+        "text": "adopted at Birth by a lawyer and a his"
+      },
+      {
+        "start": 90.72,
+        "end": 95.32,
+        "text": "wife except that when I popped out they"
+      },
+      {
+        "start": 93.64,
+        "end": 96.64,
+        "text": "decided at the last minute that they"
+      },
+      {
+        "start": 95.32,
+        "end": 99.439,
+        "text": "really wanted a"
+      },
+      {
+        "start": 96.64,
+        "end": 101.24,
+        "text": "girl so my parents who were on a waiting"
+      },
+      {
+        "start": 99.439,
+        "end": 104.36,
+        "text": "list got a call in the middle of the"
+      },
+      {
+        "start": 101.24,
+        "end": 109.759,
+        "text": "night asking we've got an unexpected"
+      },
+      {
+        "start": 104.36,
+        "end": 112.36,
+        "text": "baby boy do you want him they said of"
+      },
+      {
+        "start": 109.759,
+        "end": 114.56,
+        "text": "course my biological mother found out"
+      },
+      {
+        "start": 112.36,
+        "end": 116.6,
+        "text": "later that my mother had never graduated"
+      },
+      {
+        "start": 114.56,
+        "end": 119.159,
+        "text": "from college and that my father had"
+      },
+      {
+        "start": 116.6,
+        "end": 122.19999999999999,
+        "text": "never graduated from high school she"
+      },
+      {
+        "start": 119.159,
+        "end": 124.68,
+        "text": "refused to signed the final adoption"
+      },
+      {
+        "start": 122.2,
+        "end": 127.2,
+        "text": "papers she only relented a few months"
+      },
+      {
+        "start": 124.68,
+        "end": 130.679,
+        "text": "later when my parents promised that I"
+      },
+      {
+        "start": 127.2,
+        "end": 132.72,
+        "text": "would go to college this was the start"
+      },
+      {
+        "start": 130.679,
+        "end": 136.36,
+        "text": "in my"
+      },
+      {
+        "start": 132.72,
+        "end": 139.16,
+        "text": "life and 17 years later I did go to"
+      },
+      {
+        "start": 136.36,
+        "end": 141.31900000000002,
+        "text": "college but I naively chose a college"
+      },
+      {
+        "start": 139.16,
+        "end": 143.72,
+        "text": "that was almost as expensive as"
+      },
+      {
+        "start": 141.319,
+        "end": 145.56,
+        "text": "Stanford and all of my workingclass"
+      },
+      {
+        "start": 143.72,
+        "end": 148.8,
+        "text": "parents savings were being spent on my"
+      },
+      {
+        "start": 145.56,
+        "end": 150.599,
+        "text": "college tuition after 6 months I"
+      },
+      {
+        "start": 148.8,
+        "end": 152.31900000000002,
+        "text": "couldn't see the value in it"
+      },
+      {
+        "start": 150.599,
+        "end": 154.76,
+        "text": "I had no idea what I wanted to do with"
+      },
+      {
+        "start": 152.319,
+        "end": 157.07999999999998,
+        "text": "my life and no idea how College was"
+      },
+      {
+        "start": 154.76,
+        "end": 159.12,
+        "text": "going to help me figure it out and here"
+      },
+      {
+        "start": 157.08,
+        "end": 161.4,
+        "text": "I was spending all the money my parents"
+      },
+      {
+        "start": 159.12,
+        "end": 164.76,
+        "text": "had saved their entire"
+      },
+      {
+        "start": 161.4,
+        "end": 167.68,
+        "text": "life so I decided to drop out and trust"
+      },
+      {
+        "start": 164.76,
+        "end": 169.519,
+        "text": "that it would all work out okay it was"
+      },
+      {
+        "start": 167.68,
+        "end": 171.48000000000002,
+        "text": "pretty scary at the time but looking"
+      },
+      {
+        "start": 169.519,
+        "end": 172.92000000000002,
+        "text": "back it was one of the best decisions I"
+      },
+      {
+        "start": 171.48,
+        "end": 176.11999999999998,
+        "text": "ever"
+      },
+      {
+        "start": 172.92,
+        "end": 178.07999999999998,
+        "text": "made the minute I dropped out I could"
+      },
+      {
+        "start": 176.12,
+        "end": 180.84,
+        "text": "stop taking the required classes that"
+      },
+      {
+        "start": 178.08,
+        "end": 183.59900000000002,
+        "text": "didn't interest me and begin dropping in"
+      },
+      {
+        "start": 180.84,
+        "end": 186.48,
+        "text": "on the ones that looked far more"
+      },
+      {
+        "start": 183.599,
+        "end": 188.23899999999998,
+        "text": "interesting it wasn't all romantic I"
+      },
+      {
+        "start": 186.48,
+        "end": 190.959,
+        "text": "didn't have a dorm room so I slept on"
+      },
+      {
+        "start": 188.239,
+        "end": 193,
+        "text": "the floor in friends rooms I returned"
+      },
+      {
+        "start": 190.959,
+        "end": 195.56,
+        "text": "Coke bottles for the 5-cent deposits to"
+      },
+      {
+        "start": 193,
+        "end": 198.36,
+        "text": "buy food with and I would walk the seven"
+      },
+      {
+        "start": 195.56,
+        "end": 200.159,
+        "text": "miles across town every Sunday night to"
+      },
+      {
+        "start": 198.36,
+        "end": 204.04000000000002,
+        "text": "get one good meal a week at the Hari"
+      },
+      {
+        "start": 200.159,
+        "end": 206.319,
+        "text": "Krishna Temple I loved it and much of"
+      },
+      {
+        "start": 204.04,
+        "end": 208.239,
+        "text": "what I stumbled into by following my"
+      },
+      {
+        "start": 206.319,
+        "end": 211.92,
+        "text": "curiosity and intuition turned out to be"
+      },
+      {
+        "start": 208.239,
+        "end": 214.48000000000002,
+        "text": "Priceless later on let me give you one"
+      },
+      {
+        "start": 211.92,
+        "end": 216.23899999999998,
+        "text": "example Reed College at that time"
+      },
+      {
+        "start": 214.48,
+        "end": 218.48,
+        "text": "offered perhaps the best calligraphy"
+      },
+      {
+        "start": 216.239,
+        "end": 221.56,
+        "text": "instruction in the country throughout"
+      },
+      {
+        "start": 218.48,
+        "end": 224.159,
+        "text": "the campus every poster every label on"
+      },
+      {
+        "start": 221.56,
+        "end": 226.64000000000001,
+        "text": "every drawer was beautifully hand"
+      },
+      {
+        "start": 224.159,
+        "end": 229.599,
+        "text": "cigraph because I had dropped out and"
+      },
+      {
+        "start": 226.64,
+        "end": 231.23899999999998,
+        "text": "didn't have to take the normal classes I"
+      },
+      {
+        "start": 229.599,
+        "end": 233.51899999999998,
+        "text": "decided to take a calligraphy class to"
+      },
+      {
+        "start": 231.239,
+        "end": 236.4,
+        "text": "learn how to do this I learned about"
+      },
+      {
+        "start": 233.519,
+        "end": 237.959,
+        "text": "serif and Sans serif type faces about"
+      },
+      {
+        "start": 236.4,
+        "end": 240.079,
+        "text": "varying the amount of space between"
+      },
+      {
+        "start": 237.959,
+        "end": 242.159,
+        "text": "different letter combinations about what"
+      },
+      {
+        "start": 240.079,
+        "end": 245.64000000000001,
+        "text": "makes great typography"
+      },
+      {
+        "start": 242.159,
+        "end": 247.39999999999998,
+        "text": "great it was beautiful historical"
+      },
+      {
+        "start": 245.64,
+        "end": 250.879,
+        "text": "artistically subtle in a way that"
+      },
+      {
+        "start": 247.4,
+        "end": 253.56,
+        "text": "science can't capture and I found it"
+      },
+      {
+        "start": 250.879,
+        "end": 256.28,
+        "text": "fascinating none of this had even a hope"
+      },
+      {
+        "start": 253.56,
+        "end": 259.16,
+        "text": "of any practical application in my"
+      },
+      {
+        "start": 256.28,
+        "end": 261.479,
+        "text": "life but 10 years later when we were"
+      },
+      {
+        "start": 259.16,
+        "end": 264.04,
+        "text": "designing the first Macintosh computer"
+      },
+      {
+        "start": 261.479,
+        "end": 266.479,
+        "text": "it all came back to me and we designed"
+      },
+      {
+        "start": 264.04,
+        "end": 268.16,
+        "text": "it all into the Mac it was the first"
+      },
+      {
+        "start": 266.479,
+        "end": 270.32,
+        "text": "computer with beautiful"
+      },
+      {
+        "start": 268.16,
+        "end": 272.759,
+        "text": "typography if I had never never dropped"
+      },
+      {
+        "start": 270.32,
+        "end": 274.52,
+        "text": "in on that single course in college the"
+      },
+      {
+        "start": 272.759,
+        "end": 277.12,
+        "text": "Mac would have never had multiple type"
+      },
+      {
+        "start": 274.52,
+        "end": 279.52,
+        "text": "faces or proportionately spaced fonts"
+      },
+      {
+        "start": 277.12,
+        "end": 281.28000000000003,
+        "text": "and since Windows just copi the Mac it's"
+      },
+      {
+        "start": 279.52,
+        "end": 281.53999999999996,
+        "text": "likely that no personal computer would"
+      },
+      {
+        "start": 281.28,
+        "end": 284.91999999999996,
+        "text": "have"
+      },
+      {
+        "start": 281.54,
+        "end": 287.98,
+        "text": "[Applause]"
+      },
+      {
+        "start": 284.92,
+        "end": 287.98,
+        "text": "[Music]"
+      },
+      {
+        "start": 288.639,
+        "end": 292.72,
+        "text": "them if I had never dropped out I would"
+      },
+      {
+        "start": 291.56,
+        "end": 294.88,
+        "text": "have never dropped in on that"
+      },
+      {
+        "start": 292.72,
+        "end": 296.72,
+        "text": "calligraphy class and personal computers"
+      },
+      {
+        "start": 294.88,
+        "end": 299.71999999999997,
+        "text": "might not have the wonderful typography"
+      },
+      {
+        "start": 296.72,
+        "end": 301.32000000000005,
+        "text": "that they do of course it was impossible"
+      },
+      {
+        "start": 299.72,
+        "end": 303.88000000000005,
+        "text": "to connect the dots looking forward when"
+      },
+      {
+        "start": 301.32,
+        "end": 307,
+        "text": "I was in college but it was very very"
+      },
+      {
+        "start": 303.88,
+        "end": 309.199,
+        "text": "clear looking backwards 10 years later"
+      },
+      {
+        "start": 307,
+        "end": 311.08,
+        "text": "again you can't connect the dots looking"
+      },
+      {
+        "start": 309.199,
+        "end": 313.639,
+        "text": "forward you can only connect them"
+      },
+      {
+        "start": 311.08,
+        "end": 315.28,
+        "text": "looking backwards so you have to trust"
+      },
+      {
+        "start": 313.639,
+        "end": 317.32,
+        "text": "that the dots will somehow connect in"
+      },
+      {
+        "start": 315.28,
+        "end": 320.55999999999995,
+        "text": "your future you have to trust in"
+      },
+      {
+        "start": 317.32,
+        "end": 322.84,
+        "text": "something your gut Destiny Life Karma"
+      },
+      {
+        "start": 320.56,
+        "end": 325.36,
+        "text": "whatever because believing that the dots"
+      },
+      {
+        "start": 322.84,
+        "end": 327.84,
+        "text": "will connect down the road will give you"
+      },
+      {
+        "start": 325.36,
+        "end": 329.8,
+        "text": "the confidence to follow your heart even"
+      },
+      {
+        "start": 327.84,
+        "end": 333.63899999999995,
+        "text": "when it leads you off the well-worn path"
+      },
+      {
+        "start": 329.8,
+        "end": 333.639,
+        "text": "path and that will make all the"
+      },
+      {
+        "start": 337.319,
+        "end": 342.68,
+        "text": "difference my second story is about love"
+      },
+      {
+        "start": 341.08,
+        "end": 346.08,
+        "text": "and"
+      },
+      {
+        "start": 342.68,
+        "end": 349.16,
+        "text": "loss I was lucky I found what I love to"
+      },
+      {
+        "start": 346.08,
+        "end": 351.639,
+        "text": "do early in life W and I started Apple"
+      },
+      {
+        "start": 349.16,
+        "end": 353.88000000000005,
+        "text": "in my parents garage when I was 20 we"
+      },
+      {
+        "start": 351.639,
+        "end": 355.24,
+        "text": "worked hard and in 10 years Apple had"
+      },
+      {
+        "start": 353.88,
+        "end": 357.759,
+        "text": "grown from Just the Two of Us in a"
+      },
+      {
+        "start": 355.24,
+        "end": 360.6,
+        "text": "garage into A2 billion doll company with"
+      },
+      {
+        "start": 357.759,
+        "end": 363,
+        "text": "over 4,000 employees we just released"
+      },
+      {
+        "start": 360.6,
+        "end": 365,
+        "text": "our finest creation the Macintosh a year"
+      },
+      {
+        "start": 363,
+        "end": 367.72,
+        "text": "earlier and I just turned"
+      },
+      {
+        "start": 365,
+        "end": 369.919,
+        "text": "30 and then I got"
+      },
+      {
+        "start": 367.72,
+        "end": 371.16,
+        "text": "fired how can you get fired from a"
+      },
+      {
+        "start": 369.919,
+        "end": 374.639,
+        "text": "company you"
+      },
+      {
+        "start": 371.16,
+        "end": 376.68,
+        "text": "started well as Apple grew we hired"
+      },
+      {
+        "start": 374.639,
+        "end": 378.639,
+        "text": "someone who I thought was very talented"
+      },
+      {
+        "start": 376.68,
+        "end": 380.84000000000003,
+        "text": "to run the company with me and for the"
+      },
+      {
+        "start": 378.639,
+        "end": 382.44,
+        "text": "first year or so things went well but"
+      },
+      {
+        "start": 380.84,
+        "end": 384.44,
+        "text": "then our visions of the future began to"
+      },
+      {
+        "start": 382.44,
+        "end": 387.16,
+        "text": "diverge and eventually we had a falling"
+      },
+      {
+        "start": 384.44,
+        "end": 390.84,
+        "text": "out when we did our board of directors"
+      },
+      {
+        "start": 387.16,
+        "end": 393.44,
+        "text": "sided with him and so at 30 I was out"
+      },
+      {
+        "start": 390.84,
+        "end": 395.96,
+        "text": "and very publicly out what had been the"
+      },
+      {
+        "start": 393.44,
+        "end": 397.08,
+        "text": "focus of my entire adult life was gone"
+      },
+      {
+        "start": 395.96,
+        "end": 398.96,
+        "text": "and it was"
+      },
+      {
+        "start": 397.08,
+        "end": 401.4,
+        "text": "devastating I really didn't know what to"
+      },
+      {
+        "start": 398.96,
+        "end": 402.75899999999996,
+        "text": "do for a few months I felt that I had"
+      },
+      {
+        "start": 401.4,
+        "end": 404.919,
+        "text": "let the previous generation of"
+      },
+      {
+        "start": 402.759,
+        "end": 407.759,
+        "text": "entrepreneurs down that I had dropped"
+      },
+      {
+        "start": 404.919,
+        "end": 410.599,
+        "text": "the Baton as it was being passed to me I"
+      },
+      {
+        "start": 407.759,
+        "end": 413,
+        "text": "met with David Packard and Bob noise and"
+      },
+      {
+        "start": 410.599,
+        "end": 415.71999999999997,
+        "text": "tried to apologize for screwing up so"
+      },
+      {
+        "start": 413,
+        "end": 417.16,
+        "text": "badly I was a very public failure and I"
+      },
+      {
+        "start": 415.72,
+        "end": 419.8,
+        "text": "even thought about running away from the"
+      },
+      {
+        "start": 417.16,
+        "end": 423.56,
+        "text": "valley but something slowly began to"
+      },
+      {
+        "start": 419.8,
+        "end": 426.039,
+        "text": "dawn on me I still loved what I"
+      },
+      {
+        "start": 423.56,
+        "end": 429.16,
+        "text": "did the turn of events at Apple had not"
+      },
+      {
+        "start": 426.039,
+        "end": 430.599,
+        "text": "changed that one bit I'd been rejected"
+      },
+      {
+        "start": 429.16,
+        "end": 433.44,
+        "text": "but I was still in"
+      },
+      {
+        "start": 430.599,
+        "end": 436.4,
+        "text": "love and so I decided to start"
+      },
+      {
+        "start": 433.44,
+        "end": 437.879,
+        "text": "over I didn't see it then but it turned"
+      },
+      {
+        "start": 436.4,
+        "end": 439.039,
+        "text": "out that getting fired from Apple was"
+      },
+      {
+        "start": 437.879,
+        "end": 441.639,
+        "text": "the best thing that could have ever"
+      },
+      {
+        "start": 439.039,
+        "end": 444.15999999999997,
+        "text": "happened to me the heaviness of being"
+      },
+      {
+        "start": 441.639,
+        "end": 446.28000000000003,
+        "text": "successful was replaced by the lightness"
+      },
+      {
+        "start": 444.16,
+        "end": 448.47900000000004,
+        "text": "of being a beginner again less sure"
+      },
+      {
+        "start": 446.28,
+        "end": 449.84,
+        "text": "about everything it freed me to enter"
+      },
+      {
+        "start": 448.479,
+        "end": 452.15999999999997,
+        "text": "one of the most creative periods per of"
+      },
+      {
+        "start": 449.84,
+        "end": 454.44,
+        "text": "my life during the next 5 years I"
+      },
+      {
+        "start": 452.16,
+        "end": 456.47900000000004,
+        "text": "started a company named next another"
+      },
+      {
+        "start": 454.44,
+        "end": 457.84,
+        "text": "company named Pixar and fell in love"
+      },
+      {
+        "start": 456.479,
+        "end": 460.4,
+        "text": "with an amazing woman who would become"
+      },
+      {
+        "start": 457.84,
+        "end": 462.11999999999995,
+        "text": "my wife Pixar went on to create the"
+      },
+      {
+        "start": 460.4,
+        "end": 464.63899999999995,
+        "text": "world's first computer animated feature"
+      },
+      {
+        "start": 462.12,
+        "end": 468.36,
+        "text": "film Toy Story and is now the most"
+      },
+      {
+        "start": 464.639,
+        "end": 471.8,
+        "text": "successful Animation Studio in the"
+      },
+      {
+        "start": 468.36,
+        "end": 474,
+        "text": "world in a remarkable turn of events"
+      },
+      {
+        "start": 471.8,
+        "end": 476.24,
+        "text": "Apple bought next and I returned to"
+      },
+      {
+        "start": 474,
+        "end": 478.199,
+        "text": "Apple and the technology we developed it"
+      },
+      {
+        "start": 476.24,
+        "end": 481.40000000000003,
+        "text": "next is at the heart of Apple's current"
+      },
+      {
+        "start": 478.199,
+        "end": 482.52000000000004,
+        "text": "Renaissance and L and I have a wonderful"
+      },
+      {
+        "start": 481.4,
+        "end": 485.039,
+        "text": "family"
+      },
+      {
+        "start": 482.52,
+        "end": 486.19899999999996,
+        "text": "together I'm pretty sure none of this"
+      },
+      {
+        "start": 485.039,
+        "end": 488.599,
+        "text": "would have happened if I hadn't been"
+      },
+      {
+        "start": 486.199,
+        "end": 490.96000000000004,
+        "text": "fired from Apple it was awful tasting"
+      },
+      {
+        "start": 488.599,
+        "end": 493.87899999999996,
+        "text": "medicine but I guess the patient needed"
+      },
+      {
+        "start": 490.96,
+        "end": 495.87899999999996,
+        "text": "it sometime life sometimes life's going"
+      },
+      {
+        "start": 493.879,
+        "end": 498.56,
+        "text": "to hit you in the head with a brick"
+      },
+      {
+        "start": 495.879,
+        "end": 500.36,
+        "text": "don't lose faith I'm convinced that the"
+      },
+      {
+        "start": 498.56,
+        "end": 503.08,
+        "text": "only thing that kept me going was that I"
+      },
+      {
+        "start": 500.36,
+        "end": 505.72,
+        "text": "loved what I did you've got to find what"
+      },
+      {
+        "start": 503.08,
+        "end": 508.28,
+        "text": "you love and that is as true for work as"
+      },
+      {
+        "start": 505.72,
+        "end": 510.24,
+        "text": "it is for your lovers your work is going"
+      },
+      {
+        "start": 508.28,
+        "end": 512.4399999999999,
+        "text": "to fill a large part of your life and"
+      },
+      {
+        "start": 510.24,
+        "end": 514.719,
+        "text": "the only way to be truly satisfied is to"
+      },
+      {
+        "start": 512.44,
+        "end": 517.2790000000001,
+        "text": "do what you believe is great work and"
+      },
+      {
+        "start": 514.719,
+        "end": 520.24,
+        "text": "the only way to do great work is to love"
+      },
+      {
+        "start": 517.279,
+        "end": 523.56,
+        "text": "what you do if you haven't found it yet"
+      },
+      {
+        "start": 520.24,
+        "end": 525.519,
+        "text": "keep looking and don't settle as with"
+      },
+      {
+        "start": 523.56,
+        "end": 527.68,
+        "text": "all matters of the heart you'll know"
+      },
+      {
+        "start": 525.519,
+        "end": 529.5600000000001,
+        "text": "when you find it and like any great"
+      },
+      {
+        "start": 527.68,
+        "end": 532.2399999999999,
+        "text": "relationship it just gets better and"
+      },
+      {
+        "start": 529.56,
+        "end": 536.5999999999999,
+        "text": "better as the years roll on so keep"
+      },
+      {
+        "start": 532.24,
+        "end": 536.6,
+        "text": "looking don't settle"
+      },
+      {
+        "start": 537.75,
+        "end": 547.68,
+        "text": "[Applause]"
+      },
+      {
+        "start": 544.76,
+        "end": 550.8389999999999,
+        "text": "my third story is about"
+      },
+      {
+        "start": 547.68,
+        "end": 553.88,
+        "text": "death when I was 17 I read a quote that"
+      },
+      {
+        "start": 550.839,
+        "end": 555.9200000000001,
+        "text": "went something like if you live each day"
+      },
+      {
+        "start": 553.88,
+        "end": 559,
+        "text": "as if it was your last someday you'll"
+      },
+      {
+        "start": 555.92,
+        "end": 559,
+        "text": "most certainly be"
+      },
+      {
+        "start": 559.32,
+        "end": 565.2,
+        "text": "right it made an impression on me and"
+      },
+      {
+        "start": 562.399,
+        "end": 566.64,
+        "text": "since then for the past 33 years I"
+      },
+      {
+        "start": 565.2,
+        "end": 569.0790000000001,
+        "text": "looked in the mirror every morning and"
+      },
+      {
+        "start": 566.64,
+        "end": 571.68,
+        "text": "asked myself if today were the last day"
+      },
+      {
+        "start": 569.079,
+        "end": 574.399,
+        "text": "of my life what I want to do what I am"
+      },
+      {
+        "start": 571.68,
+        "end": 576.3199999999999,
+        "text": "about to do today and whenever the"
+      },
+      {
+        "start": 574.399,
+        "end": 579,
+        "text": "answer has been no for too many days in"
+      },
+      {
+        "start": 576.32,
+        "end": 581.519,
+        "text": "a row I know I need to change"
+      },
+      {
+        "start": 579,
+        "end": 583.72,
+        "text": "something remembering that I'll be dead"
+      },
+      {
+        "start": 581.519,
+        "end": 585.44,
+        "text": "soon is the most important tool I've"
+      },
+      {
+        "start": 583.72,
+        "end": 588.24,
+        "text": "ever encountered to help me make the big"
+      },
+      {
+        "start": 585.44,
+        "end": 591.36,
+        "text": "choices in life because almost"
+      },
+      {
+        "start": 588.24,
+        "end": 593.36,
+        "text": "everything all external expectations all"
+      },
+      {
+        "start": 591.36,
+        "end": 596,
+        "text": "Pride all fear of embarrassment or"
+      },
+      {
+        "start": 593.36,
+        "end": 598.519,
+        "text": "failure these things just fall away in"
+      },
+      {
+        "start": 596,
+        "end": 600.24,
+        "text": "the face of death leaving only what is"
+      },
+      {
+        "start": 598.519,
+        "end": 602.64,
+        "text": "truly important"
+      },
+      {
+        "start": 600.24,
+        "end": 605.12,
+        "text": "remembering that you are going to die is"
+      },
+      {
+        "start": 602.64,
+        "end": 607.72,
+        "text": "the best way I know to avoid the Trap of"
+      },
+      {
+        "start": 605.12,
+        "end": 610.72,
+        "text": "thinking you have something to lose you"
+      },
+      {
+        "start": 607.72,
+        "end": 612.36,
+        "text": "are already naked there is no reason not"
+      },
+      {
+        "start": 610.72,
+        "end": 615.8000000000001,
+        "text": "to follow your"
+      },
+      {
+        "start": 612.36,
+        "end": 619.0790000000001,
+        "text": "heart about a year ago I was diagnosed"
+      },
+      {
+        "start": 615.8,
+        "end": 621.279,
+        "text": "with cancer I had a scan at 7:30 in the"
+      },
+      {
+        "start": 619.079,
+        "end": 623.8,
+        "text": "morning and it clearly showed a tumor on"
+      },
+      {
+        "start": 621.279,
+        "end": 627.24,
+        "text": "my pancreas I didn't even know what a"
+      },
+      {
+        "start": 623.8,
+        "end": 629.3199999999999,
+        "text": "pancreas was the doctors told me this"
+      },
+      {
+        "start": 627.24,
+        "end": 631.12,
+        "text": "was almost certainly a type of cancer"
+      },
+      {
+        "start": 629.32,
+        "end": 634.2,
+        "text": "that is incurable and that I should"
+      },
+      {
+        "start": 631.12,
+        "end": 637.279,
+        "text": "expect to live no longer than 3 to 6"
+      },
+      {
+        "start": 634.2,
+        "end": 640.0400000000001,
+        "text": "months my doctor advised me to go home"
+      },
+      {
+        "start": 637.279,
+        "end": 643.279,
+        "text": "and get my Affairs in order which is"
+      },
+      {
+        "start": 640.04,
+        "end": 645.88,
+        "text": "doctor's code for prepare to die it"
+      },
+      {
+        "start": 643.279,
+        "end": 647.68,
+        "text": "means to try and tell your kids"
+      },
+      {
+        "start": 645.88,
+        "end": 650.2,
+        "text": "everything you thought you'd have the"
+      },
+      {
+        "start": 647.68,
+        "end": 652.519,
+        "text": "next 10 years to tell them in just a few"
+      },
+      {
+        "start": 650.2,
+        "end": 654.399,
+        "text": "months it means to make sure everything"
+      },
+      {
+        "start": 652.519,
+        "end": 657.04,
+        "text": "is buttoned up so that it will be as"
+      },
+      {
+        "start": 654.399,
+        "end": 660.76,
+        "text": "easy as possible for your family it"
+      },
+      {
+        "start": 657.04,
+        "end": 663.8389999999999,
+        "text": "means to say your goodbyes"
+      },
+      {
+        "start": 660.76,
+        "end": 666.12,
+        "text": "I live with that diagnosis all day later"
+      },
+      {
+        "start": 663.839,
+        "end": 668.1600000000001,
+        "text": "that evening I had a biopsy where they"
+      },
+      {
+        "start": 666.12,
+        "end": 669.519,
+        "text": "stuck an endoscope down my throat"
+      },
+      {
+        "start": 668.16,
+        "end": 672.1999999999999,
+        "text": "through my stomach and into my"
+      },
+      {
+        "start": 669.519,
+        "end": 675.079,
+        "text": "intestines put a needle into my pancreas"
+      },
+      {
+        "start": 672.2,
+        "end": 678.1600000000001,
+        "text": "and got a few cells from the tumor I was"
+      },
+      {
+        "start": 675.079,
+        "end": 679.8389999999999,
+        "text": "sedated but my wife who was there told"
+      },
+      {
+        "start": 678.16,
+        "end": 682.8389999999999,
+        "text": "me that when they viewed the cells under"
+      },
+      {
+        "start": 679.839,
+        "end": 684.519,
+        "text": "a microscope the doctor started crying"
+      },
+      {
+        "start": 682.839,
+        "end": 686.519,
+        "text": "because it turned out to be a very rare"
+      },
+      {
+        "start": 684.519,
+        "end": 689.72,
+        "text": "form of pancreatic cancer that is"
+      },
+      {
+        "start": 686.519,
+        "end": 693.279,
+        "text": "curable with surgery I had the surgery"
+      },
+      {
+        "start": 689.72,
+        "end": 693.279,
+        "text": "and thankfully I'm fine"
+      },
+      {
+        "start": 699.16,
+        "end": 703.959,
+        "text": "now this was the closest I've been to"
+      },
+      {
+        "start": 701.68,
+        "end": 706.399,
+        "text": "facing death and I hope it's the closest"
+      },
+      {
+        "start": 703.959,
+        "end": 708.76,
+        "text": "I get for a few more decades having"
+      },
+      {
+        "start": 706.399,
+        "end": 710.6,
+        "text": "lived through it I can now say this to"
+      },
+      {
+        "start": 708.76,
+        "end": 712.279,
+        "text": "you with a bit more certainty than when"
+      },
+      {
+        "start": 710.6,
+        "end": 714.0400000000001,
+        "text": "death was a useful but purely"
+      },
+      {
+        "start": 712.279,
+        "end": 718.04,
+        "text": "intellectual"
+      },
+      {
+        "start": 714.04,
+        "end": 719.8389999999999,
+        "text": "concept no one wants to die even people"
+      },
+      {
+        "start": 718.04,
+        "end": 723.399,
+        "text": "who want to go to heaven don't want to"
+      },
+      {
+        "start": 719.839,
+        "end": 726.2790000000001,
+        "text": "die to get there and yet death is the"
+      },
+      {
+        "start": 723.399,
+        "end": 729.68,
+        "text": "destination we all share no one has ever"
+      },
+      {
+        "start": 726.279,
+        "end": 732.079,
+        "text": "escaped it and that is as it should be"
+      },
+      {
+        "start": 729.68,
+        "end": 734.92,
+        "text": "because death is very likely the single"
+      },
+      {
+        "start": 732.079,
+        "end": 737.16,
+        "text": "best invention of life it's life's"
+      },
+      {
+        "start": 734.92,
+        "end": 740.399,
+        "text": "change agent it clears out the old to"
+      },
+      {
+        "start": 737.16,
+        "end": 743.8,
+        "text": "make way for the new right now the new"
+      },
+      {
+        "start": 740.399,
+        "end": 745.959,
+        "text": "is you but someday not too long from now"
+      },
+      {
+        "start": 743.8,
+        "end": 749.639,
+        "text": "you will gradually become the old and be"
+      },
+      {
+        "start": 745.959,
+        "end": 750.8389999999999,
+        "text": "cleared away sorry to be so dramatic but"
+      },
+      {
+        "start": 749.639,
+        "end": 754.399,
+        "text": "it's quite"
+      },
+      {
+        "start": 750.839,
+        "end": 757.639,
+        "text": "true your time is limited so don't waste"
+      },
+      {
+        "start": 754.399,
+        "end": 759.72,
+        "text": "it living someone else's life don't be"
+      },
+      {
+        "start": 757.639,
+        "end": 762.36,
+        "text": "trapped by Dogma which is living with"
+      },
+      {
+        "start": 759.72,
+        "end": 764.24,
+        "text": "the results of other people's thinking"
+      },
+      {
+        "start": 762.36,
+        "end": 767.04,
+        "text": "don't let the noise of others opinions"
+      },
+      {
+        "start": 764.24,
+        "end": 768.9590000000001,
+        "text": "drown out your own inner voice and most"
+      },
+      {
+        "start": 767.04,
+        "end": 771.56,
+        "text": "important have the courage to follow"
+      },
+      {
+        "start": 768.959,
+        "end": 774.079,
+        "text": "your heart and intuition they somehow"
+      },
+      {
+        "start": 771.56,
+        "end": 779.56,
+        "text": "already know what you truly want to"
+      },
+      {
+        "start": 774.079,
+        "end": 779.56,
+        "text": "become everything else is secondary"
+      },
+      {
+        "start": 780.87,
+        "end": 791.519,
+        "text": "[Applause]"
+      },
+      {
+        "start": 788.88,
+        "end": 793.56,
+        "text": "when I was young there was an amazing"
+      },
+      {
+        "start": 791.519,
+        "end": 795.9590000000001,
+        "text": "publication called the whole earth"
+      },
+      {
+        "start": 793.56,
+        "end": 798.7199999999999,
+        "text": "catalog which was one of the Bibles of"
+      },
+      {
+        "start": 795.959,
+        "end": 801,
+        "text": "my generation it was created by a fellow"
+      },
+      {
+        "start": 798.72,
+        "end": 803.519,
+        "text": "named Stuart brand not far from here in"
+      },
+      {
+        "start": 801,
+        "end": 806.16,
+        "text": "Meno Park and he brought it to life with"
+      },
+      {
+        "start": 803.519,
+        "end": 808.199,
+        "text": "his poetic touch this was in the late"
+      },
+      {
+        "start": 806.16,
+        "end": 810.639,
+        "text": "60s before personal computers and"
+      },
+      {
+        "start": 808.199,
+        "end": 812.8389999999999,
+        "text": "desktop publishing so it was all made"
+      },
+      {
+        "start": 810.639,
+        "end": 815.16,
+        "text": "with typewriters scissors and Polaroid"
+      },
+      {
+        "start": 812.839,
+        "end": 817.8000000000001,
+        "text": "cameras it was sort of like Google in"
+      },
+      {
+        "start": 815.16,
+        "end": 821.399,
+        "text": "paperback form 35 years before Google"
+      },
+      {
+        "start": 817.8,
+        "end": 823.4799999999999,
+        "text": "came along it was idealistic overflowing"
+      },
+      {
+        "start": 821.399,
+        "end": 825.92,
+        "text": "with neat tools and great"
+      },
+      {
+        "start": 823.48,
+        "end": 827.32,
+        "text": "Notions Stewart and his team put out"
+      },
+      {
+        "start": 825.92,
+        "end": 829.8,
+        "text": "several issues of the whole earth"
+      },
+      {
+        "start": 827.32,
+        "end": 832.8000000000001,
+        "text": "catalog and then when it had run its"
+      },
+      {
+        "start": 829.8,
+        "end": 836.7589999999999,
+        "text": "course they put out a final issue it was"
+      },
+      {
+        "start": 832.8,
+        "end": 839.399,
+        "text": "the mid 1970s and I was your"
+      },
+      {
+        "start": 836.759,
+        "end": 841.6800000000001,
+        "text": "age on the back cover of their final"
+      },
+      {
+        "start": 839.399,
+        "end": 844.199,
+        "text": "issue was a photograph of an early"
+      },
+      {
+        "start": 841.68,
+        "end": 846.279,
+        "text": "morning Country Road the kind you might"
+      },
+      {
+        "start": 844.199,
+        "end": 847.12,
+        "text": "find yourself hitchhiking on if you were"
+      },
+      {
+        "start": 846.279,
+        "end": 850.079,
+        "text": "so"
+      },
+      {
+        "start": 847.12,
+        "end": 853.48,
+        "text": "adventurous beneath it were the words"
+      },
+      {
+        "start": 850.079,
+        "end": 856.7589999999999,
+        "text": "stay hungry stay foolish it was their"
+      },
+      {
+        "start": 853.48,
+        "end": 860.1990000000001,
+        "text": "farewell message as they signed off stay"
+      },
+      {
+        "start": 856.759,
+        "end": 861.8000000000001,
+        "text": "hungry stay foolish and I have always"
+      },
+      {
+        "start": 860.199,
+        "end": 865.12,
+        "text": "wished that for"
+      },
+      {
+        "start": 861.8,
+        "end": 869.399,
+        "text": "myself and now as you graduate to begin"
+      },
+      {
+        "start": 865.12,
+        "end": 872.61,
+        "text": "a new I wish that for you stay hungry"
+      },
+      {
+        "start": 869.399,
+        "end": 890.7,
+        "text": "stay foolish thank you all very"
+      },
+      {
+        "start": 872.61,
+        "end": 895.639,
+        "text": "[Applause]"
+      },
+      {
+        "start": 890.7,
+        "end": 897.839,
+        "text": "[Music]"
+      },
+      {
+        "start": 895.639,
+        "end": 900.199,
+        "text": "much the preceding program is"
+      },
+      {
+        "start": 897.839,
+        "end": 904.32,
+        "text": "copyrighted by Stanford University"
+      },
+      {
+        "start": 900.199,
+        "end": 904.3199999999999,
+        "text": "please visit us at stanford.edu"
+      }
+    ]
+  },
+  "manual": {
+    "index": 2,
+    "languageCode": "en",
+    "vssId": ".en.eEY6OEpapPo",
+    "bytes": 35670,
+    "cueCount": 244,
+    "first3": [
+      {
+        "start": 7.47,
+        "end": 10.369,
+        "text": "This program is brought to you by Stanford University."
+      },
+      {
+        "start": 10.47,
+        "end": 14.443000000000001,
+        "text": "Please visit us at stanford.edu"
+      },
+      {
+        "start": 22.492,
+        "end": 30.019000000000002,
+        "text": "Thank You. I am honored to be with you today at your commencement"
+      }
+    ],
+    "cues": [
+      {
+        "start": 7.47,
+        "end": 10.369,
+        "text": "This program is brought to you by Stanford University."
+      },
+      {
+        "start": 10.47,
+        "end": 14.443000000000001,
+        "text": "Please visit us at stanford.edu"
+      },
+      {
+        "start": 22.492,
+        "end": 30.019000000000002,
+        "text": "Thank You. I am honored to be with you today at your commencement"
+      },
+      {
+        "start": 30.02,
+        "end": 32.738,
+        "text": "from one of the finest universities in the world."
+      },
+      {
+        "start": 35.559,
+        "end": 41.559,
+        "text": "Truth be told I never graduated from college"
+      },
+      {
+        "start": 41.56,
+        "end": 45.929,
+        "text": "and this is the closest I've ever gotten to a college graduation."
+      },
+      {
+        "start": 47.98,
+        "end": 52.009,
+        "text": "Today I want to tell you three stories from my life. That's it."
+      },
+      {
+        "start": 52.01,
+        "end": 54.849,
+        "text": "No big deal. Just three stories."
+      },
+      {
+        "start": 55.85,
+        "end": 59.569,
+        "text": "The first story is about connecting the dots."
+      },
+      {
+        "start": 61.01,
+        "end": 63.894,
+        "text": "I dropped out of Reed College after the first 6 months,"
+      },
+      {
+        "start": 63.98,
+        "end": 65.798,
+        "text": "but then stayed around as a drop-in"
+      },
+      {
+        "start": 65.799,
+        "end": 68.72800000000001,
+        "text": "for another 18 months or so before I really quit."
+      },
+      {
+        "start": 69.41,
+        "end": 71.078,
+        "text": "So why did I drop out?"
+      },
+      {
+        "start": 72.23,
+        "end": 74.369,
+        "text": "It started before I was born."
+      },
+      {
+        "start": 75.25,
+        "end": 79.034,
+        "text": "My biological mother was a young, unwed graduate student,"
+      },
+      {
+        "start": 79.24,
+        "end": 81.34899999999999,
+        "text": "and she decided to put me up for adoption."
+      },
+      {
+        "start": 82.36,
+        "end": 86.228,
+        "text": "She felt very strongly that I should be adopted by college graduates,"
+      },
+      {
+        "start": 86.309,
+        "end": 88.608,
+        "text": "so everything was all set for me to"
+      },
+      {
+        "start": 88.609,
+        "end": 91.098,
+        "text": "be adopted at birth by a lawyer and his wife."
+      },
+      {
+        "start": 91.74,
+        "end": 94.149,
+        "text": "Except that when I popped out they decided"
+      },
+      {
+        "start": 94.15,
+        "end": 97.549,
+        "text": "at the last minute that they really wanted a girl."
+      },
+      {
+        "start": 97.92,
+        "end": 100.049,
+        "text": "So my parents, who were on a waiting list,"
+      },
+      {
+        "start": 100.16,
+        "end": 104.469,
+        "text": "got a call in the middle of the night asking: \"We have an unexpected"
+      },
+      {
+        "start": 104.47,
+        "end": 106.919,
+        "text": "baby boy; do you want him?\""
+      },
+      {
+        "start": 107.43,
+        "end": 113.07400000000001,
+        "text": "They said: \"Of course.\" My biological mother later found out that"
+      },
+      {
+        "start": 113.3,
+        "end": 115.309,
+        "text": "my mother had never graduated from college"
+      },
+      {
+        "start": 115.31,
+        "end": 118.46900000000001,
+        "text": "and that my father had never graduated from high school."
+      },
+      {
+        "start": 119.16,
+        "end": 122.449,
+        "text": "She refused to sign the final adoption papers."
+      },
+      {
+        "start": 123.43,
+        "end": 125.38900000000001,
+        "text": "She only relented a few months later when"
+      },
+      {
+        "start": 125.39,
+        "end": 132.50900000000001,
+        "text": "my parents promised that I would go to college. This was the start in my life."
+      },
+      {
+        "start": 132.54,
+        "end": 139.339,
+        "text": "And 17 years later I did go to college. But I naively chose a college"
+      },
+      {
+        "start": 139.34,
+        "end": 141.659,
+        "text": "that was almost as expensive as Stanford,"
+      },
+      {
+        "start": 142.47,
+        "end": 144.309,
+        "text": "and all of my working-class parents'"
+      },
+      {
+        "start": 144.31,
+        "end": 146.779,
+        "text": "savings were being spent on my college tuition."
+      },
+      {
+        "start": 147.61,
+        "end": 150.40900000000002,
+        "text": "After six months, I couldn't see the value in it."
+      },
+      {
+        "start": 150.72,
+        "end": 152.759,
+        "text": "I had no idea what I wanted to do with my life"
+      },
+      {
+        "start": 152.76,
+        "end": 156.379,
+        "text": "and no idea how college was going to help me figure it out."
+      },
+      {
+        "start": 156.85,
+        "end": 160.089,
+        "text": "And here I was spending all of the money my parents had saved"
+      },
+      {
+        "start": 160.289,
+        "end": 160.899,
+        "text": "their entire life."
+      },
+      {
+        "start": 162.6,
+        "end": 166.938,
+        "text": "So I decided to drop out and trust that it would all work out OK."
+      },
+      {
+        "start": 166.939,
+        "end": 169.398,
+        "text": "It was pretty scary at the time,"
+      },
+      {
+        "start": 169.399,
+        "end": 172.808,
+        "text": "but looking back it was one of the best decisions I ever made."
+      },
+      {
+        "start": 174.08,
+        "end": 176.68900000000002,
+        "text": "The minute I dropped out I could stop"
+      },
+      {
+        "start": 176.69,
+        "end": 179.484,
+        "text": "taking the required classes that didn't interest me,"
+      },
+      {
+        "start": 179.74,
+        "end": 183.59900000000002,
+        "text": "and begin dropping in on the ones that looked interesting."
+      },
+      {
+        "start": 184.76,
+        "end": 188.099,
+        "text": "It wasn't all romantic. I didn't have a dorm room,"
+      },
+      {
+        "start": 188.17,
+        "end": 190.498,
+        "text": "so I slept on the floor in friends' rooms,"
+      },
+      {
+        "start": 190.59,
+        "end": 194.179,
+        "text": "I returned coke bottles for the 5 cent deposits to buy food with,"
+      },
+      {
+        "start": 194.72,
+        "end": 197.279,
+        "text": "and I would walk the 7 miles across town every Sunday"
+      },
+      {
+        "start": 197.28,
+        "end": 201.079,
+        "text": "night to get one good meal a week at the Hare Krishna"
+      },
+      {
+        "start": 201.15,
+        "end": 203.079,
+        "text": "temple. I loved it."
+      },
+      {
+        "start": 203.85,
+        "end": 206.259,
+        "text": "And much of what I stumbled into by following"
+      },
+      {
+        "start": 206.26,
+        "end": 209.689,
+        "text": "my curiosity and intuition turned out to be priceless later on."
+      },
+      {
+        "start": 209.689,
+        "end": 214.374,
+        "text": "Let me give you one example: Reed College at that"
+      },
+      {
+        "start": 214.5,
+        "end": 217.989,
+        "text": "time offered perhaps the best calligraphy instruction in the country."
+      },
+      {
+        "start": 218.35,
+        "end": 222.748,
+        "text": "Throughout the campus every poster, every label on every drawer,"
+      },
+      {
+        "start": 222.749,
+        "end": 225.108,
+        "text": "was beautifully hand calligraphed."
+      },
+      {
+        "start": 225.39,
+        "end": 228.88899999999998,
+        "text": "Because I had dropped out and didn't have to take the normal classes,"
+      },
+      {
+        "start": 229.73,
+        "end": 232.679,
+        "text": "I decided to take a calligraphy class to learn how to do this."
+      },
+      {
+        "start": 233.1,
+        "end": 236.094,
+        "text": "I learned about serif and san serif typefaces,"
+      },
+      {
+        "start": 236.3,
+        "end": 237.949,
+        "text": "about varying the amount of space"
+      },
+      {
+        "start": 237.95,
+        "end": 239.664,
+        "text": "between different letter combinations,"
+      },
+      {
+        "start": 239.85,
+        "end": 242.399,
+        "text": "about what makes great typography great."
+      },
+      {
+        "start": 243.44,
+        "end": 245.579,
+        "text": "It was beautiful, historical,"
+      },
+      {
+        "start": 245.8,
+        "end": 249.179,
+        "text": "artistically subtle in a way that science can't capture,"
+      },
+      {
+        "start": 249.75,
+        "end": 251.448,
+        "text": "and I found it fascinating."
+      },
+      {
+        "start": 252.21,
+        "end": 256.798,
+        "text": "None of this had even a hope of any practical application in my life."
+      },
+      {
+        "start": 257.57,
+        "end": 258.774,
+        "text": "But ten years later,"
+      },
+      {
+        "start": 258.87,
+        "end": 261.629,
+        "text": "when we were designing the first Macintosh computer,"
+      },
+      {
+        "start": 261.88,
+        "end": 265.469,
+        "text": "it all came back to me. And we designed it all into the Mac."
+      },
+      {
+        "start": 265.47,
+        "end": 268.939,
+        "text": "It was the first computer with beautiful typography."
+      },
+      {
+        "start": 269.49,
+        "end": 272.769,
+        "text": "If I had never dropped in on that single course in college,"
+      },
+      {
+        "start": 272.96,
+        "end": 274.589,
+        "text": "the Mac would have never had multiple"
+      },
+      {
+        "start": 274.59,
+        "end": 277.114,
+        "text": "typefaces or proportionally spaced fonts."
+      },
+      {
+        "start": 277.4,
+        "end": 279.614,
+        "text": "And since Windows just copied the Mac,"
+      },
+      {
+        "start": 279.7,
+        "end": 283.51599999999996,
+        "text": "it's likely that no personal computer would have them."
+      },
+      {
+        "start": 287.07,
+        "end": 291.139,
+        "text": "If I had never dropped out,"
+      },
+      {
+        "start": 291.14,
+        "end": 294.039,
+        "text": "I would have never dropped in on this calligraphy class,"
+      },
+      {
+        "start": 294.11,
+        "end": 297.149,
+        "text": "and personal computers might not have the wonderful typography"
+      },
+      {
+        "start": 297.15,
+        "end": 300.519,
+        "text": "that they do. Of course it was impossible to connect"
+      },
+      {
+        "start": 300.52,
+        "end": 302.44899999999996,
+        "text": "the dots looking forward when I was in college."
+      },
+      {
+        "start": 302.45,
+        "end": 306.649,
+        "text": "But it was very, very clear looking backwards ten years later."
+      },
+      {
+        "start": 307.13,
+        "end": 310.149,
+        "text": "Again, you can't connect the dots looking forward;"
+      },
+      {
+        "start": 310.15,
+        "end": 312.49899999999997,
+        "text": "you can only connect them looking backwards."
+      },
+      {
+        "start": 312.92,
+        "end": 315.54900000000004,
+        "text": "So you have to trust that the dots will somehow connect"
+      },
+      {
+        "start": 315.549,
+        "end": 316.44399999999996,
+        "text": "in your future."
+      },
+      {
+        "start": 316.73,
+        "end": 320.72900000000004,
+        "text": "You have to trust in something, your gut, destiny, life, karma,"
+      },
+      {
+        "start": 320.73,
+        "end": 321.439,
+        "text": "whatever."
+      },
+      {
+        "start": 322.35,
+        "end": 328.098,
+        "text": "Beleiveing that the dots will connect down the road will give you the confidence to follow your heart"
+      },
+      {
+        "start": 328.1,
+        "end": 333.346,
+        "text": "Even when it leads you off the well worn path, and that will make all the difference."
+      },
+      {
+        "start": 338.6,
+        "end": 342.699,
+        "text": "My second story is about love and loss."
+      },
+      {
+        "start": 344.03,
+        "end": 347.929,
+        "text": "I was lucky I found what I loved to do early in life."
+      },
+      {
+        "start": 348.31,
+        "end": 351.519,
+        "text": "Woz and I started Apple in my parents garage when I was 20."
+      },
+      {
+        "start": 351.87,
+        "end": 355.259,
+        "text": "We worked hard, and in 10 years Apple had grown from just the two of"
+      },
+      {
+        "start": 355.26,
+        "end": 359.579,
+        "text": "us in a garage into a $2 billion company with over 4000 employees."
+      },
+      {
+        "start": 359.66,
+        "end": 363.34900000000005,
+        "text": "We had just released our finest creation the Macintosh"
+      },
+      {
+        "start": 363.35,
+        "end": 365.639,
+        "text": "a year earlier, and I had just turned 30."
+      },
+      {
+        "start": 366.36,
+        "end": 367.949,
+        "text": "And then I got fired."
+      },
+      {
+        "start": 369.05,
+        "end": 371.899,
+        "text": "How can you get fired from a company you started?"
+      },
+      {
+        "start": 372.4,
+        "end": 375.899,
+        "text": "Well, as Apple grew we hired someone who I thought"
+      },
+      {
+        "start": 375.9,
+        "end": 378.459,
+        "text": "was very talented to run the company with me,"
+      },
+      {
+        "start": 378.68,
+        "end": 380.469,
+        "text": "and for the first year or so things went well."
+      },
+      {
+        "start": 380.47,
+        "end": 382.67900000000003,
+        "text": "But then our visions of the future began"
+      },
+      {
+        "start": 382.68,
+        "end": 385.73900000000003,
+        "text": "to diverge and eventually we had a falling out."
+      },
+      {
+        "start": 385.77,
+        "end": 388.669,
+        "text": "When we did, our Board of Directors sided with him."
+      },
+      {
+        "start": 389.15,
+        "end": 392.729,
+        "text": "So at 30 I was out. And very publicly out."
+      },
+      {
+        "start": 392.73,
+        "end": 395.889,
+        "text": "What had been the focus of my entire adult life was gone,"
+      },
+      {
+        "start": 395.89,
+        "end": 397.699,
+        "text": "and it was devastating."
+      },
+      {
+        "start": 398.53,
+        "end": 400.63899999999995,
+        "text": "I really didn't know what to do for a few months."
+      },
+      {
+        "start": 401.11,
+        "end": 403.869,
+        "text": "I felt that I had let the previous generation of entrepreneurs"
+      },
+      {
+        "start": 403.87,
+        "end": 407.209,
+        "text": "down - that I had dropped the baton as it was being passed to me."
+      },
+      {
+        "start": 407.21,
+        "end": 410.489,
+        "text": "I met with David Packard and Bob Noyce"
+      },
+      {
+        "start": 410.88,
+        "end": 413.699,
+        "text": "and tried to apologize for screwing up so badly."
+      },
+      {
+        "start": 414.42,
+        "end": 415.839,
+        "text": "I was a very public failure,"
+      },
+      {
+        "start": 415.84,
+        "end": 418.089,
+        "text": "and I even thought about running away from the valley."
+      },
+      {
+        "start": 418.57,
+        "end": 423.389,
+        "text": "But something slowly began to dawn on me I still loved what I did."
+      },
+      {
+        "start": 423.59,
+        "end": 427.799,
+        "text": "The turn of events at Apple had not changed that one bit."
+      },
+      {
+        "start": 427.8,
+        "end": 430.969,
+        "text": "I had been rejected, but I was still in love."
+      },
+      {
+        "start": 432.09,
+        "end": 433.839,
+        "text": "And so I decided to start over."
+      },
+      {
+        "start": 434.91,
+        "end": 437.90900000000005,
+        "text": "I didn't see it then, but it turned out that getting fired from"
+      },
+      {
+        "start": 437.91,
+        "end": 440.319,
+        "text": "Apple was the best thing that could have ever happened to me."
+      },
+      {
+        "start": 441.01,
+        "end": 443.18899999999996,
+        "text": "The heaviness of being successful was"
+      },
+      {
+        "start": 443.19,
+        "end": 446.024,
+        "text": "replaced by the lightness of being a beginner again,"
+      },
+      {
+        "start": 446.22,
+        "end": 447.15900000000005,
+        "text": "less sure about everything."
+      },
+      {
+        "start": 447.16,
+        "end": 450.899,
+        "text": "It freed me to enter one of the most creative periods of my life."
+      },
+      {
+        "start": 451.42,
+        "end": 454.349,
+        "text": "During the next five years, I started a company named NeXT,"
+      },
+      {
+        "start": 454.53,
+        "end": 455.88899999999995,
+        "text": "another company named Pixar,"
+      },
+      {
+        "start": 455.89,
+        "end": 459.079,
+        "text": "and fell in love with an amazing woman who would become my wife."
+      },
+      {
+        "start": 459.78,
+        "end": 462.609,
+        "text": "Pixar went on to create the worlds first computer animated feature"
+      },
+      {
+        "start": 462.61,
+        "end": 464.10400000000004,
+        "text": "film, Toy Story,"
+      },
+      {
+        "start": 464.38,
+        "end": 469.979,
+        "text": "and is now the most successful animation studio in the world."
+      },
+      {
+        "start": 469.98,
+        "end": 473.79900000000004,
+        "text": "In a remarkable turn of events, Apple bought NeXT,"
+      },
+      {
+        "start": 473.89,
+        "end": 476.709,
+        "text": "I returned to Apple, and the technology we developed at"
+      },
+      {
+        "start": 476.71,
+        "end": 479.43899999999996,
+        "text": "NeXT is at the heart of Apple's current renaissance."
+      },
+      {
+        "start": 479.89,
+        "end": 482.779,
+        "text": "And Laurene and I have a wonderful family together."
+      },
+      {
+        "start": 483.88,
+        "end": 485.749,
+        "text": "I'm pretty sure none of this would"
+      },
+      {
+        "start": 485.75,
+        "end": 487.749,
+        "text": "have happened if I hadn't been fired from Apple."
+      },
+      {
+        "start": 488.15,
+        "end": 491.88899999999995,
+        "text": "It was awful tasting medicine, but I guess the patient needed it."
+      },
+      {
+        "start": 492.43,
+        "end": 497.859,
+        "text": "Sometimes life hits you in the head with a brick. Don't lose faith."
+      },
+      {
+        "start": 498.3,
+        "end": 501.209,
+        "text": "I'm convinced that the only thing that kept me going was that I loved"
+      },
+      {
+        "start": 501.21,
+        "end": 504.304,
+        "text": "what I did. You've got to find what you love."
+      },
+      {
+        "start": 504.54,
+        "end": 507.469,
+        "text": "And that is as true for your work as it is for your lovers."
+      },
+      {
+        "start": 508.17,
+        "end": 510.099,
+        "text": "Your work is going to fill a large part of your life,"
+      },
+      {
+        "start": 510.1,
+        "end": 512.448,
+        "text": "and the only way to be truly satisfied"
+      },
+      {
+        "start": 512.45,
+        "end": 514.808,
+        "text": "is to do what you believe is great work."
+      },
+      {
+        "start": 515.08,
+        "end": 518.457,
+        "text": "And the only way to do great work is to love what you do."
+      },
+      {
+        "start": 518.46,
+        "end": 523.119,
+        "text": "If you haven't found it yet, keep looking. Don't settle."
+      },
+      {
+        "start": 523.74,
+        "end": 527.509,
+        "text": "As with all matters of the heart, you'll know when you find it."
+      },
+      {
+        "start": 527.51,
+        "end": 528.934,
+        "text": "And, like any great relationship,"
+      },
+      {
+        "start": 529.06,
+        "end": 531.9939999999999,
+        "text": "it just gets better and better as the years roll on."
+      },
+      {
+        "start": 532.26,
+        "end": 536.149,
+        "text": "So keep looking. Don't settle."
+      },
+      {
+        "start": 545.3,
+        "end": 548.4889999999999,
+        "text": "My third story is about death."
+      },
+      {
+        "start": 549.27,
+        "end": 552.529,
+        "text": "When I was 17, I read a quote that went something like:"
+      },
+      {
+        "start": 552.53,
+        "end": 555.754,
+        "text": "\"If you live each day as if it was your last,"
+      },
+      {
+        "start": 555.91,
+        "end": 557.9689999999999,
+        "text": "someday you'll most certainly be right.\""
+      },
+      {
+        "start": 560.86,
+        "end": 565.359,
+        "text": "It made an impression on me, and since then, for the past 33 years,"
+      },
+      {
+        "start": 565.52,
+        "end": 567.139,
+        "text": "I have looked in the mirror every morning"
+      },
+      {
+        "start": 567.14,
+        "end": 570.019,
+        "text": "and asked myself: \"If today were the last day of my life,"
+      },
+      {
+        "start": 570.02,
+        "end": 573.7189999999999,
+        "text": "would I want to do what I am about to do today?\""
+      },
+      {
+        "start": 574.31,
+        "end": 577.669,
+        "text": "And whenever the answer has been \"No\" for too many days in a row,"
+      },
+      {
+        "start": 577.92,
+        "end": 579.559,
+        "text": "I know I need to change something."
+      },
+      {
+        "start": 580.57,
+        "end": 583.9290000000001,
+        "text": "Remembering that I'll be dead soon is the most important"
+      },
+      {
+        "start": 583.93,
+        "end": 587.209,
+        "text": "tool I've ever encountered to help me make the big choices in life."
+      },
+      {
+        "start": 587.92,
+        "end": 592.7139999999999,
+        "text": "Because almost everything all external expectations, all pride,"
+      },
+      {
+        "start": 592.89,
+        "end": 594.644,
+        "text": "all fear of embarrassment or failure -"
+      },
+      {
+        "start": 594.87,
+        "end": 597.719,
+        "text": "these things just fall away in the face of death,"
+      },
+      {
+        "start": 598.18,
+        "end": 600.279,
+        "text": "leaving only what is truly important."
+      },
+      {
+        "start": 600.83,
+        "end": 603.6690000000001,
+        "text": "Remembering that you are going to die is the best"
+      },
+      {
+        "start": 603.67,
+        "end": 607.7289999999999,
+        "text": "way I know to avoid the trap of thinking you have something to lose."
+      },
+      {
+        "start": 608.2,
+        "end": 612.5690000000001,
+        "text": "You are already naked. There is no reason not to follow your heart."
+      },
+      {
+        "start": 613.95,
+        "end": 616.979,
+        "text": "About a year ago I was diagnosed with cancer."
+      },
+      {
+        "start": 616.98,
+        "end": 620.164,
+        "text": "I had a scan at 7:30 in the morning,"
+      },
+      {
+        "start": 620.28,
+        "end": 623.069,
+        "text": "and it clearly showed a tumor on my pancreas."
+      },
+      {
+        "start": 623.6,
+        "end": 625.609,
+        "text": "I didn't even know what a pancreas was."
+      },
+      {
+        "start": 626.27,
+        "end": 628.539,
+        "text": "The doctors told me this was almost"
+      },
+      {
+        "start": 628.54,
+        "end": 630.789,
+        "text": "certainly a type of cancer that is incurable,"
+      },
+      {
+        "start": 630.79,
+        "end": 635.069,
+        "text": "and that I should expect to live no longer than three to six months."
+      },
+      {
+        "start": 635.84,
+        "end": 640.0690000000001,
+        "text": "My doctor advised me to go home and get my affairs in order,"
+      },
+      {
+        "start": 640.32,
+        "end": 642.9090000000001,
+        "text": "which is doctor's code for prepare to die."
+      },
+      {
+        "start": 642.91,
+        "end": 647.959,
+        "text": "It means to try to tell your kids everything you thought"
+      },
+      {
+        "start": 647.96,
+        "end": 651.169,
+        "text": "you'd have the next 10 years to tell them in just a few months."
+      },
+      {
+        "start": 651.85,
+        "end": 653.749,
+        "text": "It means to make sure everything is buttoned"
+      },
+      {
+        "start": 653.75,
+        "end": 656.709,
+        "text": "up so that it will be as easy as possible for your family."
+      },
+      {
+        "start": 656.71,
+        "end": 659.4490000000001,
+        "text": "It means to say your goodbyes."
+      },
+      {
+        "start": 661.46,
+        "end": 663.5790000000001,
+        "text": "I lived with that diagnosis all day."
+      },
+      {
+        "start": 664.13,
+        "end": 666.334,
+        "text": "Later that evening I had a biopsy,"
+      },
+      {
+        "start": 666.59,
+        "end": 668.634,
+        "text": "where they stuck an endoscope down my throat,"
+      },
+      {
+        "start": 668.83,
+        "end": 671.004,
+        "text": "through my stomach and into my intestines,"
+      },
+      {
+        "start": 671.26,
+        "end": 674.479,
+        "text": "put a needle into my pancreas and got a few cells from the tumor."
+      },
+      {
+        "start": 674.48,
+        "end": 678.3290000000001,
+        "text": "I was sedated, but my wife, who was there,"
+      },
+      {
+        "start": 678.55,
+        "end": 681.5089999999999,
+        "text": "told me that when they viewed the cells under a microscope"
+      },
+      {
+        "start": 681.74,
+        "end": 684.499,
+        "text": "the doctors started crying because it turned out to be"
+      },
+      {
+        "start": 684.5,
+        "end": 688.469,
+        "text": "a very rare form of pancreatic cancer that is curable with surgery."
+      },
+      {
+        "start": 689,
+        "end": 693.116,
+        "text": "I had the surgery and thankfully I'm fine now."
+      },
+      {
+        "start": 700.8,
+        "end": 703.304,
+        "text": "This was the closest I've been to facing death,"
+      },
+      {
+        "start": 703.56,
+        "end": 706.439,
+        "text": "and I hope its the closest I get for a few more decades."
+      },
+      {
+        "start": 706.86,
+        "end": 708.119,
+        "text": "Having lived through it,"
+      },
+      {
+        "start": 708.62,
+        "end": 711.249,
+        "text": "I can now say this to you with a bit more certainty than when"
+      },
+      {
+        "start": 711.25,
+        "end": 715.318,
+        "text": "death was a useful but purely intellectual concept:"
+      },
+      {
+        "start": 715.419,
+        "end": 717.869,
+        "text": "No one wants to die."
+      },
+      {
+        "start": 718.26,
+        "end": 722.389,
+        "text": "Even people who want to go to heaven don't want to die to get there."
+      },
+      {
+        "start": 722.39,
+        "end": 725.819,
+        "text": "And yet death is the destination we all share."
+      },
+      {
+        "start": 726.19,
+        "end": 730.1740000000001,
+        "text": "No one has ever escaped it. And that is as it should be,"
+      },
+      {
+        "start": 730.37,
+        "end": 734.489,
+        "text": "because Death is very likely the single best invention of Life."
+      },
+      {
+        "start": 735.02,
+        "end": 736.584,
+        "text": "It is Life's change agent."
+      },
+      {
+        "start": 736.63,
+        "end": 739.049,
+        "text": "It clears out the old to make way for the new."
+      },
+      {
+        "start": 739.87,
+        "end": 744.479,
+        "text": "Right now the new is you, but someday not too long from now,"
+      },
+      {
+        "start": 744.57,
+        "end": 747.759,
+        "text": "you will gradually become the old and be cleared away."
+      },
+      {
+        "start": 748.53,
+        "end": 751.0079999999999,
+        "text": "Sorry to be so dramatic, but it is quite true."
+      },
+      {
+        "start": 752.149,
+        "end": 757.289,
+        "text": "Your time is limited, so don't waste it living someone else's life."
+      },
+      {
+        "start": 758.11,
+        "end": 760.409,
+        "text": "Don't be trapped by dogma which is living"
+      },
+      {
+        "start": 760.41,
+        "end": 762.5989999999999,
+        "text": "with the results of other people's thinking."
+      },
+      {
+        "start": 762.769,
+        "end": 766.189,
+        "text": "Don't let the noise of others' opinions drown out your own inner"
+      },
+      {
+        "start": 766.19,
+        "end": 768.4490000000001,
+        "text": "voice. And most important,"
+      },
+      {
+        "start": 768.64,
+        "end": 771.279,
+        "text": "have the courage to follow your heart and intuition."
+      },
+      {
+        "start": 771.58,
+        "end": 775.349,
+        "text": "They somehow already know what you truly want to become."
+      },
+      {
+        "start": 775.87,
+        "end": 778.199,
+        "text": "Everything else is secondary."
+      },
+      {
+        "start": 789.72,
+        "end": 790.909,
+        "text": "When I was young,"
+      },
+      {
+        "start": 791.29,
+        "end": 795.084,
+        "text": "there was an amazing publication called The Whole Earth Catalog,"
+      },
+      {
+        "start": 795.33,
+        "end": 797.789,
+        "text": "which was one of the bibles of my generation."
+      },
+      {
+        "start": 798.26,
+        "end": 801.769,
+        "text": "It was created by a fellow named Stewart Brand not far from here"
+      },
+      {
+        "start": 801.77,
+        "end": 805.4789999999999,
+        "text": "in Menlo Park, and he brought it to life with his poetic touch."
+      },
+      {
+        "start": 805.839,
+        "end": 807.589,
+        "text": "This was in the late 1960's,"
+      },
+      {
+        "start": 807.59,
+        "end": 810.174,
+        "text": "before personal computers and desktop publishing,"
+      },
+      {
+        "start": 810.44,
+        "end": 814.339,
+        "text": "so it was all made with typewriters, scissors, and polaroid cameras."
+      },
+      {
+        "start": 814.68,
+        "end": 816.939,
+        "text": "It was sort of like Google in paperback form,"
+      },
+      {
+        "start": 816.94,
+        "end": 821.344,
+        "text": "35 years before Google came along: it was idealistic,"
+      },
+      {
+        "start": 821.57,
+        "end": 824.5490000000001,
+        "text": "overflowing with neat tools, and great notions."
+      },
+      {
+        "start": 825.49,
+        "end": 827.089,
+        "text": "Stewart and his team put out several"
+      },
+      {
+        "start": 827.09,
+        "end": 828.479,
+        "text": "issues of The Whole Earth Catalog,"
+      },
+      {
+        "start": 828.48,
+        "end": 832.909,
+        "text": "and then when it had run its course, they put out a final issue."
+      },
+      {
+        "start": 833.4,
+        "end": 837.119,
+        "text": "It was the mid-1970s, and I was your age."
+      },
+      {
+        "start": 838.72,
+        "end": 840.429,
+        "text": "On the back cover of their final issue"
+      },
+      {
+        "start": 840.43,
+        "end": 844.069,
+        "text": "was a photograph of an early morning country road,"
+      },
+      {
+        "start": 844.32,
+        "end": 845.3190000000001,
+        "text": "the kind you might find yourself"
+      },
+      {
+        "start": 845.319,
+        "end": 848.189,
+        "text": "hitchhiking on if you were so adventurous."
+      },
+      {
+        "start": 848.93,
+        "end": 853.1389999999999,
+        "text": "Beneath it were the words: \"Stay Hungry. Stay Foolish.\""
+      },
+      {
+        "start": 853.14,
+        "end": 858.229,
+        "text": "It was their farewell message as they signed off. Stay Hungry."
+      },
+      {
+        "start": 858.56,
+        "end": 862.7289999999999,
+        "text": "Stay Foolish. And I have always wished that for myself."
+      },
+      {
+        "start": 863.75,
+        "end": 868.539,
+        "text": "And now, as you graduate to begin anew, I wish that for you."
+      },
+      {
+        "start": 868.68,
+        "end": 871.608,
+        "text": "Stay Hungry. Stay Foolish."
+      },
+      {
+        "start": 871.731,
+        "end": 874.853,
+        "text": "Thank you all very much."
+      },
+      {
+        "start": 897.5,
+        "end": 900.889,
+        "text": "The preceding program is copyrighted by Stanford University."
+      },
+      {
+        "start": 901.08,
+        "end": 903.76,
+        "text": "Please visit us at stanford.edu"
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "method": "innertube-android",
+  "videoId": "hWe-j78vNpc",
+  "runs": [
+    {
+      "p1Ms": 78,
+      "p2Ms": 65,
+      "error": null
+    },
+    {
+      "p1Ms": 79,
+      "p2Ms": 53,
+      "error": null
+    },
+    {
+      "p1Ms": 92,
+      "p2Ms": 51,
+      "error": null
+    }
+  ],
+  "okRuns": 3,
+  "medianP1Ms": 79,
+  "medianP2Ms": 53,
+  "medianTotalMs": 143
+}

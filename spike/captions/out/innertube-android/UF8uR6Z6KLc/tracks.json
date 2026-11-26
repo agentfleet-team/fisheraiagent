@@ -1,0 +1,87 @@
+{
+  "videoId": "UF8uR6Z6KLc",
+  "title": "Steve Jobs' 2005 Stanford Commencement Address",
+  "durationSeconds": 904,
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "ar",
+      "kind": "manual",
+      "vssId": ".ar",
+      "name": "Arabic",
+      "isTranslatable": true
+    },
+    {
+      "index": 1,
+      "languageCode": "en",
+      "kind": "asr",
+      "vssId": "a.en",
+      "name": "English (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 2,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en.eEY6OEpapPo",
+      "name": "English - English",
+      "isTranslatable": true
+    },
+    {
+      "index": 3,
+      "languageCode": "it",
+      "kind": "manual",
+      "vssId": ".it",
+      "name": "Italian",
+      "isTranslatable": true
+    },
+    {
+      "index": 4,
+      "languageCode": "ja",
+      "kind": "manual",
+      "vssId": ".ja",
+      "name": "Japanese",
+      "isTranslatable": true
+    },
+    {
+      "index": 5,
+      "languageCode": "km",
+      "kind": "manual",
+      "vssId": ".km",
+      "name": "Khmer",
+      "isTranslatable": true
+    },
+    {
+      "index": 6,
+      "languageCode": "pt-BR",
+      "kind": "manual",
+      "vssId": ".pt-BR",
+      "name": "Portuguese (Brazil)",
+      "isTranslatable": true
+    },
+    {
+      "index": 7,
+      "languageCode": "es",
+      "kind": "manual",
+      "vssId": ".es.y1SAwy5xd4g",
+      "name": "Spanish - Spanish",
+      "isTranslatable": true
+    },
+    {
+      "index": 8,
+      "languageCode": "es-ES",
+      "kind": "manual",
+      "vssId": ".es-ES",
+      "name": "Spanish (Spain)",
+      "isTranslatable": true
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "translationLanguageCount": 18
+}

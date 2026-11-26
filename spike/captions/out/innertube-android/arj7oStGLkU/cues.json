@@ -1,0 +1,3304 @@
+{
+  "asr": {
+    "index": 13,
+    "languageCode": "en",
+    "vssId": "a.en",
+    "bytes": 241331,
+    "cueCount": 335,
+    "first3": [
+      {
+        "start": 12.559,
+        "end": 17.039,
+        "text": "so in"
+      },
+      {
+        "start": 14.36,
+        "end": 19.64,
+        "text": "college I was a government major which"
+      },
+      {
+        "start": 17.039,
+        "end": 20.92,
+        "text": "means I had to write a lot of papers now"
+      }
+    ],
+    "cues": [
+      {
+        "start": 12.559,
+        "end": 17.039,
+        "text": "so in"
+      },
+      {
+        "start": 14.36,
+        "end": 19.64,
+        "text": "college I was a government major which"
+      },
+      {
+        "start": 17.039,
+        "end": 20.92,
+        "text": "means I had to write a lot of papers now"
+      },
+      {
+        "start": 19.64,
+        "end": 22.119,
+        "text": "when a normal student writes a paper"
+      },
+      {
+        "start": 20.92,
+        "end": 25.96,
+        "text": "they might spread the work out a little"
+      },
+      {
+        "start": 22.119,
+        "end": 28,
+        "text": "like this so you"
+      },
+      {
+        "start": 25.96,
+        "end": 29.359,
+        "text": "know you get started maybe a little"
+      },
+      {
+        "start": 28,
+        "end": 30.96,
+        "text": "slowly but you get enough done in the"
+      },
+      {
+        "start": 29.359,
+        "end": 33.160000000000004,
+        "text": "first week that that with some heavier"
+      },
+      {
+        "start": 30.96,
+        "end": 34.92,
+        "text": "days later on everything gets done and"
+      },
+      {
+        "start": 33.16,
+        "end": 37.599999999999994,
+        "text": "things stay"
+      },
+      {
+        "start": 34.92,
+        "end": 40.719,
+        "text": "civil and I would want to do that like"
+      },
+      {
+        "start": 37.6,
+        "end": 42.28,
+        "text": "that that would be the plan I would uh I"
+      },
+      {
+        "start": 40.719,
+        "end": 43.92,
+        "text": "would have it all ready to go but then"
+      },
+      {
+        "start": 42.28,
+        "end": 47.32,
+        "text": "then then actually the paper would would"
+      },
+      {
+        "start": 43.92,
+        "end": 47.32,
+        "text": "come along and then I would kind of do"
+      },
+      {
+        "start": 47.76,
+        "end": 54.559,
+        "text": "this and that would happen every single"
+      },
+      {
+        "start": 50.6,
+        "end": 56.480000000000004,
+        "text": "paper but then came my 90 page senior"
+      },
+      {
+        "start": 54.559,
+        "end": 59.16,
+        "text": "thesis a paper you're supposed to spend"
+      },
+      {
+        "start": 56.48,
+        "end": 61.16,
+        "text": "a year on I knew for a paper like that"
+      },
+      {
+        "start": 59.16,
+        "end": 63.12,
+        "text": "my normal work work flow was not an"
+      },
+      {
+        "start": 61.16,
+        "end": 65.23899999999999,
+        "text": "option it was way too big a project so I"
+      },
+      {
+        "start": 63.12,
+        "end": 68,
+        "text": "planned things out and I decided I kind"
+      },
+      {
+        "start": 65.239,
+        "end": 70.28,
+        "text": "of had to go something like this this is"
+      },
+      {
+        "start": 68,
+        "end": 72.68,
+        "text": "how the year would go so I'd start off"
+      },
+      {
+        "start": 70.28,
+        "end": 75.32000000000001,
+        "text": "light and I'd bump it up in the middle"
+      },
+      {
+        "start": 72.68,
+        "end": 76.64,
+        "text": "months and then at the end I would kick"
+      },
+      {
+        "start": 75.32,
+        "end": 78.32,
+        "text": "it up into high gear it's just like a"
+      },
+      {
+        "start": 76.64,
+        "end": 82.159,
+        "text": "little staircase how hard could it be"
+      },
+      {
+        "start": 78.32,
+        "end": 84.91999999999999,
+        "text": "just walk up the stairs no big deal"
+      },
+      {
+        "start": 82.159,
+        "end": 87.2,
+        "text": "right but then funniest thing happened"
+      },
+      {
+        "start": 84.92,
+        "end": 89.56,
+        "text": "those first few months they came and"
+      },
+      {
+        "start": 87.2,
+        "end": 91.72,
+        "text": "went and I I couldn't quite do stuff so"
+      },
+      {
+        "start": 89.56,
+        "end": 94.68,
+        "text": "we had an awesome new revised"
+      },
+      {
+        "start": 91.72,
+        "end": 96.96,
+        "text": "plan and"
+      },
+      {
+        "start": 94.68,
+        "end": 99.32000000000001,
+        "text": "then but then those middle months"
+      },
+      {
+        "start": 96.96,
+        "end": 103.79899999999999,
+        "text": "actually went by and I didn't really"
+      },
+      {
+        "start": 99.32,
+        "end": 106.119,
+        "text": "write words and so we were here and then"
+      },
+      {
+        "start": 103.799,
+        "end": 108.71900000000001,
+        "text": "two months turned into one month which"
+      },
+      {
+        "start": 106.119,
+        "end": 112.399,
+        "text": "turned into two weeks and one day I woke"
+      },
+      {
+        "start": 108.719,
+        "end": 115.479,
+        "text": "up with three days until the"
+      },
+      {
+        "start": 112.399,
+        "end": 117.68,
+        "text": "deadline still not having written a word"
+      },
+      {
+        "start": 115.479,
+        "end": 120.2,
+        "text": "and so I did the only thing I could I"
+      },
+      {
+        "start": 117.68,
+        "end": 122.399,
+        "text": "wrote 90 pages over 72 hours hours"
+      },
+      {
+        "start": 120.2,
+        "end": 125.43900000000001,
+        "text": "pulling not one but two allnighters"
+      },
+      {
+        "start": 122.399,
+        "end": 128.56,
+        "text": "humans are not supposed to pull two"
+      },
+      {
+        "start": 125.439,
+        "end": 131.07999999999998,
+        "text": "allnighters sprinted across campus dove"
+      },
+      {
+        "start": 128.56,
+        "end": 132.959,
+        "text": "in slow motion and got it in just at the"
+      },
+      {
+        "start": 131.08,
+        "end": 135.68,
+        "text": "deadline I thought that was the end of"
+      },
+      {
+        "start": 132.959,
+        "end": 136.76,
+        "text": "everything but a week later I get a call"
+      },
+      {
+        "start": 135.68,
+        "end": 139.31900000000002,
+        "text": "it's the"
+      },
+      {
+        "start": 136.76,
+        "end": 141.64,
+        "text": "school and they say is this Tim Urban"
+      },
+      {
+        "start": 139.319,
+        "end": 144.48,
+        "text": "and I say yeah and they say we need to"
+      },
+      {
+        "start": 141.64,
+        "end": 147.79999999999998,
+        "text": "talk about your thesis and I say"
+      },
+      {
+        "start": 144.48,
+        "end": 151.2,
+        "text": "okay and they say it's the best one"
+      },
+      {
+        "start": 147.8,
+        "end": 151.20000000000002,
+        "text": "we've ever seen"
+      },
+      {
+        "start": 155.16,
+        "end": 159.239,
+        "text": "[Applause]"
+      },
+      {
+        "start": 157.04,
+        "end": 164.35999999999999,
+        "text": "that did not"
+      },
+      {
+        "start": 159.239,
+        "end": 168.20000000000002,
+        "text": "happen it was a very very bad"
+      },
+      {
+        "start": 164.36,
+        "end": 170.20000000000002,
+        "text": "thesis I just wanted to enjoy that one"
+      },
+      {
+        "start": 168.2,
+        "end": 171.76,
+        "text": "moment when all of you thought this guy"
+      },
+      {
+        "start": 170.2,
+        "end": 174.48,
+        "text": "is"
+      },
+      {
+        "start": 171.76,
+        "end": 178.28,
+        "text": "amazing no no it was very very"
+      },
+      {
+        "start": 174.48,
+        "end": 181.23899999999998,
+        "text": "bad anyway today I'm a writer blogger"
+      },
+      {
+        "start": 178.28,
+        "end": 182.84,
+        "text": "guy I write the blog weight but why and"
+      },
+      {
+        "start": 181.239,
+        "end": 184.879,
+        "text": "a couple years ago I decided to write"
+      },
+      {
+        "start": 182.84,
+        "end": 187.64000000000001,
+        "text": "about procrastination my Behavior's"
+      },
+      {
+        "start": 184.879,
+        "end": 189.39999999999998,
+        "text": "always perplexed the non-pr around me"
+      },
+      {
+        "start": 187.64,
+        "end": 192.04,
+        "text": "and I wanted to explain to the non-rr"
+      },
+      {
+        "start": 189.4,
+        "end": 193.48000000000002,
+        "text": "inators of the world what goes on in the"
+      },
+      {
+        "start": 192.04,
+        "end": 196.04,
+        "text": "heads of procrastinators and why we are"
+      },
+      {
+        "start": 193.48,
+        "end": 197.72,
+        "text": "the way we are now I had a hypothesis"
+      },
+      {
+        "start": 196.04,
+        "end": 199.959,
+        "text": "that the the brains of procrastinators"
+      },
+      {
+        "start": 197.72,
+        "end": 203.239,
+        "text": "were actually different than the brains"
+      },
+      {
+        "start": 199.959,
+        "end": 205.239,
+        "text": "of other people and to test this I found"
+      },
+      {
+        "start": 203.239,
+        "end": 208.76,
+        "text": "an MRI lab that actually let me scan"
+      },
+      {
+        "start": 205.239,
+        "end": 211.04,
+        "text": "both my brain and the brain of a proven"
+      },
+      {
+        "start": 208.76,
+        "end": 212.64,
+        "text": "non-prorated compare them and I actually"
+      },
+      {
+        "start": 211.04,
+        "end": 214.04,
+        "text": "brought them here to show you today and"
+      },
+      {
+        "start": 212.64,
+        "end": 215.48,
+        "text": "I want you to take a look carefully to"
+      },
+      {
+        "start": 214.04,
+        "end": 216.879,
+        "text": "see if you can notice a difference and I"
+      },
+      {
+        "start": 215.48,
+        "end": 218.879,
+        "text": "know that if you're not a trained brain"
+      },
+      {
+        "start": 216.879,
+        "end": 221.28,
+        "text": "expert it's not that obvious but just"
+      },
+      {
+        "start": 218.879,
+        "end": 224.439,
+        "text": "take a look okay so here's the brain of"
+      },
+      {
+        "start": 221.28,
+        "end": 224.439,
+        "text": "a non-prorated"
+      },
+      {
+        "start": 239.84,
+        "end": 244.36,
+        "text": "maker in them but the procrastinator's"
+      },
+      {
+        "start": 241.48,
+        "end": 246,
+        "text": "brain also has an instant gratification"
+      },
+      {
+        "start": 244.36,
+        "end": 248.04000000000002,
+        "text": "monkey now what does this mean for the"
+      },
+      {
+        "start": 246,
+        "end": 251.12,
+        "text": "procrastinator well means everything's"
+      },
+      {
+        "start": 248.04,
+        "end": 253.599,
+        "text": "fine until this"
+      },
+      {
+        "start": 251.12,
+        "end": 256.16,
+        "text": "happens so the rational decision maker"
+      },
+      {
+        "start": 253.599,
+        "end": 257.88,
+        "text": "will make the rational decision to do"
+      },
+      {
+        "start": 256.16,
+        "end": 259.84000000000003,
+        "text": "something productive but the monkey"
+      },
+      {
+        "start": 257.88,
+        "end": 262.15999999999997,
+        "text": "doesn't like that plan so he actually"
+      },
+      {
+        "start": 259.84,
+        "end": 263.919,
+        "text": "takes the wheel and he says actually"
+      },
+      {
+        "start": 262.16,
+        "end": 265.47900000000004,
+        "text": "let's read the entire Wikipedia page of"
+      },
+      {
+        "start": 263.919,
+        "end": 267.79999999999995,
+        "text": "the Nancy Carri and Tanya Harding"
+      },
+      {
+        "start": 265.479,
+        "end": 271.56,
+        "text": "Scandal cuz I just remember that that"
+      },
+      {
+        "start": 267.8,
+        "end": 272.40000000000003,
+        "text": "happened then"
+      },
+      {
+        "start": 271.56,
+        "end": 273.28000000000003,
+        "text": "then we're going to go over to the"
+      },
+      {
+        "start": 272.4,
+        "end": 275,
+        "text": "fridge we're going to see if there's"
+      },
+      {
+        "start": 273.28,
+        "end": 278.19899999999996,
+        "text": "anything new in there since 10 minutes"
+      },
+      {
+        "start": 275,
+        "end": 280.44,
+        "text": "ago after that we're going to go on a"
+      },
+      {
+        "start": 278.199,
+        "end": 282.639,
+        "text": "YouTube spiral that starts with videos"
+      },
+      {
+        "start": 280.44,
+        "end": 284.4,
+        "text": "of Richard Fineman talking about magnets"
+      },
+      {
+        "start": 282.639,
+        "end": 288.32,
+        "text": "and ends much much later with us"
+      },
+      {
+        "start": 284.4,
+        "end": 288.32,
+        "text": "watching interviews with Justin Bieber's"
+      },
+      {
+        "start": 288.4,
+        "end": 292.32,
+        "text": "mom all of that's going to take a while"
+      },
+      {
+        "start": 291.08,
+        "end": 295.96,
+        "text": "so we're not going to really have room"
+      },
+      {
+        "start": 292.32,
+        "end": 295.96,
+        "text": "on the schedule for any work today"
+      },
+      {
+        "start": 297.479,
+        "end": 305.08,
+        "text": "sorry now what is going on"
+      },
+      {
+        "start": 302.479,
+        "end": 306.88,
+        "text": "here the instag gratification monkey"
+      },
+      {
+        "start": 305.08,
+        "end": 308.479,
+        "text": "does not seem like a guy you want behind"
+      },
+      {
+        "start": 306.88,
+        "end": 310.8,
+        "text": "the wheel he lives entirely in the"
+      },
+      {
+        "start": 308.479,
+        "end": 312.56,
+        "text": "present moment he has no memory of the"
+      },
+      {
+        "start": 310.8,
+        "end": 316.44,
+        "text": "past no knowledge of the future and he"
+      },
+      {
+        "start": 312.56,
+        "end": 319.479,
+        "text": "only cares about two things easy and fun"
+      },
+      {
+        "start": 316.44,
+        "end": 321.44,
+        "text": "now in the animal world that works fine"
+      },
+      {
+        "start": 319.479,
+        "end": 323.15999999999997,
+        "text": "if you're a dog and you spend your whole"
+      },
+      {
+        "start": 321.44,
+        "end": 325.52,
+        "text": "life doing nothing other than easy and"
+      },
+      {
+        "start": 323.16,
+        "end": 329.96000000000004,
+        "text": "fun things you're a huge"
+      },
+      {
+        "start": 325.52,
+        "end": 331.96,
+        "text": "success and to the monkey"
+      },
+      {
+        "start": 329.96,
+        "end": 334,
+        "text": "humans are just another animal species"
+      },
+      {
+        "start": 331.96,
+        "end": 335.68,
+        "text": "you has to keep well slept well fed and"
+      },
+      {
+        "start": 334,
+        "end": 337.96,
+        "text": "propagating into the Next"
+      },
+      {
+        "start": 335.68,
+        "end": 339.639,
+        "text": "Generation which in tribal times might"
+      },
+      {
+        "start": 337.96,
+        "end": 341.75899999999996,
+        "text": "have worked okay but if you haven't"
+      },
+      {
+        "start": 339.639,
+        "end": 343.759,
+        "text": "noticed now we're not in tribal times"
+      },
+      {
+        "start": 341.759,
+        "end": 346.039,
+        "text": "we're in an advanced civilization and"
+      },
+      {
+        "start": 343.759,
+        "end": 347.47900000000004,
+        "text": "the monkey does not know what that is"
+      },
+      {
+        "start": 346.039,
+        "end": 350.8,
+        "text": "which is why we have another guy in our"
+      },
+      {
+        "start": 347.479,
+        "end": 352.56,
+        "text": "brain the rational decision maker who"
+      },
+      {
+        "start": 350.8,
+        "end": 355.28000000000003,
+        "text": "gives us the ability to do things no"
+      },
+      {
+        "start": 352.56,
+        "end": 357.72,
+        "text": "other animal can do we can visualize the"
+      },
+      {
+        "start": 355.28,
+        "end": 359.31899999999996,
+        "text": "future we can see the big picture we can"
+      },
+      {
+        "start": 357.72,
+        "end": 361.16,
+        "text": "make long-term plans and he wants to"
+      },
+      {
+        "start": 359.319,
+        "end": 363.88,
+        "text": "take all all of that into"
+      },
+      {
+        "start": 361.16,
+        "end": 366.24,
+        "text": "account and he wants to just have us do"
+      },
+      {
+        "start": 363.88,
+        "end": 368.4,
+        "text": "whatever makes sense to be doing right"
+      },
+      {
+        "start": 366.24,
+        "end": 370.56,
+        "text": "now now sometimes it makes sense to be"
+      },
+      {
+        "start": 368.4,
+        "end": 372.08,
+        "text": "doing things that are easy and fun like"
+      },
+      {
+        "start": 370.56,
+        "end": 374.4,
+        "text": "when you're having dinner or going to"
+      },
+      {
+        "start": 372.08,
+        "end": 376.4,
+        "text": "bed or enjoying well earn leisure time"
+      },
+      {
+        "start": 374.4,
+        "end": 379.44,
+        "text": "that's why there's an overlap sometimes"
+      },
+      {
+        "start": 376.4,
+        "end": 382.56,
+        "text": "they agree but other times it makes much"
+      },
+      {
+        "start": 379.44,
+        "end": 384.639,
+        "text": "more sense to be doing things that are"
+      },
+      {
+        "start": 382.56,
+        "end": 386.4,
+        "text": "harder and Less Pleasant for the sake of"
+      },
+      {
+        "start": 384.639,
+        "end": 389.12,
+        "text": "the big picture and that's when we have"
+      },
+      {
+        "start": 386.4,
+        "end": 391,
+        "text": "a conflict and for the procrastinator"
+      },
+      {
+        "start": 389.12,
+        "end": 393.199,
+        "text": "that conflict tends to end a certain way"
+      },
+      {
+        "start": 391,
+        "end": 397.08,
+        "text": "every time leaving him spending a lot of"
+      },
+      {
+        "start": 393.199,
+        "end": 399.08000000000004,
+        "text": "time in this orange Zone an easy and fun"
+      },
+      {
+        "start": 397.08,
+        "end": 403.08,
+        "text": "place that's entirely out of the makes"
+      },
+      {
+        "start": 399.08,
+        "end": 404.75899999999996,
+        "text": "sense Circle I call it the dark"
+      },
+      {
+        "start": 403.08,
+        "end": 407.4,
+        "text": "Playground"
+      },
+      {
+        "start": 404.759,
+        "end": 409.24,
+        "text": "now the dark playground is a place that"
+      },
+      {
+        "start": 407.4,
+        "end": 411.67999999999995,
+        "text": "all of you procrastinators out there"
+      },
+      {
+        "start": 409.24,
+        "end": 413.599,
+        "text": "know very well it's where leisure"
+      },
+      {
+        "start": 411.68,
+        "end": 415.40000000000003,
+        "text": "activities happen at times when leisure"
+      },
+      {
+        "start": 413.599,
+        "end": 417.52,
+        "text": "activities are not supposed to be"
+      },
+      {
+        "start": 415.4,
+        "end": 419,
+        "text": "happening the fun you have in the dark"
+      },
+      {
+        "start": 417.52,
+        "end": 420.71999999999997,
+        "text": "playground isn't actually fun because"
+      },
+      {
+        "start": 419,
+        "end": 423.28,
+        "text": "it's completely unearned and the air is"
+      },
+      {
+        "start": 420.72,
+        "end": 424.56,
+        "text": "filled with guilt dread anxiety"
+      },
+      {
+        "start": 423.28,
+        "end": 427.23999999999995,
+        "text": "self-hatred all those good"
+      },
+      {
+        "start": 424.56,
+        "end": 429.039,
+        "text": "procrastinator feelings and the question"
+      },
+      {
+        "start": 427.24,
+        "end": 430.36,
+        "text": "is in this situation with the monkey"
+      },
+      {
+        "start": 429.039,
+        "end": 432.199,
+        "text": "behind the wheel how does the"
+      },
+      {
+        "start": 430.36,
+        "end": 434.639,
+        "text": "procrastinator ever get himself over"
+      },
+      {
+        "start": 432.199,
+        "end": 436.24,
+        "text": "here to this Blue Zone a Less Pleasant"
+      },
+      {
+        "start": 434.639,
+        "end": 439.68,
+        "text": "place but we really important things"
+      },
+      {
+        "start": 436.24,
+        "end": 442.16,
+        "text": "happen Well turns out that the"
+      },
+      {
+        "start": 439.68,
+        "end": 443.919,
+        "text": "procrastinator has a guardian angel"
+      },
+      {
+        "start": 442.16,
+        "end": 446.12,
+        "text": "someone who's always looking down on him"
+      },
+      {
+        "start": 443.919,
+        "end": 451.28,
+        "text": "and watching over him in his darkest"
+      },
+      {
+        "start": 446.12,
+        "end": 451.28000000000003,
+        "text": "moments someone called the Panic monster"
+      },
+      {
+        "start": 454.72,
+        "end": 461.24,
+        "text": "now the Panic monster is dormant most of"
+      },
+      {
+        "start": 458,
+        "end": 463.36,
+        "text": "the time but he suddenly wakes up"
+      },
+      {
+        "start": 461.24,
+        "end": 465.40000000000003,
+        "text": "anytime a deadline gets too close or"
+      },
+      {
+        "start": 463.36,
+        "end": 467.039,
+        "text": "there's danger of public embarrassment a"
+      },
+      {
+        "start": 465.4,
+        "end": 469.31899999999996,
+        "text": "career disaster or some other scary"
+      },
+      {
+        "start": 467.039,
+        "end": 471.599,
+        "text": "consequence and importantly he's the"
+      },
+      {
+        "start": 469.319,
+        "end": 474.44,
+        "text": "only thing that the monkey is terrified"
+      },
+      {
+        "start": 471.599,
+        "end": 477.4,
+        "text": "of now he became very relevant in my"
+      },
+      {
+        "start": 474.44,
+        "end": 479.96,
+        "text": "life pretty recently because people of"
+      },
+      {
+        "start": 477.4,
+        "end": 483.35999999999996,
+        "text": "Ted reached out to me about months ago"
+      },
+      {
+        "start": 479.96,
+        "end": 483.35999999999996,
+        "text": "and invited me to do a TED"
+      },
+      {
+        "start": 486.159,
+        "end": 491,
+        "text": "talk now of course I said yes it's"
+      },
+      {
+        "start": 489.12,
+        "end": 494.199,
+        "text": "always been a dream of mine to have done"
+      },
+      {
+        "start": 491,
+        "end": 494.199,
+        "text": "a TED Talk in the"
+      },
+      {
+        "start": 495.21,
+        "end": 505,
+        "text": "[Applause]"
+      },
+      {
+        "start": 503.159,
+        "end": 506.479,
+        "text": "past but in the middle of all this"
+      },
+      {
+        "start": 505,
+        "end": 507.68,
+        "text": "excitement the rational decision maker"
+      },
+      {
+        "start": 506.479,
+        "end": 510.159,
+        "text": "seemed to have something else in his"
+      },
+      {
+        "start": 507.68,
+        "end": 513.36,
+        "text": "mind he was saying are we"
+      },
+      {
+        "start": 510.159,
+        "end": 515,
+        "text": "on what we just accepted do we do we get"
+      },
+      {
+        "start": 513.36,
+        "end": 516.159,
+        "text": "what's going to be now happening one day"
+      },
+      {
+        "start": 515,
+        "end": 518.24,
+        "text": "in the future we need to sit down and"
+      },
+      {
+        "start": 516.159,
+        "end": 519.959,
+        "text": "work on this right now and the monkey"
+      },
+      {
+        "start": 518.24,
+        "end": 521.64,
+        "text": "said totally agree but also let's just"
+      },
+      {
+        "start": 519.959,
+        "end": 523.3199999999999,
+        "text": "open Google Earth and let's zoom into"
+      },
+      {
+        "start": 521.64,
+        "end": 524.3199999999999,
+        "text": "the bottom of India like 200 feet above"
+      },
+      {
+        "start": 523.32,
+        "end": 526.0400000000001,
+        "text": "the ground and we're going to scroll up"
+      },
+      {
+        "start": 524.32,
+        "end": 527.5600000000001,
+        "text": "for two and a half hours till we get to"
+      },
+      {
+        "start": 526.04,
+        "end": 530.68,
+        "text": "the top of the country so we can get a"
+      },
+      {
+        "start": 527.56,
+        "end": 530.68,
+        "text": "better feel for"
+      },
+      {
+        "start": 534.12,
+        "end": 540.839,
+        "text": "India so that's what we did that day"
+      },
+      {
+        "start": 538.19,
+        "end": 543.0400000000001,
+        "text": "[Applause]"
+      },
+      {
+        "start": 540.839,
+        "end": 545.36,
+        "text": "as six months turned into four and then"
+      },
+      {
+        "start": 543.04,
+        "end": 547.959,
+        "text": "two and then one the people of Ted"
+      },
+      {
+        "start": 545.36,
+        "end": 549.839,
+        "text": "decided to release the speakers and I"
+      },
+      {
+        "start": 547.959,
+        "end": 552.1999999999999,
+        "text": "opened up the website and there was my"
+      },
+      {
+        "start": 549.839,
+        "end": 554.6800000000001,
+        "text": "face staring right back at me and guess"
+      },
+      {
+        "start": 552.2,
+        "end": 554.6800000000001,
+        "text": "who woke"
+      },
+      {
+        "start": 556.399,
+        "end": 561.04,
+        "text": "up so the Panic monster starts losing"
+      },
+      {
+        "start": 559.12,
+        "end": 563.76,
+        "text": "his mind and a few seconds later the"
+      },
+      {
+        "start": 561.04,
+        "end": 563.76,
+        "text": "whole system's in"
+      },
+      {
+        "start": 566.519,
+        "end": 570.44,
+        "text": "Mayhem and the monkey who remember he's"
+      },
+      {
+        "start": 568.76,
+        "end": 573.88,
+        "text": "terrified at the Panic Monster boom he's"
+      },
+      {
+        "start": 570.44,
+        "end": 575.1600000000001,
+        "text": "up the tree and finally finally the"
+      },
+      {
+        "start": 573.88,
+        "end": 576.64,
+        "text": "rational decision maker can take the"
+      },
+      {
+        "start": 575.16,
+        "end": 580.24,
+        "text": "wheel and I can start working on the"
+      },
+      {
+        "start": 576.64,
+        "end": 582.8389999999999,
+        "text": "talk now the Panic monster explains all"
+      },
+      {
+        "start": 580.24,
+        "end": 584.279,
+        "text": "kinds of pretty insane procrastinative"
+      },
+      {
+        "start": 582.839,
+        "end": 587.399,
+        "text": "Behavior like how someone like me could"
+      },
+      {
+        "start": 584.279,
+        "end": 589.68,
+        "text": "spend two weeks unable to start the"
+      },
+      {
+        "start": 587.399,
+        "end": 591.68,
+        "text": "opening sentence of a paper and then"
+      },
+      {
+        "start": 589.68,
+        "end": 593.88,
+        "text": "miraculously find the unbelievable work"
+      },
+      {
+        "start": 591.68,
+        "end": 595.56,
+        "text": "work ethic to stay up all night and"
+      },
+      {
+        "start": 593.88,
+        "end": 598.64,
+        "text": "write eight"
+      },
+      {
+        "start": 595.56,
+        "end": 600,
+        "text": "pages and this entire situation with the"
+      },
+      {
+        "start": 598.64,
+        "end": 603,
+        "text": "three characters this is the"
+      },
+      {
+        "start": 600,
+        "end": 606.16,
+        "text": "procrastinator system it's not pretty"
+      },
+      {
+        "start": 603,
+        "end": 608.399,
+        "text": "but in the end it works and this is what"
+      },
+      {
+        "start": 606.16,
+        "end": 611.12,
+        "text": "I decided to write about on the blog"
+      },
+      {
+        "start": 608.399,
+        "end": 613.079,
+        "text": "just a couple years ago now when I did I"
+      },
+      {
+        "start": 611.12,
+        "end": 615.16,
+        "text": "was amazed by the response literally"
+      },
+      {
+        "start": 613.079,
+        "end": 616.5999999999999,
+        "text": "thousands of emails came in from all"
+      },
+      {
+        "start": 615.16,
+        "end": 618.12,
+        "text": "different kinds of people from all over"
+      },
+      {
+        "start": 616.6,
+        "end": 620.24,
+        "text": "the world doing all different kinds of"
+      },
+      {
+        "start": 618.12,
+        "end": 622.2,
+        "text": "things these were people who were nurses"
+      },
+      {
+        "start": 620.24,
+        "end": 625.72,
+        "text": "and bankers and Painters and engineers"
+      },
+      {
+        "start": 622.2,
+        "end": 627.6,
+        "text": "and lots and lots of PhD"
+      },
+      {
+        "start": 625.72,
+        "end": 629.76,
+        "text": "students and they were all writing"
+      },
+      {
+        "start": 627.6,
+        "end": 631.9200000000001,
+        "text": "saying the same thing I have this"
+      },
+      {
+        "start": 629.76,
+        "end": 633.88,
+        "text": "problem too but what struck me was the"
+      },
+      {
+        "start": 631.92,
+        "end": 637.04,
+        "text": "contrast between the light tone of the"
+      },
+      {
+        "start": 633.88,
+        "end": 639.639,
+        "text": "post and the heaviness of these emails"
+      },
+      {
+        "start": 637.04,
+        "end": 641.5999999999999,
+        "text": "these people were writing with intense"
+      },
+      {
+        "start": 639.639,
+        "end": 643.44,
+        "text": "frustration about what procrastination"
+      },
+      {
+        "start": 641.6,
+        "end": 646.2,
+        "text": "had done to their lives about what this"
+      },
+      {
+        "start": 643.44,
+        "end": 650.0790000000001,
+        "text": "monkey had done to"
+      },
+      {
+        "start": 646.2,
+        "end": 651.839,
+        "text": "them and I thought about this and I said"
+      },
+      {
+        "start": 650.079,
+        "end": 653.7199999999999,
+        "text": "if the procrastinator system works then"
+      },
+      {
+        "start": 651.839,
+        "end": 656.24,
+        "text": "what's going on why are all these people"
+      },
+      {
+        "start": 653.72,
+        "end": 660,
+        "text": "in such a dark place Well turns out that"
+      },
+      {
+        "start": 656.24,
+        "end": 661.16,
+        "text": "there's two kinds of procrastination"
+      },
+      {
+        "start": 660,
+        "end": 662.32,
+        "text": "everything I've talked about today the"
+      },
+      {
+        "start": 661.16,
+        "end": 664.3199999999999,
+        "text": "examples I've given they all have"
+      },
+      {
+        "start": 662.32,
+        "end": 666.88,
+        "text": "deadlines and when there's deadlines the"
+      },
+      {
+        "start": 664.32,
+        "end": 668.48,
+        "text": "effects of procrastination are contained"
+      },
+      {
+        "start": 666.88,
+        "end": 669.959,
+        "text": "to the shortterm because the Panic"
+      },
+      {
+        "start": 668.48,
+        "end": 671.76,
+        "text": "monster gets involved but there's a"
+      },
+      {
+        "start": 669.959,
+        "end": 674.04,
+        "text": "second kind of procrastination that"
+      },
+      {
+        "start": 671.76,
+        "end": 675.88,
+        "text": "happens in situations when there is no"
+      },
+      {
+        "start": 674.04,
+        "end": 676.88,
+        "text": "deadline so if you want to have a career"
+      },
+      {
+        "start": 675.88,
+        "end": 678.8389999999999,
+        "text": "where you want to be a selfstarter"
+      },
+      {
+        "start": 676.88,
+        "end": 680.8,
+        "text": "something in the Arts something"
+      },
+      {
+        "start": 678.839,
+        "end": 682.5600000000001,
+        "text": "entrepreneurial there's no deadlines on"
+      },
+      {
+        "start": 680.8,
+        "end": 684.279,
+        "text": "those things at first because nothing's"
+      },
+      {
+        "start": 682.56,
+        "end": 685.68,
+        "text": "happening at first not until you've gone"
+      },
+      {
+        "start": 684.279,
+        "end": 687.56,
+        "text": "out and done the hard work to get some"
+      },
+      {
+        "start": 685.68,
+        "end": 688.76,
+        "text": "momentum to get things going there's"
+      },
+      {
+        "start": 687.56,
+        "end": 690.3599999999999,
+        "text": "also all kinds of important things"
+      },
+      {
+        "start": 688.76,
+        "end": 692.04,
+        "text": "outside of your career that don't"
+      },
+      {
+        "start": 690.36,
+        "end": 693.88,
+        "text": "involve any deadlines like seeing your"
+      },
+      {
+        "start": 692.04,
+        "end": 696.36,
+        "text": "family or exercising and taking care of"
+      },
+      {
+        "start": 693.88,
+        "end": 698.079,
+        "text": "your health working on your relationship"
+      },
+      {
+        "start": 696.36,
+        "end": 701.5600000000001,
+        "text": "or getting out of a relationship that"
+      },
+      {
+        "start": 698.079,
+        "end": 704.1999999999999,
+        "text": "isn't working now if procrastinator's"
+      },
+      {
+        "start": 701.56,
+        "end": 706.079,
+        "text": "only mechanism of doing these hard"
+      },
+      {
+        "start": 704.2,
+        "end": 707.519,
+        "text": "things is the Panic monster that's a"
+      },
+      {
+        "start": 706.079,
+        "end": 710.1999999999999,
+        "text": "problem because in all of these non-"
+      },
+      {
+        "start": 707.519,
+        "end": 711.48,
+        "text": "deadline situations the Panic monster"
+      },
+      {
+        "start": 710.2,
+        "end": 713.6,
+        "text": "doesn't show up he has nothing to wake"
+      },
+      {
+        "start": 711.48,
+        "end": 715.0790000000001,
+        "text": "up for so the effects of procrastination"
+      },
+      {
+        "start": 713.6,
+        "end": 716.9590000000001,
+        "text": "they're not contained they just extend"
+      },
+      {
+        "start": 715.079,
+        "end": 719.8,
+        "text": "outward"
+      },
+      {
+        "start": 716.959,
+        "end": 722.399,
+        "text": "forever and it's this long-term kind of"
+      },
+      {
+        "start": 719.8,
+        "end": 724.04,
+        "text": "procrastination that's much less visible"
+      },
+      {
+        "start": 722.399,
+        "end": 726.76,
+        "text": "and much less talked about than the"
+      },
+      {
+        "start": 724.04,
+        "end": 729.8389999999999,
+        "text": "funnier short-term deadline based kind"
+      },
+      {
+        "start": 726.76,
+        "end": 731.92,
+        "text": "it's usually suffered quietly and"
+      },
+      {
+        "start": 729.839,
+        "end": 735.639,
+        "text": "privately and it can be the source of a"
+      },
+      {
+        "start": 731.92,
+        "end": 737.68,
+        "text": "huge amount of long-term unhappiness and"
+      },
+      {
+        "start": 735.639,
+        "end": 739.839,
+        "text": "regrets and I thought you know that's"
+      },
+      {
+        "start": 737.68,
+        "end": 742.279,
+        "text": "why these people are emailing and that's"
+      },
+      {
+        "start": 739.839,
+        "end": 744.8800000000001,
+        "text": "why they're in such a bad place it's not"
+      },
+      {
+        "start": 742.279,
+        "end": 746.56,
+        "text": "that they're cramming for some project"
+      },
+      {
+        "start": 744.88,
+        "end": 748.48,
+        "text": "it's that long-term procrastination has"
+      },
+      {
+        "start": 746.56,
+        "end": 751,
+        "text": "made them feel like a spectator at times"
+      },
+      {
+        "start": 748.48,
+        "end": 752.72,
+        "text": "in their own lives you know the"
+      },
+      {
+        "start": 751,
+        "end": 753.8,
+        "text": "frustration was not that they couldn't"
+      },
+      {
+        "start": 752.72,
+        "end": 756.9590000000001,
+        "text": "achieve their dreams it's that they"
+      },
+      {
+        "start": 753.8,
+        "end": 759.68,
+        "text": "weren't even able to start chasing them"
+      },
+      {
+        "start": 756.959,
+        "end": 761.3599999999999,
+        "text": "so I read these emails and I had a"
+      },
+      {
+        "start": 759.68,
+        "end": 763.8389999999999,
+        "text": "little bit of an"
+      },
+      {
+        "start": 761.36,
+        "end": 766.9590000000001,
+        "text": "epiphany that I don't think nonpr"
+      },
+      {
+        "start": 763.839,
+        "end": 768.8800000000001,
+        "text": "procrastinators exist that's right I"
+      },
+      {
+        "start": 766.959,
+        "end": 770.76,
+        "text": "think all of you are"
+      },
+      {
+        "start": 768.88,
+        "end": 773.8389999999999,
+        "text": "procrastinators now you might not all be"
+      },
+      {
+        "start": 770.76,
+        "end": 776.3199999999999,
+        "text": "a mess like some of"
+      },
+      {
+        "start": 773.839,
+        "end": 778.639,
+        "text": "us and some of you may have a healthy"
+      },
+      {
+        "start": 776.32,
+        "end": 781.1600000000001,
+        "text": "relationship with deadlines but remember"
+      },
+      {
+        "start": 778.639,
+        "end": 783.519,
+        "text": "the monkey sneakiest trick is when the"
+      },
+      {
+        "start": 781.16,
+        "end": 786.68,
+        "text": "deadlines aren't there now I want to"
+      },
+      {
+        "start": 783.519,
+        "end": 789.839,
+        "text": "show you one last thing I call this a"
+      },
+      {
+        "start": 786.68,
+        "end": 794,
+        "text": "life calendar that's one box for every"
+      },
+      {
+        "start": 789.839,
+        "end": 796.639,
+        "text": "week of a 90-year life that's not that"
+      },
+      {
+        "start": 794,
+        "end": 799.32,
+        "text": "many boxes especially since we've"
+      },
+      {
+        "start": 796.639,
+        "end": 802.6,
+        "text": "already used a bunch of those so I think"
+      },
+      {
+        "start": 799.32,
+        "end": 803.9200000000001,
+        "text": "we need to all take a long hard look at"
+      },
+      {
+        "start": 802.6,
+        "end": 806.12,
+        "text": "that"
+      },
+      {
+        "start": 803.92,
+        "end": 808.12,
+        "text": "Calender and we need to think about what"
+      },
+      {
+        "start": 806.12,
+        "end": 810.199,
+        "text": "we're really procrastinating on because"
+      },
+      {
+        "start": 808.12,
+        "end": 811.76,
+        "text": "everyone is proc procrastinating on"
+      },
+      {
+        "start": 810.199,
+        "end": 814,
+        "text": "something in"
+      },
+      {
+        "start": 811.76,
+        "end": 816.519,
+        "text": "life we need to stay aware of the"
+      },
+      {
+        "start": 814,
+        "end": 821.04,
+        "text": "instant gratification"
+      },
+      {
+        "start": 816.519,
+        "end": 822.32,
+        "text": "monkey that's a job for all of us and"
+      },
+      {
+        "start": 821.04,
+        "end": 823.68,
+        "text": "because there's not that many boxes on"
+      },
+      {
+        "start": 822.32,
+        "end": 829,
+        "text": "there it's a job that should probably"
+      },
+      {
+        "start": 823.68,
+        "end": 836.7589999999999,
+        "text": "start today well maybe not today"
+      },
+      {
+        "start": 829,
+        "end": 836.759,
+        "text": "but you know sometime soon thank you"
+      },
+      {
+        "start": 840.279,
+        "end": 843.279,
+        "text": "w"
+      }
+    ]
+  },
+  "manual": {
+    "index": 12,
+    "languageCode": "en",
+    "vssId": ".en",
+    "bytes": 43156,
+    "cueCount": 315,
+    "first3": [
+      {
+        "start": 12.645,
+        "end": 14.015,
+        "text": "So in college,"
+      },
+      {
+        "start": 15.349,
+        "end": 16.913,
+        "text": "I was a government major,"
+      },
+      {
+        "start": 16.937,
+        "end": 19.399,
+        "text": "which means I had to write a lot of papers."
+      }
+    ],
+    "cues": [
+      {
+        "start": 12.645,
+        "end": 14.015,
+        "text": "So in college,"
+      },
+      {
+        "start": 15.349,
+        "end": 16.913,
+        "text": "I was a government major,"
+      },
+      {
+        "start": 16.937,
+        "end": 19.399,
+        "text": "which means I had to write a lot of papers."
+      },
+      {
+        "start": 19.423,
+        "end": 21.470999999999997,
+        "text": "Now, when a normal student writes a paper,"
+      },
+      {
+        "start": 21.495,
+        "end": 23.868000000000002,
+        "text": "they might spread the work out a little like this."
+      },
+      {
+        "start": 23.892,
+        "end": 25.043,
+        "text": "So, you know --"
+      },
+      {
+        "start": 25.067,
+        "end": 26.724,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 26.748,
+        "end": 28.575000000000003,
+        "text": "you get started maybe a little slowly,"
+      },
+      {
+        "start": 28.599,
+        "end": 30.567,
+        "text": "but you get enough done in the first week"
+      },
+      {
+        "start": 30.591,
+        "end": 32.422000000000004,
+        "text": "that, with some heavier days later on,"
+      },
+      {
+        "start": 32.446,
+        "end": 34.602999999999994,
+        "text": "everything gets done, things stay civil."
+      },
+      {
+        "start": 34.627,
+        "end": 35.829,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 35.853,
+        "end": 38.124,
+        "text": "And I would want to do that like that."
+      },
+      {
+        "start": 38.148,
+        "end": 39.342000000000006,
+        "text": "That would be the plan."
+      },
+      {
+        "start": 39.366,
+        "end": 41.856,
+        "text": "I would have it all ready to go,"
+      },
+      {
+        "start": 41.88,
+        "end": 44.374,
+        "text": "but then, actually, the paper would come along,"
+      },
+      {
+        "start": 44.398,
+        "end": 46.339000000000006,
+        "text": "and then I would kind of do this."
+      },
+      {
+        "start": 46.363,
+        "end": 48.733,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 48.757,
+        "end": 50.9,
+        "text": "And that would happen every single paper."
+      },
+      {
+        "start": 51.638,
+        "end": 55.519999999999996,
+        "text": "But then came my 90-page senior thesis,"
+      },
+      {
+        "start": 55.544,
+        "end": 57.830999999999996,
+        "text": "a paper you're supposed to spend a year on."
+      },
+      {
+        "start": 57.855,
+        "end": 61.474,
+        "text": "And I knew for a paper like that, my normal work flow was not an option."
+      },
+      {
+        "start": 61.498,
+        "end": 62.899,
+        "text": "It was way too big a project."
+      },
+      {
+        "start": 62.923,
+        "end": 64.07600000000001,
+        "text": "So I planned things out,"
+      },
+      {
+        "start": 64.1,
+        "end": 67.30499999999999,
+        "text": "and I decided I kind of had to go something like this."
+      },
+      {
+        "start": 67.781,
+        "end": 69.233,
+        "text": "This is how the year would go."
+      },
+      {
+        "start": 69.257,
+        "end": 71.224,
+        "text": "So I'd start off light,"
+      },
+      {
+        "start": 71.248,
+        "end": 73.566,
+        "text": "and I'd bump it up in the middle months,"
+      },
+      {
+        "start": 73.59,
+        "end": 76.21600000000001,
+        "text": "and then at the end, I would kick it up into high gear"
+      },
+      {
+        "start": 76.24,
+        "end": 77.679,
+        "text": "just like a little staircase."
+      },
+      {
+        "start": 77.703,
+        "end": 79.765,
+        "text": "How hard could it be to walk up the stairs?"
+      },
+      {
+        "start": 80.233,
+        "end": 81.552,
+        "text": "No big deal, right?"
+      },
+      {
+        "start": 83.09,
+        "end": 84.9,
+        "text": "But then, the funniest thing happened."
+      },
+      {
+        "start": 84.924,
+        "end": 86.23500000000001,
+        "text": "Those first few months?"
+      },
+      {
+        "start": 86.791,
+        "end": 87.958,
+        "text": "They came and went,"
+      },
+      {
+        "start": 87.982,
+        "end": 89.567,
+        "text": "and I couldn't quite do stuff."
+      },
+      {
+        "start": 89.591,
+        "end": 91.44,
+        "text": "So we had an awesome new revised plan."
+      },
+      {
+        "start": 91.464,
+        "end": 92.631,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 92.655,
+        "end": 93.81400000000001,
+        "text": "And then --"
+      },
+      {
+        "start": 93.838,
+        "end": 95.72,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 95.744,
+        "end": 98.528,
+        "text": "But then those middle months actually went by,"
+      },
+      {
+        "start": 98.552,
+        "end": 100.73400000000001,
+        "text": "and I didn't really write words,"
+      },
+      {
+        "start": 100.758,
+        "end": 102.59299999999999,
+        "text": "and so we were here."
+      },
+      {
+        "start": 103.5,
+        "end": 106.076,
+        "text": "And then two months turned into one month,"
+      },
+      {
+        "start": 106.1,
+        "end": 107.725,
+        "text": "which turned into two weeks."
+      },
+      {
+        "start": 107.749,
+        "end": 109.05799999999999,
+        "text": "And one day I woke up"
+      },
+      {
+        "start": 109.724,
+        "end": 112.343,
+        "text": "with three days until the deadline,"
+      },
+      {
+        "start": 113.502,
+        "end": 115.43299999999999,
+        "text": "still not having written a word,"
+      },
+      {
+        "start": 115.457,
+        "end": 117.51599999999999,
+        "text": "and so I did the only thing I could:"
+      },
+      {
+        "start": 117.54,
+        "end": 120.147,
+        "text": "I wrote 90 pages over 72 hours,"
+      },
+      {
+        "start": 120.171,
+        "end": 122.447,
+        "text": "pulling not one but two all-nighters --"
+      },
+      {
+        "start": 122.471,
+        "end": 125.04,
+        "text": "humans are not supposed to pull two all-nighters --"
+      },
+      {
+        "start": 126.373,
+        "end": 128.366,
+        "text": "sprinted across campus,"
+      },
+      {
+        "start": 128.39,
+        "end": 129.87599999999998,
+        "text": "dove in slow motion,"
+      },
+      {
+        "start": 129.9,
+        "end": 131.95600000000002,
+        "text": "and got it in just at the deadline."
+      },
+      {
+        "start": 131.98,
+        "end": 134.004,
+        "text": "I thought that was the end of everything."
+      },
+      {
+        "start": 134.028,
+        "end": 135.587,
+        "text": "But a week later I get a call,"
+      },
+      {
+        "start": 135.611,
+        "end": 137.09699999999998,
+        "text": "and it's the school."
+      },
+      {
+        "start": 137.757,
+        "end": 139.39600000000002,
+        "text": "And they say, \"Is this Tim Urban?\""
+      },
+      {
+        "start": 139.42,
+        "end": 140.88799999999998,
+        "text": "And I say, \"Yeah.\""
+      },
+      {
+        "start": 140.912,
+        "end": 143.252,
+        "text": "And they say, \"We need to talk about your thesis.\""
+      },
+      {
+        "start": 143.276,
+        "end": 144.531,
+        "text": "And I say, \"OK.\""
+      },
+      {
+        "start": 145.468,
+        "end": 146.69,
+        "text": "And they say,"
+      },
+      {
+        "start": 147.23,
+        "end": 149.12599999999998,
+        "text": "\"It's the best one we've ever seen.\""
+      },
+      {
+        "start": 149.15,
+        "end": 150.85500000000002,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 152.014,
+        "end": 154.704,
+        "text": "(Applause)"
+      },
+      {
+        "start": 156.945,
+        "end": 158.24699999999999,
+        "text": "That did not happen."
+      },
+      {
+        "start": 158.271,
+        "end": 160.409,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 160.433,
+        "end": 163.05599999999998,
+        "text": "It was a very, very bad thesis."
+      },
+      {
+        "start": 163.08,
+        "end": 165.354,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 165.378,
+        "end": 169.47799999999998,
+        "text": "I just wanted to enjoy that one moment when all of you thought,"
+      },
+      {
+        "start": 169.502,
+        "end": 171.407,
+        "text": "\"This guy is amazing!\""
+      },
+      {
+        "start": 171.431,
+        "end": 172.77900000000002,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 172.803,
+        "end": 174.47,
+        "text": "No, no, it was very, very bad."
+      },
+      {
+        "start": 175.343,
+        "end": 178.75099999999998,
+        "text": "Anyway, today I'm a writer-blogger guy."
+      },
+      {
+        "start": 178.775,
+        "end": 180.518,
+        "text": "I write the blog Wait But Why."
+      },
+      {
+        "start": 180.542,
+        "end": 184.278,
+        "text": "And a couple of years ago, I decided to write about procrastination."
+      },
+      {
+        "start": 184.302,
+        "end": 187.58599999999998,
+        "text": "My behavior has always perplexed the non-procrastinators around me,"
+      },
+      {
+        "start": 187.61,
+        "end": 191.298,
+        "text": "and I wanted to explain to the non-procrastinators of the world"
+      },
+      {
+        "start": 191.322,
+        "end": 193.429,
+        "text": "what goes on in the heads of procrastinators,"
+      },
+      {
+        "start": 193.453,
+        "end": 194.893,
+        "text": "and why we are the way we are."
+      },
+      {
+        "start": 194.917,
+        "end": 196.073,
+        "text": "Now, I had a hypothesis"
+      },
+      {
+        "start": 196.097,
+        "end": 198.952,
+        "text": "that the brains of procrastinators were actually different"
+      },
+      {
+        "start": 198.976,
+        "end": 200.933,
+        "text": "than the brains of other people."
+      },
+      {
+        "start": 201.698,
+        "end": 203.889,
+        "text": "And to test this, I found an MRI lab"
+      },
+      {
+        "start": 203.913,
+        "end": 206.345,
+        "text": "that actually let me scan both my brain"
+      },
+      {
+        "start": 206.369,
+        "end": 209.024,
+        "text": "and the brain of a proven non-procrastinator,"
+      },
+      {
+        "start": 209.048,
+        "end": 210.483,
+        "text": "so I could compare them."
+      },
+      {
+        "start": 210.507,
+        "end": 212.708,
+        "text": "I actually brought them here to show you today."
+      },
+      {
+        "start": 212.732,
+        "end": 216.269,
+        "text": "I want you to take a look carefully to see if you can notice a difference."
+      },
+      {
+        "start": 216.293,
+        "end": 218.607,
+        "text": "I know that if you're not a trained brain expert,"
+      },
+      {
+        "start": 218.631,
+        "end": 220.894,
+        "text": "it's not that obvious, but just take a look, OK?"
+      },
+      {
+        "start": 220.918,
+        "end": 223.046,
+        "text": "So here's the brain of a non-procrastinator."
+      },
+      {
+        "start": 223.835,
+        "end": 226.109,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 226.133,
+        "end": 227.28400000000002,
+        "text": "Now ..."
+      },
+      {
+        "start": 228.325,
+        "end": 229.63899999999998,
+        "text": "here's my brain."
+      },
+      {
+        "start": 230.28,
+        "end": 233.006,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 235.713,
+        "end": 237.277,
+        "text": "There is a difference."
+      },
+      {
+        "start": 237.904,
+        "end": 240.292,
+        "text": "Both brains have a Rational Decision-Maker in them,"
+      },
+      {
+        "start": 240.316,
+        "end": 241.968,
+        "text": "but the procrastinator's brain"
+      },
+      {
+        "start": 241.992,
+        "end": 244.97799999999998,
+        "text": "also has an Instant Gratification Monkey."
+      },
+      {
+        "start": 245.002,
+        "end": 247.304,
+        "text": "Now, what does this mean for the procrastinator?"
+      },
+      {
+        "start": 247.328,
+        "end": 249.769,
+        "text": "Well, it means everything's fine until this happens."
+      },
+      {
+        "start": 249.793,
+        "end": 252.41500000000002,
+        "text": "[This is a perfect time to get some work done.] [Nope!]"
+      },
+      {
+        "start": 252.439,
+        "end": 255.37199999999999,
+        "text": "So the Rational Decision-Maker will make the rational decision"
+      },
+      {
+        "start": 255.396,
+        "end": 257.292,
+        "text": "to do something productive,"
+      },
+      {
+        "start": 257.316,
+        "end": 259.26599999999996,
+        "text": "but the Monkey doesn't like that plan,"
+      },
+      {
+        "start": 259.29,
+        "end": 260.798,
+        "text": "so he actually takes the wheel,"
+      },
+      {
+        "start": 260.822,
+        "end": 263.703,
+        "text": "and he says, \"Actually, let's read the entire Wikipedia page"
+      },
+      {
+        "start": 263.727,
+        "end": 265.863,
+        "text": "of the Nancy Kerrigan/ Tonya Harding scandal,"
+      },
+      {
+        "start": 265.887,
+        "end": 268.018,
+        "text": "because I just remembered that that happened."
+      },
+      {
+        "start": 268.042,
+        "end": 269.058,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 269.082,
+        "end": 270.24,
+        "text": "Then --"
+      },
+      {
+        "start": 270.264,
+        "end": 271.527,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 271.551,
+        "end": 273.589,
+        "text": "Then we're going to go over to the fridge,"
+      },
+      {
+        "start": 273.613,
+        "end": 276.479,
+        "text": "to see if there's anything new in there since 10 minutes ago."
+      },
+      {
+        "start": 276.503,
+        "end": 279.14099999999996,
+        "text": "After that, we're going to go on a YouTube spiral"
+      },
+      {
+        "start": 279.165,
+        "end": 282.415,
+        "text": "that starts with videos of Richard Feynman talking about magnets"
+      },
+      {
+        "start": 282.439,
+        "end": 285.15500000000003,
+        "text": "and ends much, much later with us watching interviews"
+      },
+      {
+        "start": 285.179,
+        "end": 287.05899999999997,
+        "text": "with Justin Bieber's mom."
+      },
+      {
+        "start": 287.083,
+        "end": 289.271,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 289.295,
+        "end": 291.058,
+        "text": "\"All of that's going to take a while,"
+      },
+      {
+        "start": 291.082,
+        "end": 294.584,
+        "text": "so we're not going to really have room on the schedule for any work today."
+      },
+      {
+        "start": 294.608,
+        "end": 295.771,
+        "text": "Sorry!\""
+      },
+      {
+        "start": 295.795,
+        "end": 296.96000000000004,
+        "text": "(Sigh)"
+      },
+      {
+        "start": 298.325,
+        "end": 301.694,
+        "text": "Now, what is going on here?"
+      },
+      {
+        "start": 303.481,
+        "end": 306.17199999999997,
+        "text": "The Instant Gratification Monkey does not seem like a guy"
+      },
+      {
+        "start": 306.196,
+        "end": 307.45000000000005,
+        "text": "you want behind the wheel."
+      },
+      {
+        "start": 307.474,
+        "end": 309.419,
+        "text": "He lives entirely in the present moment."
+      },
+      {
+        "start": 309.443,
+        "end": 312.27099999999996,
+        "text": "He has no memory of the past, no knowledge of the future,"
+      },
+      {
+        "start": 312.295,
+        "end": 313.992,
+        "text": "and he only cares about two things:"
+      },
+      {
+        "start": 314.016,
+        "end": 315.699,
+        "text": "easy and fun."
+      },
+      {
+        "start": 316.338,
+        "end": 319.43,
+        "text": "Now, in the animal world, that works fine."
+      },
+      {
+        "start": 319.454,
+        "end": 320.66200000000003,
+        "text": "If you're a dog"
+      },
+      {
+        "start": 320.686,
+        "end": 324.257,
+        "text": "and you spend your whole life doing nothing other than easy and fun things,"
+      },
+      {
+        "start": 324.281,
+        "end": 325.446,
+        "text": "you're a huge success!"
+      },
+      {
+        "start": 325.47,
+        "end": 327.38100000000003,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 327.405,
+        "end": 328.691,
+        "text": "And to the Monkey,"
+      },
+      {
+        "start": 329.969,
+        "end": 332.063,
+        "text": "humans are just another animal species."
+      },
+      {
+        "start": 332.087,
+        "end": 336.59299999999996,
+        "text": "You have to keep well-slept, well-fed and propagating into the next generation,"
+      },
+      {
+        "start": 336.617,
+        "end": 338.903,
+        "text": "which in tribal times might have worked OK."
+      },
+      {
+        "start": 338.927,
+        "end": 341.77700000000004,
+        "text": "But, if you haven't noticed, now we're not in tribal times."
+      },
+      {
+        "start": 341.801,
+        "end": 345.93399999999997,
+        "text": "We're in an advanced civilization, and the Monkey does not know what that is."
+      },
+      {
+        "start": 345.958,
+        "end": 348.23900000000003,
+        "text": "Which is why we have another guy in our brain,"
+      },
+      {
+        "start": 348.263,
+        "end": 350.628,
+        "text": "the Rational Decision-Maker,"
+      },
+      {
+        "start": 350.652,
+        "end": 353.679,
+        "text": "who gives us the ability to do things no other animal can do."
+      },
+      {
+        "start": 353.703,
+        "end": 355.62399999999997,
+        "text": "We can visualize the future."
+      },
+      {
+        "start": 355.648,
+        "end": 357.40000000000003,
+        "text": "We can see the big picture."
+      },
+      {
+        "start": 357.424,
+        "end": 358.774,
+        "text": "We can make long-term plans."
+      },
+      {
+        "start": 358.798,
+        "end": 361.281,
+        "text": "And he wants to take all of that into account."
+      },
+      {
+        "start": 362.138,
+        "end": 363.82899999999995,
+        "text": "And he wants to just have us do"
+      },
+      {
+        "start": 363.853,
+        "end": 366.801,
+        "text": "whatever makes sense to be doing right now."
+      },
+      {
+        "start": 366.825,
+        "end": 368.214,
+        "text": "Now, sometimes it makes sense"
+      },
+      {
+        "start": 368.238,
+        "end": 370.267,
+        "text": "to be doing things that are easy and fun,"
+      },
+      {
+        "start": 370.291,
+        "end": 372.442,
+        "text": "like when you're having dinner or going to bed"
+      },
+      {
+        "start": 372.466,
+        "end": 374.294,
+        "text": "or enjoying well-earned leisure time."
+      },
+      {
+        "start": 374.318,
+        "end": 375.768,
+        "text": "That's why there's an overlap."
+      },
+      {
+        "start": 375.792,
+        "end": 377.536,
+        "text": "Sometimes they agree."
+      },
+      {
+        "start": 377.56,
+        "end": 380.382,
+        "text": "But other times, it makes much more sense"
+      },
+      {
+        "start": 380.406,
+        "end": 384.008,
+        "text": "to be doing things that are harder and less pleasant,"
+      },
+      {
+        "start": 384.032,
+        "end": 385.572,
+        "text": "for the sake of the big picture."
+      },
+      {
+        "start": 385.596,
+        "end": 387.485,
+        "text": "And that's when we have a conflict."
+      },
+      {
+        "start": 388.017,
+        "end": 389.332,
+        "text": "And for the procrastinator,"
+      },
+      {
+        "start": 389.356,
+        "end": 391.865,
+        "text": "that conflict tends to end a certain way every time,"
+      },
+      {
+        "start": 391.889,
+        "end": 395.60900000000004,
+        "text": "leaving him spending a lot of time in this orange zone,"
+      },
+      {
+        "start": 395.633,
+        "end": 399.96,
+        "text": "an easy and fun place that's entirely out of the Makes Sense circle."
+      },
+      {
+        "start": 399.984,
+        "end": 402.263,
+        "text": "I call it the Dark Playground."
+      },
+      {
+        "start": 402.287,
+        "end": 403.911,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 403.935,
+        "end": 407.063,
+        "text": "Now, the Dark Playground is a place"
+      },
+      {
+        "start": 407.087,
+        "end": 410.279,
+        "text": "that all of you procrastinators out there know very well."
+      },
+      {
+        "start": 410.892,
+        "end": 412.69599999999997,
+        "text": "It's where leisure activities happen"
+      },
+      {
+        "start": 412.72,
+        "end": 416.03000000000003,
+        "text": "at times when leisure activities are not supposed to be happening."
+      },
+      {
+        "start": 416.418,
+        "end": 418.308,
+        "text": "The fun you have in the Dark Playground"
+      },
+      {
+        "start": 418.332,
+        "end": 420.815,
+        "text": "isn't actually fun, because it's completely unearned,"
+      },
+      {
+        "start": 420.839,
+        "end": 424.054,
+        "text": "and the air is filled with guilt, dread, anxiety, self-hatred --"
+      },
+      {
+        "start": 424.078,
+        "end": 426.19599999999997,
+        "text": "all of those good procrastinator feelings."
+      },
+      {
+        "start": 426.703,
+        "end": 430.179,
+        "text": "And the question is, in this situation, with the Monkey behind the wheel,"
+      },
+      {
+        "start": 430.203,
+        "end": 433.796,
+        "text": "how does the procrastinator ever get himself over here to this blue zone,"
+      },
+      {
+        "start": 433.82,
+        "end": 437.101,
+        "text": "a less pleasant place, but where really important things happen?"
+      },
+      {
+        "start": 437.125,
+        "end": 442.162,
+        "text": "Well, turns out the procrastinator has a guardian angel,"
+      },
+      {
+        "start": 442.186,
+        "end": 445.394,
+        "text": "someone who's always looking down on him and watching over him"
+      },
+      {
+        "start": 445.418,
+        "end": 446.848,
+        "text": "in his darkest moments --"
+      },
+      {
+        "start": 446.872,
+        "end": 448.96700000000004,
+        "text": "someone called the Panic Monster."
+      },
+      {
+        "start": 448.991,
+        "end": 452.06899999999996,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 454.386,
+        "end": 459.24600000000004,
+        "text": "Now, the Panic Monster is dormant most of the time,"
+      },
+      {
+        "start": 459.27,
+        "end": 463.17199999999997,
+        "text": "but he suddenly wakes up anytime a deadline gets too close"
+      },
+      {
+        "start": 463.196,
+        "end": 465.24100000000004,
+        "text": "or there's danger of public embarrassment,"
+      },
+      {
+        "start": 465.265,
+        "end": 467.776,
+        "text": "a career disaster or some other scary consequence."
+      },
+      {
+        "start": 467.8,
+        "end": 471.97200000000004,
+        "text": "And importantly, he's the only thing the Monkey is terrified of."
+      },
+      {
+        "start": 471.996,
+        "end": 476.57399999999996,
+        "text": "Now, he became very relevant in my life pretty recently,"
+      },
+      {
+        "start": 476.598,
+        "end": 479.844,
+        "text": "because the people of TED reached out to me about six months ago"
+      },
+      {
+        "start": 479.868,
+        "end": 481.889,
+        "text": "and invited me to do a TED Talk."
+      },
+      {
+        "start": 481.913,
+        "end": 484.341,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 487.058,
+        "end": 488.965,
+        "text": "Now, of course, I said yes."
+      },
+      {
+        "start": 488.989,
+        "end": 492.794,
+        "text": "It's always been a dream of mine to have done a TED Talk in the past."
+      },
+      {
+        "start": 492.818,
+        "end": 496.78999999999996,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 496.814,
+        "end": 500.511,
+        "text": "(Applause)"
+      },
+      {
+        "start": 504.203,
+        "end": 506.17199999999997,
+        "text": "But in the middle of all this excitement,"
+      },
+      {
+        "start": 506.196,
+        "end": 509.497,
+        "text": "the Rational Decision-Maker seemed to have something else on his mind."
+      },
+      {
+        "start": 509.521,
+        "end": 512.069,
+        "text": "He was saying, \"Are we clear on what we just accepted?"
+      },
+      {
+        "start": 512.093,
+        "end": 515.342,
+        "text": "Do we get what's going to be now happening one day in the future?"
+      },
+      {
+        "start": 515.366,
+        "end": 517.633,
+        "text": "We need to sit down and work on this right now.\""
+      },
+      {
+        "start": 517.657,
+        "end": 520.922,
+        "text": "And the Monkey said, \"Totally agree, but let's just open Google Earth"
+      },
+      {
+        "start": 520.946,
+        "end": 524.106,
+        "text": "and zoom in to the bottom of India, like 200 feet above the ground,"
+      },
+      {
+        "start": 524.13,
+        "end": 527.751,
+        "text": "and scroll up for two and a half hours til we get to the top of the country,"
+      },
+      {
+        "start": 527.775,
+        "end": 529.7529999999999,
+        "text": "so we can get a better feel for India.\""
+      },
+      {
+        "start": 529.777,
+        "end": 534.212,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 535.149,
+        "end": 536.634,
+        "text": "So that's what we did that day."
+      },
+      {
+        "start": 536.658,
+        "end": 539.328,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 540.604,
+        "end": 544.5,
+        "text": "As six months turned into four and then two and then one,"
+      },
+      {
+        "start": 544.524,
+        "end": 547.619,
+        "text": "the people of TED decided to release the speakers."
+      },
+      {
+        "start": 547.643,
+        "end": 550.255,
+        "text": "And I opened up the website, and there was my face"
+      },
+      {
+        "start": 550.279,
+        "end": 551.635,
+        "text": "staring right back at me."
+      },
+      {
+        "start": 551.659,
+        "end": 553.259,
+        "text": "And guess who woke up?"
+      },
+      {
+        "start": 553.283,
+        "end": 556.398,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 557.43,
+        "end": 559.88,
+        "text": "So the Panic Monster starts losing his mind,"
+      },
+      {
+        "start": 559.904,
+        "end": 562.65,
+        "text": "and a few seconds later, the whole system's in mayhem."
+      },
+      {
+        "start": 562.674,
+        "end": 565.12,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 567.511,
+        "end": 570.612,
+        "text": "And the Monkey -- remember, he's terrified of the Panic Monster --"
+      },
+      {
+        "start": 570.636,
+        "end": 571.794,
+        "text": "boom, he's up the tree!"
+      },
+      {
+        "start": 571.818,
+        "end": 572.9689999999999,
+        "text": "And finally,"
+      },
+      {
+        "start": 572.993,
+        "end": 575.589,
+        "text": "finally, the Rational Decision-Maker can take the wheel"
+      },
+      {
+        "start": 575.613,
+        "end": 577.331,
+        "text": "and I can start working on the talk."
+      },
+      {
+        "start": 577.355,
+        "end": 579.643,
+        "text": "Now, the Panic Monster explains"
+      },
+      {
+        "start": 579.667,
+        "end": 583.148,
+        "text": "all kinds of pretty insane procrastinator behavior,"
+      },
+      {
+        "start": 583.172,
+        "end": 585.506,
+        "text": "like how someone like me could spend two weeks"
+      },
+      {
+        "start": 585.53,
+        "end": 589.374,
+        "text": "unable to start the opening sentence of a paper,"
+      },
+      {
+        "start": 589.398,
+        "end": 592.169,
+        "text": "and then miraculously find the unbelievable work ethic"
+      },
+      {
+        "start": 592.193,
+        "end": 595.289,
+        "text": "to stay up all night and write eight pages."
+      },
+      {
+        "start": 596.385,
+        "end": 599.367,
+        "text": "And this entire situation, with the three characters --"
+      },
+      {
+        "start": 599.391,
+        "end": 601.411,
+        "text": "this is the procrastinator's system."
+      },
+      {
+        "start": 602.096,
+        "end": 605.521,
+        "text": "It's not pretty, but in the end, it works."
+      },
+      {
+        "start": 605.545,
+        "end": 609.607,
+        "text": "This is what I decided to write about on the blog a couple of years ago."
+      },
+      {
+        "start": 609.631,
+        "end": 612.602,
+        "text": "When I did, I was amazed by the response."
+      },
+      {
+        "start": 612.626,
+        "end": 614.779,
+        "text": "Literally thousands of emails came in,"
+      },
+      {
+        "start": 614.803,
+        "end": 617.58,
+        "text": "from all different kinds of people from all over the world,"
+      },
+      {
+        "start": 617.604,
+        "end": 619.3420000000001,
+        "text": "doing all different kinds of things."
+      },
+      {
+        "start": 619.366,
+        "end": 622.332,
+        "text": "These are people who were nurses, bankers, painters, engineers"
+      },
+      {
+        "start": 622.356,
+        "end": 624.678,
+        "text": "and lots and lots of PhD students."
+      },
+      {
+        "start": 624.702,
+        "end": 626.703,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 626.727,
+        "end": 629.015,
+        "text": "And they were all writing, saying the same thing:"
+      },
+      {
+        "start": 629.039,
+        "end": 630.991,
+        "text": "\"I have this problem too.\""
+      },
+      {
+        "start": 631.015,
+        "end": 634.8439999999999,
+        "text": "But what struck me was the contrast between the light tone of the post"
+      },
+      {
+        "start": 634.868,
+        "end": 636.9630000000001,
+        "text": "and the heaviness of these emails."
+      },
+      {
+        "start": 636.987,
+        "end": 640.0699999999999,
+        "text": "These people were writing with intense frustration"
+      },
+      {
+        "start": 640.094,
+        "end": 642.856,
+        "text": "about what procrastination had done to their lives,"
+      },
+      {
+        "start": 642.88,
+        "end": 644.91,
+        "text": "about what this Monkey had done to them."
+      },
+      {
+        "start": 646.902,
+        "end": 649.868,
+        "text": "And I thought about this, and I said,"
+      },
+      {
+        "start": 649.892,
+        "end": 653.004,
+        "text": "well, if the procrastinator's system works, then what's going on?"
+      },
+      {
+        "start": 653.028,
+        "end": 655.514,
+        "text": "Why are all of these people in such a dark place?"
+      },
+      {
+        "start": 655.538,
+        "end": 658.836,
+        "text": "Well, it turns out that there's two kinds of procrastination."
+      },
+      {
+        "start": 659.987,
+        "end": 662.8209999999999,
+        "text": "Everything I've talked about today, the examples I've given,"
+      },
+      {
+        "start": 662.845,
+        "end": 663.996,
+        "text": "they all have deadlines."
+      },
+      {
+        "start": 664.02,
+        "end": 665.318,
+        "text": "And when there's deadlines,"
+      },
+      {
+        "start": 665.342,
+        "end": 668.2669999999999,
+        "text": "the effects of procrastination are contained to the short term"
+      },
+      {
+        "start": 668.291,
+        "end": 670.2040000000001,
+        "text": "because the Panic Monster gets involved."
+      },
+      {
+        "start": 670.228,
+        "end": 672.2819999999999,
+        "text": "But there's a second kind of procrastination"
+      },
+      {
+        "start": 672.306,
+        "end": 674.793,
+        "text": "that happens in situations when there is no deadline."
+      },
+      {
+        "start": 674.817,
+        "end": 677.5070000000001,
+        "text": "So if you wanted a career where you're a self-starter --"
+      },
+      {
+        "start": 677.531,
+        "end": 679.944,
+        "text": "something in the arts, something entrepreneurial --"
+      },
+      {
+        "start": 679.968,
+        "end": 683.4929999999999,
+        "text": "there's no deadlines on those things at first, because nothing's happening,"
+      },
+      {
+        "start": 683.517,
+        "end": 685.7610000000001,
+        "text": "not until you've gone out and done the hard work"
+      },
+      {
+        "start": 685.785,
+        "end": 687.411,
+        "text": "to get momentum, get things going."
+      },
+      {
+        "start": 687.435,
+        "end": 690.5129999999999,
+        "text": "There's also all kinds of important things outside of your career"
+      },
+      {
+        "start": 690.537,
+        "end": 692.142,
+        "text": "that don't involve any deadlines,"
+      },
+      {
+        "start": 692.166,
+        "end": 695.431,
+        "text": "like seeing your family or exercising and taking care of your health,"
+      },
+      {
+        "start": 695.455,
+        "end": 696.859,
+        "text": "working on your relationship"
+      },
+      {
+        "start": 696.883,
+        "end": 699.5640000000001,
+        "text": "or getting out of a relationship that isn't working."
+      },
+      {
+        "start": 699.588,
+        "end": 704.736,
+        "text": "Now if the procrastinator's only mechanism of doing these hard things"
+      },
+      {
+        "start": 704.76,
+        "end": 706.645,
+        "text": "is the Panic Monster, that's a problem,"
+      },
+      {
+        "start": 706.669,
+        "end": 709.4689999999999,
+        "text": "because in all of these non-deadline situations,"
+      },
+      {
+        "start": 709.493,
+        "end": 711.1210000000001,
+        "text": "the Panic Monster doesn't show up."
+      },
+      {
+        "start": 711.145,
+        "end": 712.597,
+        "text": "He has nothing to wake up for,"
+      },
+      {
+        "start": 712.621,
+        "end": 715.319,
+        "text": "so the effects of procrastination, they're not contained;"
+      },
+      {
+        "start": 715.343,
+        "end": 717.083,
+        "text": "they just extend outward forever."
+      },
+      {
+        "start": 717.953,
+        "end": 720.693,
+        "text": "And it's this long-term kind of procrastination"
+      },
+      {
+        "start": 720.717,
+        "end": 723.798,
+        "text": "that's much less visible and much less talked about"
+      },
+      {
+        "start": 723.822,
+        "end": 726.723,
+        "text": "than the funnier, short-term deadline-based kind."
+      },
+      {
+        "start": 726.747,
+        "end": 729.8499999999999,
+        "text": "It's usually suffered quietly and privately."
+      },
+      {
+        "start": 730.816,
+        "end": 731.97,
+        "text": "And it can be the source"
+      },
+      {
+        "start": 731.994,
+        "end": 735.729,
+        "text": "of a huge amount of long-term unhappiness, and regrets."
+      },
+      {
+        "start": 736.576,
+        "end": 739.448,
+        "text": "And I thought, that's why those people are emailing,"
+      },
+      {
+        "start": 739.472,
+        "end": 741.9739999999999,
+        "text": "and that's why they're in such a bad place."
+      },
+      {
+        "start": 741.998,
+        "end": 744.7420000000001,
+        "text": "It's not that they're cramming for some project."
+      },
+      {
+        "start": 744.766,
+        "end": 748.187,
+        "text": "It's that long-term procrastination has made them feel like a spectator,"
+      },
+      {
+        "start": 748.211,
+        "end": 750.25,
+        "text": "at times, in their own lives."
+      },
+      {
+        "start": 750.594,
+        "end": 753.576,
+        "text": "The frustration is not that they couldn't achieve their dreams;"
+      },
+      {
+        "start": 753.6,
+        "end": 756.6890000000001,
+        "text": "it's that they weren't even able to start chasing them."
+      },
+      {
+        "start": 756.713,
+        "end": 760.896,
+        "text": "So I read these emails and I had a little bit of an epiphany --"
+      },
+      {
+        "start": 762.182,
+        "end": 765.582,
+        "text": "that I don't think non-procrastinators exist."
+      },
+      {
+        "start": 765.979,
+        "end": 769.215,
+        "text": "That's right -- I think all of you are procrastinators."
+      },
+      {
+        "start": 769.898,
+        "end": 771.812,
+        "text": "Now, you might not all be a mess,"
+      },
+      {
+        "start": 771.836,
+        "end": 773.186,
+        "text": "like some of us,"
+      },
+      {
+        "start": 773.21,
+        "end": 774.739,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 774.763,
+        "end": 778.0790000000001,
+        "text": "and some of you may have a healthy relationship with deadlines,"
+      },
+      {
+        "start": 778.103,
+        "end": 780.627,
+        "text": "but remember: the Monkey's sneakiest trick"
+      },
+      {
+        "start": 780.651,
+        "end": 782.491,
+        "text": "is when the deadlines aren't there."
+      },
+      {
+        "start": 783.249,
+        "end": 785.2810000000001,
+        "text": "Now, I want to show you one last thing."
+      },
+      {
+        "start": 785.305,
+        "end": 787.678,
+        "text": "I call this a Life Calendar."
+      },
+      {
+        "start": 788.352,
+        "end": 792.631,
+        "text": "That's one box for every week of a 90-year life."
+      },
+      {
+        "start": 793.345,
+        "end": 794.9340000000001,
+        "text": "That's not that many boxes,"
+      },
+      {
+        "start": 794.958,
+        "end": 797.932,
+        "text": "especially since we've already used a bunch of those."
+      },
+      {
+        "start": 798.607,
+        "end": 803.7389999999999,
+        "text": "So I think we need to all take a long, hard look at that calendar."
+      },
+      {
+        "start": 804.977,
+        "end": 807.99,
+        "text": "We need to think about what we're really procrastinating on,"
+      },
+      {
+        "start": 808.014,
+        "end": 811.379,
+        "text": "because everyone is procrastinating on something in life."
+      },
+      {
+        "start": 812.782,
+        "end": 815.812,
+        "text": "We need to stay aware of the Instant Gratification Monkey."
+      },
+      {
+        "start": 817.455,
+        "end": 819.947,
+        "text": "That's a job for all of us."
+      },
+      {
+        "start": 820.669,
+        "end": 822.9689999999999,
+        "text": "And because there's not that many boxes on there,"
+      },
+      {
+        "start": 822.993,
+        "end": 825.283,
+        "text": "it's a job that should probably start today."
+      },
+      {
+        "start": 825.307,
+        "end": 828.307,
+        "text": "Well, maybe not today, but ..."
+      },
+      {
+        "start": 828.331,
+        "end": 829.972,
+        "text": "(Laughter)"
+      },
+      {
+        "start": 829.996,
+        "end": 831.146,
+        "text": "You know."
+      },
+      {
+        "start": 831.576,
+        "end": 832.726,
+        "text": "Sometime soon."
+      },
+      {
+        "start": 833.393,
+        "end": 834.602,
+        "text": "Thank you."
+      },
+      {
+        "start": 834.626,
+        "end": 842.624,
+        "text": "(Applause)"
+      }
+    ]
+  }
+}

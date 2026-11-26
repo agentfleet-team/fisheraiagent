@@ -1,0 +1,619 @@
+{
+  "asr": {
+    "index": 1,
+    "languageCode": "en",
+    "vssId": "a.en",
+    "bytes": 32623,
+    "cueCount": 52,
+    "first3": [
+      {
+        "start": 0.32,
+        "end": 14.58,
+        "text": "[Music]"
+      },
+      {
+        "start": 18.8,
+        "end": 25.96,
+        "text": "We're no strangers to"
+      },
+      {
+        "start": 21.8,
+        "end": 29.119,
+        "text": "love. You know the rules and so do"
+      }
+    ],
+    "cues": [
+      {
+        "start": 0.32,
+        "end": 14.58,
+        "text": "[Music]"
+      },
+      {
+        "start": 18.8,
+        "end": 25.96,
+        "text": "We're no strangers to"
+      },
+      {
+        "start": 21.8,
+        "end": 29.119,
+        "text": "love. You know the rules and so do"
+      },
+      {
+        "start": 25.96,
+        "end": 30.279,
+        "text": "I. I feel commitments from what I'm"
+      },
+      {
+        "start": 29.119,
+        "end": 34.36,
+        "text": "thinking"
+      },
+      {
+        "start": 30.279,
+        "end": 39.559,
+        "text": "of. You wouldn't get this from any other"
+      },
+      {
+        "start": 34.36,
+        "end": 43.12,
+        "text": "guy. I just want to tell you how I'm"
+      },
+      {
+        "start": 39.559,
+        "end": 45.839999999999996,
+        "text": "feeling. Got to make you understand."
+      },
+      {
+        "start": 43.12,
+        "end": 49.199999999999996,
+        "text": "Never going to give you up. I'm going to"
+      },
+      {
+        "start": 45.84,
+        "end": 53.32000000000001,
+        "text": "let you down. I'm going to run around"
+      },
+      {
+        "start": 49.2,
+        "end": 56.399,
+        "text": "and desert you. I'm going to make"
+      },
+      {
+        "start": 53.32,
+        "end": 59.879,
+        "text": "you say goodbye."
+      },
+      {
+        "start": 56.399,
+        "end": 64.04,
+        "text": "Tell a lie and hurt"
+      },
+      {
+        "start": 59.879,
+        "end": 67.2,
+        "text": "you. We've known each other for so"
+      },
+      {
+        "start": 64.04,
+        "end": 70.56,
+        "text": "long. Your heart's been aching, but"
+      },
+      {
+        "start": 67.2,
+        "end": 72.60000000000001,
+        "text": "you're too shy to say we don't know"
+      },
+      {
+        "start": 70.56,
+        "end": 77.799,
+        "text": "what's been going"
+      },
+      {
+        "start": 72.6,
+        "end": 81.479,
+        "text": "on. We know the game and we're going to"
+      },
+      {
+        "start": 77.799,
+        "end": 84.56,
+        "text": "play. If you ask me how I'm"
+      },
+      {
+        "start": 81.479,
+        "end": 88.32,
+        "text": "feeling, don't tell me your truth. to"
+      },
+      {
+        "start": 84.56,
+        "end": 88.32000000000001,
+        "text": "see. I will give"
+      },
+      {
+        "start": 89.88,
+        "end": 94.72,
+        "text": "you"
+      },
+      {
+        "start": 91.72,
+        "end": 94.72,
+        "text": "around"
+      },
+      {
+        "start": 95,
+        "end": 99.04,
+        "text": "you. I will say"
+      },
+      {
+        "start": 99.56,
+        "end": 106.759,
+        "text": "goodbye and hurt you. I will give"
+      },
+      {
+        "start": 103.99,
+        "end": 108.6,
+        "text": "[Music]"
+      },
+      {
+        "start": 106.759,
+        "end": 115.92,
+        "text": "you"
+      },
+      {
+        "start": 108.6,
+        "end": 115.91999999999999,
+        "text": "around you. I will leave you. I will say"
+      },
+      {
+        "start": 116.439,
+        "end": 121.079,
+        "text": "goodbye and hurt you."
+      },
+      {
+        "start": 128.319,
+        "end": 132.56,
+        "text": "Never going to give. Never going to"
+      },
+      {
+        "start": 129.759,
+        "end": 134,
+        "text": "give."
+      },
+      {
+        "start": 132.56,
+        "end": 136.8,
+        "text": "Never going to give. Never going to"
+      },
+      {
+        "start": 134,
+        "end": 141.04,
+        "text": "give."
+      },
+      {
+        "start": 136.8,
+        "end": 143.68,
+        "text": "We've known each other for so long."
+      },
+      {
+        "start": 141.04,
+        "end": 147.51999999999998,
+        "text": "Your heart's been aching, but you're too"
+      },
+      {
+        "start": 143.68,
+        "end": 148.52,
+        "text": "shy to say it. We both know what's been"
+      },
+      {
+        "start": 147.52,
+        "end": 152.239,
+        "text": "going"
+      },
+      {
+        "start": 148.52,
+        "end": 157.8,
+        "text": "on. We know the game and we're going to"
+      },
+      {
+        "start": 152.239,
+        "end": 161.36,
+        "text": "play it. I just want to tell you how I'm"
+      },
+      {
+        "start": 157.8,
+        "end": 163.92000000000002,
+        "text": "feeling. Got to make you understand."
+      },
+      {
+        "start": 161.36,
+        "end": 166.8,
+        "text": "Never going to give you up. Never going"
+      },
+      {
+        "start": 163.92,
+        "end": 171.28,
+        "text": "to let you down. Never going to run"
+      },
+      {
+        "start": 166.8,
+        "end": 171.28,
+        "text": "around and desert you. Heat."
+      },
+      {
+        "start": 172.33,
+        "end": 182.76000000000002,
+        "text": "[Music]"
+      },
+      {
+        "start": 178.76,
+        "end": 182.76,
+        "text": "Heat. Heat. Heat."
+      },
+      {
+        "start": 183.39,
+        "end": 195.2,
+        "text": "[Music]"
+      },
+      {
+        "start": 191.04,
+        "end": 197.76,
+        "text": "Never going to tell a lie and hurt you."
+      },
+      {
+        "start": 195.2,
+        "end": 200.64,
+        "text": "Never going to give you up. Never going"
+      },
+      {
+        "start": 197.76,
+        "end": 204.239,
+        "text": "to let you down. Never going to run"
+      },
+      {
+        "start": 200.64,
+        "end": 206.83999999999997,
+        "text": "around and desert you. Never going to"
+      },
+      {
+        "start": 204.239,
+        "end": 211.879,
+        "text": "make you cry. Never going to say"
+      },
+      {
+        "start": 206.84,
+        "end": 211.879,
+        "text": "goodbye. Never going to say goodbye."
+      }
+    ]
+  },
+  "manual": {
+    "index": 0,
+    "languageCode": "en",
+    "vssId": ".en",
+    "bytes": 8079,
+    "cueCount": 61,
+    "first3": [
+      {
+        "start": 1.36,
+        "end": 3.04,
+        "text": "[♪♪♪]"
+      },
+      {
+        "start": 18.64,
+        "end": 21.880000000000003,
+        "text": "♪ We're no strangers to love ♪"
+      },
+      {
+        "start": 22.64,
+        "end": 26.96,
+        "text": "♪ You know the rules and so do I ♪"
+      }
+    ],
+    "cues": [
+      {
+        "start": 1.36,
+        "end": 3.04,
+        "text": "[♪♪♪]"
+      },
+      {
+        "start": 18.64,
+        "end": 21.880000000000003,
+        "text": "♪ We're no strangers to love ♪"
+      },
+      {
+        "start": 22.64,
+        "end": 26.96,
+        "text": "♪ You know the rules and so do I ♪"
+      },
+      {
+        "start": 27.04,
+        "end": 31.04,
+        "text": "♪ A full commitment's what I'm thinking of ♪"
+      },
+      {
+        "start": 31.12,
+        "end": 35.08,
+        "text": "♪ You wouldn't get this from any other guy ♪"
+      },
+      {
+        "start": 35.16,
+        "end": 39.519999999999996,
+        "text": "♪ I just wanna tell you how I'm feeling ♪"
+      },
+      {
+        "start": 40.52,
+        "end": 42.92,
+        "text": "♪ Gotta make you understand ♪"
+      },
+      {
+        "start": 43,
+        "end": 45.12,
+        "text": "♪ Never gonna give you up ♪"
+      },
+      {
+        "start": 45.2,
+        "end": 47.080000000000005,
+        "text": "♪ Never gonna let you down ♪"
+      },
+      {
+        "start": 47.32,
+        "end": 51.12,
+        "text": "♪ Never gonna run around and desert you ♪"
+      },
+      {
+        "start": 51.48,
+        "end": 53.48,
+        "text": "♪ Never gonna make you cry ♪"
+      },
+      {
+        "start": 53.6,
+        "end": 55.52,
+        "text": "♪ Never gonna say goodbye ♪"
+      },
+      {
+        "start": 55.72,
+        "end": 59.36,
+        "text": "♪ Never gonna tell a lie and hurt you ♪"
+      },
+      {
+        "start": 60.8,
+        "end": 64.8,
+        "text": "♪ We've known each other for so long ♪"
+      },
+      {
+        "start": 64.88,
+        "end": 69.03999999999999,
+        "text": "♪ Your heart's been aching but you're too shy to say it ♪"
+      },
+      {
+        "start": 69.12,
+        "end": 72.96000000000001,
+        "text": "♪ Inside we both know what's been going ♪"
+      },
+      {
+        "start": 73.36,
+        "end": 77.2,
+        "text": "♪ We know the game and we're gonna play it ♪"
+      },
+      {
+        "start": 77.4,
+        "end": 82.04,
+        "text": "♪ And if you ask me how I'm feeling ♪"
+      },
+      {
+        "start": 82.4,
+        "end": 85.24000000000001,
+        "text": "♪ Don't tell me you're too blind to see ♪"
+      },
+      {
+        "start": 85.32,
+        "end": 87.27999999999999,
+        "text": "♪ Never gonna give you up ♪"
+      },
+      {
+        "start": 87.36,
+        "end": 89.32,
+        "text": "♪ Never gonna let you down ♪"
+      },
+      {
+        "start": 89.44,
+        "end": 93.72,
+        "text": "♪ Never gonna run around and desert you ♪"
+      },
+      {
+        "start": 93.8,
+        "end": 95.6,
+        "text": "♪ Never gonna make you cry ♪"
+      },
+      {
+        "start": 95.76,
+        "end": 98,
+        "text": "♪ Never gonna say goodbye ♪"
+      },
+      {
+        "start": 98.08,
+        "end": 102.03999999999999,
+        "text": "♪ Never gonna tell a lie and hurt you ♪"
+      },
+      {
+        "start": 102.2,
+        "end": 104.12,
+        "text": "♪ Never gonna give you up ♪"
+      },
+      {
+        "start": 104.28,
+        "end": 106.36,
+        "text": "♪ Never gonna let you down ♪"
+      },
+      {
+        "start": 106.48,
+        "end": 110.08,
+        "text": "♪ Never gonna run around and desert you ♪"
+      },
+      {
+        "start": 110.76,
+        "end": 112.72,
+        "text": "♪ Never gonna make you cry ♪"
+      },
+      {
+        "start": 112.8,
+        "end": 114.67999999999999,
+        "text": "♪ Never gonna say goodbye ♪"
+      },
+      {
+        "start": 114.96,
+        "end": 118.75999999999999,
+        "text": "♪ Never gonna tell a lie and hurt you ♪"
+      },
+      {
+        "start": 119.84,
+        "end": 122.96000000000001,
+        "text": "♪ (Ooh, give you up) ♪"
+      },
+      {
+        "start": 123.72,
+        "end": 127.36,
+        "text": "♪ (Ooh, give you up) ♪"
+      },
+      {
+        "start": 128.48,
+        "end": 130.11999999999998,
+        "text": "♪ Never gonna give, never gonna give ♪"
+      },
+      {
+        "start": 130.24,
+        "end": 131.56,
+        "text": "♪ (Give you up) ♪"
+      },
+      {
+        "start": 132.48,
+        "end": 134.23999999999998,
+        "text": "♪ Never gonna give, never gonna give ♪"
+      },
+      {
+        "start": 134.36,
+        "end": 135.92000000000002,
+        "text": "♪ (Give you up) ♪"
+      },
+      {
+        "start": 136.76,
+        "end": 141.07999999999998,
+        "text": "♪ We've known each other for so long ♪"
+      },
+      {
+        "start": 141.2,
+        "end": 145.2,
+        "text": "♪ Your heart's been aching but you're too shy to say it ♪"
+      },
+      {
+        "start": 145.28,
+        "end": 149.12,
+        "text": "♪ Inside we both know what's been going ♪"
+      },
+      {
+        "start": 149.52,
+        "end": 153.20000000000002,
+        "text": "♪ We know the game and we're gonna play it ♪"
+      },
+      {
+        "start": 153.36,
+        "end": 158.04000000000002,
+        "text": "♪ I just wanna tell you how I'm feeling ♪"
+      },
+      {
+        "start": 158.64,
+        "end": 161.32,
+        "text": "♪ Gotta make you understand ♪"
+      },
+      {
+        "start": 161.4,
+        "end": 163.36,
+        "text": "♪ Never gonna give you up ♪"
+      },
+      {
+        "start": 163.44,
+        "end": 165.64,
+        "text": "♪ Never gonna let you down ♪"
+      },
+      {
+        "start": 165.72,
+        "end": 169.72,
+        "text": "♪ Never gonna run around and desert you ♪"
+      },
+      {
+        "start": 169.8,
+        "end": 171.64000000000001,
+        "text": "♪ Never gonna make you cry ♪"
+      },
+      {
+        "start": 171.8,
+        "end": 173.96,
+        "text": "♪ Never gonna say goodbye ♪"
+      },
+      {
+        "start": 174.04,
+        "end": 177.6,
+        "text": "♪ Never gonna tell a lie and hurt you ♪"
+      },
+      {
+        "start": 178.2,
+        "end": 180.23999999999998,
+        "text": "♪ Never gonna give you up ♪"
+      },
+      {
+        "start": 180.32,
+        "end": 182.44,
+        "text": "♪ Never gonna let you down ♪"
+      },
+      {
+        "start": 182.52,
+        "end": 186.64000000000001,
+        "text": "♪ Never gonna run around and desert you ♪"
+      },
+      {
+        "start": 186.72,
+        "end": 188.72,
+        "text": "♪ Never gonna make you cry ♪"
+      },
+      {
+        "start": 188.84,
+        "end": 190.72,
+        "text": "♪ Never gonna say goodbye ♪"
+      },
+      {
+        "start": 190.84,
+        "end": 195.20000000000002,
+        "text": "♪ Never gonna tell a lie and hurt you ♪"
+      },
+      {
+        "start": 195.28,
+        "end": 197.12,
+        "text": "♪ Never gonna give you up ♪"
+      },
+      {
+        "start": 197.2,
+        "end": 199.23999999999998,
+        "text": "♪ Never gonna let you down ♪"
+      },
+      {
+        "start": 199.4,
+        "end": 203.12,
+        "text": "♪ Never gonna run around and desert you ♪"
+      },
+      {
+        "start": 203.36,
+        "end": 205.60000000000002,
+        "text": "♪ Never gonna make you cry ♪"
+      },
+      {
+        "start": 205.68,
+        "end": 207.84,
+        "text": "♪ Never gonna say goodbye ♪"
+      },
+      {
+        "start": 207.92,
+        "end": 211.32,
+        "text": "♪ Never gonna tell a lie and hurt you ♪"
+      }
+    ]
+  }
+}

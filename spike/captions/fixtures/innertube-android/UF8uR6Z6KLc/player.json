@@ -1,0 +1,351 @@
+{
+  "playabilityStatus": {
+    "status": "OK"
+  },
+  "videoDetails": {
+    "videoId": "UF8uR6Z6KLc",
+    "lengthSeconds": "904",
+    "title": "Steve Jobs' 2005 Stanford Commencement Address"
+  },
+  "captions": {
+    "playerCaptionsTracklistRenderer": {
+      "captionTracks": [
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=ar&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Arabic"
+              }
+            ]
+          },
+          "vssId": ".ar",
+          "languageCode": "ar",
+          "rtl": true,
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&kind=asr&lang=en&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "English (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.en",
+          "languageCode": "en",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=en&name=English&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "English - English"
+              }
+            ]
+          },
+          "vssId": ".en.eEY6OEpapPo",
+          "languageCode": "en",
+          "isTranslatable": true,
+          "trackName": "English"
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=it&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Italian"
+              }
+            ]
+          },
+          "vssId": ".it",
+          "languageCode": "it",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=ja&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Japanese"
+              }
+            ]
+          },
+          "vssId": ".ja",
+          "languageCode": "ja",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=km&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Khmer"
+              }
+            ]
+          },
+          "vssId": ".km",
+          "languageCode": "km",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=pt-BR&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Portuguese (Brazil)"
+              }
+            ]
+          },
+          "vssId": ".pt-BR",
+          "languageCode": "pt-BR",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=es&name=Spanish&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Spanish - Spanish"
+              }
+            ]
+          },
+          "vssId": ".es.y1SAwy5xd4g",
+          "languageCode": "es",
+          "isTranslatable": true,
+          "trackName": "Spanish"
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=UF8uR6Z6KLc&ei=QWkIa-_KI9O02roPwLa_2AU&caps=asr&opi=112496729&xoaf=5&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738545&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=6484A27CD814766B4145EE390D5B0511DF989089.26D506B71245A531E99AAE26643B02441370680F&key=yt8&lang=es-ES&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Spanish (Spain)"
+              }
+            ]
+          },
+          "vssId": ".es-ES",
+          "languageCode": "es-ES",
+          "isTranslatable": true,
+          "trackName": ""
+        }
+      ],
+      "audioTracks": [
+        {
+          "captionTrackIndices": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            1
+          ],
+          "defaultCaptionTrackIndex": 2,
+          "hasDefaultTrack": true,
+          "captionsInitialState": "CAPTIONS_INITIAL_STATE_OFF_RECOMMENDED"
+        }
+      ],
+      "translationLanguages": [
+        {
+          "languageCode": "ar",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Arabic"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "zh-Hant",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Chinese (Traditional)"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "nl",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Dutch"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "en",
+          "languageName": {
+            "runs": [
+              {
+                "text": "English"
+              }
+            ]
+          },
+          "translationSourceTrackIndices": [
+            0
+          ]
+        },
+        {
+          "languageCode": "fr",
+          "languageName": {
+            "runs": [
+              {
+                "text": "French"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "de",
+          "languageName": {
+            "runs": [
+              {
+                "text": "German"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "hi",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Hindi"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "id",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Indonesian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "it",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Italian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "ja",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Japanese"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "ko",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Korean"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "pt",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Portuguese"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "ru",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Russian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "es",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Spanish"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "th",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Thai"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "tr",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Turkish"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "uk",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Ukrainian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "vi",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Vietnamese"
+              }
+            ]
+          }
+        }
+      ],
+      "defaultAudioTrackIndex": 0,
+      "defaultTranslationSourceTrackIndices": [
+        2
+      ]
+    }
+  }
+}

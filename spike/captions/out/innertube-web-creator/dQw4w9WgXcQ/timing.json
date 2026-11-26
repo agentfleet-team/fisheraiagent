@@ -1,0 +1,25 @@
+{
+  "method": "innertube-web-creator",
+  "videoId": "dQw4w9WgXcQ",
+  "runs": [
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability LOGIN_REQUIRED: Please sign in"
+    },
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability LOGIN_REQUIRED: Please sign in"
+    },
+    {
+      "p1Ms": null,
+      "p2Ms": null,
+      "error": "blocked: playability LOGIN_REQUIRED: Please sign in"
+    }
+  ],
+  "okRuns": 0,
+  "medianP1Ms": null,
+  "medianP2Ms": null,
+  "medianTotalMs": null
+}

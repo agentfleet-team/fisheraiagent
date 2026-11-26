@@ -1,0 +1,723 @@
+{
+  "playabilityStatus": {
+    "status": "OK"
+  },
+  "videoDetails": {
+    "videoId": "3JZ_D3ELwOQ",
+    "lengthSeconds": "254",
+    "title": "Flexin' On Ya (2014)"
+  },
+  "captions": {
+    "playerCaptionsTracklistRenderer": {
+      "captionTracks": [
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=nl-NL&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Dutch (Netherlands) (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.nl-NL",
+          "languageCode": "nl-NL",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=en&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "English (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.en",
+          "languageCode": "en",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=fr-FR&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "French (France) (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.fr-FR",
+          "languageCode": "fr-FR",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=de-DE&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "German (Germany) (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.de-DE",
+          "languageCode": "de-DE",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=iw&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Hebrew (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.iw",
+          "languageCode": "iw",
+          "kind": "asr",
+          "rtl": true,
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=hi&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Hindi (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.hi",
+          "languageCode": "hi",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=id&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Indonesian (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.id",
+          "languageCode": "id",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=it&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Italian (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.it",
+          "languageCode": "it",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=ko&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Korean (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.ko",
+          "languageCode": "ko",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=ml&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Malayalam (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.ml",
+          "languageCode": "ml",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=pl&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Polish (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.pl",
+          "languageCode": "pl",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=pt-BR&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Portuguese (Brazil) (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.pt-BR",
+          "languageCode": "pt-BR",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=ru&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Russian (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.ru",
+          "languageCode": "ru",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=es-US&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Spanish (United States) (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.es-US",
+          "languageCode": "es-US",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        },
+        {
+          "baseUrl": "https://www.youtube.com/api/timedtext?v=3JZ_D3ELwOQ&ei=QmkIa7O-FcGzpt8Pg66Y-Ac&caps=asr&opi=112496729&xoaf=4&xowf=1&hl=en&ip=0.0.0.0&ipbits=0&expire=1795738546&sparams=ip,ipbits,expire,v,ei,caps,opi,xoaf&signature=7922C673929A55384604696F50D047C2BB24AAAC.D4C32C7E2AE379CFE3245B52B568A1D818AE5B49&key=yt8&kind=asr&lang=uk&variant=timing-optimized&fmt=srv3",
+          "name": {
+            "runs": [
+              {
+                "text": "Ukrainian (auto-generated)"
+              }
+            ]
+          },
+          "vssId": "a.uk",
+          "languageCode": "uk",
+          "kind": "asr",
+          "isTranslatable": true,
+          "trackName": ""
+        }
+      ],
+      "audioTracks": [
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "pt-BR.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "id.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "de-DE.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "en-US.4"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "it.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "iw.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "hi.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "ml.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "ru.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "uk.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "ko.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "es-US.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "fr-FR.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "pl.10"
+        },
+        {
+          "captionTrackIndices": [
+            1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14
+          ],
+          "audioTrackId": "nl-NL.10"
+        }
+      ],
+      "translationLanguages": [
+        {
+          "languageCode": "ar",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Arabic"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "zh-Hant",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Chinese (Traditional)"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "nl",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Dutch"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "en",
+          "languageName": {
+            "runs": [
+              {
+                "text": "English"
+              }
+            ]
+          },
+          "translationSourceTrackIndices": [
+            0
+          ]
+        },
+        {
+          "languageCode": "fr",
+          "languageName": {
+            "runs": [
+              {
+                "text": "French"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "de",
+          "languageName": {
+            "runs": [
+              {
+                "text": "German"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "hi",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Hindi"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "id",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Indonesian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "it",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Italian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "ja",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Japanese"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "ko",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Korean"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "pt",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Portuguese"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "ru",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Russian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "es",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Spanish"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "th",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Thai"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "uk",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Ukrainian"
+              }
+            ]
+          }
+        },
+        {
+          "languageCode": "vi",
+          "languageName": {
+            "runs": [
+              {
+                "text": "Vietnamese"
+              }
+            ]
+          }
+        }
+      ],
+      "defaultAudioTrackIndex": 3,
+      "defaultTranslationSourceTrackIndices": [
+        1
+      ]
+    }
+  }
+}

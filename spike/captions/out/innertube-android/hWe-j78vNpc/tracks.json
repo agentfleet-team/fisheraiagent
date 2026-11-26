@@ -1,0 +1,263 @@
+{
+  "videoId": "hWe-j78vNpc",
+  "title": "The Home Repo: The effortless multi-repo agent setup",
+  "durationSeconds": 533,
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "ar",
+      "kind": "asr",
+      "vssId": "a.ar",
+      "name": "Arabic (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 1,
+      "languageCode": "bn",
+      "kind": "asr",
+      "vssId": "a.bn",
+      "name": "Bangla (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 2,
+      "languageCode": "nl",
+      "kind": "asr",
+      "vssId": "a.nl",
+      "name": "Dutch (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 3,
+      "languageCode": "en",
+      "kind": "asr",
+      "vssId": "a.en",
+      "name": "English (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 4,
+      "languageCode": "fr",
+      "kind": "asr",
+      "vssId": "a.fr",
+      "name": "French (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 5,
+      "languageCode": "de",
+      "kind": "asr",
+      "vssId": "a.de",
+      "name": "German (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 6,
+      "languageCode": "iw",
+      "kind": "asr",
+      "vssId": "a.iw",
+      "name": "Hebrew (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 7,
+      "languageCode": "hi",
+      "kind": "asr",
+      "vssId": "a.hi",
+      "name": "Hindi (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 8,
+      "languageCode": "id",
+      "kind": "asr",
+      "vssId": "a.id",
+      "name": "Indonesian (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 9,
+      "languageCode": "it",
+      "kind": "asr",
+      "vssId": "a.it",
+      "name": "Italian (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 10,
+      "languageCode": "ja",
+      "kind": "asr",
+      "vssId": "a.ja",
+      "name": "Japanese (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 11,
+      "languageCode": "ko",
+      "kind": "asr",
+      "vssId": "a.ko",
+      "name": "Korean (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 12,
+      "languageCode": "ml",
+      "kind": "asr",
+      "vssId": "a.ml",
+      "name": "Malayalam (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 13,
+      "languageCode": "pl",
+      "kind": "asr",
+      "vssId": "a.pl",
+      "name": "Polish (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 14,
+      "languageCode": "pt",
+      "kind": "asr",
+      "vssId": "a.pt",
+      "name": "Portuguese (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 15,
+      "languageCode": "pa",
+      "kind": "asr",
+      "vssId": "a.pa",
+      "name": "Punjabi (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 16,
+      "languageCode": "ru",
+      "kind": "asr",
+      "vssId": "a.ru",
+      "name": "Russian (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 17,
+      "languageCode": "es",
+      "kind": "asr",
+      "vssId": "a.es",
+      "name": "Spanish (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 18,
+      "languageCode": "ta",
+      "kind": "asr",
+      "vssId": "a.ta",
+      "name": "Tamil (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 19,
+      "languageCode": "te",
+      "kind": "asr",
+      "vssId": "a.te",
+      "name": "Telugu (auto-generated)",
+      "isTranslatable": true
+    },
+    {
+      "index": 20,
+      "languageCode": "uk",
+      "kind": "asr",
+      "vssId": "a.uk",
+      "name": "Ukrainian (auto-generated)",
+      "isTranslatable": true
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": "uk.10"
+    },
+    {
+      "index": 1,
+      "audioTrackId": "en-US.4"
+    },
+    {
+      "index": 2,
+      "audioTrackId": "de-DE.10"
+    },
+    {
+      "index": 3,
+      "audioTrackId": "ar.10"
+    },
+    {
+      "index": 4,
+      "audioTrackId": "bn.10"
+    },
+    {
+      "index": 5,
+      "audioTrackId": "hi.10"
+    },
+    {
+      "index": 6,
+      "audioTrackId": "nl-NL.10"
+    },
+    {
+      "index": 7,
+      "audioTrackId": "pa.10"
+    },
+    {
+      "index": 8,
+      "audioTrackId": "te.10"
+    },
+    {
+      "index": 9,
+      "audioTrackId": "ko.10"
+    },
+    {
+      "index": 10,
+      "audioTrackId": "es-US.10"
+    },
+    {
+      "index": 11,
+      "audioTrackId": "pt-BR.10"
+    },
+    {
+      "index": 12,
+      "audioTrackId": "id.10"
+    },
+    {
+      "index": 13,
+      "audioTrackId": "fr-FR.10"
+    },
+    {
+      "index": 14,
+      "audioTrackId": "ml.10"
+    },
+    {
+      "index": 15,
+      "audioTrackId": "pl.10"
+    },
+    {
+      "index": 16,
+      "audioTrackId": "ru.10"
+    },
+    {
+      "index": 17,
+      "audioTrackId": "iw.10"
+    },
+    {
+      "index": 18,
+      "audioTrackId": "ja.10"
+    },
+    {
+      "index": 19,
+      "audioTrackId": "ta.10"
+    },
+    {
+      "index": 20,
+      "audioTrackId": "it.10"
+    }
+  ],
+  "defaultAudioTrackIndex": 1,
+  "translationLanguageCount": 17
+}

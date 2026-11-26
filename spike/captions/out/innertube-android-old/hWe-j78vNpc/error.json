@@ -1,0 +1,7 @@
+{
+  "method": "innertube-android-old",
+  "videoId": "hWe-j78vNpc",
+  "code": "http",
+  "message": "player http 400",
+  "body": "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"Precondition check failed.\",\n    \"errors\": [\n      {\n        \"message\": \"Precondition check failed.\",\n        \"domain\": \"global\",\n        \"reason\": \"failedPrecondition\"\n      }\n    ],\n    \"status\": \"FAILED_PRECONDITION\"\n  }\n}\n"
+}

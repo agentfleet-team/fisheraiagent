@@ -1,0 +1,63 @@
+{
+  "videoId": "kJQP7kiw5Fk",
+  "title": "Luis Fonsi - Despacito ft. Daddy Yankee",
+  "durationSeconds": 282,
+  "tracks": [
+    {
+      "index": 0,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en.nP7-2PuUl7o",
+      "name": "English - en",
+      "isTranslatable": true
+    },
+    {
+      "index": 1,
+      "languageCode": "en",
+      "kind": "manual",
+      "vssId": ".en.eEY6OEpapPo",
+      "name": "English - English",
+      "isTranslatable": true
+    },
+    {
+      "index": 2,
+      "languageCode": "en-US",
+      "kind": "manual",
+      "vssId": ".en-US.njLgzgtehjs",
+      "name": "English (United States) - English - United States",
+      "isTranslatable": true
+    },
+    {
+      "index": 3,
+      "languageCode": "ja",
+      "kind": "manual",
+      "vssId": ".ja",
+      "name": "Japanese",
+      "isTranslatable": true
+    },
+    {
+      "index": 4,
+      "languageCode": "es",
+      "kind": "manual",
+      "vssId": ".es",
+      "name": "Spanish",
+      "isTranslatable": true
+    },
+    {
+      "index": 5,
+      "languageCode": "es-ES",
+      "kind": "manual",
+      "vssId": ".es-ES.7eCR4kqQbL4",
+      "name": "Spanish (Spain) - Spanish - Spain",
+      "isTranslatable": true
+    }
+  ],
+  "audioTracks": [
+    {
+      "index": 0,
+      "audioTrackId": null
+    }
+  ],
+  "defaultAudioTrackIndex": 0,
+  "translationLanguageCount": 0
+}

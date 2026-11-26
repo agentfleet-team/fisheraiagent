@@ -1,0 +1,18 @@
+{
+  "videoId": "UF8uR6Z6KLc",
+  "asrTrackCount": 1,
+  "spokenLanguage": "en",
+  "originalAsrTrack": {
+    "index": 1,
+    "languageCode": "en",
+    "vssId": "a.en"
+  },
+  "manualTrack": {
+    "index": 2,
+    "languageCode": "en",
+    "vssId": ".en.eEY6OEpapPo"
+  },
+  "kind": "manual",
+  "rule": "single-asr-track",
+  "tracksSha256": "82b44c0d7d132ce3006c830e60a06cd3a6c36e8fcfcbf00e56b52031c5e1ff8d"
+}

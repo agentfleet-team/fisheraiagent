@@ -1,0 +1,25 @@
+{
+  "method": "innertube-android",
+  "videoId": "aqz-KE-bpKQ",
+  "runs": [
+    {
+      "p1Ms": 78,
+      "p2Ms": 0,
+      "error": null
+    },
+    {
+      "p1Ms": 68,
+      "p2Ms": 0,
+      "error": null
+    },
+    {
+      "p1Ms": 70,
+      "p2Ms": 0,
+      "error": null
+    }
+  ],
+  "okRuns": 3,
+  "medianP1Ms": 70,
+  "medianP2Ms": 0,
+  "medianTotalMs": 70
+}

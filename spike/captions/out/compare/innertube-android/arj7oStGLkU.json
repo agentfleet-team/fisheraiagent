@@ -1,0 +1,22 @@
+{
+  "videoId": "arj7oStGLkU",
+  "method": "bag-of-words over Intl.Segmenter word segments, lower-cased; bagF1 = 2*|A∩B|/(|A|+|B|) on multisets; setJaccard on word sets",
+  "a": {
+    "label": "asr",
+    "language": "en",
+    "cues": 335
+  },
+  "b": {
+    "label": "manual",
+    "language": "en",
+    "cues": 315
+  },
+  "wordsA": 2267,
+  "wordsB": 2288,
+  "bagF1": 0.962,
+  "setJaccard": 0.941,
+  "inputSha256": {
+    "asr": "eb43f0aa6d94dd64e4d1e908ee0af8aacae8298069090e024bf5c5a8f14d1a66",
+    "manual": "b4d605dad1e0746426d6f39c7fc807ee0c457f755caee5075d1eac24c20df316"
+  }
+}

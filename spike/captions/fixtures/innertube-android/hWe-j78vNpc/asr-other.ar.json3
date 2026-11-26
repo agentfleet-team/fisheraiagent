@@ -1,0 +1,7779 @@
+{
+  "wireMagic": "pb3",
+  "pens": [ {
+  
+  } ],
+  "wsWinStyles": [ {
+  
+  }, {
+    "mhModeHint": 2,
+    "juJustifCode": 1,
+    "sdScrollDir": 3
+  } ],
+  "wpWinPositions": [ {
+  
+  }, {
+    "apPoint": 6,
+    "ahHorPos": 20,
+    "avVerPos": 100,
+    "rcRows": 2,
+    "ccCols": 40
+  } ],
+  "events": [ {
+    "tStartMs": 0,
+    "dDurationMs": 535121,
+    "id": 1,
+    "wpWinPosId": 1,
+    "wsWinStyleId": 1
+  }, {
+    "tStartMs": 100,
+    "dDurationMs": 5904,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "هناك"
+    }, {
+      "utf8": " تقنية",
+      "tOffsetMs": 382
+    }, {
+      "utf8": " أستخدمها",
+      "tOffsetMs": 849
+    }, {
+      "utf8": " منذ",
+      "tOffsetMs": 1571
+    }, {
+      "utf8": " فترة",
+      "tOffsetMs": 1869
+    }, {
+      "utf8": " واعتقدت",
+      "tOffsetMs": 2251
+    } ]
+  }, {
+    "tStartMs": 2978,
+    "dDurationMs": 3026,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 2988,
+    "dDurationMs": 5263,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أنها"
+    }, {
+      "utf8": " مملة",
+      "tOffsetMs": 382
+    }, {
+      "utf8": " وبديهية",
+      "tOffsetMs": 765
+    }, {
+      "utf8": " للغاية",
+      "tOffsetMs": 1402
+    }, {
+      "utf8": " بحيث",
+      "tOffsetMs": 1954
+    }, {
+      "utf8": " لا",
+      "tOffsetMs": 2336
+    }, {
+      "utf8": " تستحق",
+      "tOffsetMs": 2549
+    } ]
+  }, {
+    "tStartMs": 5994,
+    "dDurationMs": 2257,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 6004,
+    "dDurationMs": 4462,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "النشر"
+    }, {
+      "utf8": " عنها",
+      "tOffsetMs": 467
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 807
+    }, {
+      "utf8": " ثم",
+      "tOffsetMs": 950
+    }, {
+      "utf8": " خلال",
+      "tOffsetMs": 1108
+    }, {
+      "utf8": " ساعات",
+      "tOffsetMs": 1393
+    }, {
+      "utf8": " العمل",
+      "tOffsetMs": 1741
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 2089
+    } ]
+  }, {
+    "tStartMs": 8241,
+    "dDurationMs": 2225,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 8251,
+    "dDurationMs": 4367,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المجموعة"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 538
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 823
+    }, {
+      "utf8": " أديرها",
+      "tOffsetMs": 1044
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 1456
+    }, {
+      "utf8": " الأسبوع",
+      "tOffsetMs": 1677
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2120
+    } ]
+  }, {
+    "tStartMs": 10456,
+    "dDurationMs": 2162,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 10466,
+    "dDurationMs": 4414,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "استعرضتها"
+    }, {
+      "utf8": " فقط",
+      "tOffsetMs": 602
+    }, {
+      "utf8": " وكان",
+      "tOffsetMs": 823
+    }, {
+      "utf8": " رد",
+      "tOffsetMs": 1108
+    }, {
+      "utf8": " فعل",
+      "tOffsetMs": 1266
+    }, {
+      "utf8": " الناس",
+      "tOffsetMs": 1488
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 1804
+    }, {
+      "utf8": " واو",
+      "tOffsetMs": 1868
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2057
+    } ]
+  }, {
+    "tStartMs": 12608,
+    "dDurationMs": 2272,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 12618,
+    "dDurationMs": 4488,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "هذا"
+    }, {
+      "utf8": " رائع",
+      "tOffsetMs": 222
+    }, {
+      "utf8": " حقاً",
+      "tOffsetMs": 507
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 760
+    }, {
+      "utf8": " لم",
+      "tOffsetMs": 892
+    }, {
+      "utf8": " أتخيل",
+      "tOffsetMs": 1044
+    }, {
+      "utf8": " أبداً",
+      "tOffsetMs": 1379
+    }, {
+      "utf8": " أنها",
+      "tOffsetMs": 1714
+    }, {
+      "utf8": " يمكن",
+      "tOffsetMs": 1988
+    } ]
+  }, {
+    "tStartMs": 14870,
+    "dDurationMs": 2236,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 14880,
+    "dDurationMs": 4330,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أن"
+    }, {
+      "utf8": " تكون",
+      "tOffsetMs": 152
+    }, {
+      "utf8": " بهذه",
+      "tOffsetMs": 426
+    }, {
+      "utf8": " البساطة",
+      "tOffsetMs": 700
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1126
+    }, {
+      "utf8": " ثم",
+      "tOffsetMs": 1256
+    }, {
+      "utf8": " نشرت",
+      "tOffsetMs": 1418
+    }, {
+      "utf8": " عنها",
+      "tOffsetMs": 1709
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 2000
+    } ]
+  }, {
+    "tStartMs": 17096,
+    "dDurationMs": 2114,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 17106,
+    "dDurationMs": 4458,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تويتر"
+    }, {
+      "utf8": " ولقيت",
+      "tOffsetMs": 356
+    }, {
+      "utf8": " تفاعلاً",
+      "tOffsetMs": 711
+    }, {
+      "utf8": " هائلاً",
+      "tOffsetMs": 1196
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1584
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 1717
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1942
+    } ]
+  }, {
+    "tStartMs": 19200,
+    "dDurationMs": 2364,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 19210,
+    "dDurationMs": 5139,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الواضح"
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 419
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 580
+    }, {
+      "utf8": " شيء",
+      "tOffsetMs": 806
+    }, {
+      "utf8": " يحتاج",
+      "tOffsetMs": 1032
+    }, {
+      "utf8": " الناس",
+      "tOffsetMs": 1387
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1741
+    }, {
+      "utf8": " معرفته",
+      "tOffsetMs": 1967
+    } ]
+  }, {
+    "tStartMs": 21554,
+    "dDurationMs": 2795,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 21564,
+    "dDurationMs": 5513,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " وهذه",
+      "tOffsetMs": 133
+    }, {
+      "utf8": " التقنية",
+      "tOffsetMs": 469
+    }, {
+      "utf8": " تحل",
+      "tOffsetMs": 1029
+    }, {
+      "utf8": " مشكلة",
+      "tOffsetMs": 1291
+    }, {
+      "utf8": " وهي",
+      "tOffsetMs": 1702
+    }, {
+      "utf8": " كيفية",
+      "tOffsetMs": 1963
+    }, {
+      "utf8": " العمل",
+      "tOffsetMs": 2374
+    } ]
+  }, {
+    "tStartMs": 24339,
+    "dDurationMs": 2738,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 24349,
+    "dDurationMs": 5654,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مع"
+    }, {
+      "utf8": " الوكلاء",
+      "tOffsetMs": 187
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 748
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 935
+    }, {
+      "utf8": " متعددة",
+      "tOffsetMs": 1570
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 2056
+    }, {
+      "utf8": " آن",
+      "tOffsetMs": 2242
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 2429
+    } ]
+  }, {
+    "tStartMs": 27067,
+    "dDurationMs": 2936,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 27077,
+    "dDurationMs": 5987,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " دعونا",
+      "tOffsetMs": 138
+    }, {
+      "utf8": " نعد",
+      "tOffsetMs": 560
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 829
+    }, {
+      "utf8": " الإعداد",
+      "tOffsetMs": 1098
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1636
+    }, {
+      "utf8": " تخيل",
+      "tOffsetMs": 1775
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 2158
+    }, {
+      "utf8": " مؤسستك",
+      "tOffsetMs": 2371
+    } ]
+  }, {
+    "tStartMs": 29993,
+    "dDurationMs": 3071,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 30003,
+    "dDurationMs": 5779,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تبدو"
+    }, {
+      "utf8": " هكذا",
+      "tOffsetMs": 383
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 724
+    }, {
+      "utf8": " وهو",
+      "tOffsetMs": 852
+    }, {
+      "utf8": " حال",
+      "tOffsetMs": 1151
+    }, {
+      "utf8": " معظم",
+      "tOffsetMs": 1449
+    }, {
+      "utf8": " المؤسسات",
+      "tOffsetMs": 1833
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2515
+    }, {
+      "utf8": " لديهم",
+      "tOffsetMs": 2658
+    } ]
+  }, {
+    "tStartMs": 33054,
+    "dDurationMs": 2728,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 33064,
+    "dDurationMs": 5164,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الكثير"
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 478
+    }, {
+      "utf8": " المستودعات",
+      "tOffsetMs": 661
+    }, {
+      "utf8": " المختلفة",
+      "tOffsetMs": 1433
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 2057
+    }, {
+      "utf8": " تهتم",
+      "tOffsetMs": 2387
+    } ]
+  }, {
+    "tStartMs": 35772,
+    "dDurationMs": 2456,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 35782,
+    "dDurationMs": 4533,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بمسائل"
+    }, {
+      "utf8": " متنوعة",
+      "tOffsetMs": 477
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 918
+    }, {
+      "utf8": " لدينا",
+      "tOffsetMs": 1055
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 1387
+    }, {
+      "utf8": " لمتجر",
+      "tOffsetMs": 1780
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2083
+    }, {
+      "utf8": " وآخر",
+      "tOffsetMs": 2174
+    } ]
+  }, {
+    "tStartMs": 38218,
+    "dDurationMs": 2097,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 38228,
+    "dDurationMs": 4325,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لواجهة"
+    }, {
+      "utf8": " برمجة",
+      "tOffsetMs": 393
+    }, {
+      "utf8": " تطبيقات",
+      "tOffsetMs": 726
+    }, {
+      "utf8": " المدفوعات",
+      "tOffsetMs": 1179
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1724
+    }, {
+      "utf8": " وآخر",
+      "tOffsetMs": 1815
+    } ]
+  }, {
+    "tStartMs": 40305,
+    "dDurationMs": 2248,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 40315,
+    "dDurationMs": 4174,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "للوحة"
+    }, {
+      "utf8": " تحكم",
+      "tOffsetMs": 333
+    }, {
+      "utf8": " الإدارة",
+      "tOffsetMs": 605
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1028
+    }, {
+      "utf8": " وعشرون",
+      "tOffsetMs": 1119
+    }, {
+      "utf8": " مستودعاً",
+      "tOffsetMs": 1512
+    }, {
+      "utf8": " آخر",
+      "tOffsetMs": 2026
+    } ]
+  }, {
+    "tStartMs": 42543,
+    "dDurationMs": 1946,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 42553,
+    "dDurationMs": 4056,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "قد"
+    }, {
+      "utf8": " تحتاج",
+      "tOffsetMs": 151
+    }, {
+      "utf8": " للدخول",
+      "tOffsetMs": 484
+    }, {
+      "utf8": " إليها",
+      "tOffsetMs": 877
+    }, {
+      "utf8": " والخروج",
+      "tOffsetMs": 1210
+    }, {
+      "utf8": " منها",
+      "tOffsetMs": 1664
+    } ]
+  }, {
+    "tStartMs": 44479,
+    "dDurationMs": 2130,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 44489,
+    "dDurationMs": 4237,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أحياناً"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 423
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 554
+    }, {
+      "utf8": " سهل",
+      "tOffsetMs": 757
+    }, {
+      "utf8": " عندما",
+      "tOffsetMs": 960
+    }, {
+      "utf8": " تحتاج",
+      "tOffsetMs": 1279
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1598
+    }, {
+      "utf8": " إجراء",
+      "tOffsetMs": 1801
+    } ]
+  }, {
+    "tStartMs": 46599,
+    "dDurationMs": 2127,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 46609,
+    "dDurationMs": 4276,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تغييرات"
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 435
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 638
+    }, {
+      "utf8": " فقط",
+      "tOffsetMs": 899
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1102
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1247
+    }, {
+      "utf8": " المستودعات",
+      "tOffsetMs": 1450
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2030
+    } ]
+  }, {
+    "tStartMs": 48716,
+    "dDurationMs": 2169,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 48726,
+    "dDurationMs": 4178,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لذا"
+    }, {
+      "utf8": " تقوم",
+      "tOffsetMs": 203
+    }, {
+      "utf8": " فقط",
+      "tOffsetMs": 464
+    }, {
+      "utf8": " بتشغيل",
+      "tOffsetMs": 667
+    }, {
+      "utf8": " الوكيل",
+      "tOffsetMs": 1044
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1421
+    }, {
+      "utf8": " المتجر",
+      "tOffsetMs": 1682
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2030
+    } ]
+  }, {
+    "tStartMs": 50875,
+    "dDurationMs": 2029,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 50885,
+    "dDurationMs": 4219,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الأمر"
+    }, {
+      "utf8": " سهل",
+      "tOffsetMs": 331
+    }, {
+      "utf8": " جداً",
+      "tOffsetMs": 542
+    }, {
+      "utf8": " أيضاً",
+      "tOffsetMs": 813
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 1145
+    }, {
+      "utf8": " أدركت",
+      "tOffsetMs": 1356
+    }, {
+      "utf8": " أثناء",
+      "tOffsetMs": 1687
+    } ]
+  }, {
+    "tStartMs": 52894,
+    "dDurationMs": 2210,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 52904,
+    "dDurationMs": 4430,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "عملك"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 271
+    }, {
+      "utf8": " المتجر",
+      "tOffsetMs": 422
+    }, {
+      "utf8": " أنك",
+      "tOffsetMs": 814
+    }, {
+      "utf8": " بحاجة",
+      "tOffsetMs": 1025
+    }, {
+      "utf8": " لإجراء",
+      "tOffsetMs": 1356
+    }, {
+      "utf8": " تغييرات",
+      "tOffsetMs": 1748
+    } ]
+  }, {
+    "tStartMs": 55094,
+    "dDurationMs": 2240,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 55104,
+    "dDurationMs": 4310,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "على"
+    }, {
+      "utf8": " واجهة",
+      "tOffsetMs": 211
+    }, {
+      "utf8": " برمجة",
+      "tOffsetMs": 542
+    }, {
+      "utf8": " تطبيقات",
+      "tOffsetMs": 874
+    }, {
+      "utf8": " المدفوعات",
+      "tOffsetMs": 1326
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1869
+    }, {
+      "utf8": " لأنه",
+      "tOffsetMs": 1959
+    } ]
+  }, {
+    "tStartMs": 57324,
+    "dDurationMs": 2090,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 57334,
+    "dDurationMs": 4559,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يمكنك"
+    }, {
+      "utf8": " فعلياً",
+      "tOffsetMs": 332
+    }, {
+      "utf8": " جعل",
+      "tOffsetMs": 724
+    }, {
+      "utf8": " وكيلك",
+      "tOffsetMs": 935
+    }, {
+      "utf8": " يعمل",
+      "tOffsetMs": 1266
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1537
+    }, {
+      "utf8": " مجلدات",
+      "tOffsetMs": 1688
+    } ]
+  }, {
+    "tStartMs": 59404,
+    "dDurationMs": 2489,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 59414,
+    "dDurationMs": 4797,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "متعددة"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 392
+    }, {
+      "utf8": " وقت",
+      "tOffsetMs": 542
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 753
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 994
+    }, {
+      "utf8": " وهذا",
+      "tOffsetMs": 1125
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 1445
+    }, {
+      "utf8": " أنك",
+      "tOffsetMs": 1766
+    }, {
+      "utf8": " ستنتهي",
+      "tOffsetMs": 2016
+    } ]
+  }, {
+    "tStartMs": 61883,
+    "dDurationMs": 2328,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 61893,
+    "dDurationMs": 4885,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بطلب"
+    }, {
+      "utf8": " سحب",
+      "tOffsetMs": 321
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 571
+    }, {
+      "utf8": " متجر",
+      "tOffsetMs": 892
+    }, {
+      "utf8": " Acme",
+      "tOffsetMs": 1213
+    }, {
+      "utf8": " ثم",
+      "tOffsetMs": 1391
+    }, {
+      "utf8": " طلب",
+      "tOffsetMs": 1569
+    }, {
+      "utf8": " سحب",
+      "tOffsetMs": 1819
+    }, {
+      "utf8": " آخر",
+      "tOffsetMs": 2069
+    } ]
+  }, {
+    "tStartMs": 64201,
+    "dDurationMs": 2577,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 64211,
+    "dDurationMs": 5374,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "داخل"
+    }, {
+      "utf8": " واجهة",
+      "tOffsetMs": 320
+    }, {
+      "utf8": " برمجة",
+      "tOffsetMs": 713
+    }, {
+      "utf8": " تطبيقات",
+      "tOffsetMs": 1106
+    }, {
+      "utf8": " المدفوعات",
+      "tOffsetMs": 1640
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2282
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 2389
+    } ]
+  }, {
+    "tStartMs": 66768,
+    "dDurationMs": 2817,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 66778,
+    "dDurationMs": 5755,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "ذلك"
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 250
+    }, {
+      "utf8": " نفس",
+      "tOffsetMs": 428
+    }, {
+      "utf8": " الجلسة",
+      "tOffsetMs": 678
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1106
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 1242
+    }, {
+      "utf8": " جيد",
+      "tOffsetMs": 1564
+    }, {
+      "utf8": " ويعمل",
+      "tOffsetMs": 1886
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2347
+    }, {
+      "utf8": " لكن",
+      "tOffsetMs": 2485
+    } ]
+  }, {
+    "tStartMs": 69575,
+    "dDurationMs": 2958,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 69585,
+    "dDurationMs": 6357,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المشكلة"
+    }, {
+      "utf8": " تصبح",
+      "tOffsetMs": 691
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 1060
+    }, {
+      "utf8": " ماذا",
+      "tOffsetMs": 1152
+    }, {
+      "utf8": " تفعل",
+      "tOffsetMs": 1566
+    }, {
+      "utf8": " بالبيانات",
+      "tOffsetMs": 1981
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2810
+    } ]
+  }, {
+    "tStartMs": 72523,
+    "dDurationMs": 3419,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 72533,
+    "dDurationMs": 6450,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وبملفات"
+    }, {
+      "utf8": " التوجيه",
+      "tOffsetMs": 691
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1336
+    }, {
+      "utf8": " وبالأشياء",
+      "tOffsetMs": 1474
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 2349
+    }, {
+      "utf8": " تريد",
+      "tOffsetMs": 2764
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 3178
+    } ]
+  }, {
+    "tStartMs": 75932,
+    "dDurationMs": 3051,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 75942,
+    "dDurationMs": 5919,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تتوفر"
+    }, {
+      "utf8": " لدى",
+      "tOffsetMs": 506
+    }, {
+      "utf8": " الوكيل",
+      "tOffsetMs": 829
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1427
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 1658
+    }, {
+      "utf8": " جلسة",
+      "tOffsetMs": 1888
+    }, {
+      "utf8": "؟",
+      "tOffsetMs": 2256
+    }, {
+      "utf8": " ما",
+      "tOffsetMs": 2449
+    }, {
+      "utf8": " يحدث",
+      "tOffsetMs": 2660
+    } ]
+  }, {
+    "tStartMs": 78973,
+    "dDurationMs": 2888,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 78983,
+    "dDurationMs": 5586,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "غالباً"
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 550
+    }, {
+      "utf8": " أنك",
+      "tOffsetMs": 762
+    }, {
+      "utf8": " ستمتلك",
+      "tOffsetMs": 1058
+    }, {
+      "utf8": " مهاراتك",
+      "tOffsetMs": 1608
+    }, {
+      "utf8": " وأدواتك",
+      "tOffsetMs": 2243
+    } ]
+  }, {
+    "tStartMs": 81851,
+    "dDurationMs": 2718,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 81861,
+    "dDurationMs": 5585,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وملف"
+    }, {
+      "utf8": " agents.md",
+      "tOffsetMs": 380
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 804
+    }, {
+      "utf8": " بك",
+      "tOffsetMs": 1269
+    }, {
+      "utf8": " وربما",
+      "tOffsetMs": 1481
+    }, {
+      "utf8": " حتى",
+      "tOffsetMs": 1946
+    }, {
+      "utf8": " روابط",
+      "tOffsetMs": 2242
+    } ]
+  }, {
+    "tStartMs": 84559,
+    "dDurationMs": 2887,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 84569,
+    "dDurationMs": 5673,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "ويكي"
+    }, {
+      "utf8": " وأشياء",
+      "tOffsetMs": 381
+    }, {
+      "utf8": " أخرى",
+      "tOffsetMs": 931
+    }, {
+      "utf8": " مكررة",
+      "tOffsetMs": 1312
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1777
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 2158
+    } ]
+  }, {
+    "tStartMs": 87436,
+    "dDurationMs": 2806,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 87446,
+    "dDurationMs": 5523,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "متعددة"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 508
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 651
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 909
+    }, {
+      "utf8": " أنه",
+      "tOffsetMs": 1242
+    }, {
+      "utf8": " كلما",
+      "tOffsetMs": 1501
+    }, {
+      "utf8": " بدأت",
+      "tOffsetMs": 1834
+    }, {
+      "utf8": " جلسة",
+      "tOffsetMs": 2167
+    }, {
+      "utf8": " وكيل",
+      "tOffsetMs": 2500
+    } ]
+  }, {
+    "tStartMs": 90232,
+    "dDurationMs": 2737,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 90242,
+    "dDurationMs": 5165,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "،"
+    }, {
+      "utf8": " سيكون",
+      "tOffsetMs": 111
+    }, {
+      "utf8": " بإمكانك",
+      "tOffsetMs": 518
+    }, {
+      "utf8": " الوصول",
+      "tOffsetMs": 1073
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1554
+    }, {
+      "utf8": " تلك",
+      "tOffsetMs": 1813
+    }, {
+      "utf8": " الأشياء",
+      "tOffsetMs": 2072
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2590
+    } ]
+  }, {
+    "tStartMs": 92959,
+    "dDurationMs": 2448,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 92969,
+    "dDurationMs": 4789,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لذا"
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 247
+    }, {
+      "utf8": " بدأتها",
+      "tOffsetMs": 494
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 954
+    }, {
+      "utf8": " المتجر",
+      "tOffsetMs": 1130
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1554
+    }, {
+      "utf8": " فستظل",
+      "tOffsetMs": 1660
+    }, {
+      "utf8": " تمتلك",
+      "tOffsetMs": 2049
+    } ]
+  }, {
+    "tStartMs": 95397,
+    "dDurationMs": 2361,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 95407,
+    "dDurationMs": 4830,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "نفس"
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 247
+    }, {
+      "utf8": " والأدوات",
+      "tOffsetMs": 848
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1413
+    }, {
+      "utf8": " لكن",
+      "tOffsetMs": 1549
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 1793
+    }, {
+      "utf8": " يمثل",
+      "tOffsetMs": 2037
+    } ]
+  }, {
+    "tStartMs": 97748,
+    "dDurationMs": 2489,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 97758,
+    "dDurationMs": 4993,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "إزعاجاً"
+    }, {
+      "utf8": " كبيراً",
+      "tOffsetMs": 524
+    }, {
+      "utf8": " لأنك",
+      "tOffsetMs": 978
+    }, {
+      "utf8": " ستحتاج",
+      "tOffsetMs": 1292
+    }, {
+      "utf8": " بعد",
+      "tOffsetMs": 1746
+    }, {
+      "utf8": " ذلك",
+      "tOffsetMs": 1990
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 2235
+    } ]
+  }, {
+    "tStartMs": 100227,
+    "dDurationMs": 2524,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 100237,
+    "dDurationMs": 4818,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "إبقاء"
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 384
+    }, {
+      "utf8": " تلك",
+      "tOffsetMs": 559
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 803
+    }, {
+      "utf8": " والأدوات",
+      "tOffsetMs": 1397
+    }, {
+      "utf8": " متزامنة",
+      "tOffsetMs": 1990
+    } ]
+  }, {
+    "tStartMs": 102741,
+    "dDurationMs": 2314,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 102751,
+    "dDurationMs": 4584,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "عبر"
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 244
+    }, {
+      "utf8": " مختلفة",
+      "tOffsetMs": 838
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1257
+    }, {
+      "utf8": " ربما",
+      "tOffsetMs": 1361
+    }, {
+      "utf8": " عبر",
+      "tOffsetMs": 1676
+    }, {
+      "utf8": " 30",
+      "tOffsetMs": 1920
+    }, {
+      "utf8": " أو",
+      "tOffsetMs": 2025
+    }, {
+      "utf8": " 40",
+      "tOffsetMs": 2199
+    } ]
+  }, {
+    "tStartMs": 105045,
+    "dDurationMs": 2290,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 105055,
+    "dDurationMs": 4846,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مستودعاً"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 559
+    }, {
+      "utf8": " يمكنك",
+      "tOffsetMs": 694
+    }, {
+      "utf8": " وضع",
+      "tOffsetMs": 1065
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 1301
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1470
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 1706
+    } ]
+  }, {
+    "tStartMs": 107325,
+    "dDurationMs": 2576,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 107335,
+    "dDurationMs": 4862,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "والأدوات"
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 574
+    }, {
+      "utf8": " الأجهزة",
+      "tOffsetMs": 878
+    }, {
+      "utf8": " المحلية",
+      "tOffsetMs": 1384
+    }, {
+      "utf8": " للمستخدمين",
+      "tOffsetMs": 1891
+    } ]
+  }, {
+    "tStartMs": 109891,
+    "dDurationMs": 2306,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 109901,
+    "dDurationMs": 4457,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "،"
+    }, {
+      "utf8": " أي",
+      "tOffsetMs": 101
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 270
+    }, {
+      "utf8": " مجلد",
+      "tOffsetMs": 439
+    }, {
+      "utf8": " المستخدم",
+      "tOffsetMs": 743
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 1317
+    }, {
+      "utf8": " بهم",
+      "tOffsetMs": 1688
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1891
+    }, {
+      "utf8": " بحيث",
+      "tOffsetMs": 1992
+    } ]
+  }, {
+    "tStartMs": 112187,
+    "dDurationMs": 2171,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 112197,
+    "dDurationMs": 4424,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يمكن"
+    }, {
+      "utf8": " الوصول",
+      "tOffsetMs": 304
+    }, {
+      "utf8": " إليها",
+      "tOffsetMs": 743
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1114
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 1283
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 1452
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1755
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1924
+    } ]
+  }, {
+    "tStartMs": 114348,
+    "dDurationMs": 2273,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 114358,
+    "dDurationMs": 5058,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودعات"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 675
+    }, {
+      "utf8": " ولكن",
+      "tOffsetMs": 809
+    }, {
+      "utf8": " لأنها",
+      "tOffsetMs": 1153
+    }, {
+      "utf8": " غير",
+      "tOffsetMs": 1574
+    }, {
+      "utf8": " مرئية",
+      "tOffsetMs": 1842
+    } ]
+  }, {
+    "tStartMs": 116611,
+    "dDurationMs": 2805,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 116621,
+    "dDurationMs": 5475,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "للمستخدم"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 613
+    }, {
+      "utf8": " فهذا",
+      "tOffsetMs": 728
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 1072
+    }, {
+      "utf8": " أنها",
+      "tOffsetMs": 1417
+    }, {
+      "utf8": " لن",
+      "tOffsetMs": 1762
+    }, {
+      "utf8": " يتم",
+      "tOffsetMs": 1953
+    }, {
+      "utf8": " تحديثها",
+      "tOffsetMs": 2221
+    } ]
+  }, {
+    "tStartMs": 119406,
+    "dDurationMs": 2690,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 119416,
+    "dDurationMs": 5101,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بمرور"
+    }, {
+      "utf8": " الوقت",
+      "tOffsetMs": 422
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 804
+    }, {
+      "utf8": " وربما",
+      "tOffsetMs": 919
+    }, {
+      "utf8": " ستصبح",
+      "tOffsetMs": 1340
+    }, {
+      "utf8": " قديمة",
+      "tOffsetMs": 1762
+    }, {
+      "utf8": " مقارنة",
+      "tOffsetMs": 2183
+    } ]
+  }, {
+    "tStartMs": 122086,
+    "dDurationMs": 2431,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 122096,
+    "dDurationMs": 4990,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بالإعداد"
+    }, {
+      "utf8": " العام",
+      "tOffsetMs": 651
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1034
+    }, {
+      "utf8": " وأيضاً",
+      "tOffsetMs": 1173
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1601
+    }, {
+      "utf8": " أعتبر",
+      "tOffsetMs": 1708
+    }, {
+      "utf8": " مجلد",
+      "tOffsetMs": 2100
+    } ]
+  }, {
+    "tStartMs": 124507,
+    "dDurationMs": 2579,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 124517,
+    "dDurationMs": 5244,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستخدم"
+    }, {
+      "utf8": " المكان",
+      "tOffsetMs": 607
+    }, {
+      "utf8": " الذي",
+      "tOffsetMs": 1071
+    }, {
+      "utf8": " يمكن",
+      "tOffsetMs": 1392
+    }, {
+      "utf8": " فيه",
+      "tOffsetMs": 1713
+    }, {
+      "utf8": " للمستخدم",
+      "tOffsetMs": 1963
+    } ]
+  }, {
+    "tStartMs": 127076,
+    "dDurationMs": 2685,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 127086,
+    "dDurationMs": 4960,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "إجراء"
+    }, {
+      "utf8": " تغييرات",
+      "tOffsetMs": 393
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 928
+    }, {
+      "utf8": " إعداده",
+      "tOffsetMs": 1178
+    }, {
+      "utf8": " بما",
+      "tOffsetMs": 1641
+    }, {
+      "utf8": " يناسب",
+      "tOffsetMs": 1891
+    }, {
+      "utf8": " طريقة",
+      "tOffsetMs": 2283
+    } ]
+  }, {
+    "tStartMs": 129751,
+    "dDurationMs": 2295,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 129761,
+    "dDurationMs": 4289,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "عمله"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 287
+    }, {
+      "utf8": " بدلاً",
+      "tOffsetMs": 394
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 786
+    }, {
+      "utf8": " الطريقة",
+      "tOffsetMs": 965
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 1500
+    }, {
+      "utf8": " يريدها",
+      "tOffsetMs": 1821
+    } ]
+  }, {
+    "tStartMs": 132036,
+    "dDurationMs": 2014,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 132046,
+    "dDurationMs": 3954,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الفريق"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 428
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 564
+    }, {
+      "utf8": " لا",
+      "tOffsetMs": 761
+    }, {
+      "utf8": " يبدو",
+      "tOffsetMs": 903
+    }, {
+      "utf8": " أي",
+      "tOffsetMs": 1157
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1298
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1439
+    }, {
+      "utf8": " الحلول",
+      "tOffsetMs": 1637
+    } ]
+  }, {
+    "tStartMs": 134040,
+    "dDurationMs": 1960,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 134050,
+    "dDurationMs": 4069,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "رائعاً"
+    }, {
+      "utf8": " بشكل",
+      "tOffsetMs": 368
+    }, {
+      "utf8": " خاص",
+      "tOffsetMs": 622
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 791
+    }, {
+      "utf8": " وهذا",
+      "tOffsetMs": 876
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 1130
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 1385
+    }, {
+      "utf8": " الأشخاص",
+      "tOffsetMs": 1526
+    } ]
+  }, {
+    "tStartMs": 135990,
+    "dDurationMs": 2129,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 136000,
+    "dDurationMs": 4209,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الذين"
+    }, {
+      "utf8": " يعملون",
+      "tOffsetMs": 310
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 678
+    }, {
+      "utf8": " بيئات",
+      "tOffsetMs": 819
+    }, {
+      "utf8": " تعتمد",
+      "tOffsetMs": 1130
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1441
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 1638
+    } ]
+  }, {
+    "tStartMs": 138109,
+    "dDurationMs": 2100,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 138119,
+    "dDurationMs": 5039,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "متعددة"
+    }, {
+      "utf8": " يشعرون",
+      "tOffsetMs": 367
+    }, {
+      "utf8": " بأنه",
+      "tOffsetMs": 734
+    }, {
+      "utf8": " ليس",
+      "tOffsetMs": 988
+    }, {
+      "utf8": " لديهم",
+      "tOffsetMs": 1186
+    }, {
+      "utf8": " خيارات",
+      "tOffsetMs": 1497
+    }, {
+      "utf8": " جيدة",
+      "tOffsetMs": 1864
+    } ]
+  }, {
+    "tStartMs": 140199,
+    "dDurationMs": 2959,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 140209,
+    "dDurationMs": 5330,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 129
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 381
+    }, {
+      "utf8": " الحل",
+      "tOffsetMs": 507
+    }, {
+      "utf8": " الذي",
+      "tOffsetMs": 886
+    }, {
+      "utf8": " أقترحه",
+      "tOffsetMs": 1265
+    }, {
+      "utf8": " يسمى",
+      "tOffsetMs": 1812
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 2191
+    }, {
+      "utf8": "المستودع",
+      "tOffsetMs": 2233
+    } ]
+  }, {
+    "tStartMs": 143148,
+    "dDurationMs": 2391,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 143158,
+    "dDurationMs": 4835,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الرئيسي"
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 589
+    }, {
+      "utf8": "(",
+      "tOffsetMs": 631
+    }, {
+      "utf8": "home",
+      "tOffsetMs": 673
+    }, {
+      "utf8": " repo",
+      "tOffsetMs": 884
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1052
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1094
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1237
+    }, {
+      "utf8": " تقنية",
+      "tOffsetMs": 1465
+    }, {
+      "utf8": " أستخدمها",
+      "tOffsetMs": 1825
+    } ]
+  }, {
+    "tStartMs": 145529,
+    "dDurationMs": 2464,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 145539,
+    "dDurationMs": 4940,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "منذ"
+    }, {
+      "utf8": " فترة",
+      "tOffsetMs": 229
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 491
+    }, {
+      "utf8": " حيث",
+      "tOffsetMs": 589
+    }, {
+      "utf8": " أمتلك",
+      "tOffsetMs": 818
+    }, {
+      "utf8": " مستودعاً",
+      "tOffsetMs": 1178
+    }, {
+      "utf8": " واحداً",
+      "tOffsetMs": 1734
+    }, {
+      "utf8": " يمثل",
+      "tOffsetMs": 2160
+    } ]
+  }, {
+    "tStartMs": 147983,
+    "dDurationMs": 2496,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 147993,
+    "dDurationMs": 4547,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "موطناً"
+    }, {
+      "utf8": " لكل",
+      "tOffsetMs": 425
+    }, {
+      "utf8": " مهاراتي",
+      "tOffsetMs": 654
+    }, {
+      "utf8": " وملفات",
+      "tOffsetMs": 1145
+    }, {
+      "utf8": " التوجيه",
+      "tOffsetMs": 1570
+    }, {
+      "utf8": " الخاصة",
+      "tOffsetMs": 2061
+    } ]
+  }, {
+    "tStartMs": 150469,
+    "dDurationMs": 2071,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 150479,
+    "dDurationMs": 4449,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بي"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 131
+    }, {
+      "utf8": " كما",
+      "tOffsetMs": 229
+    }, {
+      "utf8": " أحتفظ",
+      "tOffsetMs": 458
+    }, {
+      "utf8": " فيه",
+      "tOffsetMs": 818
+    }, {
+      "utf8": " بويكي",
+      "tOffsetMs": 1047
+    }, {
+      "utf8": " ومجموعة",
+      "tOffsetMs": 1407
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1898
+    } ]
+  }, {
+    "tStartMs": 152530,
+    "dDurationMs": 2398,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 152540,
+    "dDurationMs": 4583,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الأدوات"
+    }, {
+      "utf8": " المخصصة",
+      "tOffsetMs": 491
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 982
+    }, {
+      "utf8": " تعيش",
+      "tOffsetMs": 1276
+    }, {
+      "utf8": " جميعها",
+      "tOffsetMs": 1571
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1996
+    }, {
+      "utf8": " ذلك",
+      "tOffsetMs": 2159
+    } ]
+  }, {
+    "tStartMs": 154918,
+    "dDurationMs": 2205,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 154928,
+    "dDurationMs": 4692,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودع"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 524
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 657
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 896
+    }, {
+      "utf8": " أنني",
+      "tOffsetMs": 1204
+    }, {
+      "utf8": " عندما",
+      "tOffsetMs": 1511
+    }, {
+      "utf8": " أشغل",
+      "tOffsetMs": 1888
+    } ]
+  }, {
+    "tStartMs": 157113,
+    "dDurationMs": 2507,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 157123,
+    "dDurationMs": 4611,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الوكيل"
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 445
+    }, {
+      "utf8": " بي",
+      "tOffsetMs": 821
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 958
+    }, {
+      "utf8": " فأنا",
+      "tOffsetMs": 1061
+    }, {
+      "utf8": " أشغله",
+      "tOffsetMs": 1368
+    }, {
+      "utf8": " دائماً",
+      "tOffsetMs": 1744
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 2189
+    } ]
+  }, {
+    "tStartMs": 159610,
+    "dDurationMs": 2124,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 159620,
+    "dDurationMs": 4304,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "هذا"
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 239
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 821
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1299
+    }, {
+      "utf8": " وهذا",
+      "tOffsetMs": 1434
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 1700
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 1966
+    } ]
+  }, {
+    "tStartMs": 161724,
+    "dDurationMs": 2200,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 161734,
+    "dDurationMs": 4113,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الوكيل"
+    }, {
+      "utf8": " الذي",
+      "tOffsetMs": 385
+    }, {
+      "utf8": " يعمل",
+      "tOffsetMs": 651
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 917
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1184
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 1687
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2101
+    } ]
+  }, {
+    "tStartMs": 163914,
+    "dDurationMs": 1933,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 163924,
+    "dDurationMs": 3935,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تماماً"
+    }, {
+      "utf8": " مثل",
+      "tOffsetMs": 384
+    }, {
+      "utf8": " أي",
+      "tOffsetMs": 592
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 740
+    }, {
+      "utf8": " عادي",
+      "tOffsetMs": 1124
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1361
+    }, {
+      "utf8": " قادر",
+      "tOffsetMs": 1450
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1716
+    } ]
+  }, {
+    "tStartMs": 165837,
+    "dDurationMs": 2022,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 165847,
+    "dDurationMs": 4202,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الوصول"
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 385
+    }, {
+      "utf8": " واجهة",
+      "tOffsetMs": 592
+    }, {
+      "utf8": " المتجر",
+      "tOffsetMs": 917
+    }, {
+      "utf8": " وواجهة",
+      "tOffsetMs": 1302
+    }, {
+      "utf8": " برمجة",
+      "tOffsetMs": 1687
+    } ]
+  }, {
+    "tStartMs": 167849,
+    "dDurationMs": 2200,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 167859,
+    "dDurationMs": 4409,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تطبيقات"
+    }, {
+      "utf8": " المدفوعات",
+      "tOffsetMs": 444
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 977
+    }, {
+      "utf8": " والعمل",
+      "tOffsetMs": 1066
+    }, {
+      "utf8": " عبر",
+      "tOffsetMs": 1450
+    }, {
+      "utf8": " الكثير",
+      "tOffsetMs": 1657
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 2042
+    } ]
+  }, {
+    "tStartMs": 170039,
+    "dDurationMs": 2229,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 170049,
+    "dDurationMs": 4379,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودعات"
+    }, {
+      "utf8": " المختلفة",
+      "tOffsetMs": 621
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1124
+    }, {
+      "utf8": " وقت",
+      "tOffsetMs": 1272
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 1480
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1716
+    }, {
+      "utf8": " وجلب",
+      "tOffsetMs": 1805
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 2071
+    } ]
+  }, {
+    "tStartMs": 172258,
+    "dDurationMs": 2170,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 172268,
+    "dDurationMs": 4566,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "السياقات"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 503
+    }, {
+      "utf8": " يحتاجها",
+      "tOffsetMs": 770
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1184
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 1314
+    }, {
+      "utf8": " ربما",
+      "tOffsetMs": 1551
+    }, {
+      "utf8": " تفكر",
+      "tOffsetMs": 1856
+    } ]
+  }, {
+    "tStartMs": 174418,
+    "dDurationMs": 2416,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 174428,
+    "dDurationMs": 5107,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الآن"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 271
+    }, {
+      "utf8": " هل",
+      "tOffsetMs": 373
+    }, {
+      "utf8": " يمكننا",
+      "tOffsetMs": 542
+    }, {
+      "utf8": " إلقاء",
+      "tOffsetMs": 983
+    }, {
+      "utf8": " نظرة",
+      "tOffsetMs": 1355
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1660
+    }, {
+      "utf8": " مستودعك",
+      "tOffsetMs": 1897
+    } ]
+  }, {
+    "tStartMs": 176824,
+    "dDurationMs": 2711,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 176834,
+    "dDurationMs": 5047,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الرئيسي"
+    }, {
+      "utf8": "؟",
+      "tOffsetMs": 474
+    }, {
+      "utf8": " حسناً",
+      "tOffsetMs": 642
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1167
+    }, {
+      "utf8": " ها",
+      "tOffsetMs": 1324
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 1587
+    }, {
+      "utf8": " ذا",
+      "tOffsetMs": 1850
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2060
+    }, {
+      "utf8": " الأشياء",
+      "tOffsetMs": 2213
+    } ]
+  }, {
+    "tStartMs": 179525,
+    "dDurationMs": 2356,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 179535,
+    "dDurationMs": 4365,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الرئيسية"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 554
+    }, {
+      "utf8": " نحتاج",
+      "tOffsetMs": 847
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1205
+    }, {
+      "utf8": " الانتباه",
+      "tOffsetMs": 1434
+    }, {
+      "utf8": " إليها",
+      "tOffsetMs": 1987
+    } ]
+  }, {
+    "tStartMs": 181871,
+    "dDurationMs": 2029,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 181881,
+    "dDurationMs": 4332,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "هنا"
+    }, {
+      "utf8": " هي",
+      "tOffsetMs": 228
+    }, {
+      "utf8": " بالطبع",
+      "tOffsetMs": 391
+    }, {
+      "utf8": " ملف",
+      "tOffsetMs": 814
+    }, {
+      "utf8": " claw.md",
+      "tOffsetMs": 1042
+    }, {
+      "utf8": " الموجود",
+      "tOffsetMs": 1303
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 1791
+    } ]
+  }, {
+    "tStartMs": 183890,
+    "dDurationMs": 2323,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 183900,
+    "dDurationMs": 4626,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "والذي"
+    }, {
+      "utf8": " سنتطرق",
+      "tOffsetMs": 359
+    }, {
+      "utf8": " إليه",
+      "tOffsetMs": 782
+    }, {
+      "utf8": " بعد",
+      "tOffsetMs": 1075
+    }, {
+      "utf8": " قليل",
+      "tOffsetMs": 1304
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1564
+    }, {
+      "utf8": " ولكن",
+      "tOffsetMs": 1662
+    }, {
+      "utf8": " الأهم",
+      "tOffsetMs": 1955
+    } ]
+  }, {
+    "tStartMs": 186203,
+    "dDurationMs": 2323,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 186213,
+    "dDurationMs": 4696,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "من"
+    }, {
+      "utf8": " ذلك",
+      "tOffsetMs": 163
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 391
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 554
+    }, {
+      "utf8": " الموجودة",
+      "tOffsetMs": 1108
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1662
+    }, {
+      "utf8": " الأعلى",
+      "tOffsetMs": 1825
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2216
+    } ]
+  }, {
+    "tStartMs": 188516,
+    "dDurationMs": 2393,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 188526,
+    "dDurationMs": 5554,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "هنا"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 228
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 391
+    }, {
+      "utf8": "clawed",
+      "tOffsetMs": 424
+    }, {
+      "utf8": " skills",
+      "tOffsetMs": 652
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 847
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 880
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1013
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 1343
+    }, {
+      "utf8": " هي",
+      "tOffsetMs": 2147
+    } ]
+  }, {
+    "tStartMs": 190899,
+    "dDurationMs": 3181,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 190909,
+    "dDurationMs": 6375,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مهارات"
+    }, {
+      "utf8": " خاصة",
+      "tOffsetMs": 614
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 992
+    }, {
+      "utf8": " بمعنى",
+      "tOffsetMs": 1140
+    }, {
+      "utf8": " آخر",
+      "tOffsetMs": 1636
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1907
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 2042
+    }, {
+      "utf8": " مهارات",
+      "tOffsetMs": 2358
+    }, {
+      "utf8": " لا",
+      "tOffsetMs": 2945
+    } ]
+  }, {
+    "tStartMs": 194070,
+    "dDurationMs": 3214,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 194080,
+    "dDurationMs": 6657,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أريد"
+    }, {
+      "utf8": " إصدارها",
+      "tOffsetMs": 406
+    }, {
+      "utf8": " لأي",
+      "tOffsetMs": 1083
+    }, {
+      "utf8": " سبب",
+      "tOffsetMs": 1399
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1715
+    }, {
+      "utf8": " الأسباب",
+      "tOffsetMs": 1940
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2572
+    }, {
+      "utf8": " لأنها",
+      "tOffsetMs": 2708
+    } ]
+  }, {
+    "tStartMs": 197274,
+    "dDurationMs": 3463,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 197284,
+    "dDurationMs": 6475,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "جيدة"
+    }, {
+      "utf8": " للغاية",
+      "tOffsetMs": 406
+    }, {
+      "utf8": " وحساسة",
+      "tOffsetMs": 993
+    }, {
+      "utf8": " جداً",
+      "tOffsetMs": 1580
+    }, {
+      "utf8": " لعملي",
+      "tOffsetMs": 1986
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2437
+    }, {
+      "utf8": " وهذا",
+      "tOffsetMs": 2583
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 3018
+    } ]
+  }, {
+    "tStartMs": 200727,
+    "dDurationMs": 3032,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 200737,
+    "dDurationMs": 5298,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أنها"
+    }, {
+      "utf8": " متاحة",
+      "tOffsetMs": 435
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 967
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 1209
+    }, {
+      "utf8": " جلسة",
+      "tOffsetMs": 1451
+    }, {
+      "utf8": " عمل",
+      "tOffsetMs": 1886
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2176
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 2325
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 2537
+    }, {
+      "utf8": " كانت",
+      "tOffsetMs": 2749
+    } ]
+  }, {
+    "tStartMs": 203749,
+    "dDurationMs": 2286,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 203759,
+    "dDurationMs": 4581,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مؤسستك"
+    }, {
+      "utf8": " تمتلك",
+      "tOffsetMs": 395
+    }, {
+      "utf8": " قائمة",
+      "tOffsetMs": 728
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1062
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 1214
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 1729
+    }, {
+      "utf8": " تريد",
+      "tOffsetMs": 2002
+    } ]
+  }, {
+    "tStartMs": 206025,
+    "dDurationMs": 2315,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 206035,
+    "dDurationMs": 4639,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "إضافتها"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 424
+    }, {
+      "utf8": " فيجب",
+      "tOffsetMs": 515
+    }, {
+      "utf8": " عليك",
+      "tOffsetMs": 788
+    }, {
+      "utf8": " إضافتها",
+      "tOffsetMs": 1061
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1516
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1789
+    } ]
+  }, {
+    "tStartMs": 208330,
+    "dDurationMs": 2344,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 208340,
+    "dDurationMs": 4944,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الرئيسي"
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 455
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 637
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 768
+    }, {
+      "utf8": " أيضاً",
+      "tOffsetMs": 1011
+    }, {
+      "utf8": " مكان",
+      "tOffsetMs": 1394
+    }, {
+      "utf8": " يمكنك",
+      "tOffsetMs": 1707
+    }, {
+      "utf8": " فيه",
+      "tOffsetMs": 2090
+    } ]
+  }, {
+    "tStartMs": 210664,
+    "dDurationMs": 2620,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 210674,
+    "dDurationMs": 5136,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تهيئة"
+    }, {
+      "utf8": " الإعدادات",
+      "tOffsetMs": 382
+    }, {
+      "utf8": " بطريقة",
+      "tOffsetMs": 1044
+    }, {
+      "utf8": " ذات",
+      "tOffsetMs": 1496
+    }, {
+      "utf8": " إصدارات",
+      "tOffsetMs": 1740
+    }, {
+      "utf8": " أيضاً",
+      "tOffsetMs": 2262
+    } ]
+  }, {
+    "tStartMs": 213274,
+    "dDurationMs": 2536,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 213284,
+    "dDurationMs": 4660,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 135
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 392
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 650
+    }, {
+      "utf8": " تشغل",
+      "tOffsetMs": 907
+    }, {
+      "utf8": " وكيلاً",
+      "tOffsetMs": 1238
+    }, {
+      "utf8": " متسقاً",
+      "tOffsetMs": 1716
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 2195
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2415
+    } ]
+  }, {
+    "tStartMs": 215800,
+    "dDurationMs": 2144,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 215810,
+    "dDurationMs": 4304,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يمكنك"
+    }, {
+      "utf8": " الحصول",
+      "tOffsetMs": 405
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 883
+    }, {
+      "utf8": " إعدادات",
+      "tOffsetMs": 1140
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1692
+    }, {
+      "utf8": " ملف",
+      "tOffsetMs": 1876
+    } ]
+  }, {
+    "tStartMs": 217934,
+    "dDurationMs": 2180,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 217944,
+    "dDurationMs": 4946,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "settings.json"
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 515
+    }, {
+      "utf8": " بك",
+      "tOffsetMs": 919
+    }, {
+      "utf8": " والتي",
+      "tOffsetMs": 1103
+    }, {
+      "utf8": " تنتشر",
+      "tOffsetMs": 1508
+    }, {
+      "utf8": " عبر",
+      "tOffsetMs": 1913
+    } ]
+  }, {
+    "tStartMs": 220104,
+    "dDurationMs": 2786,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 220114,
+    "dDurationMs": 5726,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مؤسستك"
+    }, {
+      "utf8": " بأكملها",
+      "tOffsetMs": 478
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1030
+    }, {
+      "utf8": " الفور",
+      "tOffsetMs": 1288
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1656
+    }, {
+      "utf8": " تأتي",
+      "tOffsetMs": 1793
+    }, {
+      "utf8": " الأمور",
+      "tOffsetMs": 2195
+    } ]
+  }, {
+    "tStartMs": 222880,
+    "dDurationMs": 2960,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 222890,
+    "dDurationMs": 5944,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الهيكلية"
+    }, {
+      "utf8": " الرئيسية",
+      "tOffsetMs": 760
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1519
+    }, {
+      "utf8": " ملف",
+      "tOffsetMs": 1743
+    }, {
+      "utf8": " claw.md",
+      "tOffsetMs": 2056
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 2413
+    }, {
+      "utf8": " أو",
+      "tOffsetMs": 2726
+    } ]
+  }, {
+    "tStartMs": 225830,
+    "dDurationMs": 3004,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 225840,
+    "dDurationMs": 6033,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "agents.md"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 402
+    }, {
+      "utf8": " وداخله",
+      "tOffsetMs": 536
+    }, {
+      "utf8": " يمكنك",
+      "tOffsetMs": 1117
+    }, {
+      "utf8": " رؤية",
+      "tOffsetMs": 1609
+    }, {
+      "utf8": " مؤشرات",
+      "tOffsetMs": 2011
+    }, {
+      "utf8": " تنقل",
+      "tOffsetMs": 2592
+    } ]
+  }, {
+    "tStartMs": 228824,
+    "dDurationMs": 3049,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 228834,
+    "dDurationMs": 5308,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "إلى"
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 313
+    }, {
+      "utf8": " المستودعات",
+      "tOffsetMs": 536
+    }, {
+      "utf8": " المهمة",
+      "tOffsetMs": 1475
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 2056
+    }, {
+      "utf8": " أتعامل",
+      "tOffsetMs": 2458
+    } ]
+  }, {
+    "tStartMs": 231863,
+    "dDurationMs": 2279,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 231873,
+    "dDurationMs": 4446,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "معها"
+    }, {
+      "utf8": " يومياً",
+      "tOffsetMs": 402
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 939
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 1084
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 1308
+    }, {
+      "utf8": " كانت",
+      "tOffsetMs": 1532
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 1820
+    }, {
+      "utf8": " أي",
+      "tOffsetMs": 2108
+    } ]
+  }, {
+    "tStartMs": 234132,
+    "dDurationMs": 2187,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 234142,
+    "dDurationMs": 3901,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تغييرات"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 480
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 640
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1185
+    }, {
+      "utf8": " سبيل",
+      "tOffsetMs": 1409
+    }, {
+      "utf8": " المثال",
+      "tOffsetMs": 1697
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2081
+    } ]
+  }, {
+    "tStartMs": 236309,
+    "dDurationMs": 1734,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 236319,
+    "dDurationMs": 3458,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "فإنها"
+    }, {
+      "utf8": " تكون",
+      "tOffsetMs": 353
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 641
+    }, {
+      "utf8": " repos",
+      "tOffsetMs": 801
+    }, {
+      "utf8": " AI",
+      "tOffsetMs": 993
+    }, {
+      "utf8": " skills",
+      "tOffsetMs": 1089
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1281
+    }, {
+      "utf8": " أي",
+      "tOffsetMs": 1414
+    }, {
+      "utf8": " شيء",
+      "tOffsetMs": 1543
+    } ]
+  }, {
+    "tStartMs": 238033,
+    "dDurationMs": 1744,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 238043,
+    "dDurationMs": 3675,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يحتاج"
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 285
+    }, {
+      "utf8": " تحديث",
+      "tOffsetMs": 466
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 751
+    }, {
+      "utf8": " مدير",
+      "tOffsetMs": 880
+    }, {
+      "utf8": " فيديو",
+      "tOffsetMs": 1113
+    }, {
+      "utf8": " الدورة",
+      "tOffsetMs": 1398
+    } ]
+  }, {
+    "tStartMs": 239767,
+    "dDurationMs": 1951,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 239777,
+    "dDurationMs": 3649,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "التدريبية"
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 492
+    }, {
+      "utf8": " بي",
+      "tOffsetMs": 776
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 880
+    }, {
+      "utf8": " والذي",
+      "tOffsetMs": 957
+    }, {
+      "utf8": " ربما",
+      "tOffsetMs": 1242
+    }, {
+      "utf8": " يكون",
+      "tOffsetMs": 1475
+    }, {
+      "utf8": " أكثر",
+      "tOffsetMs": 1708
+    } ]
+  }, {
+    "tStartMs": 241708,
+    "dDurationMs": 1718,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 241718,
+    "dDurationMs": 3313,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مستودعاتي"
+    }, {
+      "utf8": " نشاطاً",
+      "tOffsetMs": 492
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 828
+    }, {
+      "utf8": " حيث",
+      "tOffsetMs": 957
+    }, {
+      "utf8": " الالتزامات",
+      "tOffsetMs": 1139
+    }, {
+      "utf8": " (",
+      "tOffsetMs": 1682
+    } ]
+  }, {
+    "tStartMs": 243416,
+    "dDurationMs": 1615,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 243426,
+    "dDurationMs": 3562,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "commits"
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 181
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 207
+    }, {
+      "utf8": " فإنه",
+      "tOffsetMs": 285
+    }, {
+      "utf8": " يذهب",
+      "tOffsetMs": 518
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 750
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 932
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1139
+    }, {
+      "utf8": " أي",
+      "tOffsetMs": 1265
+    }, {
+      "utf8": " شيء",
+      "tOffsetMs": 1406
+    } ]
+  }, {
+    "tStartMs": 245021,
+    "dDurationMs": 1967,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 245031,
+    "dDurationMs": 4068,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لمشروع"
+    }, {
+      "utf8": " الدفعة",
+      "tOffsetMs": 368
+    }, {
+      "utf8": " 05",
+      "tOffsetMs": 737
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 794
+    }, {
+      "utf8": " وأي",
+      "tOffsetMs": 879
+    }, {
+      "utf8": " شيء",
+      "tOffsetMs": 1077
+    }, {
+      "utf8": " لمستودع",
+      "tOffsetMs": 1276
+    }, {
+      "utf8": " دورة",
+      "tOffsetMs": 1701
+    } ]
+  }, {
+    "tStartMs": 246978,
+    "dDurationMs": 2121,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 246988,
+    "dDurationMs": 4100,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "البرمجة"
+    }, {
+      "utf8": " بالذكاء",
+      "tOffsetMs": 425
+    }, {
+      "utf8": " الاصطناعي",
+      "tOffsetMs": 850
+    }, {
+      "utf8": " المكثفة",
+      "tOffsetMs": 1389
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1786
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 1915
+    } ]
+  }, {
+    "tStartMs": 249089,
+    "dDurationMs": 1999,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 249099,
+    "dDurationMs": 4090,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "عندما"
+    }, {
+      "utf8": " أتحدث",
+      "tOffsetMs": 308
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 616
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 756
+    }, {
+      "utf8": " الروابط",
+      "tOffsetMs": 952
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1372
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1513
+    } ]
+  }, {
+    "tStartMs": 251078,
+    "dDurationMs": 2111,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 251088,
+    "dDurationMs": 5284,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الرئيسي"
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 420
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 616
+    }, {
+      "utf8": " أخرى",
+      "tOffsetMs": 1093
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1317
+    }, {
+      "utf8": " فهذه",
+      "tOffsetMs": 1401
+    }, {
+      "utf8": " هي",
+      "tOffsetMs": 1653
+    }, {
+      "utf8": " كيفية",
+      "tOffsetMs": 1793
+    } ]
+  }, {
+    "tStartMs": 253179,
+    "dDurationMs": 3193,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 253189,
+    "dDurationMs": 5287,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "القيام"
+    }, {
+      "utf8": " بها",
+      "tOffsetMs": 364
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 532
+    }, {
+      "utf8": " حرفياً",
+      "tOffsetMs": 661
+    }, {
+      "utf8": " مجرد",
+      "tOffsetMs": 1358
+    }, {
+      "utf8": " مسار",
+      "tOffsetMs": 1842
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 2325
+    }, {
+      "utf8": " ملف",
+      "tOffsetMs": 2808
+    } ]
+  }, {
+    "tStartMs": 256362,
+    "dDurationMs": 2114,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 256372,
+    "dDurationMs": 4048,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "agents.md"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 483
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 638
+    }, {
+      "utf8": " جهاز",
+      "tOffsetMs": 875
+    }, {
+      "utf8": " جديد",
+      "tOffsetMs": 1183
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1456
+    }, {
+      "utf8": " ما",
+      "tOffsetMs": 1558
+    }, {
+      "utf8": " يفعله",
+      "tOffsetMs": 1729
+    } ]
+  }, {
+    "tStartMs": 258466,
+    "dDurationMs": 1954,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 258476,
+    "dDurationMs": 3990,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الوكيل"
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 443
+    }, {
+      "utf8": " أنه",
+      "tOffsetMs": 614
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 852
+    }, {
+      "utf8": " لم",
+      "tOffsetMs": 1090
+    }, {
+      "utf8": " يكن",
+      "tOffsetMs": 1262
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 1500
+    }, {
+      "utf8": "sandcastle",
+      "tOffsetMs": 1534
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 1875
+    } ]
+  }, {
+    "tStartMs": 260410,
+    "dDurationMs": 2056,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 260420,
+    "dDurationMs": 4228,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "موجوداً"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 511
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 681
+    }, {
+      "utf8": " الموقع",
+      "tOffsetMs": 920
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1329
+    }, {
+      "utf8": " فإنه",
+      "tOffsetMs": 1431
+    }, {
+      "utf8": " يقوم",
+      "tOffsetMs": 1739
+    } ]
+  }, {
+    "tStartMs": 262456,
+    "dDurationMs": 2192,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 262466,
+    "dDurationMs": 4302,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "باستنساخه"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 613
+    }, {
+      "utf8": " ثم",
+      "tOffsetMs": 748
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 903
+    }, {
+      "utf8": " كان",
+      "tOffsetMs": 1122
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 1340
+    }, {
+      "utf8": " العديد",
+      "tOffsetMs": 1620
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 2026
+    } ]
+  }, {
+    "tStartMs": 264638,
+    "dDurationMs": 2130,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 264648,
+    "dDurationMs": 3897,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الوكلاء"
+    }, {
+      "utf8": " يعملون",
+      "tOffsetMs": 467
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 872
+    }, {
+      "utf8": " وقت",
+      "tOffsetMs": 1028
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 1247
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1496
+    }, {
+      "utf8": " فسيستخدم",
+      "tOffsetMs": 1590
+    } ]
+  }, {
+    "tStartMs": 266758,
+    "dDurationMs": 1787,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 266768,
+    "dDurationMs": 4503,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "ببساطة"
+    }, {
+      "utf8": " شجرة",
+      "tOffsetMs": 405
+    }, {
+      "utf8": " عمل",
+      "tOffsetMs": 685
+    }, {
+      "utf8": " (",
+      "tOffsetMs": 904
+    }, {
+      "utf8": "work",
+      "tOffsetMs": 935
+    }, {
+      "utf8": " tree",
+      "tOffsetMs": 1091
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1215
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1278
+    }, {
+      "utf8": " نفس",
+      "tOffsetMs": 1558
+    } ]
+  }, {
+    "tStartMs": 268535,
+    "dDurationMs": 2736,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 268545,
+    "dDurationMs": 4417,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودع"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 498
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 630
+    }, {
+      "utf8": " فهو",
+      "tOffsetMs": 927
+    }, {
+      "utf8": " إعداد",
+      "tOffsetMs": 1224
+    }, {
+      "utf8": " صفري",
+      "tOffsetMs": 1691
+    }, {
+      "utf8": " أساساً",
+      "tOffsetMs": 2073
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2583
+    } ]
+  }, {
+    "tStartMs": 271261,
+    "dDurationMs": 1701,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 271271,
+    "dDurationMs": 3307,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يعمل"
+    }, {
+      "utf8": " الأمر",
+      "tOffsetMs": 227
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 504
+    }, {
+      "utf8": " تلقاء",
+      "tOffsetMs": 631
+    }, {
+      "utf8": " نفسه",
+      "tOffsetMs": 908
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1110
+    }, {
+      "utf8": " وكما",
+      "tOffsetMs": 1186
+    }, {
+      "utf8": " تعلم",
+      "tOffsetMs": 1413
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1615
+    } ]
+  }, {
+    "tStartMs": 272952,
+    "dDurationMs": 1626,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 272962,
+    "dDurationMs": 3484,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "سيتعين"
+    }, {
+      "utf8": " عليك",
+      "tOffsetMs": 328
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 555
+    }, {
+      "utf8": " النهاية",
+      "tOffsetMs": 682
+    }, {
+      "utf8": " القيام",
+      "tOffsetMs": 1060
+    }, {
+      "utf8": " ببعض",
+      "tOffsetMs": 1388
+    } ]
+  }, {
+    "tStartMs": 274568,
+    "dDurationMs": 1878,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 274578,
+    "dDurationMs": 3826,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "التنظيف"
+    }, {
+      "utf8": " المعتاد",
+      "tOffsetMs": 378
+    }, {
+      "utf8": " لشجرة",
+      "tOffsetMs": 757
+    }, {
+      "utf8": " العمل",
+      "tOffsetMs": 1035
+    }, {
+      "utf8": " أثناء",
+      "tOffsetMs": 1312
+    }, {
+      "utf8": " المضي",
+      "tOffsetMs": 1590
+    } ]
+  }, {
+    "tStartMs": 276436,
+    "dDurationMs": 1968,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 276446,
+    "dDurationMs": 3655,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "قدماً"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 252
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 378
+    }, {
+      "utf8": " أردت",
+      "tOffsetMs": 582
+    }, {
+      "utf8": " إضافة",
+      "tOffsetMs": 846
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 1168
+    }, {
+      "utf8": " آخر",
+      "tOffsetMs": 1548
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1753
+    } ]
+  }, {
+    "tStartMs": 278394,
+    "dDurationMs": 1707,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 278404,
+    "dDurationMs": 3569,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "القائمة"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 409
+    }, {
+      "utf8": " فما",
+      "tOffsetMs": 497
+    }, {
+      "utf8": " عليّ",
+      "tOffsetMs": 702
+    }, {
+      "utf8": " سوى",
+      "tOffsetMs": 965
+    }, {
+      "utf8": " تعديل",
+      "tOffsetMs": 1170
+    }, {
+      "utf8": " ملف",
+      "tOffsetMs": 1492
+    } ]
+  }, {
+    "tStartMs": 280091,
+    "dDurationMs": 1882,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 280101,
+    "dDurationMs": 4427,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "agents.md"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 263
+    }, {
+      "utf8": " وسيدخل",
+      "tOffsetMs": 351
+    }, {
+      "utf8": " تلقائياً",
+      "tOffsetMs": 731
+    }, {
+      "utf8": " ضمن",
+      "tOffsetMs": 1228
+    }, {
+      "utf8": " الإعداد",
+      "tOffsetMs": 1433
+    } ]
+  }, {
+    "tStartMs": 281963,
+    "dDurationMs": 2565,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 281973,
+    "dDurationMs": 5182,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "نفسه"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 234
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 364
+    }, {
+      "utf8": " الإعداد",
+      "tOffsetMs": 637
+    }, {
+      "utf8": " يعمل",
+      "tOffsetMs": 1224
+    }, {
+      "utf8": " ربما",
+      "tOffsetMs": 1576
+    }, {
+      "utf8": " مع",
+      "tOffsetMs": 1929
+    }, {
+      "utf8": " 20",
+      "tOffsetMs": 2124
+    }, {
+      "utf8": " أو",
+      "tOffsetMs": 2242
+    }, {
+      "utf8": " 30",
+      "tOffsetMs": 2437
+    } ]
+  }, {
+    "tStartMs": 284518,
+    "dDurationMs": 2637,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 284528,
+    "dDurationMs": 4995,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أو"
+    }, {
+      "utf8": " 40",
+      "tOffsetMs": 195
+    }, {
+      "utf8": " مستودعاً",
+      "tOffsetMs": 313
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 978
+    }, {
+      "utf8": " الأرجح",
+      "tOffsetMs": 1252
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1721
+    }, {
+      "utf8": " لكنه",
+      "tOffsetMs": 1861
+    }, {
+      "utf8": " لن",
+      "tOffsetMs": 2161
+    }, {
+      "utf8": " يكون",
+      "tOffsetMs": 2327
+    } ]
+  }, {
+    "tStartMs": 287145,
+    "dDurationMs": 2378,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 287155,
+    "dDurationMs": 4220,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مناسباً"
+    }, {
+      "utf8": " للتوسع",
+      "tOffsetMs": 501
+    }, {
+      "utf8": " ليصل",
+      "tOffsetMs": 934
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1234
+    }, {
+      "utf8": " 400",
+      "tOffsetMs": 1468
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 1601
+    }, {
+      "utf8": " مثلاً",
+      "tOffsetMs": 2035
+    } ]
+  }, {
+    "tStartMs": 289513,
+    "dDurationMs": 1862,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 289523,
+    "dDurationMs": 3854,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " ولكن",
+      "tOffsetMs": 134
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 383
+    }, {
+      "utf8": " تلك",
+      "tOffsetMs": 521
+    }, {
+      "utf8": " الحالات",
+      "tOffsetMs": 715
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1103
+    }, {
+      "utf8": " سأقوم",
+      "tOffsetMs": 1187
+    }, {
+      "utf8": " ببساطة",
+      "tOffsetMs": 1491
+    } ]
+  }, {
+    "tStartMs": 291365,
+    "dDurationMs": 2012,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 291375,
+    "dDurationMs": 3520,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بإضافة"
+    }, {
+      "utf8": " القليل",
+      "tOffsetMs": 360
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 720
+    }, {
+      "utf8": " الكشف",
+      "tOffsetMs": 859
+    }, {
+      "utf8": " التدريجي",
+      "tOffsetMs": 1163
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1607
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1735
+    } ]
+  }, {
+    "tStartMs": 293367,
+    "dDurationMs": 1528,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 293377,
+    "dDurationMs": 3719,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "ملف"
+    }, {
+      "utf8": " agents.md",
+      "tOffsetMs": 209
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 506
+    }, {
+      "utf8": " بك",
+      "tOffsetMs": 833
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 952
+    }, {
+      "utf8": " بدلاً",
+      "tOffsetMs": 1042
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1369
+    } ]
+  }, {
+    "tStartMs": 294885,
+    "dDurationMs": 2211,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 294895,
+    "dDurationMs": 4373,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الارتباط"
+    }, {
+      "utf8": " بالمستودعات",
+      "tOffsetMs": 505
+    }, {
+      "utf8": " الخام",
+      "tOffsetMs": 1190
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1487
+    }, {
+      "utf8": " يمكنك",
+      "tOffsetMs": 1577
+    }, {
+      "utf8": " القول",
+      "tOffsetMs": 1904
+    } ]
+  }, {
+    "tStartMs": 297086,
+    "dDurationMs": 2182,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 297096,
+    "dDurationMs": 4166,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": ":"
+    }, {
+      "utf8": " حسناً",
+      "tOffsetMs": 60
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 357
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 447
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 655
+    }, {
+      "utf8": " الواجهة",
+      "tOffsetMs": 1161
+    }, {
+      "utf8": " الأمامية",
+      "tOffsetMs": 1607
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2083
+    } ]
+  }, {
+    "tStartMs": 299258,
+    "dDurationMs": 2004,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 299268,
+    "dDurationMs": 4362,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وهنا"
+    }, {
+      "utf8": " مستودعات",
+      "tOffsetMs": 268
+    }, {
+      "utf8": " الواجهة",
+      "tOffsetMs": 774
+    }, {
+      "utf8": " الخلفية",
+      "tOffsetMs": 1220
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1637
+    }, {
+      "utf8": " وهنا",
+      "tOffsetMs": 1726
+    } ]
+  }, {
+    "tStartMs": 301252,
+    "dDurationMs": 2378,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 301262,
+    "dDurationMs": 4788,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودعات"
+    }, {
+      "utf8": " الداخلية",
+      "tOffsetMs": 624
+    }, {
+      "utf8": " للأدوات",
+      "tOffsetMs": 1130
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1547
+    }, {
+      "utf8": " ومن",
+      "tOffsetMs": 1677
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 1945
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2253
+    } ]
+  }, {
+    "tStartMs": 303620,
+    "dDurationMs": 2430,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 303630,
+    "dDurationMs": 4577,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يمكنك"
+    }, {
+      "utf8": " ببساطة",
+      "tOffsetMs": 422
+    }, {
+      "utf8": " وضع",
+      "tOffsetMs": 922
+    }, {
+      "utf8": " روابط",
+      "tOffsetMs": 1191
+    }, {
+      "utf8": " للمستودعات",
+      "tOffsetMs": 1613
+    } ]
+  }, {
+    "tStartMs": 306040,
+    "dDurationMs": 2167,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 306050,
+    "dDurationMs": 4343,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المطلوبة"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 614
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 753
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 971
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 1252
+    }, {
+      "utf8": " الوكيل",
+      "tOffsetMs": 1408
+    }, {
+      "utf8": " سيكون",
+      "tOffsetMs": 1814
+    } ]
+  }, {
+    "tStartMs": 308197,
+    "dDurationMs": 2196,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 308207,
+    "dDurationMs": 4472,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "قادراً"
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 406
+    }, {
+      "utf8": " العثور",
+      "tOffsetMs": 625
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1031
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1249
+    }, {
+      "utf8": " الصحيح",
+      "tOffsetMs": 1780
+    } ]
+  }, {
+    "tStartMs": 310383,
+    "dDurationMs": 2296,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 310393,
+    "dDurationMs": 4451,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بناءً"
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 343
+    }, {
+      "utf8": " تكتيكات",
+      "tOffsetMs": 562
+    }, {
+      "utf8": " بسيطة",
+      "tOffsetMs": 1030
+    }, {
+      "utf8": " لنظام",
+      "tOffsetMs": 1374
+    }, {
+      "utf8": " الملفات",
+      "tOffsetMs": 1717
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2154
+    } ]
+  }, {
+    "tStartMs": 312669,
+    "dDurationMs": 2175,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 312679,
+    "dDurationMs": 4224,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وبالمناسبة"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 618
+    }, {
+      "utf8": " تجدر",
+      "tOffsetMs": 711
+    }, {
+      "utf8": " الإشارة",
+      "tOffsetMs": 990
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1454
+    }, {
+      "utf8": " أنني",
+      "tOffsetMs": 1670
+    }, {
+      "utf8": " أحب",
+      "tOffsetMs": 1949
+    } ]
+  }, {
+    "tStartMs": 314834,
+    "dDurationMs": 2069,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 314844,
+    "dDurationMs": 4240,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودعات"
+    }, {
+      "utf8": " الموحدة",
+      "tOffsetMs": 650
+    }, {
+      "utf8": " (",
+      "tOffsetMs": 1114
+    }, {
+      "utf8": "Mono",
+      "tOffsetMs": 1145
+    }, {
+      "utf8": " repos",
+      "tOffsetMs": 1300
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1455
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1486
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 1617
+    }, {
+      "utf8": " كان",
+      "tOffsetMs": 1838
+    } ]
+  }, {
+    "tStartMs": 316893,
+    "dDurationMs": 2191,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 316903,
+    "dDurationMs": 4217,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بإمكان"
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 411
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 569
+    }, {
+      "utf8": " الأشياء",
+      "tOffsetMs": 790
+    }, {
+      "utf8": " العيش",
+      "tOffsetMs": 1264
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1612
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 1770
+    } ]
+  }, {
+    "tStartMs": 319074,
+    "dDurationMs": 2046,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 319084,
+    "dDurationMs": 3612,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "واحد"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 253
+    }, {
+      "utf8": " فسأفعل",
+      "tOffsetMs": 347
+    }, {
+      "utf8": " ذلك",
+      "tOffsetMs": 758
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 948
+    }, {
+      "utf8": " كما",
+      "tOffsetMs": 1080
+    }, {
+      "utf8": " تعلم",
+      "tOffsetMs": 1276
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1502
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 1586
+    }, {
+      "utf8": " أعمل",
+      "tOffsetMs": 1783
+    } ]
+  }, {
+    "tStartMs": 321110,
+    "dDurationMs": 1586,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 321120,
+    "dDurationMs": 3527,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "سابقاً"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 366
+    }, {
+      "utf8": " Vercel",
+      "tOffsetMs": 507
+    }, {
+      "utf8": " كمسؤول",
+      "tOffsetMs": 704
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 1069
+    }, {
+      "utf8": " علاقات",
+      "tOffsetMs": 1210
+    } ]
+  }, {
+    "tStartMs": 322686,
+    "dDurationMs": 1961,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 322696,
+    "dDurationMs": 4422,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المطورين"
+    }, {
+      "utf8": " لـ",
+      "tOffsetMs": 478
+    }, {
+      "utf8": " Turbo",
+      "tOffsetMs": 619
+    }, {
+      "utf8": " repo",
+      "tOffsetMs": 788
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 900
+    }, {
+      "utf8": " وأنا",
+      "tOffsetMs": 1029
+    }, {
+      "utf8": " مهتم",
+      "tOffsetMs": 1336
+    }, {
+      "utf8": " جداً",
+      "tOffsetMs": 1643
+    } ]
+  }, {
+    "tStartMs": 324637,
+    "dDurationMs": 2481,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 324647,
+    "dDurationMs": 4588,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بالمستودعات"
+    }, {
+      "utf8": " الموحدة",
+      "tOffsetMs": 785
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1263
+    }, {
+      "utf8": " لكن",
+      "tOffsetMs": 1398
+    }, {
+      "utf8": " لا",
+      "tOffsetMs": 1606
+    }, {
+      "utf8": " يمكنك",
+      "tOffsetMs": 1755
+    }, {
+      "utf8": " دائماً",
+      "tOffsetMs": 2083
+    } ]
+  }, {
+    "tStartMs": 327108,
+    "dDurationMs": 2127,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 327118,
+    "dDurationMs": 4324,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "استخدامها"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 537
+    }, {
+      "utf8": " خاصة",
+      "tOffsetMs": 626
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 894
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 1103
+    }, {
+      "utf8": " بحاجة",
+      "tOffsetMs": 1312
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1640
+    }, {
+      "utf8": " مزيج",
+      "tOffsetMs": 1849
+    } ]
+  }, {
+    "tStartMs": 329225,
+    "dDurationMs": 2217,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 329235,
+    "dDurationMs": 4472,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "حيث"
+    }, {
+      "utf8": " يجب",
+      "tOffsetMs": 209
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 417
+    }, {
+      "utf8": " يكون",
+      "tOffsetMs": 567
+    }, {
+      "utf8": " بعضها",
+      "tOffsetMs": 835
+    }, {
+      "utf8": " عاماً",
+      "tOffsetMs": 1163
+    }, {
+      "utf8": " وبعضها",
+      "tOffsetMs": 1491
+    }, {
+      "utf8": " الآخر",
+      "tOffsetMs": 1879
+    } ]
+  }, {
+    "tStartMs": 331432,
+    "dDurationMs": 2275,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 331442,
+    "dDurationMs": 4853,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "خاصاً"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 298
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 428
+    }, {
+      "utf8": " ما",
+      "tOffsetMs": 690
+    }, {
+      "utf8": " أقوله",
+      "tOffsetMs": 878
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 1290
+    }, {
+      "utf8": " أنه",
+      "tOffsetMs": 1478
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 1740
+    }, {
+      "utf8": " كان",
+      "tOffsetMs": 2003
+    } ]
+  }, {
+    "tStartMs": 333697,
+    "dDurationMs": 2598,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 333707,
+    "dDurationMs": 4959,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بإمكانك"
+    }, {
+      "utf8": " نقل",
+      "tOffsetMs": 563
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 825
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1013
+    }, {
+      "utf8": " الأشياء",
+      "tOffsetMs": 1275
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1838
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 2100
+    } ]
+  }, {
+    "tStartMs": 336285,
+    "dDurationMs": 2381,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 336295,
+    "dDurationMs": 4981,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "واحد"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 300
+    }, {
+      "utf8": " فهذا",
+      "tOffsetMs": 412
+    }, {
+      "utf8": " رائع",
+      "tOffsetMs": 750
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1050
+    }, {
+      "utf8": " وإذا",
+      "tOffsetMs": 1188
+    }, {
+      "utf8": " لم",
+      "tOffsetMs": 1501
+    }, {
+      "utf8": " تستطع",
+      "tOffsetMs": 1675
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2023
+    }, {
+      "utf8": " وهو",
+      "tOffsetMs": 2127
+    } ]
+  }, {
+    "tStartMs": 338656,
+    "dDurationMs": 2620,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 338666,
+    "dDurationMs": 4594,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الأرجح"
+    }, {
+      "utf8": " لأسباب",
+      "tOffsetMs": 452
+    }, {
+      "utf8": " تتعلق",
+      "tOffsetMs": 905
+    }, {
+      "utf8": " بالسياسات",
+      "tOffsetMs": 1288
+    }, {
+      "utf8": " والإدارة",
+      "tOffsetMs": 1949
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2506
+    } ]
+  }, {
+    "tStartMs": 341266,
+    "dDurationMs": 1994,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 341276,
+    "dDurationMs": 4346,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "فإن"
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 244
+    }, {
+      "utf8": "المستودع",
+      "tOffsetMs": 278
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 870
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 1357
+    }, {
+      "utf8": "(",
+      "tOffsetMs": 1392
+    }, {
+      "utf8": "Home",
+      "tOffsetMs": 1427
+    }, {
+      "utf8": " repo",
+      "tOffsetMs": 1601
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1740
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 1810
+    } ]
+  }, {
+    "tStartMs": 343250,
+    "dDurationMs": 2372,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 343260,
+    "dDurationMs": 4641,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الحل"
+    }, {
+      "utf8": " الأمثل",
+      "tOffsetMs": 313
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 731
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 866
+    }, {
+      "utf8": " شيء",
+      "tOffsetMs": 1172
+    }, {
+      "utf8": " آخر",
+      "tOffsetMs": 1410
+    }, {
+      "utf8": " يجب",
+      "tOffsetMs": 1648
+    }, {
+      "utf8": " قوله",
+      "tOffsetMs": 1886
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 2192
+    } ]
+  }, {
+    "tStartMs": 345612,
+    "dDurationMs": 2289,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 345622,
+    "dDurationMs": 4796,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودعات"
+    }, {
+      "utf8": " الرئيسية",
+      "tOffsetMs": 714
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1258
+    }, {
+      "utf8": " وهو",
+      "tOffsetMs": 1360
+    }, {
+      "utf8": " أنني",
+      "tOffsetMs": 1599
+    }, {
+      "utf8": " لاحظت",
+      "tOffsetMs": 1905
+    } ]
+  }, {
+    "tStartMs": 347891,
+    "dDurationMs": 2527,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 347901,
+    "dDurationMs": 4761,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "قدرتي"
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 374
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 612
+    }, {
+      "utf8": " أكون",
+      "tOffsetMs": 782
+    }, {
+      "utf8": " أكثر",
+      "tOffsetMs": 1088
+    }, {
+      "utf8": " طموحاً",
+      "tOffsetMs": 1394
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1836
+    }, {
+      "utf8": " الأدوات",
+      "tOffsetMs": 2006
+    } ]
+  }, {
+    "tStartMs": 350408,
+    "dDurationMs": 2254,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 350418,
+    "dDurationMs": 5300,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "التي"
+    }, {
+      "utf8": " أنشأتها",
+      "tOffsetMs": 306
+    }, {
+      "utf8": " لوكلائي",
+      "tOffsetMs": 816
+    }, {
+      "utf8": " منذ",
+      "tOffsetMs": 1326
+    }, {
+      "utf8": " اعتماد",
+      "tOffsetMs": 1564
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 2006
+    } ]
+  }, {
+    "tStartMs": 352652,
+    "dDurationMs": 3066,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 352662,
+    "dDurationMs": 5891,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "النهج"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 340
+    }, {
+      "utf8": " أسمي",
+      "tOffsetMs": 475
+    }, {
+      "utf8": " مستودعي",
+      "tOffsetMs": 855
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 1490
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 2125
+    }, {
+      "utf8": "ويكي",
+      "tOffsetMs": 2167
+    }, {
+      "utf8": " الشخصي",
+      "tOffsetMs": 2548
+    } ]
+  }, {
+    "tStartMs": 355708,
+    "dDurationMs": 2845,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 355718,
+    "dDurationMs": 5957,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "\""
+    }, {
+      "utf8": " لأنه",
+      "tOffsetMs": 84
+    }, {
+      "utf8": " عبارة",
+      "tOffsetMs": 465
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 930
+    }, {
+      "utf8": " موسوعة",
+      "tOffsetMs": 1142
+    }, {
+      "utf8": " ضخمة",
+      "tOffsetMs": 1692
+    }, {
+      "utf8": " تحتوي",
+      "tOffsetMs": 2073
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 2538
+    } ]
+  }, {
+    "tStartMs": 358543,
+    "dDurationMs": 3132,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 358553,
+    "dDurationMs": 5899,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "جميع"
+    }, {
+      "utf8": " البيانات",
+      "tOffsetMs": 380
+    }, {
+      "utf8": " الحساسة",
+      "tOffsetMs": 1100
+    }, {
+      "utf8": " لعملي",
+      "tOffsetMs": 1734
+    }, {
+      "utf8": " التجاري",
+      "tOffsetMs": 2200
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2792
+    }, {
+      "utf8": " هي",
+      "tOffsetMs": 2935
+    } ]
+  }, {
+    "tStartMs": 361665,
+    "dDurationMs": 2787,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 361675,
+    "dDurationMs": 5292,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تعيش"
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 338
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 601
+    }, {
+      "utf8": " الويكي",
+      "tOffsetMs": 938
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1389
+    }, {
+      "utf8": " وهي",
+      "tOffsetMs": 1501
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1764
+    }, {
+      "utf8": " الأساس",
+      "tOffsetMs": 1952
+    }, {
+      "utf8": " ويكي",
+      "tOffsetMs": 2440
+    } ]
+  }, {
+    "tStartMs": 364442,
+    "dDurationMs": 2525,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 364452,
+    "dDurationMs": 5217,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "للنماذج"
+    }, {
+      "utf8": " اللغوية",
+      "tOffsetMs": 563
+    }, {
+      "utf8": " الكبيرة",
+      "tOffsetMs": 1126
+    }, {
+      "utf8": " (",
+      "tOffsetMs": 1689
+    }, {
+      "utf8": "LLM",
+      "tOffsetMs": 1727
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1839
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1915
+    }, {
+      "utf8": " غرار",
+      "tOffsetMs": 2177
+    } ]
+  }, {
+    "tStartMs": 366957,
+    "dDurationMs": 2712,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 366967,
+    "dDurationMs": 5329,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أسلوب"
+    }, {
+      "utf8": " كارباثي",
+      "tOffsetMs": 413
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 938
+    }, {
+      "utf8": " مع",
+      "tOffsetMs": 1051
+    }, {
+      "utf8": " مجموعة",
+      "tOffsetMs": 1239
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 1726
+    }, {
+      "utf8": " ملفات",
+      "tOffsetMs": 1914
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 2327
+    }, {
+      "utf8": "مارك",
+      "tOffsetMs": 2365
+    } ]
+  }, {
+    "tStartMs": 369659,
+    "dDurationMs": 2637,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 369669,
+    "dDurationMs": 5053,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "داون"
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 301
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 376
+    }, {
+      "utf8": " يجدها",
+      "tOffsetMs": 713
+    }, {
+      "utf8": " جمهوري",
+      "tOffsetMs": 1126
+    }, {
+      "utf8": " رائعة",
+      "tOffsetMs": 1614
+    }, {
+      "utf8": " أو",
+      "tOffsetMs": 2027
+    }, {
+      "utf8": " مثيرة",
+      "tOffsetMs": 2215
+    } ]
+  }, {
+    "tStartMs": 372286,
+    "dDurationMs": 2436,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 372296,
+    "dDurationMs": 4940,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "للاهتمام"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 601
+    }, {
+      "utf8": " سأتحدث",
+      "tOffsetMs": 739
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 1205
+    }, {
+      "utf8": " كيفية",
+      "tOffsetMs": 1385
+    }, {
+      "utf8": " إنشاء",
+      "tOffsetMs": 1780
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 2175
+    } ]
+  }, {
+    "tStartMs": 374712,
+    "dDurationMs": 2524,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 374722,
+    "dDurationMs": 5362,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الويكي"
+    }, {
+      "utf8": " وكيفية",
+      "tOffsetMs": 467
+    }, {
+      "utf8": " تحديثه",
+      "tOffsetMs": 934
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1401
+    }, {
+      "utf8": " فيديو",
+      "tOffsetMs": 1581
+    }, {
+      "utf8": " مستقبلي",
+      "tOffsetMs": 1976
+    } ]
+  }, {
+    "tStartMs": 377226,
+    "dDurationMs": 2858,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 377236,
+    "dDurationMs": 6067,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لأن"
+    }, {
+      "utf8": " الناس",
+      "tOffsetMs": 252
+    }, {
+      "utf8": " مهووسون",
+      "tOffsetMs": 647
+    }, {
+      "utf8": " بهذه",
+      "tOffsetMs": 1185
+    }, {
+      "utf8": " الفكرة",
+      "tOffsetMs": 1509
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1940
+    }, {
+      "utf8": " أعني",
+      "tOffsetMs": 2076
+    }, {
+      "utf8": " أنها",
+      "tOffsetMs": 2462
+    } ]
+  }, {
+    "tStartMs": 380074,
+    "dDurationMs": 3229,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 380084,
+    "dDurationMs": 6137,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مهمة"
+    }, {
+      "utf8": " جداً",
+      "tOffsetMs": 386
+    }, {
+      "utf8": " لعملي",
+      "tOffsetMs": 773
+    }, {
+      "utf8": " لأنني",
+      "tOffsetMs": 1245
+    }, {
+      "utf8": " قادر",
+      "tOffsetMs": 1717
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 2103
+    }, {
+      "utf8": " الاستعلام",
+      "tOffsetMs": 2403
+    } ]
+  }, {
+    "tStartMs": 383293,
+    "dDurationMs": 2928,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 383303,
+    "dDurationMs": 6008,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "عنها"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 343
+    }, {
+      "utf8": " واستخراج",
+      "tOffsetMs": 472
+    }, {
+      "utf8": " بيانات",
+      "tOffsetMs": 1201
+    }, {
+      "utf8": " غنية",
+      "tOffsetMs": 1759
+    }, {
+      "utf8": " جداً",
+      "tOffsetMs": 2146
+    }, {
+      "utf8": " منها",
+      "tOffsetMs": 2532
+    } ]
+  }, {
+    "tStartMs": 386211,
+    "dDurationMs": 3100,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 386221,
+    "dDurationMs": 6018,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تذهب"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 386
+    }, {
+      "utf8": " إنشاء",
+      "tOffsetMs": 601
+    }, {
+      "utf8": " الدورات",
+      "tOffsetMs": 1073
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1674
+    }, {
+      "utf8": " وصناعة",
+      "tOffsetMs": 1803
+    }, {
+      "utf8": " المحتوى",
+      "tOffsetMs": 2361
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2961
+    } ]
+  }, {
+    "tStartMs": 389301,
+    "dDurationMs": 2938,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 389311,
+    "dDurationMs": 5963,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "إلخ"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 258
+    }, {
+      "utf8": " وبما",
+      "tOffsetMs": 401
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 767
+    }, {
+      "utf8": " لدي",
+      "tOffsetMs": 971
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 1256
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1542
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 2235
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2805
+    } ]
+  }, {
+    "tStartMs": 392229,
+    "dDurationMs": 3045,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 392239,
+    "dDurationMs": 5705,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "فهو"
+    }, {
+      "utf8": " المكان",
+      "tOffsetMs": 285
+    }, {
+      "utf8": " البديهي",
+      "tOffsetMs": 815
+    }, {
+      "utf8": " لاستضافة",
+      "tOffsetMs": 1426
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 2119
+    }, {
+      "utf8": " الويكي",
+      "tOffsetMs": 2405
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2894
+    } ]
+  }, {
+    "tStartMs": 395264,
+    "dDurationMs": 2680,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 395274,
+    "dDurationMs": 5700,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لقد"
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 279
+    }, {
+      "utf8": " أخفي",
+      "tOffsetMs": 558
+    }, {
+      "utf8": " الجانب",
+      "tOffsetMs": 916
+    }, {
+      "utf8": " الأهم",
+      "tOffsetMs": 1435
+    }, {
+      "utf8": " فيما",
+      "tOffsetMs": 1873
+    }, {
+      "utf8": " يتعلق",
+      "tOffsetMs": 2232
+    } ]
+  }, {
+    "tStartMs": 397934,
+    "dDurationMs": 3040,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 397944,
+    "dDurationMs": 5900,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بالأدوات"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 638
+    }, {
+      "utf8": " لأن",
+      "tOffsetMs": 758
+    }, {
+      "utf8": " الأدوات",
+      "tOffsetMs": 1037
+    }, {
+      "utf8": " ضرورية",
+      "tOffsetMs": 1635
+    }, {
+      "utf8": " للغاية",
+      "tOffsetMs": 2153
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2631
+    }, {
+      "utf8": " فهي",
+      "tOffsetMs": 2751
+    } ]
+  }, {
+    "tStartMs": 400964,
+    "dDurationMs": 2880,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 400974,
+    "dDurationMs": 5612,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تمنح"
+    }, {
+      "utf8": " وكيلك",
+      "tOffsetMs": 358
+    }, {
+      "utf8": " أدوات",
+      "tOffsetMs": 797
+    }, {
+      "utf8": " مخصصة",
+      "tOffsetMs": 1235
+    }, {
+      "utf8": " يمكنه",
+      "tOffsetMs": 1674
+    }, {
+      "utf8": " استخدامها",
+      "tOffsetMs": 2112
+    } ]
+  }, {
+    "tStartMs": 403834,
+    "dDurationMs": 2752,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 403844,
+    "dDurationMs": 5359,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "للتفاعل"
+    }, {
+      "utf8": " مع",
+      "tOffsetMs": 598
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 797
+    }, {
+      "utf8": " ما",
+      "tOffsetMs": 996
+    }, {
+      "utf8": " تستخدمه",
+      "tOffsetMs": 1196
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1793
+    }, {
+      "utf8": " عملك",
+      "tOffsetMs": 1993
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2312
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 2452
+    } ]
+  }, {
+    "tStartMs": 406576,
+    "dDurationMs": 2627,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 406586,
+    "dDurationMs": 5565,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "قمت"
+    }, {
+      "utf8": " بتشغيل",
+      "tOffsetMs": 291
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 831
+    }, {
+      "utf8": "wiki",
+      "tOffsetMs": 872
+    }, {
+      "utf8": " help",
+      "tOffsetMs": 1080
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 1246
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1329
+    }, {
+      "utf8": " دليل",
+      "tOffsetMs": 1703
+    }, {
+      "utf8": " الويكي",
+      "tOffsetMs": 2077
+    } ]
+  }, {
+    "tStartMs": 409193,
+    "dDurationMs": 2958,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 409203,
+    "dDurationMs": 5606,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الشخصي"
+    }, {
+      "utf8": " الخاص",
+      "tOffsetMs": 539
+    }, {
+      "utf8": " بي",
+      "tOffsetMs": 996
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1162
+    }, {
+      "utf8": " يمكننا",
+      "tOffsetMs": 1287
+    }, {
+      "utf8": " رؤية",
+      "tOffsetMs": 1827
+    }, {
+      "utf8": " الكثير",
+      "tOffsetMs": 2201
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 2740
+    } ]
+  }, {
+    "tStartMs": 412141,
+    "dDurationMs": 2668,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 412151,
+    "dDurationMs": 4651,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الأشياء"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 623
+    }, {
+      "utf8": " تتكامل",
+      "tOffsetMs": 997
+    }, {
+      "utf8": " مع",
+      "tOffsetMs": 1537
+    }, {
+      "utf8": " Gmail",
+      "tOffsetMs": 1744
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1952
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 2077
+    }, {
+      "utf8": " Slack",
+      "tOffsetMs": 2201
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2409
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 2533
+    } ]
+  }, {
+    "tStartMs": 414799,
+    "dDurationMs": 2003,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 414809,
+    "dDurationMs": 4111,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "Discord"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 291
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 415
+    }, {
+      "utf8": " YouTube",
+      "tOffsetMs": 540
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 831
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 955
+    }, {
+      "utf8": " GitHub",
+      "tOffsetMs": 1080
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1329
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 1454
+    }, {
+      "utf8": " Gcal",
+      "tOffsetMs": 1578
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1744
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 1869
+    } ]
+  }, {
+    "tStartMs": 416792,
+    "dDurationMs": 2128,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 416802,
+    "dDurationMs": 5166,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "AI"
+    }, {
+      "utf8": " Hero",
+      "tOffsetMs": 125
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 291
+    }, {
+      "utf8": " و",
+      "tOffsetMs": 416
+    }, {
+      "utf8": " Cold",
+      "tOffsetMs": 540
+    }, {
+      "utf8": " Turkey",
+      "tOffsetMs": 748
+    }, {
+      "utf8": " لحظر",
+      "tOffsetMs": 1039
+    }, {
+      "utf8": " المواقع",
+      "tOffsetMs": 1412
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1994
+    } ]
+  }, {
+    "tStartMs": 418910,
+    "dDurationMs": 3058,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 418920,
+    "dDurationMs": 5698,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وأشياء"
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 540
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 748
+    }, {
+      "utf8": " القبيل",
+      "tOffsetMs": 1039
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1537
+    }, {
+      "utf8": " أقوم",
+      "tOffsetMs": 1679
+    }, {
+      "utf8": " بنشر",
+      "tOffsetMs": 2076
+    }, {
+      "utf8": " تقارير",
+      "tOffsetMs": 2474
+    } ]
+  }, {
+    "tStartMs": 421958,
+    "dDurationMs": 2660,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 421968,
+    "dDurationMs": 5247,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "HTML"
+    }, {
+      "utf8": " لمرة",
+      "tOffsetMs": 221
+    }, {
+      "utf8": " واحدة",
+      "tOffsetMs": 618
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1060
+    }, {
+      "utf8": " وأضيفها",
+      "tOffsetMs": 1192
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1855
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 2164
+    }, {
+      "utf8": "Butter",
+      "tOffsetMs": 2208
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 2473
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2517
+    } ]
+  }, {
+    "tStartMs": 424608,
+    "dDurationMs": 2607,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 424618,
+    "dDurationMs": 5302,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أو"
+    }, {
+      "utf8": " مؤقت",
+      "tOffsetMs": 221
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 618
+    }, {
+      "utf8": "Butter",
+      "tOffsetMs": 662
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 927
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 971
+    }, {
+      "utf8": " لقد",
+      "tOffsetMs": 1116
+    }, {
+      "utf8": " تمكنت",
+      "tOffsetMs": 1375
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1782
+    }, {
+      "utf8": " الأشياء",
+      "tOffsetMs": 2042
+    } ]
+  }, {
+    "tStartMs": 427205,
+    "dDurationMs": 2715,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 427215,
+    "dDurationMs": 5298,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "من"
+    }, {
+      "utf8": " النمو",
+      "tOffsetMs": 186
+    }, {
+      "utf8": " بشكل",
+      "tOffsetMs": 593
+    }, {
+      "utf8": " طبيعي",
+      "tOffsetMs": 927
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 1334
+    }, {
+      "utf8": " الويكي",
+      "tOffsetMs": 1668
+    }, {
+      "utf8": " الشخصي",
+      "tOffsetMs": 2149
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2594
+    } ]
+  }, {
+    "tStartMs": 429910,
+    "dDurationMs": 2603,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 429920,
+    "dDurationMs": 5113,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وإضافتها"
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 630
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 889
+    }, {
+      "utf8": " النظام",
+      "tOffsetMs": 1148
+    }, {
+      "utf8": " البيئي",
+      "tOffsetMs": 1630
+    }, {
+      "utf8": " الرائع",
+      "tOffsetMs": 2112
+    } ]
+  }, {
+    "tStartMs": 432503,
+    "dDurationMs": 2530,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 432513,
+    "dDurationMs": 5002,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "والكبير"
+    }, {
+      "utf8": " الذي",
+      "tOffsetMs": 556
+    }, {
+      "utf8": " يمكنني",
+      "tOffsetMs": 889
+    }, {
+      "utf8": " البناء",
+      "tOffsetMs": 1371
+    }, {
+      "utf8": " عليه",
+      "tOffsetMs": 1853
+    }, {
+      "utf8": " بفضل",
+      "tOffsetMs": 2186
+    } ]
+  }, {
+    "tStartMs": 435023,
+    "dDurationMs": 2492,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 435033,
+    "dDurationMs": 5115,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "حقيقة"
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 407
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 592
+    }, {
+      "utf8": " شيء",
+      "tOffsetMs": 778
+    }, {
+      "utf8": " مركزي",
+      "tOffsetMs": 1037
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1407
+    }, {
+      "utf8": " وأقوم",
+      "tOffsetMs": 1519
+    }, {
+      "utf8": " بتشغيله",
+      "tOffsetMs": 1926
+    } ]
+  }, {
+    "tStartMs": 437505,
+    "dDurationMs": 2643,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 437515,
+    "dDurationMs": 5207,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "دائماً"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 481
+    }, {
+      "utf8": " مكان",
+      "tOffsetMs": 667
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 1000
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1296
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 1434
+    }, {
+      "utf8": " يعني",
+      "tOffsetMs": 1680
+    }, {
+      "utf8": " أنني",
+      "tOffsetMs": 1998
+    }, {
+      "utf8": " قادر",
+      "tOffsetMs": 2315
+    } ]
+  }, {
+    "tStartMs": 440138,
+    "dDurationMs": 2584,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 440148,
+    "dDurationMs": 4655,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "على"
+    }, {
+      "utf8": " القيام",
+      "tOffsetMs": 246
+    }, {
+      "utf8": " بأشياء",
+      "tOffsetMs": 705
+    }, {
+      "utf8": " مذهلة",
+      "tOffsetMs": 1163
+    }, {
+      "utf8": " مثل",
+      "tOffsetMs": 1551
+    }, {
+      "utf8": " القول",
+      "tOffsetMs": 1798
+    }, {
+      "utf8": ":",
+      "tOffsetMs": 2151
+    }, {
+      "utf8": " حسناً",
+      "tOffsetMs": 2221
+    } ]
+  }, {
+    "tStartMs": 442712,
+    "dDurationMs": 2091,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 442722,
+    "dDurationMs": 4408,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "،"
+    }, {
+      "utf8": " ابحث",
+      "tOffsetMs": 106
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 423
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 600
+    }, {
+      "utf8": " الرسالة",
+      "tOffsetMs": 846
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1375
+    }, {
+      "utf8": " Discord",
+      "tOffsetMs": 1552
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1799
+    }, {
+      "utf8": " ثم",
+      "tOffsetMs": 1904
+    } ]
+  }, {
+    "tStartMs": 444793,
+    "dDurationMs": 2337,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 444803,
+    "dDurationMs": 4867,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "اذهب"
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 317
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 564
+    }, {
+      "utf8": " الدورة",
+      "tOffsetMs": 1023
+    }, {
+      "utf8": " المكثفة",
+      "tOffsetMs": 1481
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1975
+    }, {
+      "utf8": " وقم",
+      "tOffsetMs": 2081
+    } ]
+  }, {
+    "tStartMs": 447120,
+    "dDurationMs": 2550,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 447130,
+    "dDurationMs": 5125,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "بإجراء"
+    }, {
+      "utf8": " إصلاح",
+      "tOffsetMs": 459
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 847
+    }, {
+      "utf8": " باستخدام",
+      "tOffsetMs": 1164
+    }, {
+      "utf8": " كل",
+      "tOffsetMs": 1764
+    }, {
+      "utf8": " المهارات",
+      "tOffsetMs": 1940
+    } ]
+  }, {
+    "tStartMs": 449660,
+    "dDurationMs": 2595,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 449670,
+    "dDurationMs": 5046,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الحالية"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 529
+    }, {
+      "utf8": " تمتلكها",
+      "tOffsetMs": 846
+    }, {
+      "utf8": " بالفعل",
+      "tOffsetMs": 1375
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1798
+    }, {
+      "utf8": " ومن",
+      "tOffsetMs": 1934
+    }, {
+      "utf8": " هناك",
+      "tOffsetMs": 2187
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2476
+    } ]
+  }, {
+    "tStartMs": 452245,
+    "dDurationMs": 2471,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 452255,
+    "dDurationMs": 5067,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يمكنك"
+    }, {
+      "utf8": " استخدام",
+      "tOffsetMs": 398
+    }, {
+      "utf8": " مهارة",
+      "tOffsetMs": 941
+    }, {
+      "utf8": " CVM",
+      "tOffsetMs": 1339
+    }, {
+      "utf8": " الخاصة",
+      "tOffsetMs": 1484
+    }, {
+      "utf8": " بي",
+      "tOffsetMs": 1954
+    }, {
+      "utf8": " داخل",
+      "tOffsetMs": 2135
+    } ]
+  }, {
+    "tStartMs": 454706,
+    "dDurationMs": 2616,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 454716,
+    "dDurationMs": 5284,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مدير"
+    }, {
+      "utf8": " فيديو",
+      "tOffsetMs": 326
+    }, {
+      "utf8": " الدورة",
+      "tOffsetMs": 724
+    }, {
+      "utf8": " التدريبية",
+      "tOffsetMs": 1194
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1846
+    }, {
+      "utf8": " أينما",
+      "tOffsetMs": 1954
+    }, {
+      "utf8": " كان",
+      "tOffsetMs": 2353
+    } ]
+  }, {
+    "tStartMs": 457312,
+    "dDurationMs": 2688,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 457322,
+    "dDurationMs": 5359,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "هنا"
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 253
+    }, {
+      "utf8": " الأعلى",
+      "tOffsetMs": 434
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 869
+    }, {
+      "utf8": " واستخدامها",
+      "tOffsetMs": 977
+    }, {
+      "utf8": " للذهاب",
+      "tOffsetMs": 1737
+    }, {
+      "utf8": " وتعديل",
+      "tOffsetMs": 2208
+    } ]
+  }, {
+    "tStartMs": 459990,
+    "dDurationMs": 2691,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 460000,
+    "dDurationMs": 4747,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الدورة"
+    }, {
+      "utf8": " فعلياً",
+      "tOffsetMs": 471
+    }, {
+      "utf8": " لإجراء",
+      "tOffsetMs": 941
+    }, {
+      "utf8": " الإصلاح",
+      "tOffsetMs": 1412
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1918
+    }, {
+      "utf8": " بمعنى",
+      "tOffsetMs": 2055
+    }, {
+      "utf8": " آخر",
+      "tOffsetMs": 2460
+    } ]
+  }, {
+    "tStartMs": 462671,
+    "dDurationMs": 2076,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 462681,
+    "dDurationMs": 4279,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "،"
+    }, {
+      "utf8": " يصبح",
+      "tOffsetMs": 111
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 443
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 1070
+    }, {
+      "utf8": " (",
+      "tOffsetMs": 1623
+    }, {
+      "utf8": "home",
+      "tOffsetMs": 1660
+    }, {
+      "utf8": " repo",
+      "tOffsetMs": 1845
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1992
+    } ]
+  }, {
+    "tStartMs": 464737,
+    "dDurationMs": 2223,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 464747,
+    "dDurationMs": 4610,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الأداة"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 479
+    }, {
+      "utf8": " تربط",
+      "tOffsetMs": 811
+    }, {
+      "utf8": " جميع",
+      "tOffsetMs": 1143
+    }, {
+      "utf8": " أجزاء",
+      "tOffsetMs": 1475
+    }, {
+      "utf8": " عملك",
+      "tOffsetMs": 1881
+    } ]
+  }, {
+    "tStartMs": 466950,
+    "dDurationMs": 2407,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 466960,
+    "dDurationMs": 4979,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المختلفة"
+    }, {
+      "utf8": " ببعضها",
+      "tOffsetMs": 627
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1069
+    }, {
+      "utf8": " ليس",
+      "tOffsetMs": 1180
+    }, {
+      "utf8": " فقط",
+      "tOffsetMs": 1438
+    }, {
+      "utf8": " التعليمات",
+      "tOffsetMs": 1696
+    } ]
+  }, {
+    "tStartMs": 469347,
+    "dDurationMs": 2592,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 469357,
+    "dDurationMs": 5348,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "البرمجية"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 590
+    }, {
+      "utf8": " بل",
+      "tOffsetMs": 701
+    }, {
+      "utf8": " أيضاً",
+      "tOffsetMs": 885
+    }, {
+      "utf8": " منح",
+      "tOffsetMs": 1291
+    }, {
+      "utf8": " الوكيل",
+      "tOffsetMs": 1549
+    }, {
+      "utf8": " إمكانية",
+      "tOffsetMs": 2028
+    } ]
+  }, {
+    "tStartMs": 471929,
+    "dDurationMs": 2776,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 471939,
+    "dDurationMs": 5608,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الوصول"
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 479
+    }, {
+      "utf8": " مصادر",
+      "tOffsetMs": 737
+    }, {
+      "utf8": " بيانات",
+      "tOffsetMs": 1143
+    }, {
+      "utf8": " غنية",
+      "tOffsetMs": 1622
+    }, {
+      "utf8": " وأدوات",
+      "tOffsetMs": 1954
+    }, {
+      "utf8": " قوية",
+      "tOffsetMs": 2434
+    } ]
+  }, {
+    "tStartMs": 474695,
+    "dDurationMs": 2852,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 474705,
+    "dDurationMs": 5613,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "يمكنه"
+    }, {
+      "utf8": " استخدامها",
+      "tOffsetMs": 405
+    }, {
+      "utf8": " لإنجاز",
+      "tOffsetMs": 1106
+    }, {
+      "utf8": " عمل",
+      "tOffsetMs": 1585
+    }, {
+      "utf8": " أفضل",
+      "tOffsetMs": 1844
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2139
+    }, {
+      "utf8": " إذن",
+      "tOffsetMs": 2276
+    }, {
+      "utf8": " كيف",
+      "tOffsetMs": 2559
+    } ]
+  }, {
+    "tStartMs": 477537,
+    "dDurationMs": 2781,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 477547,
+    "dDurationMs": 4920,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تقوم"
+    }, {
+      "utf8": " بإعداد",
+      "tOffsetMs": 364
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 891
+    }, {
+      "utf8": " لنفسك",
+      "tOffsetMs": 1255
+    }, {
+      "utf8": "؟",
+      "tOffsetMs": 1660
+    }, {
+      "utf8": " حسناً",
+      "tOffsetMs": 1841
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2161
+    }, {
+      "utf8": " لقد",
+      "tOffsetMs": 2257
+    }, {
+      "utf8": " كتبت",
+      "tOffsetMs": 2482
+    } ]
+  }, {
+    "tStartMs": 480308,
+    "dDurationMs": 2159,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 480318,
+    "dDurationMs": 3934,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مقالاً"
+    }, {
+      "utf8": " بعنوان",
+      "tOffsetMs": 417
+    }, {
+      "utf8": " \"",
+      "tOffsetMs": 834
+    }, {
+      "utf8": "نمط",
+      "tOffsetMs": 866
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1090
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 1636
+    }, {
+      "utf8": "\"",
+      "tOffsetMs": 2085
+    }, {
+      "utf8": "(",
+      "tOffsetMs": 2117
+    } ]
+  }, {
+    "tStartMs": 482457,
+    "dDurationMs": 1795,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 482467,
+    "dDurationMs": 3908,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "The"
+    }, {
+      "utf8": " home",
+      "tOffsetMs": 128
+    }, {
+      "utf8": " repo",
+      "tOffsetMs": 288
+    }, {
+      "utf8": " pattern",
+      "tOffsetMs": 449
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 673
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 705
+    }, {
+      "utf8": " وفي",
+      "tOffsetMs": 838
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 1066
+    }, {
+      "utf8": " المقال",
+      "tOffsetMs": 1295
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1687
+    } ]
+  }, {
+    "tStartMs": 484242,
+    "dDurationMs": 2133,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 484252,
+    "dDurationMs": 4486,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "قمت"
+    }, {
+      "utf8": " بتضمين",
+      "tOffsetMs": 229
+    }, {
+      "utf8": " أمر",
+      "tOffsetMs": 653
+    }, {
+      "utf8": " (",
+      "tOffsetMs": 882
+    }, {
+      "utf8": "prompt",
+      "tOffsetMs": 915
+    }, {
+      "utf8": ")",
+      "tOffsetMs": 1111
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1176
+    }, {
+      "utf8": " الأسفل",
+      "tOffsetMs": 1339
+    }, {
+      "utf8": " يمكنك",
+      "tOffsetMs": 1764
+    } ]
+  }, {
+    "tStartMs": 486365,
+    "dDurationMs": 2373,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 486375,
+    "dDurationMs": 5036,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "استخدامه"
+    }, {
+      "utf8": " لإعداد",
+      "tOffsetMs": 556
+    }, {
+      "utf8": " واحد",
+      "tOffsetMs": 980
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1242
+    }, {
+      "utf8": " إنه",
+      "tOffsetMs": 1375
+    }, {
+      "utf8": " يسألك",
+      "tOffsetMs": 1631
+    }, {
+      "utf8": " بشكل",
+      "tOffsetMs": 2034
+    } ]
+  }, {
+    "tStartMs": 488728,
+    "dDurationMs": 2683,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 488738,
+    "dDurationMs": 5383,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "أساسي"
+    }, {
+      "utf8": " عن",
+      "tOffsetMs": 403
+    }, {
+      "utf8": " إعداداتك",
+      "tOffsetMs": 586
+    }, {
+      "utf8": " الخاصة",
+      "tOffsetMs": 1209
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1648
+    }, {
+      "utf8": " وينظر",
+      "tOffsetMs": 1758
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 2161
+    }, {
+      "utf8": " جميع",
+      "tOffsetMs": 2344
+    } ]
+  }, {
+    "tStartMs": 491401,
+    "dDurationMs": 2720,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 491411,
+    "dDurationMs": 5310,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المستودعات"
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 769
+    }, {
+      "utf8": " تحتاج",
+      "tOffsetMs": 1099
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1502
+    }, {
+      "utf8": " الاهتمام",
+      "tOffsetMs": 1758
+    }, {
+      "utf8": " بها",
+      "tOffsetMs": 2380
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2600
+    } ]
+  }, {
+    "tStartMs": 494111,
+    "dDurationMs": 2610,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 494121,
+    "dDurationMs": 5397,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "ثم"
+    }, {
+      "utf8": " يبدأ",
+      "tOffsetMs": 183
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 513
+    }, {
+      "utf8": " نقل",
+      "tOffsetMs": 696
+    }, {
+      "utf8": " الأشياء",
+      "tOffsetMs": 952
+    }, {
+      "utf8": " إلى",
+      "tOffsetMs": 1501
+    }, {
+      "utf8": " مستودع",
+      "tOffsetMs": 1758
+    }, {
+      "utf8": " رئيسي",
+      "tOffsetMs": 2234
+    } ]
+  }, {
+    "tStartMs": 496711,
+    "dDurationMs": 2807,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 496721,
+    "dDurationMs": 4940,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "."
+    }, {
+      "utf8": " وبالطبع",
+      "tOffsetMs": 137
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 664
+    }, {
+      "utf8": " الرابط",
+      "tOffsetMs": 777
+    }, {
+      "utf8": " لهذا",
+      "tOffsetMs": 1266
+    }, {
+      "utf8": " موجود",
+      "tOffsetMs": 1605
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 2019
+    }, {
+      "utf8": " الأسفل",
+      "tOffsetMs": 2207
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2659
+    } ]
+  }, {
+    "tStartMs": 499508,
+    "dDurationMs": 2153,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 499518,
+    "dDurationMs": 4417,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وبالمناسبة"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 649
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 747
+    }, {
+      "utf8": " أعجبك",
+      "tOffsetMs": 974
+    }, {
+      "utf8": " ما",
+      "tOffsetMs": 1331
+    }, {
+      "utf8": " أقدمه",
+      "tOffsetMs": 1494
+    }, {
+      "utf8": " هنا",
+      "tOffsetMs": 1851
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 2046
+    } ]
+  }, {
+    "tStartMs": 501651,
+    "dDurationMs": 2284,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 501661,
+    "dDurationMs": 4593,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "فستستمتع"
+    }, {
+      "utf8": " حقاً",
+      "tOffsetMs": 553
+    }, {
+      "utf8": " بدورتي",
+      "tOffsetMs": 845
+    }, {
+      "utf8": " المكثفة",
+      "tOffsetMs": 1267
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1755
+    }, {
+      "utf8": " برمجة",
+      "tOffsetMs": 1917
+    } ]
+  }, {
+    "tStartMs": 503925,
+    "dDurationMs": 2329,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 503935,
+    "dDurationMs": 4749,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "الذكاء"
+    }, {
+      "utf8": " الاصطناعي",
+      "tOffsetMs": 423
+    }, {
+      "utf8": " ذاتية",
+      "tOffsetMs": 1040
+    }, {
+      "utf8": " التعلم",
+      "tOffsetMs": 1397
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1787
+    }, {
+      "utf8": " هذه",
+      "tOffsetMs": 1920
+    }, {
+      "utf8": " هي",
+      "tOffsetMs": 2153
+    } ]
+  }, {
+    "tStartMs": 506244,
+    "dDurationMs": 2440,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 506254,
+    "dDurationMs": 4927,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "المقدمة"
+    }, {
+      "utf8": " المثالية",
+      "tOffsetMs": 499
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 1065
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 1298
+    }, {
+      "utf8": " ترغب",
+      "tOffsetMs": 1531
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1831
+    }, {
+      "utf8": " التعرف",
+      "tOffsetMs": 1998
+    } ]
+  }, {
+    "tStartMs": 508674,
+    "dDurationMs": 2507,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 508684,
+    "dDurationMs": 4794,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "على"
+    }, {
+      "utf8": " الوكلاء",
+      "tOffsetMs": 233
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 699
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 799
+    }, {
+      "utf8": " لم",
+      "tOffsetMs": 1032
+    }, {
+      "utf8": " تجرب",
+      "tOffsetMs": 1199
+    }, {
+      "utf8": " استخدام",
+      "tOffsetMs": 1498
+    }, {
+      "utf8": " الوكلاء",
+      "tOffsetMs": 1998
+    } ]
+  }, {
+    "tStartMs": 511171,
+    "dDurationMs": 2307,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 511181,
+    "dDurationMs": 4694,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "من"
+    }, {
+      "utf8": " قبل",
+      "tOffsetMs": 167
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 366
+    }, {
+      "utf8": " أو",
+      "tOffsetMs": 466
+    }, {
+      "utf8": " إذا",
+      "tOffsetMs": 633
+    }, {
+      "utf8": " كنت",
+      "tOffsetMs": 866
+    }, {
+      "utf8": " تشعر",
+      "tOffsetMs": 1099
+    }, {
+      "utf8": " فقط",
+      "tOffsetMs": 1397
+    }, {
+      "utf8": " بأنك",
+      "tOffsetMs": 1632
+    }, {
+      "utf8": " تتخلف",
+      "tOffsetMs": 1931
+    } ]
+  }, {
+    "tStartMs": 513468,
+    "dDurationMs": 2407,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 513478,
+    "dDurationMs": 4383,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "عن"
+    }, {
+      "utf8": " الركب",
+      "tOffsetMs": 167
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 533
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 699
+    }, {
+      "utf8": " العالم",
+      "tOffsetMs": 933
+    }, {
+      "utf8": " المثير",
+      "tOffsetMs": 1365
+    }, {
+      "utf8": " والكبير",
+      "tOffsetMs": 1798
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2264
+    } ]
+  }, {
+    "tStartMs": 515865,
+    "dDurationMs": 1996,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 515875,
+    "dDurationMs": 3971,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "على"
+    }, {
+      "utf8": " أية",
+      "tOffsetMs": 202
+    }, {
+      "utf8": " حال",
+      "tOffsetMs": 403
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 576
+    }, {
+      "utf8": " هذا",
+      "tOffsetMs": 662
+    }, {
+      "utf8": " هو",
+      "tOffsetMs": 864
+    }, {
+      "utf8": " المستودع",
+      "tOffsetMs": 1007
+    }, {
+      "utf8": " الرئيسي",
+      "tOffsetMs": 1497
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1899
+    } ]
+  }, {
+    "tStartMs": 517851,
+    "dDurationMs": 1995,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 517861,
+    "dDurationMs": 3999,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "وهو"
+    }, {
+      "utf8": " النمط",
+      "tOffsetMs": 201
+    }, {
+      "utf8": " الذي",
+      "tOffsetMs": 518
+    }, {
+      "utf8": " اعتقدت",
+      "tOffsetMs": 777
+    }, {
+      "utf8": " أنه",
+      "tOffsetMs": 1151
+    }, {
+      "utf8": " بسيط",
+      "tOffsetMs": 1352
+    }, {
+      "utf8": " للغاية",
+      "tOffsetMs": 1611
+    } ]
+  }, {
+    "tStartMs": 519836,
+    "dDurationMs": 2024,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 519846,
+    "dDurationMs": 3826,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "لدرجة"
+    }, {
+      "utf8": " لا",
+      "tOffsetMs": 316
+    }, {
+      "utf8": " تستحق",
+      "tOffsetMs": 460
+    }, {
+      "utf8": " النشر",
+      "tOffsetMs": 777
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1063
+    }, {
+      "utf8": " ولكن",
+      "tOffsetMs": 1151
+    }, {
+      "utf8": " الآن",
+      "tOffsetMs": 1409
+    }, {
+      "utf8": " بعد",
+      "tOffsetMs": 1669
+    }, {
+      "utf8": " أن",
+      "tOffsetMs": 1870
+    } ]
+  }, {
+    "tStartMs": 521850,
+    "dDurationMs": 1822,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 521860,
+    "dDurationMs": 3826,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "تحدثت"
+    }, {
+      "utf8": " عنه",
+      "tOffsetMs": 316
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 489
+    }, {
+      "utf8": " أدركت",
+      "tOffsetMs": 575
+    }, {
+      "utf8": " أنه",
+      "tOffsetMs": 892
+    }, {
+      "utf8": " يحل",
+      "tOffsetMs": 1093
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 1295
+    }, {
+      "utf8": " الواقع",
+      "tOffsetMs": 1437
+    } ]
+  }, {
+    "tStartMs": 523662,
+    "dDurationMs": 2024,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 523672,
+    "dDurationMs": 4616,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "مجموعة"
+    }, {
+      "utf8": " من",
+      "tOffsetMs": 375
+    }, {
+      "utf8": " المشكلات",
+      "tOffsetMs": 518
+    }, {
+      "utf8": " التي",
+      "tOffsetMs": 1007
+    }, {
+      "utf8": " يواجهها",
+      "tOffsetMs": 1266
+    }, {
+      "utf8": " الناس",
+      "tOffsetMs": 1698
+    } ]
+  }, {
+    "tStartMs": 525676,
+    "dDurationMs": 2612,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 525686,
+    "dDurationMs": 5285,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "فعلياً"
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 346
+    }, {
+      "utf8": " لذا",
+      "tOffsetMs": 475
+    }, {
+      "utf8": " استمتع",
+      "tOffsetMs": 768
+    }, {
+      "utf8": " به",
+      "tOffsetMs": 1312
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 1480
+    }, {
+      "utf8": " استمتع",
+      "tOffsetMs": 1622
+    }, {
+      "utf8": " بإعداده",
+      "tOffsetMs": 2077
+    } ]
+  }, {
+    "tStartMs": 528278,
+    "dDurationMs": 2693,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 528288,
+    "dDurationMs": 6833,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "واستمتع"
+    }, {
+      "utf8": " بمنزلك",
+      "tOffsetMs": 525
+    }, {
+      "utf8": " الجديد",
+      "tOffsetMs": 980
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 1400
+    }, {
+      "utf8": " على",
+      "tOffsetMs": 1505
+    }, {
+      "utf8": " ما",
+      "tOffsetMs": 1750
+    }, {
+      "utf8": " أعتقد",
+      "tOffsetMs": 1925
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2275
+    }, {
+      "utf8": " عمل",
+      "tOffsetMs": 2410
+    } ]
+  }, {
+    "tStartMs": 530961,
+    "dDurationMs": 4160,
+    "wWinId": 1,
+    "aAppend": 1,
+    "segs": [ {
+      "utf8": "\n"
+    } ]
+  }, {
+    "tStartMs": 530971,
+    "dDurationMs": 4150,
+    "wWinId": 1,
+    "segs": [ {
+      "utf8": "رائع"
+    }, {
+      "utf8": "،",
+      "tOffsetMs": 313
+    }, {
+      "utf8": " وأراكم",
+      "tOffsetMs": 430
+    }, {
+      "utf8": " في",
+      "tOffsetMs": 938
+    }, {
+      "utf8": " المرة",
+      "tOffsetMs": 1133
+    }, {
+      "utf8": " القادمة",
+      "tOffsetMs": 1563
+    }, {
+      "utf8": ".",
+      "tOffsetMs": 2110
+    } ]
+  } ]
+}

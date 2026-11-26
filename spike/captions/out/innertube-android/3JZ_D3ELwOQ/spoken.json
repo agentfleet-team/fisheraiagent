@@ -1,0 +1,14 @@
+{
+  "videoId": "3JZ_D3ELwOQ",
+  "asrTrackCount": 15,
+  "spokenLanguage": "en",
+  "originalAsrTrack": {
+    "index": 1,
+    "languageCode": "en",
+    "vssId": "a.en"
+  },
+  "manualTrack": null,
+  "kind": "auto",
+  "rule": "multi-audio: default audio track en-US.4 -> asr track with language en",
+  "tracksSha256": "1f3dc4006f1f08b8724bc6b3e4c1d61890efedc0182d906a432e68023a1065e4"
+}
