@@ -1,0 +1,58 @@
+{
+  "title": "今日早晨：Rust 編譯器、Postgres 索引、LLM 評測",
+  "sections": [
+    {
+      "kind": "opening",
+      "text": "各位早安，歡迎收聽今天的早晨節目。今天我們整理了三支影片，一起來看重點。"
+    },
+    {
+      "kind": "segment",
+      "slot": 1,
+      "text": "講者先從 Rust 編譯器 的背景談起，說明這個問題為什麼在最近幾個月突然變得重要，也提到團隊原本的做法有哪些限制。他接著用一個具體的例子示範，Rust 編譯器 在真實專案裡長什麼樣子，聽起來並不抽象，反而相當貼近日常工作。",
+      "refs": [
+        {
+          "video_id": "aaaaaaaaaaa",
+          "start": 30.0
+        },
+        {
+          "video_id": "aaaaaaaaaaa",
+          "start": 120.5
+        }
+      ]
+    },
+    {
+      "kind": "segment",
+      "slot": 2,
+      "text": "講者先從 Postgres 索引 的背景談起，說明這個問題為什麼在最近幾個月突然變得重要，也提到團隊原本的做法有哪些限制。他接著用一個具體的例子示範，Postgres 索引 在真實專案裡長什麼樣子，聽起來並不抽象，反而相當貼近日常工作。",
+      "refs": [
+        {
+          "video_id": "bbbbbbbbbbb",
+          "start": 30.0
+        },
+        {
+          "video_id": "bbbbbbbbbbb",
+          "start": 120.5
+        }
+      ]
+    },
+    {
+      "kind": "segment",
+      "slot": 3,
+      "text": "講者先從 LLM 評測 的背景談起，說明這個問題為什麼在最近幾個月突然變得重要，也提到團隊原本的做法有哪些限制。他接著用一個具體的例子示範，LLM 評測 在真實專案裡長什麼樣子，聽起來並不抽象，反而相當貼近日常工作。",
+      "refs": [
+        {
+          "video_id": "ccccccccccc",
+          "start": 30.0
+        },
+        {
+          "video_id": "ccccccccccc",
+          "start": 120.5
+        }
+      ]
+    },
+    {
+      "kind": "closing",
+      "text": "以上就是今天的內容，謝謝你的收聽，我們明天早上再見。"
+    }
+  ]
+}

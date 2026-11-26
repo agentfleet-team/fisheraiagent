@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: fisheraiagent digest
+  version: 0.1.0
+  description: Tool 2. Transcript JSON in, one episode script out. Same job API as the transcript tool.
+paths:
+  /healthz:
+    get:
+      summary: Liveness
+      responses:
+        '200': { description: ok }
+  /v1/jobs:
+    post:
+      summary: Submit an EpisodeRequest
+      parameters:
+        - { name: Idempotency-Key, in: header, required: false, schema: { type: string, maxLength: 200 } }
+        - { name: X-Gemini-Key, in: header, required: false, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EpisodeRequest' }
+      responses:
+        '202':
+          description: Accepted, or a replay of an earlier job with the same Idempotency-Key and request.
+          content:
+            application/json:
+              schema: { type: object, required: [job_id], properties: { job_id: { type: string } } }
+        '400': { description: 'invalid_request or missing_key', content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+        '401': { description: unauthorized, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+        '409': { description: idempotency_conflict, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+  /v1/jobs/{job_id}:
+    get:
+      summary: Poll a job
+      parameters:
+        - { name: job_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: The job view.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JobView' }
+        '404': { description: not_found, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+components:
+  schemas:
+    ErrorBody:
+      type: object
+      required: [error]
+      properties:
+        error: { $ref: '#/components/schemas/Error' }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          enum: [invalid_request, missing_key, key_rejected, quota_exceeded, upstream_timeout, upstream_rejected, model_not_found, script_check_failed, idempotency_conflict, save_failed, unauthorized, not_found, internal_error]
+        message: { type: string }
+    EpisodeRequest:
+      type: object
+      required: [profile, date, sources]
+      properties:
+        profile: { type: string, enum: [podcast-zh-tw-10min] }
+        date: { type: string, example: '2026-11-28' }
+        sources:
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            type: object
+            required: [slot, title, channel, url, transcript]
+            properties:
+              slot: { type: integer, minimum: 1 }
+              title: { type: string }
+              channel: { type: string }
+              url: { type: string }
+              published: { type: string }
+              transcript:
+                type: object
+                required: [video_id, language, blocks]
+                properties:
+                  video_id: { type: string }
+                  language: { type: string }
+                  blocks:
+                    type: array
+                    minItems: 1
+                    items:
+                      type: object
+                      required: [start, end, text]
+                      properties:
+                        start: { type: number }
+                        end: { type: number }
+                        text: { type: string }
+        missing_slots:
+          type: array
+          items: { type: integer, minimum: 1 }
+    Ref:
+      type: object
+      required: [video_id, start]
+      properties:
+        video_id: { type: string }
+        start: { type: number }
+    Section:
+      type: object
+      required: [id, kind, text]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [opening, segment, closing] }
+        slot: { type: integer }
+        video_id: { type: string }
+        text: { type: string }
+        refs:
+          type: array
+          items: { $ref: '#/components/schemas/Ref' }
+    EpisodeScript:
+      type: object
+      required: [profile, title, sections, char_count, markdown]
+      properties:
+        profile: { type: string }
+        title: { type: string }
+        sections:
+          type: array
+          items: { $ref: '#/components/schemas/Section' }
+        char_count: { type: integer }
+        markdown: { type: string }
+        saved:
+          type: object
+          required: [file_id, name]
+          properties:
+            file_id: { type: string }
+            name: { type: string }
+    JobView:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id: { type: string }
+        status: { type: string, enum: [queued, running, done, failed] }
+        result: { $ref: '#/components/schemas/EpisodeScript' }
+        error: { $ref: '#/components/schemas/Error' }
+        save_error: { $ref: '#/components/schemas/Error' }

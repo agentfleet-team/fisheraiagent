@@ -9,6 +9,7 @@ Open-source AI agent tools by [AgentFleet](https://agentfleet.team/). Self-host 
 | Tool | What it does | Status |
 |---|---|---|
 | YouTube transcript | One YouTube URL in, the full timed transcript out. A manual caption track in the spoken language becomes the transcript with zero Gemini calls; every other video goes to Gemini. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot + web page ready |
+| Digest | N transcripts and their video metadata in, one episode script out for a named profile (first: `podcast-zh-tw-10min`). Same job API as the transcript tool; code and API in `src/digest/`. | built, not deployed |
 
 ## Self-host quick start (HTTP service)
 
