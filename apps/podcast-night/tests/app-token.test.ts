@@ -25,12 +25,39 @@ async function makeKey() {
 
 const NOW = Date.parse("2026-11-28T00:00:00Z");
 
-function stub(expiresAt: string) {
+function stub(expiresAt: string, installationRepos: string[] = ["allen-state", "allen-ai-os", "r"]) {
   const calls: { url: string; init: RequestInit }[] = [];
+  const repos = new Set(installationRepos);
+  const knownPermissions = new Set([
+    "actions", "administration", "checks", "contents", "deployments", "discussions",
+    "issues", "metadata", "packages", "pages", "pull_requests", "repository_projects",
+    "secret_scanning_alerts", "security_events", "statuses", "vulnerabilities",
+  ]);
+  const unprocessable = () =>
+    new Response(JSON.stringify({ message: "Validation Failed" }), { status: 422 });
   let n = 0;
   const fetchFn = (async (url: string, init: RequestInit) => {
     calls.push({ url, init });
     n += 1;
+    let body: unknown;
+    try {
+      body = JSON.parse(String(init.body));
+    } catch {
+      return unprocessable();
+    }
+    const scope = (body ?? {}) as { repositories?: unknown; permissions?: unknown };
+    const reposOk =
+      Array.isArray(scope.repositories) &&
+      scope.repositories.every((name) => typeof name === "string" && repos.has(name));
+    const perms = scope.permissions;
+    const permsOk =
+      typeof perms === "object" &&
+      perms !== null &&
+      !Array.isArray(perms) &&
+      Object.entries(perms).every(
+        ([key, level]) => knownPermissions.has(key) && (level === "read" || level === "write"),
+      );
+    if (!reposOk || !permsOk) return unprocessable();
     return new Response(JSON.stringify({ token: `ghs_FAKE_TOKEN_${n}`, expires_at: expiresAt }), { status: 201 });
   }) as unknown as typeof fetch;
   return { calls, fetchFn };
@@ -68,6 +95,28 @@ describe("app tokens", () => {
     expect(
       await crypto.subtle.verify("RSASSA-PKCS1-v1_5", pub, unb64url(s) as BufferSource, new TextEncoder().encode(`${h}.${p}`)),
     ).toBe(true);
+  });
+
+  it("A1 the GitHub stub rejects malformed token bodies like the real API", async () => {
+    const { fetchFn } = stub("2026-11-28T01:00:00Z");
+    const url = "https://api.github.com/app/installations/2/access_tokens";
+    const post = (body: unknown) => fetchFn(url, { method: "POST", body: JSON.stringify(body) });
+    for (const body of [
+      { repositories: "allen-state", permissions: { contents: "write" } },
+      { repositories: ["allen-state"], permissions: "write" },
+      { repositories: ["o/allen-state"], permissions: { contents: "write" } },
+      { repositories: ["allen-state"], permissions: { contents: "bogus" } },
+      { repositories: ["not-installed"], permissions: { contents: "write" } },
+      { repositories: ["allen-state"], permissions: { bogus_key: "write" } },
+    ]) {
+      expect((await post(body)).status).toBe(422);
+    }
+    for (const body of [
+      { repositories: ["allen-state"], permissions: { contents: "write" } },
+      { repositories: ["allen-ai-os"], permissions: { issues: "write" } },
+    ]) {
+      expect((await post(body)).status).toBe(201);
+    }
   });
 
   it("A2 caches until expiry minus 5 min, then mints again", async () => {
@@ -126,6 +175,51 @@ describe("app tokens", () => {
       .scope({ repo: "r", permission: "issues" }).get().catch((e: Error) => e.message);
     const all = [...lines, String(err), String(keyErr)].join("\n");
     for (const secret of [body, jwt, "ghs_FAKE_TOKEN_1", "not a key"]) expect(all).not.toContain(secret);
+  });
+
+  it("A3 a malformed token response throws fixed wording without the body", async () => {
+    const { pem } = await makeKey();
+    const marker = "ghs_TEST_A3_VALUE";
+    const env = { GITHUB_APP_ID: "1", GITHUB_APP_INSTALLATION_ID: "2", GITHUB_APP_PRIVATE_KEY: pem };
+    const malformed = (async () => new Response(marker, { status: 201 })) as unknown as typeof fetch;
+    const thrown = (await appTokens(env, { now: () => NOW, fetchFn: malformed })
+      .scope({ repo: "r", permission: "contents" })
+      .get()
+      .catch((e: unknown) => e)) as Error;
+    expect(thrown).toBeInstanceOf(Error);
+    expect(thrown.message).toBe("GitHub App token mint returned an invalid response");
+    expect(thrown.message).not.toContain(marker);
+    expect(thrown.cause).toBeUndefined();
+
+    const shaped = (async () =>
+      new Response(JSON.stringify({ message: marker }), { status: 201 })) as unknown as typeof fetch;
+    const shapeErr = await appTokens(env, { now: () => NOW, fetchFn: shaped })
+      .scope({ repo: "r", permission: "contents" })
+      .get()
+      .catch((e: Error) => e.message);
+    expect(shapeErr).toBe("GitHub App token mint returned an invalid response");
+
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async (url: string) => {
+        if (String(url).includes("/access_tokens")) return new Response(marker, { status: 201 });
+        return new Response("[]", { status: 200 });
+      }) as unknown as typeof fetch,
+    );
+    const tickEnv = {
+      STATE_REPO: "o/s",
+      SUMMARY_REPO: "o/m",
+      SUMMARY_ISSUE: "1",
+      ...env,
+    } as Env;
+    await worker.scheduled({ scheduledTime: NOW } as ScheduledController, tickEnv);
+    const logged = [...errSpy.mock.calls, ...logSpy.mock.calls].flat().join("\n");
+    errSpy.mockRestore();
+    logSpy.mockRestore();
+    fetchSpy.mockRestore();
+    expect(logged).toContain("tick error=GitHub App token mint returned an invalid response");
+    expect(logged).not.toContain(marker);
   });
 
   it("A1 store and comments send the minted token", async () => {

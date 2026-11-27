@@ -24,6 +24,7 @@ export interface AppSecrets {
 }
 
 export const MISSING_APP_SECRETS = "missing_secret:github_app";
+export const INVALID_TOKEN_RESPONSE = "GitHub App token mint returned an invalid response";
 
 export function hasAppSecrets(env: AppSecrets | undefined): boolean {
   return [env?.GITHUB_APP_ID, env?.GITHUB_APP_INSTALLATION_ID, env?.GITHUB_APP_PRIVATE_KEY].every(
@@ -120,10 +121,15 @@ export function appTokens(env: AppSecrets, options: AppTokensOptions = {}) {
     if (res.status !== 201) {
       throw new Error(`GitHub App token mint failed with status ${res.status}`);
     }
-    const data = (await res.json()) as { token?: unknown; expires_at?: unknown };
+    let data: { token?: unknown; expires_at?: unknown };
+    try {
+      data = (await res.json()) as { token?: unknown; expires_at?: unknown };
+    } catch {
+      throw new Error(INVALID_TOKEN_RESPONSE);
+    }
     const expiresMs = typeof data.expires_at === "string" ? Date.parse(data.expires_at) : NaN;
     if (typeof data.token !== "string" || data.token === "" || Number.isNaN(expiresMs)) {
-      throw new Error("GitHub App token mint returned no token");
+      throw new Error(INVALID_TOKEN_RESPONSE);
     }
     options.log?.(`token minted repo=${scope.repo} perm=${scope.permission}`);
     return { token: data.token, expiresMs };
