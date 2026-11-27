@@ -19,6 +19,8 @@ export interface EpisodeRequest {
   date: string;
   sources: EpisodeSource[];
   missing_slots: number[];
+  /** Tenant the job runs as; from the instance config, never a literal here. */
+  tenant?: string;
 }
 
 export interface ScriptSection {
@@ -44,6 +46,8 @@ export interface VoiceRequest {
   voice: { engine: "edge"; name: string; rate: string };
   sections: { id: string; text: string }[];
   expect_seconds: { min: number; max: number };
+  /** Tenant the job runs as; from the instance config, never a literal here. */
+  tenant?: string;
 }
 
 export interface VoiceMark {

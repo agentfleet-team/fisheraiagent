@@ -8,6 +8,7 @@ export type VoiceErrorCode =
   | 'duration_out_of_band'
   | 'idempotency_conflict'
   | 'save_failed'
+  | 'tenant_forbidden'
   | 'unauthorized'
   | 'not_found'
   | 'internal_error';
@@ -18,6 +19,7 @@ const MESSAGES: Readonly<Record<VoiceErrorCode, string>> = Object.freeze({
   duration_out_of_band: 'the joined audio duration is outside expect_seconds',
   idempotency_conflict: 'this Idempotency-Key was already used with a different request',
   save_failed: 'the episode could not be saved to the configured destination',
+  tenant_forbidden: 'the named tenant is unknown or this bearer token does not authorize it',
   unauthorized: 'Authorization: Bearer <SERVICE_TOKEN> is required',
   not_found: 'unknown route or job_id',
   internal_error: 'unexpected server error',

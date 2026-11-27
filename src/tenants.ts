@@ -24,9 +24,32 @@ export type JobOrigin =
 
 export type FileExtension = '.txt' | '.md' | '.srt';
 
+// Per-tool folder overrides on a google-drive destination: `digest` names
+// the folder tool 2 saves to and `voice` the folder tool 3 saves to. A key
+// that is absent falls back to the destination's own folder_id, so a tenant
+// without `folders` saves exactly where it did before.
+export interface TenantDriveFolders {
+  digest?: DriveFolderId;
+  voice?: DriveFolderId;
+}
+
+// The longest file-name prefix a google-drive destination may set. A prefix
+// is prepended to every file name the destination writes
+// ("trial-2026-11-28-script.md"), so several tenants can share one folder
+// without colliding on a date's names; lookup by name uses the same prefixed
+// name, so the no-overwrite rule still holds.
+export const MAX_FILE_PREFIX_CHARS = 64;
+const FILE_PREFIX_BAD = /[/\\\x00-\x1f]/;
+
 export type TenantDestination =
   | { type: 'none' }
-  | { type: 'google-drive'; folder_id: DriveFolderId; extension?: FileExtension }
+  | {
+      type: 'google-drive';
+      folder_id: DriveFolderId;
+      folders?: TenantDriveFolders;
+      file_prefix?: string;
+      extension?: FileExtension;
+    }
   | {
       type: 'webdav';
       base_url: WebdavBaseUrl;
@@ -204,8 +227,49 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
     throw new TranscriptError('invalid_config', `${path}: folder_id is not a Drive folder id`);
   }
   const destination: TenantDestination = { type: 'google-drive', folder_id };
+  const folders = parseDriveFolders(field(value, 'folders'), path);
+  if (folders !== undefined) destination.folders = folders;
+  const rawPrefix = field(value, 'file_prefix');
+  if (rawPrefix !== undefined) {
+    if (
+      !isNonEmptyString(rawPrefix) ||
+      [...rawPrefix].length > MAX_FILE_PREFIX_CHARS ||
+      FILE_PREFIX_BAD.test(rawPrefix)
+    ) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: destination.file_prefix must be a non-empty string of at most ${MAX_FILE_PREFIX_CHARS} characters, without path separators`,
+      );
+    }
+    destination.file_prefix = rawPrefix;
+  }
   if (extension !== undefined) destination.extension = extension;
   return destination;
+}
+
+function parseDriveFolders(value: unknown, path: string): TenantDriveFolders | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object' || value === null) {
+    throw new TranscriptError('invalid_config', `${path}: destination.folders must be an object`);
+  }
+  const folders: TenantDriveFolders = {};
+  const keys: (keyof TenantDriveFolders)[] = ['digest', 'voice'];
+  for (const key of keys) {
+    const raw = field(value, key);
+    if (raw === undefined) continue;
+    if (!isNonEmptyString(raw)) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: destination.folders.${key} must be a non-empty folder id`,
+      );
+    }
+    const id = parseDriveFolderId(raw.trim());
+    if (!id) {
+      throw new TranscriptError('invalid_config', `${path}: destination.folders.${key} is not a Drive folder id`);
+    }
+    folders[key] = id;
+  }
+  return folders;
 }
 
 function parseCaller(value: unknown, path: string): TenantCaller | undefined {
@@ -430,6 +494,12 @@ export function callerAuthorized(tenant: Tenant, presentedToken: string | undefi
 export function tenantExtension(tenant: Tenant): FileExtension {
   const dest = tenant.destination;
   return dest !== undefined && dest.type !== 'none' ? (dest.extension ?? '.txt') : '.txt';
+}
+
+// The file-name prefix a google-drive destination prepends, or '' when it
+// names none (file names are then exactly what they always were).
+export function destinationFilePrefix(destination: TenantDestination): string {
+  return destination.type === 'google-drive' ? (destination.file_prefix ?? '') : '';
 }
 
 // A channel-scoped entry (guild + channel list) claims only the listed

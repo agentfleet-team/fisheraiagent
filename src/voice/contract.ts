@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
+import { ID_FORMATS } from '../ids.js';
 
 // VoiceRequest and VoiceResult, field for field as RFC-004 fixes them.
 
@@ -32,6 +33,9 @@ const voiceRequest = z.object({
   expect_seconds: z
     .object({ min: z.number().positive(), max: z.number().positive() })
     .refine((e) => e.min <= e.max),
+  // Optional explicit tenant id: resolution must match this id and the
+  // bearer's caller check on it; absent, the first authorized tenant wins.
+  tenant: z.string().regex(ID_FORMATS.tenant).optional(),
 });
 
 export type VoiceRequest = z.infer<typeof voiceRequest>;

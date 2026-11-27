@@ -804,6 +804,238 @@ test('N2: fixed lines are excluded from the per-section suggestions', () => {
   assert.ok(problem.includes(`opening 目前 ${openingLen} 字 → 約 ${Math.round(openingLen * scale)} 字`));
 });
 
+// --- explicit tenant selection + per-tool Drive folders (agentfleet-team/fisheraiagent#112) ---
+// Invented ids only: no real tenant or folder value in tests.
+
+const tenantsSelect = JSON.stringify({
+  tenants: [
+    {
+      id: 'tenant-first',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'folderBase', folders: { voice: 'folderVoiceOnly' } },
+    },
+    {
+      id: 'tenant-second',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      gemini_key_env: 'DIGEST_TEST_GEMINI_KEY',
+      destination: { type: 'google-drive', folder_id: 'folderOther', folders: { digest: 'folderDigest', voice: 'folderVoice' } },
+    },
+    { id: 'tenant-other', caller: { token_env: 'DIGEST_OTHER_CALLER_TOKEN' } },
+  ],
+});
+
+const withTenant = (tenant: unknown): unknown => ({ ...(requestBody as object), tenant });
+
+test('T21: the request parser takes an optional tenant slug and rejects a bad one', () => {
+  assert.equal(parseEpisodeRequest(requestBody)!.tenant, undefined);
+  assert.equal(parseEpisodeRequest(withTenant('tenant-second'))!.tenant, 'tenant-second');
+  for (const bad of ['Bad Slug', '-lead', '_lead', 'TRAIL-', 'a'.repeat(65), 7, {}, null]) {
+    assert.equal(parseEpisodeRequest(withTenant(bad)), undefined, JSON.stringify(bad));
+  }
+});
+
+test('T21: a named tenant resolves only itself, not the first authorized match', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  process.env.DIGEST_TEST_GEMINI_KEY = 'tenant-key-for-test';
+  try {
+    const llm = stubLlm([fixture('model-good.json')]);
+    const drive = new StubDrive();
+    await withService({ llmFactory: llm.factory, drive, tenantsJson: tenantsSelect }, async (base) => {
+      const auth = { authorization: 'Bearer caller-token-for-test', 'x-gemini-key': '' };
+      const sent = await post(base, withTenant('tenant-second'), auth);
+      assert.equal(sent.status, 202);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      // tenant-second's own destination and folders.digest, not tenant-first's
+      assert.deepEqual(view.result.saved, { file_id: 'stub-file-1', name: '2026-11-28-script.md' });
+      assert.equal(drive.files[0].folder, 'folderDigest');
+      // tenant-second's gemini_key_env, not the caller's (empty) header key
+      assert.deepEqual(llm.keys, ['tenant-key-for-test']);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+    delete process.env.DIGEST_TEST_GEMINI_KEY;
+  }
+});
+
+test('T21: without the tenant field the first caller-authorized tenant resolves, as today', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  try {
+    const llm = stubLlm([fixture('model-good.json')]);
+    const drive = new StubDrive();
+    await withService({ llmFactory: llm.factory, drive, tenantsJson: tenantsSelect }, async (base) => {
+      const auth = { authorization: 'Bearer caller-token-for-test' };
+      const sent = await post(base, requestBody, auth);
+      assert.equal(sent.status, 202);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      // tenant-first has folders.voice but no folders.digest: digest falls back to folder_id
+      assert.equal(drive.files[0].folder, 'folderBase');
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
+});
+
+test('T21: a named tenant the bearer does not satisfy, or does not exist, is 403 tenant_forbidden', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  process.env.DIGEST_OTHER_CALLER_TOKEN = 'other-token-for-test';
+  try {
+    const llm = stubLlm([fixture('model-good.json')]);
+    const drive = new StubDrive();
+    await withService({ llmFactory: llm.factory, drive, tenantsJson: tenantsSelect }, async (base) => {
+      const auth = { authorization: 'Bearer caller-token-for-test' };
+      for (const [body, headers] of [
+        [withTenant('tenant-other'), auth], // bearer satisfies a different env's token
+        [withTenant('no-such-tenant'), auth], // unknown id
+        [withTenant('tenant-second'), {}], // no bearer at all
+      ] as const) {
+        const sent = await post(base, body, headers);
+        assert.equal(sent.status, 403, JSON.stringify(body));
+        assert.equal(sent.body.error.code, 'tenant_forbidden');
+        assert.deepEqual(Object.keys(sent.body.error).sort(), ['code', 'message']);
+      }
+      assert.equal(llm.calls.length, 0);
+      assert.equal(drive.files.length, 0);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+    delete process.env.DIGEST_OTHER_CALLER_TOKEN;
+  }
+});
+
+test('T21: the tenants document parses destination.folders and rejects bad values', () => {
+  const doc = (destination: unknown) =>
+    JSON.stringify({ tenants: [{ id: 'pod', destination }] });
+  assert.deepEqual(
+    parseTenantsJson(doc({ type: 'google-drive', folder_id: 'base', folders: { digest: 'd1', voice: 'v1' } }), 'test')[0]
+      .destination,
+    { type: 'google-drive', folder_id: 'base', folders: { digest: 'd1', voice: 'v1' } },
+  );
+  // a single key keeps the other on the folder_id fallback; unknown keys are ignored
+  assert.deepEqual(
+    parseTenantsJson(doc({ type: 'google-drive', folder_id: 'base', folders: { digest: 'd1', other: 'x' } }), 'test')[0]
+      .destination,
+    { type: 'google-drive', folder_id: 'base', folders: { digest: 'd1' } },
+  );
+  const bad: unknown[] = [
+    { type: 'google-drive', folder_id: 'base', folders: 'd1' },
+    { type: 'google-drive', folder_id: 'base', folders: { digest: '' } },
+    { type: 'google-drive', folder_id: 'base', folders: { digest: '   ' } },
+    { type: 'google-drive', folder_id: 'base', folders: { digest: 'bad id!' } },
+    { type: 'google-drive', folder_id: 'base', folders: { voice: 3 } },
+  ];
+  for (const destination of bad) {
+    assert.throws(
+      () => parseTenantsJson(doc(destination), 'test'),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      JSON.stringify(destination),
+    );
+  }
+});
+
+test('T21 file_prefix: the tenants document parses destination.file_prefix and rejects bad values', () => {
+  const doc = (destination: unknown) =>
+    JSON.stringify({ tenants: [{ id: 'pod', destination }] });
+  assert.deepEqual(
+    parseTenantsJson(doc({ type: 'google-drive', folder_id: 'base', file_prefix: 'trial-' }), 'test')[0]
+      .destination,
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'trial-' },
+  );
+  const bad: unknown[] = [
+    { type: 'google-drive', folder_id: 'base', file_prefix: 7 },
+    { type: 'google-drive', folder_id: 'base', file_prefix: '' },
+    { type: 'google-drive', folder_id: 'base', file_prefix: '   ' },
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'x'.repeat(1024) },
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'a/b' },
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'a\\b' },
+  ];
+  for (const destination of bad) {
+    assert.throws(
+      () => parseTenantsJson(doc(destination), 'test'),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      JSON.stringify(destination),
+    );
+  }
+});
+
+// Three tenants over one folder: two carry distinct file_prefix values and
+// one carries none, so all three of a date's names coexist without collision.
+const tenantsPrefix = JSON.stringify({
+  tenants: [
+    {
+      id: 'pre-a',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder', file_prefix: 'aa-' },
+    },
+    {
+      id: 'pre-b',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder', file_prefix: 'bb-' },
+    },
+    {
+      id: 'pre-legacy',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder' },
+    },
+  ],
+});
+
+test('T21 file_prefix: distinct prefixes and omission share one folder on the same date; a retry hits the prefixed name', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  try {
+    // The fourth LLM call returns a different script, so the retry would
+    // store different bytes if the no-overwrite lookup missed.
+    const variant = JSON.parse(fixture('model-good.json')) as { sections: { text: string }[] };
+    variant.sections[0].text = `改${variant.sections[0].text.slice(1)}`;
+    const llm = stubLlm([
+      fixture('model-good.json'),
+      fixture('model-good.json'),
+      fixture('model-good.json'),
+      JSON.stringify(variant),
+    ]);
+    const drive = new StubDrive();
+    await withService({ llmFactory: llm.factory, drive, tenantsJson: tenantsPrefix }, async (base) => {
+      const auth = { authorization: 'Bearer caller-token-for-test' };
+      const saved = new Map<string, { file_id: string; name: string }>();
+      for (const [tenant, name] of [
+        ['pre-a', 'aa-2026-11-28-script.md'],
+        ['pre-b', 'bb-2026-11-28-script.md'],
+        ['pre-legacy', '2026-11-28-script.md'],
+      ] as const) {
+        const sent = await post(base, withTenant(tenant), auth);
+        assert.equal(sent.status, 202);
+        const view = await settle(base, sent.body.job_id);
+        assert.equal(view.status, 'done', tenant);
+        assert.equal(view.result.saved.name, name);
+        saved.set(tenant, view.result.saved as { file_id: string; name: string });
+      }
+      assert.deepEqual(
+        drive.files.map((f) => [f.folder, f.name]),
+        [
+          ['sharedFolder', 'aa-2026-11-28-script.md'],
+          ['sharedFolder', 'bb-2026-11-28-script.md'],
+          ['sharedFolder', '2026-11-28-script.md'],
+        ],
+      );
+      // Retry pre-a with changed request content: the prefixed name is the
+      // lookup key, so the same id and the original bytes stand and nothing
+      // new is written.
+      const changed = JSON.parse(JSON.stringify(requestBody)) as { sources: { title: string }[] };
+      changed.sources[0].title = 'a changed source title';
+      const sent = await post(base, { ...changed, tenant: 'pre-a' }, auth);
+      assert.equal(sent.status, 202);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.deepEqual(view.result.saved, saved.get('pre-a'));
+      assert.notEqual(view.result.markdown, drive.files[0].content);
+      assert.equal(drive.files.length, 3);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
+});
+
 // --- fit step: deterministic last cut after the repair calls ---
 
 // model-good.json with 20-character sentences in every segment so the spoken

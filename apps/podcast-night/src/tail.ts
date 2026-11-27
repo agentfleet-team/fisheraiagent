@@ -328,7 +328,14 @@ async function runContent(
     });
     shas.push(`${slot}:${await sha256Hex(file.text)}`);
   }
-  const body: EpisodeRequest = { profile: PROFILE, date: env.date, sources, missing_slots: missing };
+  const tenant = env.config.tenants?.[env.config.mode];
+  const body: EpisodeRequest = {
+    profile: PROFILE,
+    date: env.date,
+    sources,
+    missing_slots: missing,
+    ...(tenant === undefined ? {} : { tenant }),
+  };
   const input = await sha256Hex(`${env.date}/content|${shas.join(",")}|${missing.join(",")}`);
   return runJob(env, {
     node: "content",
@@ -374,11 +381,13 @@ async function runVoice(
     return escalate(env, "voice", plan.attempt, "script_invalid");
   }
   if (!Array.isArray(script.sections)) return escalate(env, "voice", plan.attempt, "script_invalid");
+  const tenant = env.config.tenants?.[env.config.mode];
   const body: VoiceRequest = {
     date: env.date,
     voice: { ...VOICE },
     sections: script.sections.map((s) => ({ id: s.id, text: s.text })),
     expect_seconds: expectSeconds(chars),
+    ...(tenant === undefined ? {} : { tenant }),
   };
   const input = await sha256Hex(
     `${env.date}/voice|${await sha256Hex(file.text)}|${VOICE.name}|${VOICE.rate}`,

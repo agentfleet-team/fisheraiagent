@@ -34,10 +34,14 @@ const V3 = "37ROC7uPieE";
 const V4 = "eKhog2ZXlQg";
 const V5 = "r0Mm_79yKso";
 
-function configJson(mode: "trial" | "live" = "trial"): string {
+function configJson(
+  mode: "trial" | "live" = "trial",
+  tenants?: { trial?: string; live?: string },
+): string {
   return JSON.stringify({
     enabled: true,
     mode,
+    ...(tenants === undefined ? {} : { tenants }),
     slots: ["00:00", "01:00", "02:00"],
     content_at: "03:00",
     topics: [
@@ -289,9 +293,10 @@ function rig(
   tool3 = okTool3(),
   mode: "trial" | "live" = "trial",
   tool1: Tool1 = new Tool1Stub(),
+  tenants?: { trial?: string; live?: string },
 ): Rig {
   const store = new FakeStore();
-  store.seed(CONFIG_PATH, configJson(mode));
+  store.seed(CONFIG_PATH, configJson(mode, tenants));
   const comments = new FakeComments();
   return {
     store,
@@ -849,6 +854,28 @@ describe("podcast-night content, voice, check, deliver (fisherivco/allen-ai-os#1
 
   it("R5: the clock helper agrees with the UTC helper", () => {
     expect(taipei("00:00").getTime()).toBe(at("16:00").getTime());
+  });
+
+  it("T21: one config carrying both tenant ids sends the trial tenant in trial and the live tenant in live (fisheraiagent#112)", async () => {
+    // The instance config carries both tenant ids; the router picks by mode,
+    // so changing only `mode` moves both requests to the other tenant and no
+    // tenant id literal sits in code.
+    const tenants = { trial: "podcast-trial", live: "podcast" };
+    for (const mode of ["trial", "live"] as const) {
+      const r = rig(okTool2(), okTool3(), mode, new Tool1Stub(), tenants);
+      seedSlots(r);
+      await r.tick(taipei("03:00"));
+      expect(r.tool2.submits[0].body.tenant).toBe(tenants[mode]);
+      expect(r.tool3.submits[0].body.tenant).toBe(tenants[mode]);
+    }
+  });
+
+  it("T21: a config without tenants sends no tenant field", async () => {
+    const r = rig();
+    seedSlots(r);
+    await r.tick(taipei("03:00"));
+    expect(r.tool2.submits[0].body).not.toHaveProperty("tenant");
+    expect(r.tool3.submits[0].body).not.toHaveProperty("tenant");
   });
 });
 

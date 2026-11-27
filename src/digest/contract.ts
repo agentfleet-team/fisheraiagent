@@ -42,6 +42,10 @@ const episodeRequest = z.object({
   date: isoDate,
   sources: z.array(source).min(1).max(MAX_SOURCES),
   missing_slots: z.array(slot).default([]),
+  // Optional explicit tenant id. When present, tenant resolution must match
+  // this id (and the bearer still has to satisfy that tenant's caller check);
+  // when absent, the first caller-authorized tenant resolves, as before.
+  tenant: z.string().regex(ID_FORMATS.tenant).optional(),
 });
 
 const unique = (values: unknown[]): boolean => new Set(values).size === values.length;

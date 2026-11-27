@@ -1,4 +1,4 @@
-import type { Tenant } from '../tenants.js';
+import { destinationFilePrefix, type Tenant } from '../tenants.js';
 import type { SavedScript } from './contract.js';
 
 // The Drive surface the save node needs. A real adapter lands with
@@ -26,9 +26,10 @@ export async function saveScript(
 ): Promise<SavedScript | undefined> {
   const destination = tenant?.destination;
   if (drive === undefined || destination === undefined || destination.type !== 'google-drive') return undefined;
-  const name = scriptFileName(date);
-  const existing = await drive.findFileByName(destination.folder_id, name);
+  const folderId = destination.folders?.digest ?? destination.folder_id;
+  const name = `${destinationFilePrefix(destination)}${scriptFileName(date)}`;
+  const existing = await drive.findFileByName(folderId, name);
   if (existing !== null) return { file_id: existing.id, name: existing.name };
-  const created = await drive.createFile(destination.folder_id, name, markdown, SCRIPT_MIME_TYPE);
+  const created = await drive.createFile(folderId, name, markdown, SCRIPT_MIME_TYPE);
   return { file_id: created.id, name: created.name };
 }

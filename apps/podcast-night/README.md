@@ -33,7 +33,7 @@ Scan order per tick: `config`, `pool`, `pick-1..3`, `transcript-1..3`, then at `
 
 This repository holds the generic router code and `wrangler.jsonc` template without any deployment-specific repository or issue values. Allen's instance values are supplied by the owner step `deploy-router` (`fisherivco/allen-ai-os#1905`), not by this repository.
 
-1. Prepare the instance state repository (`STATE_REPO`) with `research/morning-podcast/config.json` matching `config.schema.json`. See `fixtures/config.json` for an example with `enabled`, `mode` (`"trial"` or `"live"`), three `slots` in `HH:MM` Asia/Taipei, `content_at`, `topics`, `backlog`, `channel_boost`, and `deny_channels`.
+1. Prepare the instance state repository (`STATE_REPO`) with `research/morning-podcast/config.json` matching `config.schema.json`. See `fixtures/config.json` for an example with `enabled`, `mode` (`"trial"` or `"live"`), `tenants` (the tenant id per mode — `trial` and `live`; the router sends `tenants[mode]` on the tool 2 and tool 3 requests), three `slots` in `HH:MM` Asia/Taipei, `content_at`, `topics`, `backlog`, `channel_boost`, and `deny_channels`.
 2. Supply these Wrangler vars at deploy time (`wrangler.jsonc` sets only `DRY_RUN` and `TOOL1_BASE_URL`):
 
 | Var | Required | Default | Meaning |

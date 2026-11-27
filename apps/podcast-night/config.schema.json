@@ -15,6 +15,15 @@
       "type": "string",
       "enum": ["trial", "live"]
     },
+    "tenants": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trial": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" },
+        "live": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$" }
+      },
+      "description": "Tenant id per mode, matching the tools' tenants document; the router sends tenants[mode] on the tool 2 and tool 3 requests. Optional: absent, requests carry no tenant field."
+    },
     "slots": {
       "type": "array",
       "minItems": 3,

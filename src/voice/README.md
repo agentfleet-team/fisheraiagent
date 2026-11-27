@@ -11,6 +11,7 @@ Live check from a machine with internet: `npm run voice:probe` renders a 2-secti
 - `POST /v1/jobs` with a `VoiceRequest` returns `202 {"job_id"}`. `GET /v1/jobs/<id>` returns `queued|running|done|failed` with `result` (a `VoiceResult`) or `error`. A failed render names the section in `error.section_id`.
 - `GET /v1/jobs/<id>/audio` returns the MP3 of a done job. The service keeps the MP3 of the newest 4 done jobs in memory; Drive is the durable copy once `save` is on.
 - `Authorization: Bearer <token>` is required when `SERVICE_TOKEN` is set.
+- Tenant: the optional `tenant` field names the tenant id the job runs as; resolution then requires both that id and the bearer's caller check on it — an unknown id or an unsatisfied check is `403 tenant_forbidden` and reveals no tenant data. Without the field the first caller-authorized tenant resolves, as before.
 - `Idempotency-Key`: the same key with the same request returns the first job (`202`, same `job_id`) and renders nothing. The same key with another request returns `409 idempotency_conflict`. Keys are kept in process memory, per caller token, and a restart forgets them.
 
 ## Nodes
@@ -21,7 +22,7 @@ Live check from a machine with internet: `npm run voice:probe` renders a 2-secti
 | `render-<section>-<chunk>` | splits each section into chunks of at most 1,300 characters at sentence ends; one Edge TTS request per chunk with a 120 s limit and one retry; marks come from `SentenceBoundary` events | job `failed`, `render_failed`, with `section_id` |
 | `join` | joins the chunks in order; marks are shifted by the audio before them, ordered and never overlapping | none |
 | `check` | the joined duration must be inside `expect_seconds` | job `failed`, `duration_out_of_band`; nothing is saved |
-| `save` | writes `<date>-episode.mp3` and `<date>-marks.json` to the tenant's `google-drive` destination; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
+| `save` | writes `<date>-episode.mp3` and `<date>-marks.json` to the tenant's `google-drive` destination — `folders.voice` when the destination names it, else `folder_id`, with the destination's `file_prefix` prepended when it names one; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
 
 Notes:
 

@@ -82,9 +82,19 @@ export function createVoiceService(options: VoiceServiceOptions): Server {
     }
 
     // The tenant whose caller credential the bearer token satisfies holds the
-    // save destination (never a destination for an unverified caller).
+    // save destination (never a destination for an unverified caller). A
+    // request that names `tenant` resolves only that id — an unknown id, or
+    // one the bearer does not satisfy, is a 403 that reveals no tenant data.
     const token = bearerToken(req);
-    const tenant = tryTenants().find((t) => callerAuthorized(t, token));
+    const tenants = tryTenants();
+    const tenant =
+      request.tenant === undefined
+        ? tenants.find((t) => callerAuthorized(t, token))
+        : tenants.find((t) => t.id === request.tenant && callerAuthorized(t, token));
+    if (request.tenant !== undefined && tenant === undefined) {
+      sendError(res, 403, 'tenant_forbidden');
+      return;
+    }
 
     const scope = createHash('sha256').update(token ?? '').digest('hex');
     const outcome = jobs.submit(request, tenant, idemKey === undefined ? undefined : { scope, key: idemKey });
