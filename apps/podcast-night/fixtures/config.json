@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "mode": "trial",
+  "slots": ["00:00", "01:00", "02:00"],
+  "content_at": "03:00",
+  "topics": [
+    { "slot": 1, "name": "Agent workflows", "queries": ["AI agent workflow", "agentic coding workflow", "AI 代理 工作流程"] },
+    { "slot": 2, "name": "Practical cases", "queries": ["AI agent case study production", "AI agent real world deployment", "AI 代理 實際案例"] },
+    { "slot": 3, "name": "Memory and reliability", "queries": ["LLM agent memory", "AI agent reliability evaluation", "AI 代理 記憶 可靠性"] }
+  ],
+  "backlog": [
+    { "video_id": "jVBlkOF8sHk", "slot": 1 },
+    { "video_id": "hWe-j78vNpc", "slot": 1 },
+    { "video_id": "DGI4vucR71w", "slot": 1 },
+    { "video_id": "37ROC7uPieE", "slot": 2 },
+    { "video_id": "eKhog2ZXlQg", "slot": 2 },
+    { "video_id": "V1syfxHEhKs", "slot": 2 },
+    { "video_id": "r0Mm_79yKso", "slot": 3 }
+  ],
+  "channel_boost": {},
+  "deny_channels": []
+}

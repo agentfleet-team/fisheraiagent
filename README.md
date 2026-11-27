@@ -14,6 +14,8 @@ The directory page [tools.agentfleet.team](https://tools.agentfleet.team/) is ge
 | Digest | N transcripts and their video metadata in, one episode script out for a named profile (first: `podcast-zh-tw-10min`). Same job API as the transcript tool; code and API in `src/digest/`. | built, not deployed | [Digest code](https://github.com/agentfleet-team/fisheraiagent/tree/main/src/digest) |
 | Voice | Episode script sections in, one zh-TW MP3 and one time mark per sentence out (Edge TTS), with a duration check. Same job API as the transcript tool; code and API in `src/voice/`. | built, not deployed | [Voice code](https://github.com/agentfleet-team/fisheraiagent/tree/main/src/voice) |
 
+Router app: [podcast-night](apps/podcast-night/README.md) runs the morning-podcast night across the transcript, digest, and voice tools.
+
 ## Self-host quick start (HTTP service)
 
 One service, many callers: every client sends its own Gemini API key per request (`X-Gemini-Key` header) — or, when its tenant holds one, just its caller credential — and jobs run in the background.
