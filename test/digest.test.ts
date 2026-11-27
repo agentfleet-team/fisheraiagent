@@ -570,6 +570,21 @@ test('L2: a noncompliant first draft is repaired; the result has no duplicate fr
   }
 });
 
+test('L2: a body that echoes a fixed line is a problem, not deduplicated silently', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  // no greeting or sign-off keywords: only the echo can fail this draft
+  const echoed = checkModelOutput(
+    request,
+    profile,
+    withFraming(`${OPEN_LINE}\n${MODEL_OPENING}`, `${MODEL_CLOSING}\n${CLOSE_LINE}`, 2500),
+    lines,
+  );
+  assert.ok(!echoed.ok);
+  assert.ok(echoed.problems.some((p) => p.includes('重複寫出固定台詞')));
+});
+
 test('L3: the fixed lines count toward the length band', () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;
@@ -645,6 +660,27 @@ test('L2/L3: a job for a tenant with digest lines returns them verbatim and budg
       assert.ok(prompt.includes('不要寫問候語'));
       assert.ok(prompt.includes('不要寫收尾'));
       assert.equal(llm.calls.length, 1);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
+});
+
+test('L2: a job repairs a draft that echoes the fixed lines; each lands once', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  try {
+    const llm = stubLlm([
+      withFraming(`${OPEN_LINE}\n${MODEL_OPENING}`, `${MODEL_CLOSING}\n${CLOSE_LINE}`, 2500),
+      withFraming(MODEL_OPENING, MODEL_CLOSING, 2500),
+    ]);
+    await withService({ llmFactory: llm.factory, tenantsJson: tenantsWithLines }, async (base) => {
+      const sent = await post(base, requestBody, { authorization: 'Bearer caller-token-for-test' });
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.equal(llm.calls.length, 2);
+      const sections = view.result.sections;
+      assert.equal(sections[0].text, `${OPEN_LINE}\n${MODEL_OPENING}`);
+      assert.equal(sections[sections.length - 1].text, `${MODEL_CLOSING}\n${CLOSE_LINE}`);
     });
   } finally {
     delete process.env.DIGEST_TEST_CALLER_TOKEN;

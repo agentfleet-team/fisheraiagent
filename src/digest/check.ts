@@ -40,12 +40,6 @@ export function fixedLines(digest: TenantDigest | undefined): FixedLines | undef
   return lines;
 }
 
-// The model must not write its own greeting or sign-off when the tenant sets
-// a fixed line: the line replaces them. Only the first sentence of the opening
-// and the last sentence of the closing are inspected.
-const GREETING = /早安|早上好|大家好|各位.{0,6}(?:好|聽眾)|哈囉|你好|歡迎收聽|歡迎來到|^\s*(?:hello|hi)\b/iu;
-const FAREWELL = /再見|下集見|下次見|明天見|明早見|掰掰|拜拜|晚安|謝謝收聽|感謝收聽|感謝.{0,4}陪伴|bye/iu;
-
 function sentences(text: string): string[] {
   return text.split(/(?<=[。！？!?\n])/u).filter((x) => x.trim() !== '');
 }
@@ -76,11 +70,13 @@ function mentionsSlot(text: string, slot: number): boolean {
 
 // The script check: schema, structure, refs and length band. It returns the
 // EpisodeScript, or every problem it found so one repair call can name them.
-// A tenant's fixed lines wrap the model's framing text before the check, so
-// they land in the result verbatim and count toward the band: the opening
-// line before the opening text, the closing line after the closing text.
-// They replace the greeting and sign-off, so a draft whose opening starts with
-// a greeting or whose closing ends with a sign-off fails the check.
+// When a tenant fixes an opening_line or closing_line the line is structure,
+// not model text: the check runs on the model's bodies, and the system
+// composes the section after the body passes — opening_line before the
+// opening body, closing_line after the closing body, both verbatim. A body
+// that echoes the configured line, opens with a greeting or ends with a
+// sign-off (the profile's lists) is a check problem, so the composed result
+// holds each fixed line exactly once. The lines count toward the band.
 export function checkModelOutput(
   request: EpisodeRequest,
   profile: Profile,
@@ -98,15 +94,21 @@ export function checkModelOutput(
   const closing = sections.filter((s) => s.kind === 'closing');
   const firstOpening = opening[0];
   const lastClosing = closing[closing.length - 1];
-  if (lines?.opening !== undefined && firstOpening !== undefined && GREETING.test(firstSentence(firstOpening.text))) {
-    problems.push('固定開場台詞由系統加入，opening 不可再寫問候語，請直接從內容開始。');
+  if (lines?.opening !== undefined && firstOpening !== undefined) {
+    if (firstOpening.text.includes(lines.opening)) {
+      problems.push('固定開場台詞由系統加入，opening 不要重複寫出固定台詞，請直接從內容開始。');
+    }
+    if (profile.greetings.some((g) => g.test(firstSentence(firstOpening.text)))) {
+      problems.push('固定開場台詞由系統加入，opening 不可再寫問候語，請直接從內容開始。');
+    }
   }
-  if (lines?.closing !== undefined && lastClosing !== undefined && FAREWELL.test(lastSentence(lastClosing.text))) {
-    problems.push('固定收尾台詞由系統加入，closing 不可再寫收尾署名或道別語。');
-  }
-  if (problems.length === 0) {
-    if (lines?.opening !== undefined && firstOpening !== undefined) firstOpening.text = `${lines.opening}\n${firstOpening.text}`;
-    if (lines?.closing !== undefined && lastClosing !== undefined) lastClosing.text = `${lastClosing.text}\n${lines.closing}`;
+  if (lines?.closing !== undefined && lastClosing !== undefined) {
+    if (lastClosing.text.includes(lines.closing)) {
+      problems.push('固定收尾台詞由系統加入，closing 不要重複寫出固定台詞。');
+    }
+    if (profile.signoffs.some((s) => s.test(lastSentence(lastClosing.text)))) {
+      problems.push('固定收尾台詞由系統加入，closing 不可再寫收尾署名或道別語。');
+    }
   }
   if (opening.length !== 1 || sections[0]?.kind !== 'opening') {
     problems.push('sections 必須以恰好一段 opening 開頭。');
@@ -149,7 +151,7 @@ export function checkModelOutput(
   }
 
   const spoken = sections.map((s) => s.text);
-  const charCount = countChars(spoken);
+  const charCount = countChars(spoken) + (lines?.chars ?? 0);
   const { min, max } = profile.lengthBand;
   if (charCount < min || charCount > max) {
     problems.push(`全部文字合計 ${charCount} 字，必須在 ${min} 到 ${max} 字之間。`);
@@ -158,8 +160,14 @@ export function checkModelOutput(
   if (problems.length > 0) return { ok: false, problems };
 
   const built: EpisodeSection[] = sections.map((s) => {
-    if (s.kind === 'opening') return { id: 'opening', kind: 'opening', text: s.text };
-    if (s.kind === 'closing') return { id: 'closing', kind: 'closing', text: s.text };
+    if (s.kind === 'opening') {
+      const text = lines?.opening === undefined ? s.text : `${lines.opening}\n${s.text}`;
+      return { id: 'opening', kind: 'opening', text };
+    }
+    if (s.kind === 'closing') {
+      const text = lines?.closing === undefined ? s.text : `${s.text}\n${lines.closing}`;
+      return { id: 'closing', kind: 'closing', text };
+    }
     const source = request.sources.find((src) => src.slot === s.slot);
     return {
       id: `s${s.slot}`,

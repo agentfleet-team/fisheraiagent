@@ -8,6 +8,13 @@ export interface Profile {
   // Allowed char_count of the spoken text: sections only, whitespace not counted.
   lengthBand: { min: number; max: number };
   system: string;
+  // When a tenant fixes an opening_line or closing_line, that line is
+  // structure: the model writes only the body, so a greeting at the start
+  // of the opening body or a sign-off at the end of the closing body is a
+  // check problem. The check matches the body's first or last sentence
+  // against these lists.
+  greetings: readonly RegExp[];
+  signoffs: readonly RegExp[];
 }
 
 // The band comes from the tool-3 TTS spike (PR #82, spike/tts/REPORT.md): at
@@ -33,6 +40,31 @@ export const PROFILES: Readonly<Record<string, Profile>> = Object.freeze({
     id: 'podcast-zh-tw-10min',
     lengthBand: PODCAST_ZH_TW_10MIN_BAND,
     system: PODCAST_SYSTEM,
+    greetings: [
+      /早安/u,
+      /早上好/u,
+      /大家好/u,
+      /各位.{0,6}(?:好|聽眾)/u,
+      /哈囉/u,
+      /你好/u,
+      /歡迎收聽/u,
+      /歡迎來到/u,
+      /^\s*(?:hello|hi)\b/iu,
+    ],
+    signoffs: [
+      /再見/u,
+      /下集見/u,
+      /下次見/u,
+      /明天見/u,
+      /明早見/u,
+      /掰掰/u,
+      /拜拜/u,
+      /晚安/u,
+      /謝謝收聽/u,
+      /感謝收聽/u,
+      /感謝.{0,4}陪伴/u,
+      /bye/iu,
+    ],
   },
 });
 

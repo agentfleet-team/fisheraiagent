@@ -39,9 +39,9 @@ A tenant may fix the spoken framing of its episodes in the tenants document (the
 ```
 
 - Each value is a non-empty string of at most 200 characters (`MAX_DIGEST_LINE_CHARS` in `src/tenants.ts`); any other value fails the tenants-document load like every other bad field. Either field may be set alone; a tenant without them gets the unprompted behavior.
-- `opening_line` replaces the model's greeting: the draft and repair prompts say the system adds the opening line, the model writes no greeting of its own, and the `opening` section comes out as `opening_line` then the model's text, verbatim.
+- `opening_line` replaces the model's greeting: the draft and repair prompts say the system adds the opening line, the model writes only the opening body, and the `opening` section comes out as `opening_line` then the model's body, verbatim.
 - `closing_line` replaces the model's sign-off the same way: it ends the `closing` section verbatim, and the prompt says the system adds it.
-- The check applies the lines to the draft's output before it counts, so they are part of `char_count` and the band; the prompt reduces the model's own length target by their length. A line the model already emitted is not added twice.
+- The check works on the model's bodies before composition: a body that repeats the configured line, opens with a greeting or ends with a sign-off (the `greetings` / `signoffs` lists in `profile.ts`) is a check problem and goes to the repair loop, so the composed section holds each fixed line exactly once. The lines count in `char_count` and the band; the prompt reduces the model's own length target by their length.
 
 ## Save is off until allen-ai-os#1879 merges
 
