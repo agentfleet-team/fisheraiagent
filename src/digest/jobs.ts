@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { Tenant } from '../tenants.js';
-import { checkModelOutput } from './check.js';
+import { checkModelOutput, fixedLines, type FixedLines } from './check.js';
 import { requestHash, type EpisodeRequest, type EpisodeScript } from './contract.js';
 import { DigestError, digestCodeOf, errorView, type DigestErrorView } from './errors.js';
 import type { DigestLlm } from './llm.js';
@@ -113,6 +113,7 @@ export class DigestJobStore {
         this.deps.llmFactory(apiKey),
         profile,
         request,
+        fixedLines(tenant?.digest),
         (attempt, problems) => this.logFailedCheck(id, attempt, problems),
       );
       try {
@@ -166,17 +167,18 @@ async function draftAndCheck(
   llm: DigestLlm,
   profile: Profile,
   request: EpisodeRequest,
+  lines: FixedLines | undefined,
   onFailedCheck: (attempt: number, problems: string[]) => void,
 ): Promise<EpisodeScript> {
-  let output = await llm({ system: profile.system, prompt: buildDraftPrompt(profile, request) });
+  let output = await llm({ system: profile.system, prompt: buildDraftPrompt(profile, request, lines) });
   for (let attempt = 1; ; attempt += 1) {
-    const checked = checkModelOutput(request, profile, output);
+    const checked = checkModelOutput(request, profile, output, lines);
     if (checked.ok) return checked.script;
     onFailedCheck(attempt, checked.problems);
     if (attempt > MAX_REPAIR_CALLS) throw new ScriptCheckFailed(checked.problems);
     output = await llm({
       system: profile.system,
-      prompt: buildRepairPrompt(profile, request, output, checked.problems),
+      prompt: buildRepairPrompt(profile, request, output, checked.problems, lines),
     });
   }
 }

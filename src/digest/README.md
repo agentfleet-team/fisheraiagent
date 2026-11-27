@@ -30,6 +30,19 @@ The job makes the draft call, then up to two repair calls. The first passing che
 - `char_count` (spoken text of all sections, whitespace not counted) is inside the profile band, 2,400 to 2,850. It comes from the 9 to 11 minute acceptance at 262 characters per audio minute (fisheraiagent#82). Change it in `profile.ts`.
 - The model writes spoken text only. The tool appends the source list (title, channel, link per source) to `markdown` after the closing.
 
+## Tenant fixed lines
+
+A tenant may fix the spoken framing of its episodes in the tenants document (the same `TENANTS_FILE` / `TENANTS_JSON` the transcript tool reads):
+
+```json
+"digest": { "opening_line": "<greeting>", "closing_line": "<sign-off>" }
+```
+
+- Each value is a non-empty string of at most 200 characters (`MAX_DIGEST_LINE_CHARS` in `src/tenants.ts`); any other value fails the tenants-document load like every other bad field. Either field may be set alone; a tenant without them gets the unprompted behavior.
+- `opening_line` replaces the model's greeting: the draft and repair prompts say the system adds the opening line, the model writes only the opening body, and the `opening` section comes out as `opening_line` then the model's body, verbatim.
+- `closing_line` replaces the model's sign-off the same way: it ends the `closing` section verbatim, and the prompt says the system adds it.
+- The check works on the model's bodies before composition: a body that repeats the configured line, opens with a greeting or ends with a sign-off (the `greetings` / `signoffs` lists in `profile.ts`) is a check problem and goes to the repair loop, so the composed section holds each fixed line exactly once. The lines count in `char_count` and the band; the prompt reduces the model's own length target by their length.
+
 ## Save is off until allen-ai-os#1879 merges
 
 `server.ts` wires no Drive adapter, so `saved` is absent in every real job. The `DigestDrive` interface in `save.ts` is what the adapter must implement: find a file by name in a folder, create a file.

@@ -1,4 +1,5 @@
 import type { EpisodeRequest } from './contract.js';
+import type { FixedLines } from './check.js';
 
 // A profile fixes the language, the structure, the length band and the
 // source list of one kind of episode. Its constants live here, as data.
@@ -7,6 +8,13 @@ export interface Profile {
   // Allowed char_count of the spoken text: sections only, whitespace not counted.
   lengthBand: { min: number; max: number };
   system: string;
+  // When a tenant fixes an opening_line or closing_line, that line is
+  // structure: the model writes only the body, so a greeting at the start
+  // of the opening body or a sign-off at the end of the closing body is a
+  // check problem. The check matches the body's first or last sentence
+  // against these lists.
+  greetings: readonly RegExp[];
+  signoffs: readonly RegExp[];
 }
 
 // The band comes from the tool-3 TTS spike (PR #82, spike/tts/REPORT.md): at
@@ -32,6 +40,31 @@ export const PROFILES: Readonly<Record<string, Profile>> = Object.freeze({
     id: 'podcast-zh-tw-10min',
     lengthBand: PODCAST_ZH_TW_10MIN_BAND,
     system: PODCAST_SYSTEM,
+    greetings: [
+      /早安/u,
+      /早上好/u,
+      /大家好/u,
+      /各位.{0,6}(?:好|聽眾)/u,
+      /哈囉/u,
+      /你好/u,
+      /歡迎收聽/u,
+      /歡迎來到/u,
+      /^\s*(?:hello|hi)\b/iu,
+    ],
+    signoffs: [
+      /再見/u,
+      /下集見/u,
+      /下次見/u,
+      /明天見/u,
+      /明早見/u,
+      /掰掰/u,
+      /拜拜/u,
+      /晚安/u,
+      /謝謝收聽/u,
+      /感謝收聽/u,
+      /感謝.{0,4}陪伴/u,
+      /bye/iu,
+    ],
   },
 });
 
@@ -44,15 +77,30 @@ function fmt(seconds: number): string {
 }
 
 // The user prompt: the request, then each transcript as `[start] text` lines.
-export function buildDraftPrompt(profile: Profile, request: EpisodeRequest): string {
-  const lines: string[] = [
+// A tenant's fixed lines spend part of the band, so the model's own target
+// shrinks by their length and it is told not to write the framing the system
+// adds: no greeting in the opening, no sign-off in the closing.
+export function buildDraftPrompt(profile: Profile, request: EpisodeRequest, lines?: FixedLines): string {
+  const { min, max } = profile.lengthBand;
+  const own = lines === undefined ? '' : `，其中固定台詞 ${lines.chars} 字由系統加入；你的文字合計目標是 ${min - lines.chars} 到 ${max - lines.chars} 字`;
+  const out: string[] = [
     `日期：${request.date}`,
-    `長度：全部 section 的文字合計 ${profile.lengthBand.min} 到 ${profile.lengthBand.max} 字（不含空白）。`,
+    `長度：全部 section 的文字合計 ${min} 到 ${max} 字（不含空白）${own}。`,
     `missing_slots：${JSON.stringify(request.missing_slots)}`,
-    '',
   ];
+  if (lines !== undefined) {
+    const fixed: string[] = [];
+    if (lines.opening !== undefined) {
+      fixed.push('opening 的固定開場台詞由系統加入，opening 直接從內容開始，不要寫問候語');
+    }
+    if (lines.closing !== undefined) {
+      fixed.push('closing 的固定收尾台詞由系統加入，closing 不要寫收尾署名或道別語');
+    }
+    out.push(`固定台詞：${fixed.join('；')}。`);
+  }
+  out.push('');
   for (const s of request.sources) {
-    lines.push(
+    out.push(
       `## 來源 slot ${s.slot}`,
       `video_id: ${s.transcript.video_id}`,
       `標題：${s.title}`,
@@ -63,7 +111,7 @@ export function buildDraftPrompt(profile: Profile, request: EpisodeRequest): str
       '',
     );
   }
-  return lines.join('\n');
+  return out.join('\n');
 }
 
 export function buildRepairPrompt(
@@ -71,9 +119,10 @@ export function buildRepairPrompt(
   request: EpisodeRequest,
   previous: string,
   problems: string[],
+  lines?: FixedLines,
 ): string {
   return [
-    buildDraftPrompt(profile, request),
+    buildDraftPrompt(profile, request, lines),
     '上一次的輸出沒有通過檢查。請修正下列問題，並重新輸出完整的 JSON 物件：',
     ...problems.map((p) => `- ${p}`),
     '',

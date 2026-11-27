@@ -4,13 +4,15 @@ import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { checkModelOutput } from '../src/digest/check.js';
+import { checkModelOutput, countChars, fixedLines } from '../src/digest/check.js';
 import { parseEpisodeRequest } from '../src/digest/contract.js';
 import { DigestJobStore } from '../src/digest/jobs.js';
 import { createDigestService } from '../src/digest/service.js';
 import type { DigestLlm, DigestLlmRequest } from '../src/digest/llm.js';
-import { PODCAST_ZH_TW_10MIN_BAND, profileFor } from '../src/digest/profile.js';
+import { PODCAST_ZH_TW_10MIN_BAND, buildDraftPrompt, profileFor } from '../src/digest/profile.js';
 import type { DigestDrive } from '../src/digest/save.js';
+import { TranscriptError } from '../src/errors.js';
+import { MAX_DIGEST_LINE_CHARS, parseTenantsJson } from '../src/tenants.js';
 
 const FIXTURES = join(import.meta.dirname, 'fixtures', 'digest');
 const fixture = (name: string): string => readFileSync(join(FIXTURES, name), 'utf8');
@@ -347,7 +349,7 @@ test('D5: a script that does not name the missing slot fails the check', () => {
 const tenantsJson = JSON.stringify({
   tenants: [
     {
-      id: 'akina',
+      id: 'tenant-lines',
       caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
       gemini_key_env: 'DIGEST_TEST_GEMINI_KEY',
       destination: { type: 'google-drive', folder_id: 'folderAkina1' },
@@ -447,4 +449,262 @@ test('an LLM failure ends the job failed with its fixed code and no repair call'
     assert.equal(view.error.code, 'quota_exceeded');
     assert.equal(calls, 1);
   });
+});
+
+// --- tenant digest lines: fixed opening_line / closing_line (invented test values) ---
+
+const OPEN_LINE = '測試租戶專用開場台詞，節目開始。';
+const CLOSE_LINE = '測試租戶專用收尾台詞，節目結束。';
+// What a well-behaved model writes under fixed lines: no greeting, no sign-off.
+const MODEL_OPENING = '今天三支影片的重點整理，直接開始。';
+const MODEL_CLOSING = '以上是今天的內容。';
+
+// model-good.json with the opening and closing texts replaced and the last
+// segment grown or cut so the model's own text has `modelChars` characters.
+function withFraming(openingText: string, closingText: string, modelChars: number): string {
+  const out = JSON.parse(fixture('model-good.json'));
+  out.sections[0].text = openingText;
+  out.sections[out.sections.length - 1].text = closingText;
+  const seg = out.sections[out.sections.length - 2];
+  const rest = (out.sections as { text: string }[])
+    .filter((_, i) => i !== out.sections.length - 2)
+    .reduce((n, s) => n + s.text.replace(/\s/g, '').length, 0);
+  seg.text = '字'.repeat(modelChars - rest);
+  return JSON.stringify(out);
+}
+
+test('L4: the tenant digest field parses opening_line and closing_line; absent stays undefined', () => {
+  const doc = (digest?: unknown) =>
+    JSON.stringify({ tenants: [{ id: 'pod', ...(digest === undefined ? {} : { digest }) }] });
+  assert.equal(parseTenantsJson(doc(), 'test')[0].digest, undefined);
+  assert.deepEqual(parseTenantsJson(doc({}), 'test')[0].digest, {});
+  assert.deepEqual(
+    parseTenantsJson(doc({ opening_line: '甲', closing_line: '乙' }), 'test')[0].digest,
+    { opening_line: '甲', closing_line: '乙' },
+  );
+  assert.deepEqual(
+    parseTenantsJson(doc({ opening_line: ' 甲', closing_line: '乙 ' }), 'test')[0].digest,
+    { opening_line: ' 甲', closing_line: '乙 ' },
+  );
+  assert.equal(
+    parseTenantsJson(doc({ opening_line: '字'.repeat(MAX_DIGEST_LINE_CHARS) }), 'test')[0].digest?.opening_line
+      ?.length,
+    MAX_DIGEST_LINE_CHARS,
+  );
+});
+
+test('L4: the tenants document rejects a bad digest field with invalid_config', () => {
+  const bad: unknown[] = [
+    'yes',
+    3,
+    { opening_line: 3 },
+    { opening_line: '' },
+    { opening_line: '   ' },
+    { closing_line: true },
+    { closing_line: { text: 'x' } },
+    { opening_line: '字'.repeat(MAX_DIGEST_LINE_CHARS + 1) },
+    { closing_line: '字'.repeat(MAX_DIGEST_LINE_CHARS + 1) },
+  ];
+  for (const digest of bad) {
+    assert.throws(
+      () => parseTenantsJson(JSON.stringify({ tenants: [{ id: 'pod', digest }] }), 'test'),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      JSON.stringify(digest),
+    );
+  }
+});
+
+test('L2: the fixed lines wrap the opening and closing verbatim and count in char_count', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  const modelChars = 2400 - lines.chars;
+  const checked = checkModelOutput(request, profile, withFraming(MODEL_OPENING, MODEL_CLOSING, modelChars), lines);
+  assert.ok(checked.ok);
+  const { sections } = checked.script;
+  assert.equal(sections[0].text, `${OPEN_LINE}\n${MODEL_OPENING}`);
+  assert.equal(sections[sections.length - 1].text, `${MODEL_CLOSING}\n${CLOSE_LINE}`);
+  assert.equal(checked.script.char_count, modelChars + lines.chars);
+  assert.equal(checked.script.char_count, 2400);
+});
+
+test('L2: a model greeting or sign-off is a problem, not kept beside the fixed lines', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  const greeted = checkModelOutput(request, profile, withFraming(`各位聽眾早安！${MODEL_OPENING}`, MODEL_CLOSING, 2500), lines);
+  assert.ok(!greeted.ok);
+  assert.ok(greeted.problems.some((p) => p.includes('問候語')));
+  const signed = checkModelOutput(request, profile, withFraming(MODEL_OPENING, `${MODEL_CLOSING}再見，下集見！`, 2500), lines);
+  assert.ok(!signed.ok);
+  assert.ok(signed.problems.some((p) => p.includes('道別語')));
+  // a tenant without lines keeps the old behavior
+  assert.ok(checkModelOutput(request, profile, withFraming(`各位聽眾早安！${MODEL_OPENING}`, MODEL_CLOSING, 2500)).ok);
+});
+
+test('L2: a noncompliant first draft is repaired; the result has no duplicate framing and exact whitespace', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  const opening = `  ${OPEN_LINE}`;
+  const closing = `${CLOSE_LINE}  `;
+  const tenants = JSON.stringify({
+    tenants: [
+      { id: 'tenant-lines', caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' }, digest: { opening_line: opening, closing_line: closing } },
+    ],
+  });
+  try {
+    const llm = stubLlm([
+      withFraming(`各位聽眾早安！${MODEL_OPENING}`, `${MODEL_CLOSING}再見，下集見！`, 2500),
+      withFraming(MODEL_OPENING, MODEL_CLOSING, 2500),
+    ]);
+    await withService({ llmFactory: llm.factory, tenantsJson: tenants }, async (base) => {
+      const sent = await post(base, requestBody, { authorization: 'Bearer caller-token-for-test' });
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.equal(llm.calls.length, 2);
+      const sections = view.result.sections;
+      assert.equal(sections[0].text, `${opening}\n${MODEL_OPENING}`);
+      assert.equal(sections[sections.length - 1].text, `${MODEL_CLOSING}\n${closing}`);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
+});
+
+test('L2: a body that echoes a fixed line is a problem, not deduplicated silently', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  // no greeting or sign-off keywords: only the echo can fail this draft
+  const echoed = checkModelOutput(
+    request,
+    profile,
+    withFraming(`${OPEN_LINE}\n${MODEL_OPENING}`, `${MODEL_CLOSING}\n${CLOSE_LINE}`, 2500),
+    lines,
+  );
+  assert.ok(!echoed.ok);
+  assert.ok(echoed.problems.some((p) => p.includes('重複寫出固定台詞')));
+});
+
+test('L2: a fixed line echoed in the other framing body is a problem', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  const closingInOpening = checkModelOutput(
+    request,
+    profile,
+    withFraming(`${MODEL_OPENING}\n${CLOSE_LINE}`, MODEL_CLOSING, 2500),
+    lines,
+  );
+  assert.ok(!closingInOpening.ok);
+  assert.ok(closingInOpening.problems.some((p) => p.includes('收尾台詞')));
+  const openingInClosing = checkModelOutput(
+    request,
+    profile,
+    withFraming(MODEL_OPENING, `${OPEN_LINE}\n${MODEL_CLOSING}`, 2500),
+    lines,
+  );
+  assert.ok(!openingInClosing.ok);
+  assert.ok(openingInClosing.problems.some((p) => p.includes('開場台詞')));
+});
+
+test('L3: the fixed lines count toward the length band', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  for (const total of [2400, 2850]) {
+    const checked = checkModelOutput(
+      request,
+      profile,
+      withFraming(MODEL_OPENING, MODEL_CLOSING, total - lines.chars),
+      lines,
+    );
+    assert.ok(checked.ok, `${total} passes`);
+    assert.equal(checked.script.char_count, total);
+  }
+  for (const total of [2399, 2851]) {
+    const checked = checkModelOutput(
+      request,
+      profile,
+      withFraming(MODEL_OPENING, MODEL_CLOSING, total - lines.chars),
+      lines,
+    );
+    assert.equal(checked.ok, false, `${total} fails`);
+    if (!checked.ok) {
+      assert.ok(checked.problems.some((p) => p.includes('必須在 2400 到 2850 字之間')));
+    }
+  }
+});
+
+test('L2/L3: with fixed lines the prompt shrinks the model target and says the system adds them', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const chars = countChars([OPEN_LINE, CLOSE_LINE]);
+  const prompt = buildDraftPrompt(profile, request, fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE }));
+  assert.ok(prompt.includes(`${2400 - chars} 到 ${2850 - chars} 字`));
+  assert.ok(prompt.includes('固定台詞'));
+  assert.ok(prompt.includes('不要寫問候語'));
+  assert.ok(prompt.includes('不要寫收尾'));
+  const openingOnly = buildDraftPrompt(profile, request, fixedLines({ opening_line: OPEN_LINE }));
+  assert.ok(openingOnly.includes('不要寫問候語'));
+  assert.ok(!openingOnly.includes('收尾署名'));
+  // a tenant without lines gets the same prompt as no lines at all
+  assert.equal(buildDraftPrompt(profile, request, fixedLines({})), buildDraftPrompt(profile, request));
+});
+
+const tenantsWithLines = JSON.stringify({
+  tenants: [
+    {
+      id: 'tenant-lines',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      digest: { opening_line: OPEN_LINE, closing_line: CLOSE_LINE },
+    },
+  ],
+});
+
+test('L2/L3: a job for a tenant with digest lines returns them verbatim and budgets around them', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  try {
+    const llm = stubLlm([withFraming(MODEL_OPENING, MODEL_CLOSING, 2500)]);
+    await withService({ llmFactory: llm.factory, tenantsJson: tenantsWithLines }, async (base) => {
+      const sent = await post(base, requestBody, { authorization: 'Bearer caller-token-for-test' });
+      assert.equal(sent.status, 202);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      const sections = view.result.sections;
+      assert.equal(sections[0].text, `${OPEN_LINE}\n${MODEL_OPENING}`);
+      assert.equal(sections[sections.length - 1].text, `${MODEL_CLOSING}\n${CLOSE_LINE}`);
+      const fixed = countChars([OPEN_LINE, CLOSE_LINE]);
+      assert.equal(view.result.char_count, 2500 + fixed);
+      assert.ok(view.result.markdown.includes(OPEN_LINE));
+      assert.ok(view.result.markdown.includes(CLOSE_LINE));
+      const prompt = llm.calls[0].prompt;
+      assert.ok(prompt.includes(`${2400 - fixed} 到 ${2850 - fixed} 字`));
+      assert.ok(prompt.includes('不要寫問候語'));
+      assert.ok(prompt.includes('不要寫收尾'));
+      assert.equal(llm.calls.length, 1);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
+});
+
+test('L2: a job repairs a draft that echoes the fixed lines; each lands once', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  try {
+    const llm = stubLlm([
+      withFraming(`${OPEN_LINE}\n${MODEL_OPENING}`, `${MODEL_CLOSING}\n${CLOSE_LINE}`, 2500),
+      withFraming(MODEL_OPENING, MODEL_CLOSING, 2500),
+    ]);
+    await withService({ llmFactory: llm.factory, tenantsJson: tenantsWithLines }, async (base) => {
+      const sent = await post(base, requestBody, { authorization: 'Bearer caller-token-for-test' });
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.equal(llm.calls.length, 2);
+      const sections = view.result.sections;
+      assert.equal(sections[0].text, `${OPEN_LINE}\n${MODEL_OPENING}`);
+      assert.equal(sections[sections.length - 1].text, `${MODEL_CLOSING}\n${CLOSE_LINE}`);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
 });
