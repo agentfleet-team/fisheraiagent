@@ -1,0 +1,94 @@
+{
+  "msedge_tts": "2.1.1",
+  "node": "v26.13.0",
+  "generated_at": "2026-11-27T06:22:59.810Z",
+  "voice": "zh-TW-HsiaoChenNeural",
+  "rate": "-12%",
+  "en_voice": "en-US-AriaNeural",
+  "slow_rate": "-35%",
+  "sentence": "今天第一則是 Matt Pocock 示範怎麼用 mattpocock/skills 在一天內交付兩萬一千行的功能。",
+  "results": [
+    {
+      "id": "as-is",
+      "single": {
+        "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">今天第一則是 Matt Pocock 示範怎麼用 mattpocock/skills 在一天內交付兩萬一千行的功能。</prosody></voice></speak>",
+        "status": "ok",
+        "error": ""
+      },
+      "file": "sample-1-as-is.mp3",
+      "method": "single-ssml"
+    },
+    {
+      "id": "lang",
+      "single": {
+        "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">今天第一則是 <lang xml:lang=\"en-US\">Matt Pocock</lang> 示範怎麼用 <lang xml:lang=\"en-US\">mattpocock/skills</lang> 在一天內交付兩萬一千行的功能。</prosody></voice></speak>",
+        "status": "rejected",
+        "error": "Stream closed before the synthesis completed (no turn.end received). The audio is likely truncated."
+      },
+      "split": {
+        "requests": [
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">今天第一則是</prosody></voice></speak>"
+          },
+          {
+            "voice": "en-US-AriaNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"en-US\"><voice name=\"en-US-AriaNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">Matt Pocock</prosody></voice></speak>"
+          },
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">示範怎麼用</prosody></voice></speak>"
+          },
+          {
+            "voice": "en-US-AriaNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"en-US\"><voice name=\"en-US-AriaNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">mattpocock/skills</prosody></voice></speak>"
+          },
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">在一天內交付兩萬一千行的功能。</prosody></voice></speak>"
+          }
+        ],
+        "status": "ok",
+        "error": ""
+      },
+      "file": "sample-2-lang-split.mp3",
+      "method": "split-requests"
+    },
+    {
+      "id": "slow",
+      "single": {
+        "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">今天第一則是 <prosody rate=\"-35%\">Matt Pocock</prosody> 示範怎麼用 <prosody rate=\"-35%\">mattpocock/skills</prosody> 在一天內交付兩萬一千行的功能。</prosody></voice></speak>",
+        "status": "rejected",
+        "error": "Stream closed before the synthesis completed (no turn.end received). The audio is likely truncated."
+      },
+      "split": {
+        "requests": [
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">今天第一則是</prosody></voice></speak>"
+          },
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-35%\" volume=\"+0%\">Matt Pocock</prosody></voice></speak>"
+          },
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">示範怎麼用</prosody></voice></speak>"
+          },
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-35%\" volume=\"+0%\">mattpocock/skills</prosody></voice></speak>"
+          },
+          {
+            "voice": "zh-TW-HsiaoChenNeural",
+            "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:mstts=\"https://www.w3.org/2001/mstts\" xml:lang=\"zh-TW\"><voice name=\"zh-TW-HsiaoChenNeural\"><prosody pitch=\"+0Hz\" rate=\"-12%\" volume=\"+0%\">在一天內交付兩萬一千行的功能。</prosody></voice></speak>"
+          }
+        ],
+        "status": "ok",
+        "error": ""
+      },
+      "file": "sample-3-slow-split.mp3",
+      "method": "split-requests"
+    }
+  ]
+}

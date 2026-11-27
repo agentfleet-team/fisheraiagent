@@ -1,0 +1,9 @@
+{
+  "name": "voice-english-spike",
+  "private": true,
+  "type": "module",
+  "description": "Spike for agentfleet-team/fisheraiagent#107. Not part of the service.",
+  "engines": { "node": ">=22" },
+  "scripts": { "render": "node render.mjs" },
+  "dependencies": { "msedge-tts": "2.1.1" }
+}
