@@ -23,6 +23,11 @@ export interface Profile {
 // characters. The band 2,400 to 2,850 sits inside that range with a small margin.
 export const PODCAST_ZH_TW_10MIN_BAND = { min: 2400, max: 2850 };
 
+// The draft prompt aims at the lower middle of the band, not the midpoint:
+// the model overshoots what it is told (N5: every failure was overlong), so
+// a typical overshoot still lands inside the band.
+export const PODCAST_ZH_TW_10MIN_TARGET = 2500;
+
 const PODCAST_SYSTEM = [
   '你是一位台灣的 podcast 腳本作者。你把幾支 YouTube 影片的逐字稿，整理成一集約十分鐘的口語節目腳本。',
   '語言：台灣繁體中文，口語、清楚。英文技術名詞、產品名與人名保留原文，不翻譯。',
@@ -84,10 +89,10 @@ export function buildDraftPrompt(profile: Profile, request: EpisodeRequest, line
   const { min, max } = profile.lengthBand;
   const fixedChars = lines?.chars ?? 0;
   const own = lines === undefined ? '' : `，其中固定台詞 ${lines.chars} 字由系統加入；你的文字合計目標是 ${min - lines.chars} 到 ${max - lines.chars} 字`;
-  // A concrete target beats a bare band: the model aims at the midpoint
+  // A concrete target beats a bare band: the model aims at the target
   // instead of drifting over the upper edge, and a per-section budget keeps
   // one long segment from spending the whole allowance.
-  const ownTarget = Math.round((min + max) / 2) - fixedChars;
+  const ownTarget = PODCAST_ZH_TW_10MIN_TARGET - fixedChars;
   const openingBudget = 120;
   const closingBudget = 80;
   const segmentBudget = Math.max(

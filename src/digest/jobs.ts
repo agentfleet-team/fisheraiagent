@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { Tenant } from '../tenants.js';
 import { checkModelOutput, fixedLines, type FixedLines } from './check.js';
+import { fitModelOutput } from './fit.js';
 import { requestHash, type EpisodeRequest, type EpisodeScript } from './contract.js';
 import { DigestError, digestCodeOf, errorView, type DigestErrorView } from './errors.js';
 import type { DigestLlm } from './llm.js';
@@ -115,6 +116,7 @@ export class DigestJobStore {
         request,
         fixedLines(tenant?.digest),
         (attempt, problems) => this.logFailedCheck(id, attempt, problems),
+        (line) => (this.deps.logSink ?? consoleSink)(`job=${id} ${line}`),
       );
       try {
         const saved = await saveScript(this.deps.drive, tenant, request.date, script.markdown);
@@ -162,16 +164,27 @@ function jobError(err: unknown): DigestJobError {
 
 // The draft and check nodes: one model call, then up to MAX_REPAIR_CALLS
 // repair calls. Each repair prompt names the problems of the check before it.
-// A passing check ends the loop; the last failed check ends the job.
+// After the last repair call the fit step drops whole sentences when the
+// draft is still overlong. A passing check ends the loop; the last failed
+// check ends the job.
 async function draftAndCheck(
   llm: DigestLlm,
   profile: Profile,
   request: EpisodeRequest,
   lines: FixedLines | undefined,
   onFailedCheck: (attempt: number, problems: string[]) => void,
+  onFit: (line: string) => void,
 ): Promise<EpisodeScript> {
   let output = await llm({ system: profile.system, prompt: buildDraftPrompt(profile, request, lines) });
   for (let attempt = 1; ; attempt += 1) {
+    if (attempt === MAX_REPAIR_CALLS + 1) {
+      const { min, max } = profile.lengthBand;
+      const fitted = fitModelOutput(output, lines?.chars ?? 0, min, max);
+      if (fitted !== undefined) {
+        output = fitted.raw;
+        onFit(`fit removed=${fitted.removed} chars_before=${fitted.charsBefore} chars_after=${fitted.charsAfter}`);
+      }
+    }
     const checked = checkModelOutput(request, profile, output, lines);
     if (checked.ok) return checked.script;
     onFailedCheck(attempt, checked.problems);
