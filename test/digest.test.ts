@@ -6,9 +6,10 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { checkModelOutput } from '../src/digest/check.js';
 import { parseEpisodeRequest } from '../src/digest/contract.js';
+import { DigestJobStore } from '../src/digest/jobs.js';
 import { createDigestService } from '../src/digest/service.js';
 import type { DigestLlm, DigestLlmRequest } from '../src/digest/llm.js';
-import { profileFor } from '../src/digest/profile.js';
+import { PODCAST_ZH_TW_10MIN_BAND, profileFor } from '../src/digest/profile.js';
 import type { DigestDrive } from '../src/digest/save.js';
 
 const FIXTURES = join(import.meta.dirname, 'fixtures', 'digest');
@@ -148,7 +149,7 @@ test('D3: a missing ref triggers exactly one repair call, and a repaired output 
   });
 });
 
-test('D3: an output outside the length band triggers one repair call; a second failure ends failed with script_check_failed', async () => {
+test('D3: an output outside the length band is repaired twice; a third failure ends failed with script_check_failed', async () => {
   const llm = stubLlm([fixture('model-short.json'), fixture('model-short.json')]);
   await withService({ llmFactory: llm.factory }, async (base) => {
     const sent = await post(base, requestBody);
@@ -156,36 +157,114 @@ test('D3: an output outside the length band triggers one repair call; a second f
     assert.equal(view.status, 'failed');
     assert.equal(view.error.code, 'script_check_failed');
     assert.equal(view.result, undefined);
-    assert.equal(llm.calls.length, 2);
+    assert.equal(llm.calls.length, 3);
   });
 });
 
-test('D3: the band fixtures at 2,400 and 2,800 characters each trigger the one repair call; the 2,600 fixture passes check', async () => {
+// model-good.json with its last segment grown or cut so the spoken text has `chars` characters.
+function withCharCount(chars: number): string {
+  const out = JSON.parse(fixture('model-good.json'));
+  const last = out.sections[out.sections.length - 2];
+  const total = (out.sections as { text: string }[]).reduce((n, sec) => n + sec.text.replace(/\s/g, '').length, 0);
+  const keep = last.text.replace(/\s/g, '').length + (chars - total);
+  last.text = '字'.repeat(keep);
+  return JSON.stringify(out);
+}
+
+test('C1: the podcast-zh-tw-10min band is 2,400 to 2,850 characters', () => {
+  assert.deepEqual(PODCAST_ZH_TW_10MIN_BAND, { min: 2400, max: 2850 });
+  assert.deepEqual(profileFor('podcast-zh-tw-10min')!.lengthBand, { min: 2400, max: 2850 });
+});
+
+test('D3: the band edges pass the check; one character outside each edge is repaired', async () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;
-  const at2600 = checkModelOutput(request, profile, fixture('model-good.json'));
-  assert.ok(at2600.ok);
-  assert.equal(at2600.script.char_count, 2600);
-  for (const bad of ['model-band-low.json', 'model-band-high.json']) {
-    const llm = stubLlm([fixture(bad), fixture('model-good.json')]);
+  for (const inside of [2400, 2600, 2800, 2850]) {
+    const checked = checkModelOutput(request, profile, withCharCount(inside));
+    assert.ok(checked.ok, `${inside} passes`);
+    assert.equal(checked.script.char_count, inside);
+  }
+  for (const outside of [2399, 2851]) {
+    const llm = stubLlm([withCharCount(outside), fixture('model-good.json')]);
     await withService({ llmFactory: llm.factory }, async (base) => {
       const sent = await post(base, requestBody);
       const view = await settle(base, sent.body.job_id);
       assert.equal(view.status, 'done');
       assert.equal(llm.calls.length, 2);
-      assert.ok(llm.calls[1].prompt.includes('必須在 2500 到 2700 字之間'));
+      assert.ok(llm.calls[1].prompt.includes('必須在 2400 到 2850 字之間'));
     });
   }
 });
 
-test('D3: output that is not JSON counts as a failed check and gets one repair call', async () => {
+test('C2: the job passes at attempt 1, 2 or 3 and then makes no further call; a job that never passes makes 3 calls', async () => {
+  const bad = fixture('model-no-ref.json');
+  const good = fixture('model-good.json');
+  const cases: { texts: string[]; status: string; calls: number }[] = [
+    { texts: [good], status: 'done', calls: 1 },
+    { texts: [bad, good], status: 'done', calls: 2 },
+    { texts: [bad, bad, good], status: 'done', calls: 3 },
+    { texts: [bad], status: 'failed', calls: 3 },
+  ];
+  for (const c of cases) {
+    const llm = stubLlm(c.texts);
+    await withService({ llmFactory: llm.factory }, async (base) => {
+      const sent = await post(base, requestBody);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, c.status);
+      assert.equal(llm.calls.length, c.calls);
+    });
+  }
+});
+
+test('C2: each repair prompt names the problems of the check before it', async () => {
+  const llm = stubLlm([fixture('model-no-ref.json'), fixture('model-short.json'), fixture('model-good.json')]);
+  await withService({ llmFactory: llm.factory }, async (base) => {
+    const sent = await post(base, requestBody);
+    const view = await settle(base, sent.body.job_id);
+    assert.equal(view.status, 'done');
+    assert.equal(llm.calls.length, 3);
+    assert.ok(llm.calls[1].prompt.includes('沒有 refs'));
+    assert.ok(!llm.calls[2].prompt.includes('沒有 refs'));
+    assert.ok(llm.calls[2].prompt.includes('必須在 2400 到 2850 字之間'));
+  });
+});
+
+test('C3: a failed job carries the last problems, and the log has one line per failed check', async () => {
+  const llm = stubLlm([fixture('model-no-ref.json'), fixture('model-no-ref.json'), fixture('model-short.json')]);
+  const lines: string[] = [];
+  const store = new DigestJobStore({ llmFactory: llm.factory, logSink: (l) => lines.push(l) });
+  const outcome = store.submit(parseEpisodeRequest(requestBody)!, 'SECRET-GEMINI-KEY', undefined);
+  assert.equal(outcome.kind, 'accepted');
+  const jobId = (outcome as { jobId: string }).jobId;
+  let view = store.get(jobId)!;
+  for (let i = 0; i < 200 && view.status !== 'failed' && view.status !== 'done'; i++) {
+    await new Promise((r) => setTimeout(r, 10));
+    view = store.get(jobId)!;
+  }
+  assert.equal(view.status, 'failed');
+  assert.equal(view.error?.code, 'script_check_failed');
+  assert.equal(view.error?.problems?.length, 1);
+  assert.match(view.error!.problems![0], /必須在 2400 到 2850 字之間/);
+  assert.equal(lines.length, 3);
+  lines.forEach((line, i) => {
+    assert.ok(line.startsWith(`digest_check_failed job=${jobId} attempt=${i + 1} problems=`));
+    assert.ok(!line.includes('\n'));
+    assert.ok(!line.includes('SECRET-GEMINI-KEY'));
+  });
+  assert.match(lines[0], /沒有 refs/);
+  assert.match(lines[2], /必須在 2400 到 2850 字之間/);
+  const transcriptText = parseEpisodeRequest(requestBody)!.sources[0].transcript.blocks[0].text;
+  for (const line of lines) assert.ok(!line.includes(transcriptText));
+});
+
+test('D3: output that is not JSON counts as a failed check and gets repair calls', async () => {
   const llm = stubLlm(['not json at all', fixture('model-no-ref.json')]);
   await withService({ llmFactory: llm.factory }, async (base) => {
     const sent = await post(base, requestBody);
     const view = await settle(base, sent.body.job_id);
     assert.equal(view.status, 'failed');
     assert.equal(view.error.code, 'script_check_failed');
-    assert.equal(llm.calls.length, 2);
+    assert.equal(llm.calls.length, 3);
   });
 });
 
