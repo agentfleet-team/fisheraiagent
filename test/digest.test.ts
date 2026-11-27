@@ -863,7 +863,7 @@ test('F1: a draft still overlong after both repairs is cut to at most 2,850 with
         assert.ok(original[i].text.startsWith(sec.text));
       }
     });
-    const fit = lines.filter((l) => l.includes(' fit removed='));
+    const fit = lines.filter((l) => l.startsWith('fit removed='));
     assert.equal(fit.length, 1);
     assert.match(fit[0], new RegExp(`^fit removed=\\d+ chars_before=${total} chars_after=${script.char_count}$`));
   }
