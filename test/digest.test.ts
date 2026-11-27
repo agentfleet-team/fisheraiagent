@@ -760,6 +760,24 @@ test('N2: an underlong draft names the exact shortfall and a per-section add tow
   assert.ok(problem.includes('closing 目前'));
 });
 
+test('N2: a draft with no countable text gets per-section targets that sum to the midpoint', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const blank = JSON.parse(fixture('model-good.json')) as { sections: { text: string }[] };
+  for (const sec of blank.sections) sec.text = ' \n ';
+  const checked = checkModelOutput(request, profileFor('podcast-zh-tw-10min')!, JSON.stringify(blank));
+  assert.equal(checked.ok, false);
+  if (checked.ok) return;
+  const problem = checked.problems.find((p) => p.includes('必須在'))!;
+  assert.ok(problem.includes('全部文字合計 0 字'));
+  assert.ok(problem.includes('不足下限 2400 字'));
+  const targets = [...problem.matchAll(/→ 約 (\d+) 字/gu)].map((m) => Number(m[1]));
+  assert.equal(targets.length, 5);
+  assert.equal(
+    targets.reduce((a, b) => a + b, 0),
+    2625,
+  );
+});
+
 test('N2: fixed lines are excluded from the per-section suggestions', () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;

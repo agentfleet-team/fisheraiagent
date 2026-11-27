@@ -82,11 +82,21 @@ function lengthProblem(
 ): string {
   const mid = Math.round((min + max) / 2);
   const adjustable = charCount - fixedChars;
-  const scale = adjustable > 0 ? (mid - fixedChars) / adjustable : 0;
-  const parts = sections.map((s) => {
+  const budget = mid - fixedChars;
+  // A draft with no countable text has no lengths to scale, so the budget is
+  // split evenly; the last section takes the rounding remainder.
+  const even = Math.floor(budget / sections.length);
+  const scale = adjustable > 0 ? budget / adjustable : 0;
+  const parts = sections.map((s, i) => {
     const name = s.kind === 'segment' ? `slot ${s.slot ?? '?'}` : s.kind;
     const len = countChars([s.text]);
-    return `${name} 目前 ${len} 字 → 約 ${Math.round(len * scale)} 字`;
+    const target =
+      adjustable > 0
+        ? Math.round(len * scale)
+        : i === sections.length - 1
+          ? budget - even * (sections.length - 1)
+          : even;
+    return `${name} 目前 ${len} 字 → 約 ${target} 字`;
   });
   const over = charCount > max;
   const miss = over ? `超出上限 ${charCount - max} 字` : `不足下限 ${min - charCount} 字`;
