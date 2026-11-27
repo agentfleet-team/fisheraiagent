@@ -156,7 +156,18 @@ describe("M4: required instance Env vars", () => {
       noRetry: () => {},
     };
 
-    await worker.scheduled(controller, { ...BASE_ENV, DRY_RUN: "false" });
+    const pair = await crypto.subtle.generateKey(
+      { name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" },
+      true,
+      ["sign"],
+    );
+    const der = new Uint8Array(await crypto.subtle.exportKey("pkcs8", pair.privateKey));
+    const secrets = {
+      GITHUB_APP_ID: "1",
+      GITHUB_APP_INSTALLATION_ID: "2",
+      GITHUB_APP_PRIVATE_KEY: `-----${"BEGIN"} PRIVATE KEY-----\n${btoa(String.fromCharCode(...der))}\n-----${"END"} PRIVATE KEY-----`,
+    };
+    await worker.scheduled(controller, { ...BASE_ENV, ...secrets, DRY_RUN: "false" });
     expect(fetchSpy.mock.calls.length).toBeGreaterThan(0);
 
     for (const key of ["STATE_REPO", "SUMMARY_REPO"] as const) {
