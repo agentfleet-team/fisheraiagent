@@ -16,6 +16,24 @@ The directory page [tools.agentfleet.team](https://tools.agentfleet.team/) is ge
 
 Router app: [podcast-night](apps/podcast-night/README.md) runs the morning-podcast night across the transcript, digest, and voice tools.
 
+## Product home
+
+Technical source code, operational templates, and architecture decision records for the morning-podcast tools live in this repository:
+
+| Part | Location | Notes |
+|---|---|---|
+| Router (`podcast-night`) | [`apps/podcast-night/`](apps/podcast-night/) | Cloudflare Worker cron router across the three tools ([README](apps/podcast-night/README.md)). |
+| Transcript tool | [`src/`](src/) | CLI, HTTP job service, Discord bot, MCP server, [`web/`](web/) page, and [`openapi.yaml`](openapi.yaml). |
+| Digest tool | [`src/digest/`](src/digest/) | Script generation job API ([README](src/digest/README.md)). |
+| Voice tool | [`src/voice/`](src/voice/) | Text-to-speech MP3 and time-mark job API ([README](src/voice/README.md)). |
+| Mac caption reader | [`src/caption-reader.ts`](src/caption-reader.ts) | Standalone HTTP caption reader ([`src/caption-reader-service.ts`](src/caption-reader-service.ts)) and remote adapter ([`src/captions-remote.ts`](src/captions-remote.ts)). |
+| Architecture decisions (ADRs) | [`docs/adr/`](docs/adr/) | Public technical ADRs, starting with [ADR 0001](docs/adr/0001-captions-first-transcript-source.md). |
+| Private technical RFCs and ADRs | allen-ai-os `docs/morning-podcast/rfc/` (RFC-001..004); allen-ai-os `docs/adr/0012-morning-podcast-night-loop.md` and `docs/adr/0013-mac-inbound-channels.md` | Text pointers only. The allen-ai-os repository is private. |
+| Tools directory | [`tools-site/`](tools-site/) | Static generator for the tools directory page. |
+| AWS deployment | [`deploy/aws/`](deploy/aws/) | ECS Fargate deployment recipe ([README](deploy/aws/README.md)). |
+
+Product planning documents stay in private repositories. The private records are in allen-ai-os `docs/morning-podcast/`, and the product requirement document is PRD fisherivco/allen-ai-os#1878. The resume pointer for product discussions is the cch topic `morning-podcast`.
+
 ## Self-host quick start (HTTP service)
 
 One service, many callers: every client sends its own Gemini API key per request (`X-Gemini-Key` header) — or, when its tenant holds one, just its caller credential — and jobs run in the background.
