@@ -83,6 +83,22 @@ export async function signAppJwt(
   return `${signingInput}.${b64url(new Uint8Array(sig))}`;
 }
 
+/** Parses the token endpoint body at the HTTP boundary; null for anything but a valid token and expiry. */
+export function parseTokenResponse(text: string): { token: string; expiresMs: number } | null {
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (typeof data !== "object" || data === null || Array.isArray(data)) return null;
+  const { token, expires_at: expiresAt } = data as Record<string, unknown>;
+  if (typeof token !== "string" || token === "" || typeof expiresAt !== "string") return null;
+  const expiresMs = Date.parse(expiresAt);
+  if (!Number.isFinite(expiresMs)) return null;
+  return { token, expiresMs };
+}
+
 export interface AppTokensOptions {
   now?: () => number;
   fetchFn?: typeof fetch;
@@ -121,18 +137,11 @@ export function appTokens(env: AppSecrets, options: AppTokensOptions = {}) {
     if (res.status !== 201) {
       throw new Error(`GitHub App token mint failed with status ${res.status}`);
     }
-    let data: { token?: unknown; expires_at?: unknown };
-    try {
-      data = (await res.json()) as { token?: unknown; expires_at?: unknown };
-    } catch {
-      throw new Error(INVALID_TOKEN_RESPONSE);
-    }
-    const expiresMs = typeof data.expires_at === "string" ? Date.parse(data.expires_at) : NaN;
-    if (typeof data.token !== "string" || data.token === "" || Number.isNaN(expiresMs)) {
-      throw new Error(INVALID_TOKEN_RESPONSE);
-    }
+    const parsed = parseTokenResponse(await res.text().catch(() => ""));
+    if (parsed === null) throw new Error(INVALID_TOKEN_RESPONSE);
+    const { token, expiresMs } = parsed;
     options.log?.(`token minted repo=${scope.repo} perm=${scope.permission}`);
-    return { token: data.token, expiresMs };
+    return { token, expiresMs };
   }
 
   async function fresh(scope: TokenScope): Promise<string> {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { appTokens, fetchWithToken, hasAppSecrets } from "../src/app-token.js";
+import { appTokens, fetchWithToken, hasAppSecrets, parseTokenResponse } from "../src/app-token.js";
 import { githubStore } from "../src/github.js";
 import { githubComments } from "../src/summary.js";
 import { buildTickDeps, worker, type Env } from "../src/worker.js";
@@ -220,6 +220,48 @@ describe("app tokens", () => {
     fetchSpy.mockRestore();
     expect(logged).toContain("tick error=GitHub App token mint returned an invalid response");
     expect(logged).not.toContain(marker);
+  });
+
+  it("A3 parseTokenResponse accepts only a token with a finite expiry", () => {
+    const iso = "2030-01-01T00:00:00Z";
+    for (const bad of [
+      "{", "null", "[]", '"x"', "42", "{}",
+      JSON.stringify({ expires_at: iso }),
+      JSON.stringify({ token: "", expires_at: iso }),
+      JSON.stringify({ token: 5, expires_at: iso }),
+      JSON.stringify({ token: "t" }),
+      JSON.stringify({ token: "t", expires_at: 5 }),
+      JSON.stringify({ token: "t", expires_at: "not a date" }),
+    ]) {
+      expect(parseTokenResponse(bad)).toBeNull();
+    }
+    expect(parseTokenResponse(JSON.stringify({ token: "t", expires_at: iso }))).toEqual({
+      token: "t",
+      expiresMs: Date.parse(iso),
+    });
+  });
+
+  it("A3 a null token body yields one scheduled error with the fixed message", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(
+      (async () => new Response("null", { status: 201 })) as unknown as typeof fetch,
+    );
+    const { pem } = await makeKey();
+    const tickEnv = {
+      STATE_REPO: "o/s",
+      SUMMARY_REPO: "o/m",
+      SUMMARY_ISSUE: "1",
+      GITHUB_APP_ID: "1",
+      GITHUB_APP_INSTALLATION_ID: "2",
+      GITHUB_APP_PRIVATE_KEY: pem,
+    } as Env;
+    await worker.scheduled({ scheduledTime: NOW } as ScheduledController, tickEnv);
+    const logged = [...errSpy.mock.calls, ...logSpy.mock.calls];
+    errSpy.mockRestore();
+    logSpy.mockRestore();
+    fetchSpy.mockRestore();
+    expect(logged).toEqual([["tick error=GitHub App token mint returned an invalid response"]]);
   });
 
   it("A1 store and comments send the minted token", async () => {
