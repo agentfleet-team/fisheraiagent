@@ -378,6 +378,62 @@ test('T21: a named tenant the bearer does not satisfy, or does not exist, is 403
   }
 });
 
+// Three tenants over one folder: two carry distinct file_prefix values and
+// one carries none, so all of a date's names coexist without collision.
+const tenantsPrefix = JSON.stringify({
+  tenants: [
+    {
+      id: 'pre-a',
+      caller: { token_env: 'VOICE_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder', file_prefix: 'aa-' },
+    },
+    {
+      id: 'pre-b',
+      caller: { token_env: 'VOICE_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder', file_prefix: 'bb-' },
+    },
+    {
+      id: 'pre-legacy',
+      caller: { token_env: 'VOICE_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder' },
+    },
+  ],
+});
+
+test('T21 file_prefix: distinct prefixes and omission share one folder on the same date; a retry hits the prefixed names', async () => {
+  const drive = new StubDrive();
+  await withService({ engine: stubEngine().engine, drive, tenantsJson: tenantsPrefix }, async (base) => {
+    const auth = { authorization: 'Bearer tok' };
+    const saved = new Map<string, { audio_file_id: string; marks_file_id: string; names: string[] }>();
+    for (const [tenant, names] of [
+      ['pre-a', ['aa-2026-11-28-episode.mp3', 'aa-2026-11-28-marks.json']],
+      ['pre-b', ['bb-2026-11-28-episode.mp3', 'bb-2026-11-28-marks.json']],
+      ['pre-legacy', ['2026-11-28-episode.mp3', '2026-11-28-marks.json']],
+    ] as const) {
+      const sent = await post(base, withTenant(tenant), auth);
+      assert.equal(sent.status, 202);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done', tenant);
+      assert.deepEqual(view.result.saved.names, names);
+      saved.set(tenant, view.result.saved);
+    }
+    assert.equal(drive.files.length, 6);
+    // Retry pre-a with changed content (same length, so the band still
+    // holds): the prefixed names are the lookup keys, so the same ids and
+    // the original bytes stand and nothing new is written.
+    const changed = JSON.parse(JSON.stringify(requestBody)) as { sections: { id: string; text: string }[] };
+    changed.sections[0].text = `改${changed.sections[0].text.slice(1)}`;
+    const sent = await post(base, { ...changed, tenant: 'pre-a' }, auth);
+    assert.equal(sent.status, 202);
+    const view = await settle(base, sent.body.job_id);
+    assert.equal(view.status, 'done');
+    assert.deepEqual(view.result.saved, saved.get('pre-a'));
+    assert.equal(drive.files.length, 6);
+    const storedMarks = JSON.parse(String(drive.files[1].content)) as { marks: unknown[] };
+    assert.notDeepEqual(view.result.marks, storedMarks.marks);
+  });
+});
+
 test('V1: chunks also end at ASCII full stops, never mid-sentence', () => {
   const sentence = 'This is a complete sentence about the morning news ' +
     'with supporting detail '.repeat(8) + 'today.';

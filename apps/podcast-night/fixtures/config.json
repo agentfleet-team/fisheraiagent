@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "mode": "trial",
-  "tenant": "podcast-trial",
+  "tenants": { "trial": "podcast-trial", "live": "podcast" },
   "slots": ["00:00", "01:00", "02:00"],
   "content_at": "03:00",
   "topics": [

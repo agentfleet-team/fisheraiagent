@@ -34,11 +34,14 @@ const V3 = "37ROC7uPieE";
 const V4 = "eKhog2ZXlQg";
 const V5 = "r0Mm_79yKso";
 
-function configJson(mode: "trial" | "live" = "trial", tenant?: string): string {
+function configJson(
+  mode: "trial" | "live" = "trial",
+  tenants?: { trial?: string; live?: string },
+): string {
   return JSON.stringify({
     enabled: true,
     mode,
-    ...(tenant === undefined ? {} : { tenant }),
+    ...(tenants === undefined ? {} : { tenants }),
     slots: ["00:00", "01:00", "02:00"],
     content_at: "03:00",
     topics: [
@@ -290,10 +293,10 @@ function rig(
   tool3 = okTool3(),
   mode: "trial" | "live" = "trial",
   tool1: Tool1 = new Tool1Stub(),
-  tenant?: string,
+  tenants?: { trial?: string; live?: string },
 ): Rig {
   const store = new FakeStore();
-  store.seed(CONFIG_PATH, configJson(mode, tenant));
+  store.seed(CONFIG_PATH, configJson(mode, tenants));
   const comments = new FakeComments();
   return {
     store,
@@ -853,22 +856,21 @@ describe("podcast-night content, voice, check, deliver (fisherivco/allen-ai-os#1
     expect(taipei("00:00").getTime()).toBe(at("16:00").getTime());
   });
 
-  it("T21: the tool 2 and tool 3 requests carry the tenant the instance config names (fisheraiagent#112)", async () => {
-    // The instance config pairs a mode with its tenant slug; trial and live
-    // name different tenants of the same tools (agentfleet-team/fisheraiagent#112).
-    for (const [mode, tenant] of [
-      ["trial", "podcast-trial"],
-      ["live", "podcast"],
-    ] as const) {
-      const r = rig(okTool2(), okTool3(), mode, new Tool1Stub(), tenant);
+  it("T21: one config carrying both tenant ids sends the trial tenant in trial and the live tenant in live (fisheraiagent#112)", async () => {
+    // The instance config carries both tenant ids; the router picks by mode,
+    // so changing only `mode` moves both requests to the other tenant and no
+    // tenant id literal sits in code.
+    const tenants = { trial: "podcast-trial", live: "podcast" };
+    for (const mode of ["trial", "live"] as const) {
+      const r = rig(okTool2(), okTool3(), mode, new Tool1Stub(), tenants);
       seedSlots(r);
       await r.tick(taipei("03:00"));
-      expect(r.tool2.submits[0].body.tenant).toBe(tenant);
-      expect(r.tool3.submits[0].body.tenant).toBe(tenant);
+      expect(r.tool2.submits[0].body.tenant).toBe(tenants[mode]);
+      expect(r.tool3.submits[0].body.tenant).toBe(tenants[mode]);
     }
   });
 
-  it("T21: a config without tenant sends no tenant field", async () => {
+  it("T21: a config without tenants sends no tenant field", async () => {
     const r = rig();
     seedSlots(r);
     await r.tick(taipei("03:00"));

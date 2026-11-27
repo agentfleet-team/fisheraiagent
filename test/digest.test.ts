@@ -929,3 +929,105 @@ test('T21: the tenants document parses destination.folders and rejects bad value
     );
   }
 });
+
+test('T21 file_prefix: the tenants document parses destination.file_prefix and rejects bad values', () => {
+  const doc = (destination: unknown) =>
+    JSON.stringify({ tenants: [{ id: 'pod', destination }] });
+  assert.deepEqual(
+    parseTenantsJson(doc({ type: 'google-drive', folder_id: 'base', file_prefix: 'trial-' }), 'test')[0]
+      .destination,
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'trial-' },
+  );
+  const bad: unknown[] = [
+    { type: 'google-drive', folder_id: 'base', file_prefix: 7 },
+    { type: 'google-drive', folder_id: 'base', file_prefix: '' },
+    { type: 'google-drive', folder_id: 'base', file_prefix: '   ' },
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'x'.repeat(1024) },
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'a/b' },
+    { type: 'google-drive', folder_id: 'base', file_prefix: 'a\\b' },
+  ];
+  for (const destination of bad) {
+    assert.throws(
+      () => parseTenantsJson(doc(destination), 'test'),
+      (err: unknown) => err instanceof TranscriptError && err.code === 'invalid_config',
+      JSON.stringify(destination),
+    );
+  }
+});
+
+// Three tenants over one folder: two carry distinct file_prefix values and
+// one carries none, so all three of a date's names coexist without collision.
+const tenantsPrefix = JSON.stringify({
+  tenants: [
+    {
+      id: 'pre-a',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder', file_prefix: 'aa-' },
+    },
+    {
+      id: 'pre-b',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder', file_prefix: 'bb-' },
+    },
+    {
+      id: 'pre-legacy',
+      caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'sharedFolder' },
+    },
+  ],
+});
+
+test('T21 file_prefix: distinct prefixes and omission share one folder on the same date; a retry hits the prefixed name', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  try {
+    // The fourth LLM call returns a different script, so the retry would
+    // store different bytes if the no-overwrite lookup missed.
+    const variant = JSON.parse(fixture('model-good.json')) as { sections: { text: string }[] };
+    variant.sections[0].text = `改${variant.sections[0].text.slice(1)}`;
+    const llm = stubLlm([
+      fixture('model-good.json'),
+      fixture('model-good.json'),
+      fixture('model-good.json'),
+      JSON.stringify(variant),
+    ]);
+    const drive = new StubDrive();
+    await withService({ llmFactory: llm.factory, drive, tenantsJson: tenantsPrefix }, async (base) => {
+      const auth = { authorization: 'Bearer caller-token-for-test' };
+      const saved = new Map<string, { file_id: string; name: string }>();
+      for (const [tenant, name] of [
+        ['pre-a', 'aa-2026-11-28-script.md'],
+        ['pre-b', 'bb-2026-11-28-script.md'],
+        ['pre-legacy', '2026-11-28-script.md'],
+      ] as const) {
+        const sent = await post(base, withTenant(tenant), auth);
+        assert.equal(sent.status, 202);
+        const view = await settle(base, sent.body.job_id);
+        assert.equal(view.status, 'done', tenant);
+        assert.equal(view.result.saved.name, name);
+        saved.set(tenant, view.result.saved as { file_id: string; name: string });
+      }
+      assert.deepEqual(
+        drive.files.map((f) => [f.folder, f.name]),
+        [
+          ['sharedFolder', 'aa-2026-11-28-script.md'],
+          ['sharedFolder', 'bb-2026-11-28-script.md'],
+          ['sharedFolder', '2026-11-28-script.md'],
+        ],
+      );
+      // Retry pre-a with changed request content: the prefixed name is the
+      // lookup key, so the same id and the original bytes stand and nothing
+      // new is written.
+      const changed = JSON.parse(JSON.stringify(requestBody)) as { sources: { title: string }[] };
+      changed.sources[0].title = 'a changed source title';
+      const sent = await post(base, { ...changed, tenant: 'pre-a' }, auth);
+      assert.equal(sent.status, 202);
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.deepEqual(view.result.saved, saved.get('pre-a'));
+      assert.notEqual(view.result.markdown, drive.files[0].content);
+      assert.equal(drive.files.length, 3);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
+});

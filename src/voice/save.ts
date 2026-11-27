@@ -1,4 +1,4 @@
-import type { Tenant } from '../tenants.js';
+import { destinationFilePrefix, type Tenant } from '../tenants.js';
 import type { Mark, SavedEpisode } from './contract.js';
 
 // The Drive surface the save node needs. A real adapter lands with
@@ -43,8 +43,9 @@ export async function saveEpisode(
   const destination = tenant?.destination;
   if (drive === undefined || destination === undefined || destination.type !== 'google-drive') return undefined;
   const folderId = destination.folders?.voice ?? destination.folder_id;
-  const audioName = audioFileName(date);
-  const marksName = marksFileName(date);
+  const prefix = destinationFilePrefix(destination);
+  const audioName = `${prefix}${audioFileName(date)}`;
+  const marksName = `${prefix}${marksFileName(date)}`;
   const marksJson = `${JSON.stringify({ date, duration_s: durationS, marks }, null, 2)}\n`;
   const audioId = await findOrCreate(drive, folderId, audioName, audio, 'audio/mpeg');
   const marksId = await findOrCreate(drive, folderId, marksName, marksJson, 'application/json');

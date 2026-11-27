@@ -33,12 +33,21 @@ export interface TenantDriveFolders {
   voice?: DriveFolderId;
 }
 
+// The longest file-name prefix a google-drive destination may set. A prefix
+// is prepended to every file name the destination writes
+// ("trial-2026-11-28-script.md"), so several tenants can share one folder
+// without colliding on a date's names; lookup by name uses the same prefixed
+// name, so the no-overwrite rule still holds.
+export const MAX_FILE_PREFIX_CHARS = 64;
+const FILE_PREFIX_BAD = /[/\\\x00-\x1f]/;
+
 export type TenantDestination =
   | { type: 'none' }
   | {
       type: 'google-drive';
       folder_id: DriveFolderId;
       folders?: TenantDriveFolders;
+      file_prefix?: string;
       extension?: FileExtension;
     }
   | {
@@ -220,6 +229,20 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
   const destination: TenantDestination = { type: 'google-drive', folder_id };
   const folders = parseDriveFolders(field(value, 'folders'), path);
   if (folders !== undefined) destination.folders = folders;
+  const rawPrefix = field(value, 'file_prefix');
+  if (rawPrefix !== undefined) {
+    if (
+      !isNonEmptyString(rawPrefix) ||
+      [...rawPrefix].length > MAX_FILE_PREFIX_CHARS ||
+      FILE_PREFIX_BAD.test(rawPrefix)
+    ) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: destination.file_prefix must be a non-empty string of at most ${MAX_FILE_PREFIX_CHARS} characters, without path separators`,
+      );
+    }
+    destination.file_prefix = rawPrefix;
+  }
   if (extension !== undefined) destination.extension = extension;
   return destination;
 }
@@ -471,6 +494,12 @@ export function callerAuthorized(tenant: Tenant, presentedToken: string | undefi
 export function tenantExtension(tenant: Tenant): FileExtension {
   const dest = tenant.destination;
   return dest !== undefined && dest.type !== 'none' ? (dest.extension ?? '.txt') : '.txt';
+}
+
+// The file-name prefix a google-drive destination prepends, or '' when it
+// names none (file names are then exactly what they always were).
+export function destinationFilePrefix(destination: TenantDestination): string {
+  return destination.type === 'google-drive' ? (destination.file_prefix ?? '') : '';
 }
 
 // A channel-scoped entry (guild + channel list) claims only the listed

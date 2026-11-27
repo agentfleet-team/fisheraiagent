@@ -22,7 +22,7 @@ Live check from a machine with internet: `npm run voice:probe` renders a 2-secti
 | `render-<section>-<chunk>` | splits each section into chunks of at most 1,300 characters at sentence ends; one Edge TTS request per chunk with a 120 s limit and one retry; marks come from `SentenceBoundary` events | job `failed`, `render_failed`, with `section_id` |
 | `join` | joins the chunks in order; marks are shifted by the audio before them, ordered and never overlapping | none |
 | `check` | the joined duration must be inside `expect_seconds` | job `failed`, `duration_out_of_band`; nothing is saved |
-| `save` | writes `<date>-episode.mp3` and `<date>-marks.json` to the tenant's `google-drive` destination — `folders.voice` when the destination names it, else `folder_id`; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
+| `save` | writes `<date>-episode.mp3` and `<date>-marks.json` to the tenant's `google-drive` destination — `folders.voice` when the destination names it, else `folder_id`, with the destination's `file_prefix` prepended when it names one; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
 
 Notes:
 
