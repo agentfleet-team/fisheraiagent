@@ -12,6 +12,8 @@ export interface BacklogEntry {
 export interface PodcastConfig {
   enabled: boolean;
   mode: "trial" | "live";
+  /** Tenant the tool 2 and tool 3 jobs run as; the instance names it, the code does not. */
+  tenant?: string;
   slots: [string, string, string];
   content_at: string;
   topics: TopicConfig[];
@@ -22,6 +24,8 @@ export interface PodcastConfig {
 
 const HHMM = /^\d{2}:\d{2}$/;
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
+/** Same slug grammar as the tools' tenants document (`src/ids.ts` upstream). */
+const TENANT_ID = /^[a-z0-9][a-z0-9_-]{0,63}$/;
 
 function err(path: string, want: string): { ok: false; error: string } {
   return { ok: false, error: `${path} must be ${want}` };
@@ -47,6 +51,9 @@ export function parseConfig(
   if (typeof c.enabled !== "boolean") return err("enabled", "a boolean");
   if (c.mode !== "trial" && c.mode !== "live") {
     return err("mode", '"trial" or "live"');
+  }
+  if (c.tenant !== undefined && (typeof c.tenant !== "string" || !TENANT_ID.test(c.tenant))) {
+    return err("tenant", "a tenant id slug");
   }
   if (
     !Array.isArray(c.slots) ||
@@ -105,6 +112,7 @@ export function parseConfig(
     config: {
       enabled: c.enabled,
       mode: c.mode,
+      tenant: typeof c.tenant === "string" ? c.tenant : undefined,
       slots: c.slots as [string, string, string],
       content_at: typeof c.content_at === "string" ? c.content_at : "03:00",
       topics,

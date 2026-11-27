@@ -8,6 +8,7 @@ Run it: `npm run build && node dist/digest/server.js`. It reads the transcript s
 
 - `POST /v1/jobs` with an `EpisodeRequest` returns `202 {"job_id"}`. `GET /v1/jobs/<id>` returns `queued|running|done|failed` with `result` (an `EpisodeScript`) or `error`.
 - `Authorization: Bearer <token>` is required when `SERVICE_TOKEN` is set.
+- Tenant: the optional `tenant` field names the tenant id the job runs as; resolution then requires both that id and the bearer's caller check on it — an unknown id or an unsatisfied check is `403 tenant_forbidden` and reveals no tenant data. Without the field the first caller-authorized tenant resolves, as before.
 - Gemini key: `X-Gemini-Key`, else the `gemini_key_env` of the tenant whose `caller` credential the bearer token satisfies. No key gives `400 missing_key`.
 - `Idempotency-Key`: the same key with the same request returns the first job (`202`, same `job_id`) and makes no LLM call. The same key with another request returns `409 idempotency_conflict`. Keys are kept in process memory, per caller token, and a restart forgets them.
 
@@ -18,7 +19,7 @@ Run it: `npm run build && node dist/digest/server.js`. It reads the transcript s
 | `validate` | parses the `EpisodeRequest`; no LLM call before it passes | `400 invalid_request` |
 | `draft` | one Gemini call with the profile prompt | job `failed` with the upstream code (`key_rejected`, `quota_exceeded`, `upstream_timeout`, ...) |
 | `check` | JSON schema, structure, refs, missing-slot sentence, length band; up to two repair calls on any failure, each naming the problems of the check before it | job `failed`, `script_check_failed` with `error.problems` |
-| `save` | writes `<date>-script.md` to the tenant's `google-drive` destination; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
+| `save` | writes `<date>-script.md` to the tenant's `google-drive` destination — `folders.digest` when the destination names it, else `folder_id`; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
 
 The job makes the draft call, then up to two repair calls. The first passing check ends the loop. If the third check fails, the job is `failed` with `error.code` `script_check_failed` and `error.problems`, the problem strings of the last check. The service writes one line per failed check: `digest_check_failed job=<id> attempt=<n> problems=<JSON array>`, where attempt 1 is the draft. The lines hold no transcript text and no key.
 

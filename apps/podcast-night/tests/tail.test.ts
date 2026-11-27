@@ -34,10 +34,11 @@ const V3 = "37ROC7uPieE";
 const V4 = "eKhog2ZXlQg";
 const V5 = "r0Mm_79yKso";
 
-function configJson(mode: "trial" | "live" = "trial"): string {
+function configJson(mode: "trial" | "live" = "trial", tenant?: string): string {
   return JSON.stringify({
     enabled: true,
     mode,
+    ...(tenant === undefined ? {} : { tenant }),
     slots: ["00:00", "01:00", "02:00"],
     content_at: "03:00",
     topics: [
@@ -289,9 +290,10 @@ function rig(
   tool3 = okTool3(),
   mode: "trial" | "live" = "trial",
   tool1: Tool1 = new Tool1Stub(),
+  tenant?: string,
 ): Rig {
   const store = new FakeStore();
-  store.seed(CONFIG_PATH, configJson(mode));
+  store.seed(CONFIG_PATH, configJson(mode, tenant));
   const comments = new FakeComments();
   return {
     store,
@@ -849,6 +851,29 @@ describe("podcast-night content, voice, check, deliver (fisherivco/allen-ai-os#1
 
   it("R5: the clock helper agrees with the UTC helper", () => {
     expect(taipei("00:00").getTime()).toBe(at("16:00").getTime());
+  });
+
+  it("T21: the tool 2 and tool 3 requests carry the tenant the instance config names (fisheraiagent#112)", async () => {
+    // The instance config pairs a mode with its tenant slug; trial and live
+    // name different tenants of the same tools (agentfleet-team/fisheraiagent#112).
+    for (const [mode, tenant] of [
+      ["trial", "podcast-trial"],
+      ["live", "podcast"],
+    ] as const) {
+      const r = rig(okTool2(), okTool3(), mode, new Tool1Stub(), tenant);
+      seedSlots(r);
+      await r.tick(taipei("03:00"));
+      expect(r.tool2.submits[0].body.tenant).toBe(tenant);
+      expect(r.tool3.submits[0].body.tenant).toBe(tenant);
+    }
+  });
+
+  it("T21: a config without tenant sends no tenant field", async () => {
+    const r = rig();
+    seedSlots(r);
+    await r.tick(taipei("03:00"));
+    expect(r.tool2.submits[0].body).not.toHaveProperty("tenant");
+    expect(r.tool3.submits[0].body).not.toHaveProperty("tenant");
   });
 });
 

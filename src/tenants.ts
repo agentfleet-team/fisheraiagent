@@ -24,9 +24,23 @@ export type JobOrigin =
 
 export type FileExtension = '.txt' | '.md' | '.srt';
 
+// Per-tool folder overrides on a google-drive destination: `digest` names
+// the folder tool 2 saves to and `voice` the folder tool 3 saves to. A key
+// that is absent falls back to the destination's own folder_id, so a tenant
+// without `folders` saves exactly where it did before.
+export interface TenantDriveFolders {
+  digest?: DriveFolderId;
+  voice?: DriveFolderId;
+}
+
 export type TenantDestination =
   | { type: 'none' }
-  | { type: 'google-drive'; folder_id: DriveFolderId; extension?: FileExtension }
+  | {
+      type: 'google-drive';
+      folder_id: DriveFolderId;
+      folders?: TenantDriveFolders;
+      extension?: FileExtension;
+    }
   | {
       type: 'webdav';
       base_url: WebdavBaseUrl;
@@ -204,8 +218,35 @@ function parseDestination(value: unknown, path: string): TenantDestination | und
     throw new TranscriptError('invalid_config', `${path}: folder_id is not a Drive folder id`);
   }
   const destination: TenantDestination = { type: 'google-drive', folder_id };
+  const folders = parseDriveFolders(field(value, 'folders'), path);
+  if (folders !== undefined) destination.folders = folders;
   if (extension !== undefined) destination.extension = extension;
   return destination;
+}
+
+function parseDriveFolders(value: unknown, path: string): TenantDriveFolders | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object' || value === null) {
+    throw new TranscriptError('invalid_config', `${path}: destination.folders must be an object`);
+  }
+  const folders: TenantDriveFolders = {};
+  const keys: (keyof TenantDriveFolders)[] = ['digest', 'voice'];
+  for (const key of keys) {
+    const raw = field(value, key);
+    if (raw === undefined) continue;
+    if (!isNonEmptyString(raw)) {
+      throw new TranscriptError(
+        'invalid_config',
+        `${path}: destination.folders.${key} must be a non-empty folder id`,
+      );
+    }
+    const id = parseDriveFolderId(raw.trim());
+    if (!id) {
+      throw new TranscriptError('invalid_config', `${path}: destination.folders.${key} is not a Drive folder id`);
+    }
+    folders[key] = id;
+  }
+  return folders;
 }
 
 function parseCaller(value: unknown, path: string): TenantCaller | undefined {

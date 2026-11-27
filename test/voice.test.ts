@@ -293,6 +293,91 @@ test('chunkText cuts at sentence ends within the limit and loses no text', () =>
   assert.equal(noStop.join(''), '一二三，'.repeat(40));
 });
 
+// --- explicit tenant selection + per-tool Drive folders (agentfleet-team/fisheraiagent#112) ---
+// Invented ids only: no real tenant or folder value in tests.
+
+const tenantsSelect = JSON.stringify({
+  tenants: [
+    {
+      id: 'tenant-first',
+      caller: { token_env: 'VOICE_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'folderBase', folders: { digest: 'folderDigestOnly' } },
+    },
+    {
+      id: 'tenant-second',
+      caller: { token_env: 'VOICE_TEST_CALLER_TOKEN' },
+      destination: { type: 'google-drive', folder_id: 'folderOther', folders: { digest: 'folderDigest', voice: 'folderVoice' } },
+    },
+    { id: 'tenant-other', caller: { token_env: 'VOICE_OTHER_CALLER_TOKEN' } },
+  ],
+});
+
+const withTenant = (tenant: unknown): unknown => ({ ...requestBody, tenant });
+
+test('T21: the request parser takes an optional tenant slug and rejects a bad one', () => {
+  assert.equal(parseVoiceRequest(requestBody)!.tenant, undefined);
+  assert.equal(parseVoiceRequest(withTenant('tenant-second'))!.tenant, 'tenant-second');
+  for (const bad of ['Bad Slug', '-lead', 'TRAIL-', 'a'.repeat(65), 7, {}, null]) {
+    assert.equal(parseVoiceRequest(withTenant(bad)), undefined, JSON.stringify(bad));
+  }
+});
+
+test('T21: a named tenant resolves only itself and saves to folders.voice', async () => {
+  const drive = new StubDrive();
+  await withService({ engine: stubEngine().engine, drive, tenantsJson: tenantsSelect }, async (base) => {
+    const auth = { authorization: 'Bearer tok' };
+    const sent = await post(base, withTenant('tenant-second'), auth);
+    assert.equal(sent.status, 202);
+    const view = await settle(base, sent.body.job_id);
+    assert.equal(view.status, 'done');
+    // tenant-second's folders.voice, not tenant-first's folder_id
+    assert.deepEqual(
+      drive.files.map((f) => f.folder),
+      ['folderVoice', 'folderVoice'],
+    );
+  });
+});
+
+test('T21: without the tenant field the first caller-authorized tenant resolves, as today', async () => {
+  const drive = new StubDrive();
+  await withService({ engine: stubEngine().engine, drive, tenantsJson: tenantsSelect }, async (base) => {
+    const sent = await post(base, requestBody, { authorization: 'Bearer tok' });
+    assert.equal(sent.status, 202);
+    const view = await settle(base, sent.body.job_id);
+    assert.equal(view.status, 'done');
+    // tenant-first has folders.digest but no folders.voice: voice falls back to folder_id
+    assert.deepEqual(
+      drive.files.map((f) => f.folder),
+      ['folderBase', 'folderBase'],
+    );
+  });
+});
+
+test('T21: a named tenant the bearer does not satisfy, or does not exist, is 403 tenant_forbidden', async () => {
+  process.env.VOICE_OTHER_CALLER_TOKEN = 'other-token-for-test';
+  try {
+    const { engine, calls } = stubEngine();
+    const drive = new StubDrive();
+    await withService({ engine, drive, tenantsJson: tenantsSelect }, async (base) => {
+      const auth = { authorization: 'Bearer tok' };
+      for (const [body, headers] of [
+        [withTenant('tenant-other'), auth], // bearer satisfies a different env's token
+        [withTenant('no-such-tenant'), auth], // unknown id
+        [withTenant('tenant-second'), {}], // no bearer at all
+      ] as const) {
+        const sent = await post(base, body, headers);
+        assert.equal(sent.status, 403, JSON.stringify(body));
+        assert.equal(sent.body.error.code, 'tenant_forbidden');
+        assert.deepEqual(Object.keys(sent.body.error).sort(), ['code', 'message']);
+      }
+      assert.equal(calls.length, 0);
+      assert.equal(drive.files.length, 0);
+    });
+  } finally {
+    delete process.env.VOICE_OTHER_CALLER_TOKEN;
+  }
+});
+
 test('V1: chunks also end at ASCII full stops, never mid-sentence', () => {
   const sentence = 'This is a complete sentence about the morning news ' +
     'with supporting detail '.repeat(8) + 'today.';

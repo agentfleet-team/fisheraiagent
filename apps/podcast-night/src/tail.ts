@@ -328,7 +328,13 @@ async function runContent(
     });
     shas.push(`${slot}:${await sha256Hex(file.text)}`);
   }
-  const body: EpisodeRequest = { profile: PROFILE, date: env.date, sources, missing_slots: missing };
+  const body: EpisodeRequest = {
+    profile: PROFILE,
+    date: env.date,
+    sources,
+    missing_slots: missing,
+    ...(env.config.tenant === undefined ? {} : { tenant: env.config.tenant }),
+  };
   const input = await sha256Hex(`${env.date}/content|${shas.join(",")}|${missing.join(",")}`);
   return runJob(env, {
     node: "content",
@@ -379,6 +385,7 @@ async function runVoice(
     voice: { ...VOICE },
     sections: script.sections.map((s) => ({ id: s.id, text: s.text })),
     expect_seconds: expectSeconds(chars),
+    ...(env.config.tenant === undefined ? {} : { tenant: env.config.tenant }),
   };
   const input = await sha256Hex(
     `${env.date}/voice|${await sha256Hex(file.text)}|${VOICE.name}|${VOICE.rate}`,

@@ -81,8 +81,18 @@ export function createDigestService(options: DigestServiceOptions): Server {
 
     // The caller's own Gemini key, else the key of the tenant whose caller
     // credential the bearer token satisfies (never a key for an unverified caller).
+    // A request that names `tenant` resolves only that id — an unknown id, or
+    // one the bearer does not satisfy, is a 403 that reveals no tenant data.
     const token = bearerToken(req);
-    const tenant = tryTenants().find((t) => callerAuthorized(t, token));
+    const tenants = tryTenants();
+    const tenant =
+      request.tenant === undefined
+        ? tenants.find((t) => callerAuthorized(t, token))
+        : tenants.find((t) => t.id === request.tenant && callerAuthorized(t, token));
+    if (request.tenant !== undefined && tenant === undefined) {
+      sendError(res, 403, 'tenant_forbidden');
+      return;
+    }
     const keyHeader = req.headers['x-gemini-key'];
     let apiKey = ((Array.isArray(keyHeader) ? keyHeader[0] : keyHeader) ?? '').trim();
     if (apiKey === '' && tenant?.gemini_key_env !== undefined) {

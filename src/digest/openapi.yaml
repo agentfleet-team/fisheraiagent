@@ -28,6 +28,7 @@ paths:
               schema: { type: object, required: [job_id], properties: { job_id: { type: string } } }
         '400': { description: 'invalid_request or missing_key', content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
         '401': { description: unauthorized, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
+        '403': { description: 'tenant_forbidden: the request named a tenant that is unknown to this caller', content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
         '409': { description: idempotency_conflict, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorBody' } } } }
   /v1/jobs/{job_id}:
     get:
@@ -54,7 +55,7 @@ components:
       properties:
         code:
           type: string
-          enum: [invalid_request, missing_key, key_rejected, quota_exceeded, upstream_timeout, upstream_rejected, model_not_found, script_check_failed, idempotency_conflict, save_failed, unauthorized, not_found, internal_error]
+          enum: [invalid_request, missing_key, key_rejected, quota_exceeded, upstream_timeout, upstream_rejected, model_not_found, script_check_failed, idempotency_conflict, save_failed, tenant_forbidden, unauthorized, not_found, internal_error]
         message: { type: string }
         problems:
           type: array
@@ -98,6 +99,9 @@ components:
         missing_slots:
           type: array
           items: { type: integer, minimum: 1 }
+        tenant:
+          type: string
+          description: 'Optional tenant id (slug). When present, tenant resolution must match this id and the bearer must satisfy the caller check of that tenant; a miss is 403 tenant_forbidden. Absent, the first caller-authorized tenant resolves.'
     Ref:
       type: object
       required: [video_id, start]

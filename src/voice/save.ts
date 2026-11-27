@@ -42,10 +42,11 @@ export async function saveEpisode(
 ): Promise<SavedEpisode | undefined> {
   const destination = tenant?.destination;
   if (drive === undefined || destination === undefined || destination.type !== 'google-drive') return undefined;
+  const folderId = destination.folders?.voice ?? destination.folder_id;
   const audioName = audioFileName(date);
   const marksName = marksFileName(date);
   const marksJson = `${JSON.stringify({ date, duration_s: durationS, marks }, null, 2)}\n`;
-  const audioId = await findOrCreate(drive, destination.folder_id, audioName, audio, 'audio/mpeg');
-  const marksId = await findOrCreate(drive, destination.folder_id, marksName, marksJson, 'application/json');
+  const audioId = await findOrCreate(drive, folderId, audioName, audio, 'audio/mpeg');
+  const marksId = await findOrCreate(drive, folderId, marksName, marksJson, 'application/json');
   return { audio_file_id: audioId, marks_file_id: marksId, names: [audioName, marksName] };
 }
