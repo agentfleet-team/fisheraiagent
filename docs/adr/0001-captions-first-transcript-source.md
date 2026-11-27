@@ -10,7 +10,7 @@ Which tracks count is a per-tenant policy (#93). `manual` (the default) accepts 
 
 The read does not run in the hosted service. From the AWS egress, YouTube's bot check (`LOGIN_REQUIRED`) blocked 2 of 3 reads (#67). From the Mac mini (residential IP) the same reads worked (#66, #73). The read is therefore a separate caption reader on the Mac mini, in an OrbStack container (#86). The service calls it over HTTPS with a short timeout and falls back to Gemini when the reader is unreachable or refuses (#87). Only our own services may call it: a Cloudflare Access service token at the edge and a bearer token in the app (owner ruling 2026-11-27, spec amendment r4 on #65). With no reader configured, the service makes no YouTube call.
 
-**Pending owner confirmation.** The reader is planned on its own Cloudflare tunnel, whose only connector runs on the Mac mini (fisherivco/dotfiles#446). The earlier owner ruling was one shared tunnel for AgentFleet tools, and the 2026-11-27 ruling named the existing tunnel. A Mac mini connector on that shared tunnel would also receive the transcript hostname's traffic. The choice is open on #65 (options A/B/C) and is not run until Allen answers.
+**Tunnel (owner ruling 2026-11-27 10:1x Taipei, option A on #65).** The reader has its own Cloudflare tunnel, `agentfleet-mac`, whose only connector runs on the Mac mini (fisherivco/dotfiles#446, renamed in fisherivco/dotfiles#448). It is the one channel for cloud services to reach HTTP tools on the Mac mini. AWS-hosted tools stay on the shared tunnel `agentfleet-tools`, so a Mac mini connector never receives the transcript hostname's traffic. ChatGPT reaches the Mac mini through the OpenAI Secure MCP Tunnel, and Tailscale is for administration only (fisherivco/allen-ai-os `docs/runbooks/dot-surface-inventory.md`). The reader stays an optional adapter, off by default with the Gemini fallback, so a later commercial version can drop it with no architecture change.
 
 ## Considered Options
 
@@ -18,6 +18,7 @@ The read does not run in the hosted service. From the AWS egress, YouTube's bot 
 - **Service reads captions from AWS.** Refuted by #67.
 - **Caller-supplied captions.** Each Mac mini caller reads the track and sends it with the job. Not chosen: every caller would need the reader, and the web page would gain nothing.
 - **Reader on the Mac mini, called by the service (chosen, owner ruling A).** One reader serves every caller, the web page included. The cost is an uptime dependency on the Mac mini, which the Gemini fallback covers.
+- **Other channels to the Mac mini (not chosen, #65 comment 7207884306).** A Mac mini connector on the shared `agentfleet-tools` tunnel would also get a share of the transcript hostname's traffic. The OpenAI Secure MCP Tunnel serves ChatGPT only. A Tailscale sidecar in the cloud task would put own-use infrastructure into the service and cannot serve Cloudflare Workers.
 - **Parallel Gemini windows.** This is complementary and is tracked as its own proposal (#71).
 
 ## Consequences
