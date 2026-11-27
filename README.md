@@ -56,6 +56,7 @@ Service environment variables:
 | `GOOGLE_APPLICATION_CREDENTIALS` | no | — | Path to a Google service-account key JSON, needed only when a tenant uses a `google-drive` destination. |
 | `GOOGLE_CREDENTIALS_JSON` | no | — | The same key JSON inline (from a secrets manager). `GOOGLE_APPLICATION_CREDENTIALS` wins when both are set. |
 | `GOOGLE_OAUTH_JSON` | no | — | `{"client_id", "client_secret", "refresh_token"}` of a Google user's OAuth grant with the `drive` scope, inline. Files are created as that user, in that user's My Drive. Use it for a consumer gmail.com Drive: a service account has no storage quota and cannot create files there. Ignored when either service-account variable is set. A consent screen left in "Testing" status expires the refresh token after 7 days; set it to "In production". |
+| *Digest and voice tools* | no | — | `node dist/digest/server.js` and `node dist/voice/server.js` read the same three `GOOGLE_*` variables above. With one set, a job for a tenant with a `google-drive` destination saves `<date>-script.md` (digest) or `<date>-episode.mp3` and `<date>-marks.json` (voice) to that folder and reports the file ids in `saved`. A file of the same name is reused, never rewritten. With none set, nothing is saved and `saved` is absent. |
 | `OIDC_CLIENT_ID` | no | — | OAuth client id for web sign-in (below). |
 | `OIDC_CLIENT_SECRET` | no | — | OAuth client secret for web sign-in. |
 | `OIDC_REDIRECT_URI` | no | — | This service's callback URL, `https://<host>/auth/callback`. |

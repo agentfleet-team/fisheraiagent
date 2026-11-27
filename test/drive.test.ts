@@ -37,7 +37,12 @@ function fakeFetch(routes: (req: CapturedRequest) => Response) {
       headers: Object.fromEntries(
         Object.entries(init?.headers ?? {}).map(([k, v]) => [k.toLowerCase(), String(v)]),
       ),
-      body: typeof init?.body === 'string' ? init.body : undefined,
+      body:
+        typeof init?.body === 'string'
+          ? init.body
+          : init?.body instanceof Uint8Array
+            ? Buffer.from(init.body).toString('utf8')
+            : undefined,
     };
     requests.push(req);
     return routes(req);
