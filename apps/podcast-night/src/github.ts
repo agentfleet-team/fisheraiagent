@@ -1,3 +1,5 @@
+import { fetchWithToken, type TokenProvider } from "./app-token.js";
+
 const GITHUB_API = "https://api.github.com";
 
 export interface GhFile {
@@ -41,23 +43,25 @@ function base64ToUtf8(base64: string): string {
   return new TextDecoder().decode(bytes);
 }
 
-export function githubStore(repo: string, token: string | undefined): GhStore {
+export function githubStore(repo: string, tokens: TokenProvider): GhStore {
   async function ghFetch(
     method: string,
     path: string,
     body?: unknown,
   ): Promise<Response> {
-    return fetch(`${GITHUB_API}${path}`, {
-      method,
-      headers: {
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "podcast-night",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
-      },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
+    return fetchWithToken(tokens, (token) =>
+      fetch(`${GITHUB_API}${path}`, {
+        method,
+        headers: {
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          "User-Agent": "podcast-night",
+          Authorization: `Bearer ${token}`,
+          ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+        },
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      }),
+    );
   }
 
   return {

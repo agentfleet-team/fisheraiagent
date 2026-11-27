@@ -1,3 +1,4 @@
+import { fetchWithToken, type TokenProvider } from "./app-token.js";
 import { foldReceipts } from "./receipt.js";
 
 /** Port over issue comments: look for a marker, then post. */
@@ -42,21 +43,23 @@ export function summaryBody(date: string, lines: string[]): string {
 
 export function githubComments(
   repo: string,
-  token: string | undefined,
+  tokens: TokenProvider,
 ): IssueComments {
-  const headers: Record<string, string> = {
+  const headers = (token: string): Record<string, string> => ({
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
     "User-Agent": "podcast-night",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+    Authorization: `Bearer ${token}`,
+  });
   const MAX_PAGES = 5;
   return {
     async hasComment(issue, marker, sinceIso): Promise<boolean> {
       for (let page = 1; page <= MAX_PAGES; page += 1) {
-        const res = await fetch(
-          `https://api.github.com/repos/${repo}/issues/${issue}/comments?per_page=100&page=${page}&since=${encodeURIComponent(sinceIso)}`,
-          { headers },
+        const res = await fetchWithToken(tokens, (token) =>
+          fetch(
+            `https://api.github.com/repos/${repo}/issues/${issue}/comments?per_page=100&page=${page}&since=${encodeURIComponent(sinceIso)}`,
+            { headers: headers(token) },
+          ),
         );
         if (!res.ok) throw new Error(`GitHub GET comments failed with status ${res.status}`);
         const data = (await res.json()) as { body?: string }[];
@@ -68,13 +71,12 @@ export function githubComments(
       return false;
     },
     async post(issue, body): Promise<void> {
-      const res = await fetch(
-        `https://api.github.com/repos/${repo}/issues/${issue}/comments`,
-        {
+      const res = await fetchWithToken(tokens, (token) =>
+        fetch(`https://api.github.com/repos/${repo}/issues/${issue}/comments`, {
           method: "POST",
-          headers: { ...headers, "Content-Type": "application/json" },
+          headers: { ...headers(token), "Content-Type": "application/json" },
           body: JSON.stringify({ body }),
-        },
+        }),
       );
       if (!res.ok) throw new Error(`GitHub POST comment failed with status ${res.status}`);
     },

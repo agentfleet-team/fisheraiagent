@@ -47,7 +47,11 @@ This repository holds the generic router code and `wrangler.jsonc` template with
 | `TOOL3_BASE_URL` | no | `https://voice.agentfleet.team` | Base URL for the voice tool |
 
 3. Configure these Worker secrets by name in the target Cloudflare Worker (never commit secret values):
-   - `GITHUB_TOKEN`: GitHub token with contents read/write on `STATE_REPO` and issues read/write on `SUMMARY_REPO` when running in `trial` mode.
+   - `GITHUB_APP_ID`: id of the GitHub App installed on `STATE_REPO` and `SUMMARY_REPO`.
+   - `GITHUB_APP_INSTALLATION_ID`: id of that App's installation.
+   - `GITHUB_APP_PRIVATE_KEY`: the App private key as PKCS#8 PEM text.
+
+   The Worker signs an App JWT and mints a narrow token per use: `contents:write` on the `STATE_REPO` repository for run records, `issues:write` on the `SUMMARY_REPO` repository for summary comments. It caches each token until 5 minutes before expiry and retries once after a 401. If a secret is missing, the tick logs `tick error=missing_secret:github_app` and does nothing else.
    - `PODCAST_CALLER_TOKEN`: Bearer token sent to tool 1, tool 2, and tool 3.
 4. Keep the cron trigger from `wrangler.jsonc`: `*/5 16-22 * * *` (every 5 minutes from 00:00 to 06:55 Asia/Taipei, UTC+8).
 5. Bundle check before deploying from an instance wrapper: `npx wrangler deploy --dry-run`. Never deploy from an unreviewed agent seat or commit instance values here.

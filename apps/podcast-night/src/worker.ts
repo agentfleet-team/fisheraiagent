@@ -9,6 +9,7 @@ import {
   type Plan,
   type Slot,
 } from "./fold.js";
+import { appTokens, hasAppSecrets, MISSING_APP_SECRETS, type TokenProvider } from "./app-token.js";
 import { githubStore, sha256Hex, type GhStore } from "./github.js";
 import { httpJobTool, type JobTool } from "./jobtool.js";
 import type { EpisodeRequest, EpisodeScript, VoiceRequest, VoiceResult } from "./jobtool.js";
@@ -25,7 +26,9 @@ const CONFIG_PATH = "research/morning-podcast/config.json";
 const MAX_APPEND_WRITES = 2;
 
 export interface Env {
-  GITHUB_TOKEN?: string;
+  GITHUB_APP_ID?: string;
+  GITHUB_APP_INSTALLATION_ID?: string;
+  GITHUB_APP_PRIVATE_KEY?: string;
   PODCAST_CALLER_TOKEN?: string;
   TOOL1_BASE_URL?: string;
   TOOL2_BASE_URL?: string;
@@ -703,8 +706,12 @@ export function buildTickDeps(env: Env, now: Date): TickDeps {
   const instance = parseInstanceEnv(env);
   const stateRepo = instance.ok ? instance.config.stateRepo : "";
   const summaryRepo = instance.ok ? instance.config.summaryRepo : "";
+  const apps = appTokens(env ?? {}, { log: (line) => console.log(line) });
+  const repoName = (slug: string): string => slug.split("/")[1] ?? "";
+  const stateTokens: TokenProvider = apps.scope({ repo: repoName(stateRepo), permission: "contents" });
+  const summaryTokens: TokenProvider = apps.scope({ repo: repoName(summaryRepo), permission: "issues" });
   return {
-    store: githubStore(stateRepo, env?.GITHUB_TOKEN),
+    store: githubStore(stateRepo, stateTokens),
     tool1: httpTool1(
       env?.TOOL1_BASE_URL ?? "https://transcripts.agentfleet.team",
       env?.PODCAST_CALLER_TOKEN,
@@ -717,7 +724,7 @@ export function buildTickDeps(env: Env, now: Date): TickDeps {
       env?.TOOL3_BASE_URL ?? "https://voice.agentfleet.team",
       env?.PODCAST_CALLER_TOKEN,
     ),
-    comments: githubComments(summaryRepo, env?.GITHUB_TOKEN),
+    comments: githubComments(summaryRepo, summaryTokens),
     env: {
       STATE_REPO: env?.STATE_REPO,
       SUMMARY_REPO: env?.SUMMARY_REPO,
@@ -741,6 +748,10 @@ export const worker = {
     env: Env,
     _ctx?: ExecutionContext,
   ): Promise<void> {
+    if (parseInstanceEnv(env).ok && !hasAppSecrets(env)) {
+      console.error(`tick error=${MISSING_APP_SECRETS}`);
+      return;
+    }
     try {
       const outcome = await runTick(buildTickDeps(env, new Date(controller.scheduledTime)));
       const log = outcome.ok ? console.log : console.error;
