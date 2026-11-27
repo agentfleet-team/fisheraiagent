@@ -6,6 +6,7 @@ import { DigestError, digestCodeOf, errorView, type DigestErrorView } from './er
 import type { DigestLlm } from './llm.js';
 import { buildDraftPrompt, buildRepairPrompt, profileFor, type Profile } from './profile.js';
 import { saveScript, type DigestDrive } from './save.js';
+import { consoleSink, type LogSink } from '../log.js';
 
 export type DigestJobStatus = 'queued' | 'running' | 'done' | 'failed';
 
@@ -13,13 +14,32 @@ export interface DigestJobView {
   job_id: string;
   status: DigestJobStatus;
   result?: EpisodeScript;
-  error?: DigestErrorView;
+  error?: DigestJobError;
   save_error?: DigestErrorView;
+}
+
+// A failed job's error. `problems` is set only on `script_check_failed`: the
+// problem strings of the last failed check. The check writes them from fixed
+// templates and counts; they hold no transcript text.
+export interface DigestJobError extends DigestErrorView {
+  problems?: string[];
 }
 
 export interface DigestJobDeps {
   llmFactory: (apiKey: string) => DigestLlm;
   drive?: DigestDrive;
+  // Receives one line per failed check. Defaults to the console.
+  logSink?: LogSink;
+}
+
+// The draft call, then up to this many repair calls.
+export const MAX_REPAIR_CALLS = 2;
+const MAX_LOGGED_PROBLEM_CHARS = 300;
+
+class ScriptCheckFailed extends DigestError {
+  constructor(readonly problems: string[]) {
+    super('script_check_failed');
+  }
 }
 
 const MAX_JOBS = 1000;
@@ -27,7 +47,7 @@ const MAX_JOBS = 1000;
 interface JobRecord {
   status: DigestJobStatus;
   result?: EpisodeScript;
-  error?: DigestErrorView;
+  error?: DigestJobError;
   save_error?: DigestErrorView;
 }
 
@@ -89,7 +109,12 @@ export class DigestJobStore {
     try {
       const profile = profileFor(request.profile);
       if (profile === undefined) throw new DigestError('invalid_request');
-      const script = await draftAndCheck(this.deps.llmFactory(apiKey), profile, request);
+      const script = await draftAndCheck(
+        this.deps.llmFactory(apiKey),
+        profile,
+        request,
+        (attempt, problems) => this.logFailedCheck(id, attempt, problems),
+      );
       try {
         const saved = await saveScript(this.deps.drive, tenant, request.date, script.markdown);
         if (saved !== undefined) script.saved = saved;
@@ -99,9 +124,17 @@ export class DigestJobStore {
       record.result = script;
       record.status = 'done';
     } catch (err) {
-      record.error = errorView(digestCodeOf(err));
+      record.error = jobError(err);
       record.status = 'failed';
     }
+  }
+
+  // One line per failed check: the job id, the attempt number (1 is the
+  // draft) and the problem strings as one JSON array. The strings are cut and
+  // JSON-escaped, so they cannot break the line or carry control characters.
+  private logFailedCheck(id: string, attempt: number, problems: string[]): void {
+    const shown = JSON.stringify(problems.map((p) => p.slice(0, MAX_LOGGED_PROBLEM_CHARS)));
+    (this.deps.logSink ?? consoleSink)(`digest_check_failed job=${id} attempt=${attempt} problems=${shown}`);
   }
 
   private prune(): void {
@@ -116,17 +149,34 @@ export class DigestJobStore {
   }
 }
 
-// The draft and check nodes: one model call, and at most one repair call
-// when the output fails the check. A second failure ends the job.
-async function draftAndCheck(llm: DigestLlm, profile: Profile, request: EpisodeRequest): Promise<EpisodeScript> {
-  const draft = await llm({ system: profile.system, prompt: buildDraftPrompt(profile, request) });
-  const first = checkModelOutput(request, profile, draft);
-  if (first.ok) return first.script;
-  const repaired = await llm({
-    system: profile.system,
-    prompt: buildRepairPrompt(profile, request, draft, first.problems),
-  });
-  const second = checkModelOutput(request, profile, repaired);
-  if (second.ok) return second.script;
-  throw new DigestError('script_check_failed');
+function jobError(err: unknown): DigestJobError {
+  const view = errorView(digestCodeOf(err));
+  if (!(err instanceof ScriptCheckFailed)) return view;
+  return {
+    ...view,
+    message: `the model output failed the script check after ${MAX_REPAIR_CALLS} repair calls`,
+    problems: err.problems,
+  };
+}
+
+// The draft and check nodes: one model call, then up to MAX_REPAIR_CALLS
+// repair calls. Each repair prompt names the problems of the check before it.
+// A passing check ends the loop; the last failed check ends the job.
+async function draftAndCheck(
+  llm: DigestLlm,
+  profile: Profile,
+  request: EpisodeRequest,
+  onFailedCheck: (attempt: number, problems: string[]) => void,
+): Promise<EpisodeScript> {
+  let output = await llm({ system: profile.system, prompt: buildDraftPrompt(profile, request) });
+  for (let attempt = 1; ; attempt += 1) {
+    const checked = checkModelOutput(request, profile, output);
+    if (checked.ok) return checked.script;
+    onFailedCheck(attempt, checked.problems);
+    if (attempt > MAX_REPAIR_CALLS) throw new ScriptCheckFailed(checked.problems);
+    output = await llm({
+      system: profile.system,
+      prompt: buildRepairPrompt(profile, request, output, checked.problems),
+    });
+  }
 }

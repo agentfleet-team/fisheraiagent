@@ -17,15 +17,17 @@ Run it: `npm run build && node dist/digest/server.js`. It reads the transcript s
 |---|---|---|
 | `validate` | parses the `EpisodeRequest`; no LLM call before it passes | `400 invalid_request` |
 | `draft` | one Gemini call with the profile prompt | job `failed` with the upstream code (`key_rejected`, `quota_exceeded`, `upstream_timeout`, ...) |
-| `check` | JSON schema, structure, refs, missing-slot sentence, length band; one repair call on any failure | job `failed`, `script_check_failed` |
+| `check` | JSON schema, structure, refs, missing-slot sentence, length band; up to two repair calls on any failure, each naming the problems of the check before it | job `failed`, `script_check_failed` with `error.problems` |
 | `save` | writes `<date>-script.md` to the tenant's `google-drive` destination; an existing file of that name is returned, never rewritten | job stays `done`, `save_error` is `save_failed` |
+
+The job makes the draft call, then up to two repair calls. The first passing check ends the loop. If the third check fails, the job is `failed` with `error.code` `script_check_failed` and `error.problems`, the problem strings of the last check. The service writes one line per failed check: `digest_check_failed job=<id> attempt=<n> problems=<JSON array>`, where attempt 1 is the draft. The lines hold no transcript text and no key.
 
 `check` rules for profile `podcast-zh-tw-10min`:
 
 - `sections` are one `opening`, one `segment` per source in slot order, one `closing`.
 - Every segment has at least one ref. A ref names the segment's own `video_id` and a `start` that falls inside one transcript block (`start` to `end`).
 - Each slot in `missing_slots` appears as `第N則` in the opening or closing.
-- `char_count` (spoken text of all sections, whitespace not counted) is inside the profile band. The band is a placeholder, 2,600 to 3,000, until fisheraiagent#74 publishes the ten-minute count. Change it in `profile.ts`.
+- `char_count` (spoken text of all sections, whitespace not counted) is inside the profile band, 2,400 to 2,850. It comes from the 9 to 11 minute acceptance at 262 characters per audio minute (fisheraiagent#82). Change it in `profile.ts`.
 - The model writes spoken text only. The tool appends the source list (title, channel, link per source) to `markdown` after the closing.
 
 ## Save is off until allen-ai-os#1879 merges

@@ -71,11 +71,12 @@ export function checkModelOutput(request: EpisodeRequest, profile: Profile, raw:
       continue;
     }
     for (const ref of refs) {
-      const inTranscript =
-        ref.video_id === source.transcript.video_id &&
-        source.transcript.blocks.some((b) => ref.start >= b.start && ref.start <= b.end);
-      if (!inTranscript) {
-        problems.push(`slot ${seg.slot} 的 ref（${ref.video_id}，${ref.start}）不在該來源的逐字稿時間內。`);
+      // Fixed wording only: the model's video_id string never enters a problem,
+      // because problems reach the service log and the HTTP job error.
+      if (ref.video_id !== source.transcript.video_id) {
+        problems.push(`slot ${seg.slot} 的 ref（時間 ${ref.start}）不在該來源的逐字稿時間內，因為 video_id 與該來源不符。`);
+      } else if (!source.transcript.blocks.some((b) => ref.start >= b.start && ref.start <= b.end)) {
+        problems.push(`slot ${seg.slot} 的 ref（時間 ${ref.start}）不在該來源的逐字稿時間內。`);
       }
     }
   }

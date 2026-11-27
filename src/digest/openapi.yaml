@@ -56,6 +56,10 @@ components:
           type: string
           enum: [invalid_request, missing_key, key_rejected, quota_exceeded, upstream_timeout, upstream_rejected, model_not_found, script_check_failed, idempotency_conflict, save_failed, unauthorized, not_found, internal_error]
         message: { type: string }
+        problems:
+          type: array
+          description: Set only on a failed job with code script_check_failed. The problem strings of the last failed check, after the draft and two repair calls.
+          items: { type: string }
     EpisodeRequest:
       type: object
       required: [profile, date, sources]

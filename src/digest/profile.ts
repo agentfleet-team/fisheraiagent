@@ -10,9 +10,10 @@ export interface Profile {
 }
 
 // The band comes from the tool-3 TTS spike (PR #82, spike/tts/REPORT.md): at
-// -12% speech rate 262 characters make one audio minute in 12 of 12 runs, so
-// 2,500 to 2,700 characters of spoken text render to about ten minutes.
-const PODCAST_ZH_TW_10MIN_BAND = { min: 2500, max: 2700 };
+// -12% speech rate 262 characters make one audio minute in 12 of 12 runs. The
+// episode acceptance is 9 to 11 minutes: 9 x 262 = 2,358 and 11 x 262 = 2,882
+// characters. The band 2,400 to 2,850 sits inside that range with a small margin.
+export const PODCAST_ZH_TW_10MIN_BAND = { min: 2400, max: 2850 };
 
 const PODCAST_SYSTEM = [
   '你是一位台灣的 podcast 腳本作者。你把幾支 YouTube 影片的逐字稿，整理成一集約十分鐘的口語節目腳本。',
