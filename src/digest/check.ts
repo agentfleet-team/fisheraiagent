@@ -40,6 +40,23 @@ export function fixedLines(digest: TenantDigest | undefined): FixedLines | undef
   return lines;
 }
 
+// The model must not write its own greeting or sign-off when the tenant sets
+// a fixed line: the line replaces them. Only the first sentence of the opening
+// and the last sentence of the closing are inspected.
+const GREETING = /早安|早上好|大家好|各位.{0,6}(?:好|聽眾)|哈囉|你好|歡迎收聽|歡迎來到|^\s*(?:hello|hi)\b/iu;
+const FAREWELL = /再見|下集見|下次見|明天見|明早見|掰掰|拜拜|晚安|謝謝收聽|感謝收聽|感謝.{0,4}陪伴|bye/iu;
+
+function sentences(text: string): string[] {
+  return text.split(/(?<=[。！？!?\n])/u).filter((x) => x.trim() !== '');
+}
+function firstSentence(text: string): string {
+  return sentences(text)[0] ?? '';
+}
+function lastSentence(text: string): string {
+  const all = sentences(text);
+  return all[all.length - 1] ?? '';
+}
+
 function parseModelJson(raw: string): ModelOutput | undefined {
   const trimmed = raw.trim();
   const fenced = /^```(?:json)?\s*([\s\S]*?)\s*```$/.exec(trimmed);
@@ -61,9 +78,9 @@ function mentionsSlot(text: string, slot: number): boolean {
 // EpisodeScript, or every problem it found so one repair call can name them.
 // A tenant's fixed lines wrap the model's framing text before the check, so
 // they land in the result verbatim and count toward the band: the opening
-// line before the opening text (replacing a greeting the prompt told the
-// model not to write), the closing line after the closing text (replacing
-// the sign-off). A line the model already emitted is not added a second time.
+// line before the opening text, the closing line after the closing text.
+// They replace the greeting and sign-off, so a draft whose opening starts with
+// a greeting or whose closing ends with a sign-off fails the check.
 export function checkModelOutput(
   request: EpisodeRequest,
   profile: Profile,
@@ -81,11 +98,15 @@ export function checkModelOutput(
   const closing = sections.filter((s) => s.kind === 'closing');
   const firstOpening = opening[0];
   const lastClosing = closing[closing.length - 1];
-  if (lines?.opening !== undefined && firstOpening !== undefined && !firstOpening.text.startsWith(lines.opening)) {
-    firstOpening.text = `${lines.opening}\n${firstOpening.text}`;
+  if (lines?.opening !== undefined && firstOpening !== undefined && GREETING.test(firstSentence(firstOpening.text))) {
+    problems.push('固定開場台詞由系統加入，opening 不可再寫問候語，請直接從內容開始。');
   }
-  if (lines?.closing !== undefined && lastClosing !== undefined && !lastClosing.text.endsWith(lines.closing)) {
-    lastClosing.text = `${lastClosing.text}\n${lines.closing}`;
+  if (lines?.closing !== undefined && lastClosing !== undefined && FAREWELL.test(lastSentence(lastClosing.text))) {
+    problems.push('固定收尾台詞由系統加入，closing 不可再寫收尾署名或道別語。');
+  }
+  if (problems.length === 0) {
+    if (lines?.opening !== undefined && firstOpening !== undefined) firstOpening.text = `${lines.opening}\n${firstOpening.text}`;
+    if (lines?.closing !== undefined && lastClosing !== undefined) lastClosing.text = `${lastClosing.text}\n${lines.closing}`;
   }
   if (opening.length !== 1 || sections[0]?.kind !== 'opening') {
     problems.push('sections 必須以恰好一段 opening 開頭。');

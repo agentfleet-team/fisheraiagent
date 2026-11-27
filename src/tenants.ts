@@ -283,7 +283,7 @@ function digestLine(value: unknown, path: string, key: string): string | undefin
       `${path}: digest.${key} must be a non-empty string of at most ${MAX_DIGEST_LINE_CHARS} characters`,
     );
   }
-  return value.trim();
+  return value;
 }
 
 function parseDigest(value: unknown, path: string): TenantDigest | undefined {

@@ -349,7 +349,7 @@ test('D5: a script that does not name the missing slot fails the check', () => {
 const tenantsJson = JSON.stringify({
   tenants: [
     {
-      id: 'akina',
+      id: 'tenant-lines',
       caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
       gemini_key_env: 'DIGEST_TEST_GEMINI_KEY',
       destination: { type: 'google-drive', folder_id: 'folderAkina1' },
@@ -482,6 +482,10 @@ test('L4: the tenant digest field parses opening_line and closing_line; absent s
     parseTenantsJson(doc({ opening_line: '甲', closing_line: '乙' }), 'test')[0].digest,
     { opening_line: '甲', closing_line: '乙' },
   );
+  assert.deepEqual(
+    parseTenantsJson(doc({ opening_line: ' 甲', closing_line: '乙 ' }), 'test')[0].digest,
+    { opening_line: ' 甲', closing_line: '乙 ' },
+  );
   assert.equal(
     parseTenantsJson(doc({ opening_line: '字'.repeat(MAX_DIGEST_LINE_CHARS) }), 'test')[0].digest?.opening_line
       ?.length,
@@ -524,16 +528,46 @@ test('L2: the fixed lines wrap the opening and closing verbatim and count in cha
   assert.equal(checked.script.char_count, 2400);
 });
 
-test('L2: a fixed line the model already wrote is not doubled', () => {
+test('L2: a model greeting or sign-off is a problem, not kept beside the fixed lines', () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;
   const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
-  const opening = `${OPEN_LINE}今天直接進入重點。`;
-  const closing = `以上是內容${CLOSE_LINE}`;
-  const checked = checkModelOutput(request, profile, withFraming(opening, closing, 2500), lines);
-  assert.ok(checked.ok);
-  assert.equal(checked.script.sections[0].text, opening);
-  assert.equal(checked.script.sections[checked.script.sections.length - 1].text, closing);
+  const greeted = checkModelOutput(request, profile, withFraming(`各位聽眾早安！${MODEL_OPENING}`, MODEL_CLOSING, 2500), lines);
+  assert.ok(!greeted.ok);
+  assert.ok(greeted.problems.some((p) => p.includes('問候語')));
+  const signed = checkModelOutput(request, profile, withFraming(MODEL_OPENING, `${MODEL_CLOSING}再見，下集見！`, 2500), lines);
+  assert.ok(!signed.ok);
+  assert.ok(signed.problems.some((p) => p.includes('道別語')));
+  // a tenant without lines keeps the old behavior
+  assert.ok(checkModelOutput(request, profile, withFraming(`各位聽眾早安！${MODEL_OPENING}`, MODEL_CLOSING, 2500)).ok);
+});
+
+test('L2: a noncompliant first draft is repaired; the result has no duplicate framing and exact whitespace', async () => {
+  process.env.DIGEST_TEST_CALLER_TOKEN = 'caller-token-for-test';
+  const opening = `  ${OPEN_LINE}`;
+  const closing = `${CLOSE_LINE}  `;
+  const tenants = JSON.stringify({
+    tenants: [
+      { id: 'tenant-lines', caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' }, digest: { opening_line: opening, closing_line: closing } },
+    ],
+  });
+  try {
+    const llm = stubLlm([
+      withFraming(`各位聽眾早安！${MODEL_OPENING}`, `${MODEL_CLOSING}再見，下集見！`, 2500),
+      withFraming(MODEL_OPENING, MODEL_CLOSING, 2500),
+    ]);
+    await withService({ llmFactory: llm.factory, tenantsJson: tenants }, async (base) => {
+      const sent = await post(base, requestBody, { authorization: 'Bearer caller-token-for-test' });
+      const view = await settle(base, sent.body.job_id);
+      assert.equal(view.status, 'done');
+      assert.equal(llm.calls.length, 2);
+      const sections = view.result.sections;
+      assert.equal(sections[0].text, `${opening}\n${MODEL_OPENING}`);
+      assert.equal(sections[sections.length - 1].text, `${MODEL_CLOSING}\n${closing}`);
+    });
+  } finally {
+    delete process.env.DIGEST_TEST_CALLER_TOKEN;
+  }
 });
 
 test('L3: the fixed lines count toward the length band', () => {
@@ -583,7 +617,7 @@ test('L2/L3: with fixed lines the prompt shrinks the model target and says the s
 const tenantsWithLines = JSON.stringify({
   tenants: [
     {
-      id: 'akina',
+      id: 'tenant-lines',
       caller: { token_env: 'DIGEST_TEST_CALLER_TOKEN' },
       digest: { opening_line: OPEN_LINE, closing_line: CLOSE_LINE },
     },
