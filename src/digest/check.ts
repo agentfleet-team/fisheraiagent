@@ -94,21 +94,30 @@ export function checkModelOutput(
   const closing = sections.filter((s) => s.kind === 'closing');
   const firstOpening = opening[0];
   const lastClosing = closing[closing.length - 1];
-  if (lines?.opening !== undefined && firstOpening !== undefined) {
-    if (firstOpening.text.includes(lines.opening)) {
-      problems.push('固定開場台詞由系統加入，opening 不要重複寫出固定台詞，請直接從內容開始。');
-    }
-    if (profile.greetings.some((g) => g.test(firstSentence(firstOpening.text)))) {
-      problems.push('固定開場台詞由系統加入，opening 不可再寫問候語，請直接從內容開始。');
-    }
+  // Both framing bodies are checked for both configured lines: an echo in
+  // either body would put a second copy of the line into the composed script.
+  const bodies = [firstOpening, lastClosing].filter((s) => s !== undefined);
+  const echoes = (line: string | undefined): boolean =>
+    line !== undefined && bodies.some((s) => s.text.includes(line));
+  if (echoes(lines?.opening)) {
+    problems.push('固定開場台詞由系統加入，opening 與 closing 都不要重複寫出固定台詞（開場台詞），請直接從內容開始。');
   }
-  if (lines?.closing !== undefined && lastClosing !== undefined) {
-    if (lastClosing.text.includes(lines.closing)) {
-      problems.push('固定收尾台詞由系統加入，closing 不要重複寫出固定台詞。');
-    }
-    if (profile.signoffs.some((s) => s.test(lastSentence(lastClosing.text)))) {
-      problems.push('固定收尾台詞由系統加入，closing 不可再寫收尾署名或道別語。');
-    }
+  if (echoes(lines?.closing)) {
+    problems.push('固定收尾台詞由系統加入，opening 與 closing 都不要重複寫出固定台詞（收尾台詞）。');
+  }
+  if (
+    lines?.opening !== undefined &&
+    firstOpening !== undefined &&
+    profile.greetings.some((g) => g.test(firstSentence(firstOpening.text)))
+  ) {
+    problems.push('固定開場台詞由系統加入，opening 不可再寫問候語，請直接從內容開始。');
+  }
+  if (
+    lines?.closing !== undefined &&
+    lastClosing !== undefined &&
+    profile.signoffs.some((s) => s.test(lastSentence(lastClosing.text)))
+  ) {
+    problems.push('固定收尾台詞由系統加入，closing 不可再寫收尾署名或道別語。');
   }
   if (opening.length !== 1 || sections[0]?.kind !== 'opening') {
     problems.push('sections 必須以恰好一段 opening 開頭。');

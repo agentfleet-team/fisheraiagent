@@ -585,6 +585,28 @@ test('L2: a body that echoes a fixed line is a problem, not deduplicated silentl
   assert.ok(echoed.problems.some((p) => p.includes('重複寫出固定台詞')));
 });
 
+test('L2: a fixed line echoed in the other framing body is a problem', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  const closingInOpening = checkModelOutput(
+    request,
+    profile,
+    withFraming(`${MODEL_OPENING}\n${CLOSE_LINE}`, MODEL_CLOSING, 2500),
+    lines,
+  );
+  assert.ok(!closingInOpening.ok);
+  assert.ok(closingInOpening.problems.some((p) => p.includes('收尾台詞')));
+  const openingInClosing = checkModelOutput(
+    request,
+    profile,
+    withFraming(MODEL_OPENING, `${OPEN_LINE}\n${MODEL_CLOSING}`, 2500),
+    lines,
+  );
+  assert.ok(!openingInClosing.ok);
+  assert.ok(openingInClosing.problems.some((p) => p.includes('開場台詞')));
+});
+
 test('L3: the fixed lines count toward the length band', () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;
