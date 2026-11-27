@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "podcast-night",
+  "main": "./src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": ["*/5 16-22 * * *"]
+  },
+  "vars": {
+    "DRY_RUN": "true",
+    "TOOL1_BASE_URL": "https://transcripts.agentfleet.team"
+  }
+}
