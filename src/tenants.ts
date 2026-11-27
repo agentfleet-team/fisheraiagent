@@ -64,6 +64,19 @@ export interface TenantLimits {
   jobs_per_hour?: number;
 }
 
+// The longest fixed framing line a tenant may set, in characters.
+export const MAX_DIGEST_LINE_CHARS = 200;
+
+// Fixed spoken framing for a tenant's digest episodes (the digest tool reads
+// the same tenants document). `opening_line` replaces the model's own
+// greeting — it starts the opening section verbatim — and `closing_line`
+// replaces the model's sign-off — it ends the closing section verbatim. Both
+// count toward the episode length band; either may be set alone.
+export interface TenantDigest {
+  opening_line?: string;
+  closing_line?: string;
+}
+
 export interface Tenant {
   id: TenantId;
   discord_guild_id?: string;
@@ -82,6 +95,7 @@ export interface Tenant {
   discord_delivery?: TenantDiscordDelivery;
   destination?: TenantDestination;
   limits?: TenantLimits;
+  digest?: TenantDigest;
   // How this tenant's jobs treat the caption read (when the service runs
   // one): "manual", the default, takes only a human track in the spoken
   // language; "manual-or-auto" also accepts the speech-recognition track
@@ -261,6 +275,30 @@ function parseLimits(value: unknown, path: string): TenantLimits | undefined {
   return limits;
 }
 
+function digestLine(value: unknown, path: string, key: string): string | undefined {
+  if (value === undefined) return undefined;
+  if (!isNonEmptyString(value) || [...value].length > MAX_DIGEST_LINE_CHARS) {
+    throw new TranscriptError(
+      'invalid_config',
+      `${path}: digest.${key} must be a non-empty string of at most ${MAX_DIGEST_LINE_CHARS} characters`,
+    );
+  }
+  return value.trim();
+}
+
+function parseDigest(value: unknown, path: string): TenantDigest | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'object' || value === null) {
+    throw new TranscriptError('invalid_config', `${path}: digest must be an object`);
+  }
+  const digest: TenantDigest = {};
+  const opening = digestLine(field(value, 'opening_line'), path, 'opening_line');
+  if (opening !== undefined) digest.opening_line = opening;
+  const closing = digestLine(field(value, 'closing_line'), path, 'closing_line');
+  if (closing !== undefined) digest.closing_line = closing;
+  return digest;
+}
+
 // The tenants file is JSON read fresh on every job submit, so adding a tenant
 // is an edit to one file — never a code change or a restart:
 // {
@@ -354,6 +392,7 @@ function parseTenantsDocument(parsed: unknown, path: string): Tenant[] {
     tenant.discord_delivery = parseDiscordDelivery(field(entry, 'discord_delivery'), path);
     tenant.destination = parseDestination(field(entry, 'destination'), path);
     tenant.limits = parseLimits(field(entry, 'limits'), path);
+    tenant.digest = parseDigest(field(entry, 'digest'), path);
     const captions = field(entry, 'captions');
     if (captions !== undefined) {
       if (!isCaptionsPolicy(captions)) {

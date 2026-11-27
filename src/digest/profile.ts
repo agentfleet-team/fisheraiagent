@@ -1,4 +1,5 @@
 import type { EpisodeRequest } from './contract.js';
+import type { FixedLines } from './check.js';
 
 // A profile fixes the language, the structure, the length band and the
 // source list of one kind of episode. Its constants live here, as data.
@@ -44,15 +45,30 @@ function fmt(seconds: number): string {
 }
 
 // The user prompt: the request, then each transcript as `[start] text` lines.
-export function buildDraftPrompt(profile: Profile, request: EpisodeRequest): string {
-  const lines: string[] = [
+// A tenant's fixed lines spend part of the band, so the model's own target
+// shrinks by their length and it is told not to write the framing the system
+// adds: no greeting in the opening, no sign-off in the closing.
+export function buildDraftPrompt(profile: Profile, request: EpisodeRequest, lines?: FixedLines): string {
+  const { min, max } = profile.lengthBand;
+  const own = lines === undefined ? '' : `，其中固定台詞 ${lines.chars} 字由系統加入；你的文字合計目標是 ${min - lines.chars} 到 ${max - lines.chars} 字`;
+  const out: string[] = [
     `日期：${request.date}`,
-    `長度：全部 section 的文字合計 ${profile.lengthBand.min} 到 ${profile.lengthBand.max} 字（不含空白）。`,
+    `長度：全部 section 的文字合計 ${min} 到 ${max} 字（不含空白）${own}。`,
     `missing_slots：${JSON.stringify(request.missing_slots)}`,
-    '',
   ];
+  if (lines !== undefined) {
+    const fixed: string[] = [];
+    if (lines.opening !== undefined) {
+      fixed.push('opening 的固定開場台詞由系統加入，opening 直接從內容開始，不要寫問候語');
+    }
+    if (lines.closing !== undefined) {
+      fixed.push('closing 的固定收尾台詞由系統加入，closing 不要寫收尾署名或道別語');
+    }
+    out.push(`固定台詞：${fixed.join('；')}。`);
+  }
+  out.push('');
   for (const s of request.sources) {
-    lines.push(
+    out.push(
       `## 來源 slot ${s.slot}`,
       `video_id: ${s.transcript.video_id}`,
       `標題：${s.title}`,
@@ -63,7 +79,7 @@ export function buildDraftPrompt(profile: Profile, request: EpisodeRequest): str
       '',
     );
   }
-  return lines.join('\n');
+  return out.join('\n');
 }
 
 export function buildRepairPrompt(
@@ -71,9 +87,10 @@ export function buildRepairPrompt(
   request: EpisodeRequest,
   previous: string,
   problems: string[],
+  lines?: FixedLines,
 ): string {
   return [
-    buildDraftPrompt(profile, request),
+    buildDraftPrompt(profile, request, lines),
     '上一次的輸出沒有通過檢查。請修正下列問題，並重新輸出完整的 JSON 物件：',
     ...problems.map((p) => `- ${p}`),
     '',

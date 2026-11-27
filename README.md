@@ -11,7 +11,7 @@ The directory page [tools.agentfleet.team](https://tools.agentfleet.team/) is ge
 | Tool | What it does | Status | Link |
 |---|---|---|---|
 | YouTube transcript | One YouTube URL in, the full timed transcript out. A manual caption track in the spoken language becomes the transcript with zero Gemini calls; every other video goes to Gemini. Use it from a web page, a Discord bot, or the command line. | CLI + HTTP API + Discord bot + web page ready | [transcripts.agentfleet.team](https://transcripts.agentfleet.team/) |
-| Digest | N transcripts and their video metadata in, one episode script out for a named profile (first: `podcast-zh-tw-10min`). Same job API as the transcript tool; code and API in `src/digest/`. | built, not deployed | [Digest code](https://github.com/agentfleet-team/fisheraiagent/tree/main/src/digest) |
+| Digest | N transcripts and their video metadata in, one episode script out for a named profile (first: `podcast-zh-tw-10min`). Same job API as the transcript tool; code and API in `src/digest/`. A tenant may fix the episode's `opening_line` and `closing_line` in the tenants document. | built, not deployed | [Digest code](https://github.com/agentfleet-team/fisheraiagent/tree/main/src/digest) |
 | Voice | Episode script sections in, one zh-TW MP3 and one time mark per sentence out (Edge TTS), with a duration check. Same job API as the transcript tool; code and API in `src/voice/`. | built, not deployed | [Voice code](https://github.com/agentfleet-team/fisheraiagent/tree/main/src/voice) |
 
 Router app: [podcast-night](apps/podcast-night/README.md) runs the morning-podcast night across the transcript, digest, and voice tools.

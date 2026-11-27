@@ -5,6 +5,7 @@ import {
   type EpisodeSection,
   type ModelOutput,
 } from './contract.js';
+import type { TenantDigest } from '../tenants.js';
 import type { Profile } from './profile.js';
 
 export type CheckResult =
@@ -17,6 +18,26 @@ export function countChars(texts: string[]): number {
   let n = 0;
   for (const t of texts) for (const ch of t) if (!/\s/u.test(ch)) n += 1;
   return n;
+}
+
+// A tenant's fixed framing lines, resolved for one job. `chars` is the part
+// of the length band the lines already spend.
+export interface FixedLines {
+  opening?: string;
+  closing?: string;
+  chars: number;
+}
+
+// undefined when the tenant sets no line, so a tenant without them gets
+// exactly the behavior a caller without a tenant gets.
+export function fixedLines(digest: TenantDigest | undefined): FixedLines | undefined {
+  if (digest?.opening_line === undefined && digest?.closing_line === undefined) return undefined;
+  const lines: FixedLines = {
+    chars: countChars([digest.opening_line, digest.closing_line].filter((v): v is string => v !== undefined)),
+  };
+  if (digest.opening_line !== undefined) lines.opening = digest.opening_line;
+  if (digest.closing_line !== undefined) lines.closing = digest.closing_line;
+  return lines;
 }
 
 function parseModelJson(raw: string): ModelOutput | undefined {
@@ -38,7 +59,17 @@ function mentionsSlot(text: string, slot: number): boolean {
 
 // The script check: schema, structure, refs and length band. It returns the
 // EpisodeScript, or every problem it found so one repair call can name them.
-export function checkModelOutput(request: EpisodeRequest, profile: Profile, raw: string): CheckResult {
+// A tenant's fixed lines wrap the model's framing text before the check, so
+// they land in the result verbatim and count toward the band: the opening
+// line before the opening text (replacing a greeting the prompt told the
+// model not to write), the closing line after the closing text (replacing
+// the sign-off). A line the model already emitted is not added a second time.
+export function checkModelOutput(
+  request: EpisodeRequest,
+  profile: Profile,
+  raw: string,
+  lines?: FixedLines,
+): CheckResult {
   const output = parseModelJson(raw);
   if (output === undefined) {
     return { ok: false, problems: ['輸出不是符合格式的 JSON 物件（title 與 sections）。'] };
@@ -48,6 +79,14 @@ export function checkModelOutput(request: EpisodeRequest, profile: Profile, raw:
 
   const opening = sections.filter((s) => s.kind === 'opening');
   const closing = sections.filter((s) => s.kind === 'closing');
+  const firstOpening = opening[0];
+  const lastClosing = closing[closing.length - 1];
+  if (lines?.opening !== undefined && firstOpening !== undefined && !firstOpening.text.startsWith(lines.opening)) {
+    firstOpening.text = `${lines.opening}\n${firstOpening.text}`;
+  }
+  if (lines?.closing !== undefined && lastClosing !== undefined && !lastClosing.text.endsWith(lines.closing)) {
+    lastClosing.text = `${lastClosing.text}\n${lines.closing}`;
+  }
   if (opening.length !== 1 || sections[0]?.kind !== 'opening') {
     problems.push('sections 必須以恰好一段 opening 開頭。');
   }
