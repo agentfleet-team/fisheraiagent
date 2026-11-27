@@ -28,10 +28,11 @@ Technical source code, operational templates, and architecture decision records 
 | Voice tool | [`src/voice/`](src/voice/) | Text-to-speech MP3 and time-mark job API ([README](src/voice/README.md)). |
 | Mac caption reader | [`src/caption-reader.ts`](src/caption-reader.ts) | Standalone HTTP caption reader ([`src/caption-reader-service.ts`](src/caption-reader-service.ts)) and remote adapter ([`src/captions-remote.ts`](src/captions-remote.ts)). |
 | Architecture decisions (ADRs) | [`docs/adr/`](docs/adr/) | Public technical ADRs, starting with [ADR 0001](docs/adr/0001-captions-first-transcript-source.md). |
+| Private technical RFCs and ADRs | allen-ai-os `docs/morning-podcast/rfc/` (RFC-001..004); allen-ai-os `docs/adr/0012-morning-podcast-night-loop.md` and `docs/adr/0013-mac-inbound-channels.md` | Text pointers only. The allen-ai-os repository is private. |
 | Tools directory | [`tools-site/`](tools-site/) | Static generator for the tools directory page. |
 | AWS deployment | [`deploy/aws/`](deploy/aws/) | ECS Fargate deployment recipe ([README](deploy/aws/README.md)). |
 
-Product planning documents, including the PRD, product stages, commercial direction, and discussions, stay in private repositories.
+Product planning documents stay in private repositories. The private records are in allen-ai-os `docs/morning-podcast/`, and the product requirement document is PRD fisherivco/allen-ai-os#1878. The resume pointer for product discussions is the cch topic `morning-podcast`.
 
 ## Self-host quick start (HTTP service)
 
