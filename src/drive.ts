@@ -17,7 +17,7 @@ export interface DriveStore {
   createFile(
     folderId: string,
     name: string,
-    content: string,
+    content: string | Buffer,
     mimeType: string,
     appProperties?: Record<string, string>,
   ): Promise<StoredFile>;
@@ -200,10 +200,10 @@ function storedFile(file: unknown): StoredFile {
 // media part.
 function uploadBody(
   metadata: Record<string, unknown>,
-  content: string,
+  content: string | Buffer,
   mimeType: string,
-): string {
-  return [
+): Buffer {
+  const head = [
     `--${UPLOAD_BOUNDARY}`,
     'content-type: application/json; charset=UTF-8',
     '',
@@ -211,10 +211,13 @@ function uploadBody(
     `--${UPLOAD_BOUNDARY}`,
     `content-type: ${mimeType}`,
     '',
-    content,
-    `--${UPLOAD_BOUNDARY}--`,
     '',
   ].join('\r\n');
+  return Buffer.concat([
+    Buffer.from(head, 'utf8'),
+    Buffer.from(content),
+    Buffer.from(`\r\n--${UPLOAD_BOUNDARY}--\r\n`, 'utf8'),
+  ]);
 }
 
 const REASON_FORMAT = /^[A-Za-z_]{1,64}$/;
