@@ -68,6 +68,32 @@ function mentionsSlot(text: string, slot: number): boolean {
   return new RegExp(`第\\s*${slot}\\s*則`).test(text);
 }
 
+// The length problem names the total, the exact miss against the bound the
+// draft crossed, and a per-section cut or add scaled from the actual section
+// lengths toward the band midpoint, so a repair call targets the band center
+// instead of hovering at an edge. Fixed framing lines are not model text, so
+// they are excluded from the adjustable total and never get a suggestion.
+function lengthProblem(
+  sections: { kind: string; slot?: number; text: string }[],
+  charCount: number,
+  min: number,
+  max: number,
+  fixedChars: number,
+): string {
+  const mid = Math.round((min + max) / 2);
+  const adjustable = charCount - fixedChars;
+  const scale = adjustable > 0 ? (mid - fixedChars) / adjustable : 0;
+  const parts = sections.map((s) => {
+    const name = s.kind === 'segment' ? `slot ${s.slot ?? '?'}` : s.kind;
+    const len = countChars([s.text]);
+    return `${name} 目前 ${len} 字 → 約 ${Math.round(len * scale)} 字`;
+  });
+  const over = charCount > max;
+  const miss = over ? `超出上限 ${charCount - max} 字` : `不足下限 ${min - charCount} 字`;
+  const verb = over ? '縮減' : '擴寫';
+  return `全部文字合計 ${charCount} 字，必須在 ${min} 到 ${max} 字之間。${miss}，請${verb}到合計約 ${mid} 字：${parts.join('，')}。`;
+}
+
 // The script check: schema, structure, refs and length band. It returns the
 // EpisodeScript, or every problem it found so one repair call can name them.
 // When a tenant fixes an opening_line or closing_line the line is structure,
@@ -163,7 +189,7 @@ export function checkModelOutput(
   const charCount = countChars(spoken) + (lines?.chars ?? 0);
   const { min, max } = profile.lengthBand;
   if (charCount < min || charCount > max) {
-    problems.push(`全部文字合計 ${charCount} 字，必須在 ${min} 到 ${max} 字之間。`);
+    problems.push(lengthProblem(sections, charCount, min, max, lines?.chars ?? 0));
   }
 
   if (problems.length > 0) return { ok: false, problems };

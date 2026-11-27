@@ -27,7 +27,7 @@ The job makes the draft call, then up to two repair calls. The first passing che
 - `sections` are one `opening`, one `segment` per source in slot order, one `closing`.
 - Every segment has at least one ref. A ref names the segment's own `video_id` and a `start` that falls inside one transcript block (`start` to `end`).
 - Each slot in `missing_slots` appears as `第N則` in the opening or closing.
-- `char_count` (spoken text of all sections, whitespace not counted) is inside the profile band, 2,400 to 2,850. It comes from the 9 to 11 minute acceptance at 262 characters per audio minute (fisheraiagent#82). Change it in `profile.ts`.
+- `char_count` (spoken text of all sections, whitespace not counted) is inside the profile band, 2,400 to 2,850. It comes from the 9 to 11 minute acceptance at 262 characters per audio minute (fisheraiagent#82). Change it in `profile.ts`. The draft prompt states a concrete target — the band midpoint (2,625), minus any fixed framing lines — plus a per-section budget (opening, each segment, closing). A failed length check names the total, the exact overshoot or shortfall, and a per-section cut or add scaled from the actual section lengths toward the midpoint.
 - The model writes spoken text only. The tool appends the source list (title, channel, link per source) to `markdown` after the closing.
 
 ## Tenant fixed lines
