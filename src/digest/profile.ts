@@ -82,10 +82,22 @@ function fmt(seconds: number): string {
 // adds: no greeting in the opening, no sign-off in the closing.
 export function buildDraftPrompt(profile: Profile, request: EpisodeRequest, lines?: FixedLines): string {
   const { min, max } = profile.lengthBand;
+  const fixedChars = lines?.chars ?? 0;
   const own = lines === undefined ? '' : `，其中固定台詞 ${lines.chars} 字由系統加入；你的文字合計目標是 ${min - lines.chars} 到 ${max - lines.chars} 字`;
+  // A concrete target beats a bare band: the model aims at the midpoint
+  // instead of drifting over the upper edge, and a per-section budget keeps
+  // one long segment from spending the whole allowance.
+  const ownTarget = Math.round((min + max) / 2) - fixedChars;
+  const openingBudget = 120;
+  const closingBudget = 80;
+  const segmentBudget = Math.max(
+    100,
+    Math.round((ownTarget - openingBudget - closingBudget) / Math.max(request.sources.length, 1)),
+  );
   const out: string[] = [
     `日期：${request.date}`,
     `長度：全部 section 的文字合計 ${min} 到 ${max} 字（不含空白）${own}。`,
+    `長度目標：你的文字合計約 ${ownTarget} 字；建議分配 — opening 約 ${openingBudget} 字，每個 segment 約 ${segmentBudget} 字，closing 約 ${closingBudget} 字。`,
     `missing_slots：${JSON.stringify(request.missing_slots)}`,
   ];
   if (lines !== undefined) {

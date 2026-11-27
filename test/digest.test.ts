@@ -708,3 +708,94 @@ test('L2: a job repairs a draft that echoes the fixed lines; each lands once', a
     delete process.env.DIGEST_TEST_CALLER_TOKEN;
   }
 });
+
+// --- length control: concrete target, per-section budget, richer repair problem ---
+
+test('N1: the draft prompt states a concrete character target and a per-section budget', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const prompt = buildDraftPrompt(profile, request);
+  assert.ok(prompt.includes('你的文字合計約 2625 字'));
+  assert.ok(prompt.includes('opening 約 120 字'));
+  assert.ok(prompt.includes('每個 segment 約 808 字'));
+  assert.ok(prompt.includes('closing 約 80 字'));
+  // fixed framing lines spend part of the band, so the model's own target shrinks
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  const ownTarget = 2625 - lines.chars;
+  const withLines = buildDraftPrompt(profile, request, lines);
+  assert.ok(withLines.includes(`你的文字合計約 ${ownTarget} 字`));
+  assert.ok(withLines.includes(`每個 segment 約 ${Math.round((ownTarget - 200) / 3)} 字`));
+});
+
+test('N2: an overlong draft gets a repair prompt naming the total, the exact overshoot and per-section cuts', async () => {
+  const llm = stubLlm([withCharCount(3100), fixture('model-good.json')]);
+  await withService({ llmFactory: llm.factory }, async (base) => {
+    const sent = await post(base, requestBody);
+    const view = await settle(base, sent.body.job_id);
+    assert.equal(view.status, 'done');
+    assert.equal(llm.calls.length, 2);
+    const repair = llm.calls[1].prompt;
+    assert.ok(repair.includes('全部文字合計 3100 字'));
+    assert.ok(repair.includes('必須在 2400 到 2850 字之間'));
+    assert.ok(repair.includes('超出上限 250 字'));
+    assert.ok(repair.includes('請縮減到合計約 2625 字'));
+    assert.ok(repair.includes('opening 目前'));
+    assert.ok(repair.includes('slot 1 目前'));
+    assert.ok(repair.includes('slot 3 目前'));
+    assert.ok(repair.includes('closing 目前'));
+    assert.ok(repair.includes('→ 約'));
+  });
+});
+
+test('N2: an underlong draft names the exact shortfall and a per-section add toward the midpoint', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const checked = checkModelOutput(request, profileFor('podcast-zh-tw-10min')!, withCharCount(2000));
+  assert.equal(checked.ok, false);
+  if (checked.ok) return;
+  const problem = checked.problems.find((p) => p.includes('必須在'))!;
+  assert.ok(problem.includes('全部文字合計 2000 字'));
+  assert.ok(problem.includes('不足下限 400 字'));
+  assert.ok(problem.includes('請擴寫到合計約 2625 字'));
+  assert.ok(problem.includes('opening 目前'));
+  assert.ok(problem.includes('closing 目前'));
+});
+
+test('N2: a draft with no countable text gets per-section targets that sum to the midpoint', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const blank = JSON.parse(fixture('model-good.json')) as { sections: { text: string }[] };
+  for (const sec of blank.sections) sec.text = ' \n ';
+  const checked = checkModelOutput(request, profileFor('podcast-zh-tw-10min')!, JSON.stringify(blank));
+  assert.equal(checked.ok, false);
+  if (checked.ok) return;
+  const problem = checked.problems.find((p) => p.includes('必須在'))!;
+  assert.ok(problem.includes('全部文字合計 0 字'));
+  assert.ok(problem.includes('不足下限 2400 字'));
+  const targets = [...problem.matchAll(/→ 約 (\d+) 字/gu)].map((m) => Number(m[1]));
+  assert.equal(targets.length, 5);
+  assert.equal(
+    targets.reduce((a, b) => a + b, 0),
+    2625,
+  );
+});
+
+test('N2: fixed lines are excluded from the per-section suggestions', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  const checked = checkModelOutput(
+    request,
+    profile,
+    withFraming(MODEL_OPENING, MODEL_CLOSING, 3100 - lines.chars),
+    lines,
+  );
+  assert.equal(checked.ok, false);
+  if (checked.ok) return;
+  const problem = checked.problems.find((p) => p.includes('必須在'))!;
+  assert.ok(problem.includes('全部文字合計 3100 字'));
+  assert.ok(problem.includes('超出上限 250 字'));
+  // the model's own sections scale toward the midpoint minus the fixed chars
+  const adjustable = 3100 - lines.chars;
+  const scale = (2625 - lines.chars) / adjustable;
+  const openingLen = countChars([MODEL_OPENING]);
+  assert.ok(problem.includes(`opening 目前 ${openingLen} 字 → 約 ${Math.round(openingLen * scale)} 字`));
+});
