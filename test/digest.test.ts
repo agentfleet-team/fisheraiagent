@@ -6,10 +6,11 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { checkModelOutput, countChars, fixedLines } from '../src/digest/check.js';
 import { parseEpisodeRequest } from '../src/digest/contract.js';
+import { fitModelOutput } from '../src/digest/fit.js';
 import { DigestJobStore } from '../src/digest/jobs.js';
 import { createDigestService } from '../src/digest/service.js';
 import type { DigestLlm, DigestLlmRequest } from '../src/digest/llm.js';
-import { PODCAST_ZH_TW_10MIN_BAND, buildDraftPrompt, profileFor } from '../src/digest/profile.js';
+import { PODCAST_ZH_TW_10MIN_BAND, PODCAST_ZH_TW_10MIN_TARGET, buildDraftPrompt, profileFor } from '../src/digest/profile.js';
 import type { DigestDrive } from '../src/digest/save.js';
 import { TranscriptError } from '../src/errors.js';
 import { MAX_DIGEST_LINE_CHARS, parseTenantsJson } from '../src/tenants.js';
@@ -711,17 +712,20 @@ test('L2: a job repairs a draft that echoes the fixed lines; each lands once', a
 
 // --- length control: concrete target, per-section budget, richer repair problem ---
 
+// Scope exception (agentfleet-team/fisheraiagent#110, F2): the production draft
+// target moved from 2,625 to 2,500, so the three numeric expectations below
+// (2,625/808 became 2,500/767) are the only N1-N4 lines changed in this PR.
 test('N1: the draft prompt states a concrete character target and a per-section budget', () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;
   const prompt = buildDraftPrompt(profile, request);
-  assert.ok(prompt.includes('你的文字合計約 2625 字'));
+  assert.ok(prompt.includes('你的文字合計約 2500 字'));
   assert.ok(prompt.includes('opening 約 120 字'));
-  assert.ok(prompt.includes('每個 segment 約 808 字'));
+  assert.ok(prompt.includes('每個 segment 約 767 字'));
   assert.ok(prompt.includes('closing 約 80 字'));
   // fixed framing lines spend part of the band, so the model's own target shrinks
   const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
-  const ownTarget = 2625 - lines.chars;
+  const ownTarget = 2500 - lines.chars;
   const withLines = buildDraftPrompt(profile, request, lines);
   assert.ok(withLines.includes(`你的文字合計約 ${ownTarget} 字`));
   assert.ok(withLines.includes(`每個 segment 約 ${Math.round((ownTarget - 200) / 3)} 字`));
@@ -1030,4 +1034,113 @@ test('T21 file_prefix: distinct prefixes and omission share one folder on the sa
   } finally {
     delete process.env.DIGEST_TEST_CALLER_TOKEN;
   }
+});
+
+// --- fit step: deterministic last cut after the repair calls ---
+
+// model-good.json with 20-character sentences in every segment so the spoken
+// text has `total` characters; the segments hold 50%, 30% and 20% of the
+// segment text. Refs and framing bodies stay as the fixture has them.
+function withSentences(total: number): string {
+  const out = JSON.parse(fixture('model-good.json')) as { sections: { kind: string; text: string }[] };
+  const segs = out.sections.filter((x) => x.kind === 'segment');
+  const framing = out.sections.filter((x) => x.kind !== 'segment').reduce((n, x) => n + countChars([x.text]), 0);
+  const body = total - framing;
+  const shares = [Math.floor(body / 2), Math.floor((body * 3) / 10), 0];
+  shares[2] = body - shares[0] - shares[1];
+  segs.forEach((seg, i) => {
+    const full = Math.floor(shares[i] / 20);
+    const lens = Array.from({ length: full }, () => 20);
+    lens[full - 1] += shares[i] - full * 20;
+    seg.text = lens.map((n) => '甲'.repeat(n - 1) + '。').join('');
+  });
+  return JSON.stringify(out);
+}
+
+test('F2: the draft prompt target is about 2,500 characters minus the fixed framing', () => {
+  assert.equal(PODCAST_ZH_TW_10MIN_TARGET, 2500);
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  assert.ok(buildDraftPrompt(profile, request).includes('你的文字合計約 2500 字'));
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  assert.ok(buildDraftPrompt(profile, request, lines).includes(`你的文字合計約 ${2500 - lines.chars} 字`));
+});
+
+test('F1: a draft still overlong after both repairs is cut to at most 2,850 with framing, segments and refs intact', async () => {
+  for (const total of [2889, 3144, 4251]) {
+    const draft = withSentences(total);
+    assert.equal(countChars(JSON.parse(draft).sections.map((x: { text: string }) => x.text)), total);
+    const llm = stubLlm([draft]);
+    const lines: string[] = [];
+    const store = new DigestJobStore({ llmFactory: llm.factory, logSink: (l) => lines.push(l) });
+    const outcome = store.submit(parseEpisodeRequest(requestBody)!, 'key', undefined);
+    const jobId = (outcome as { jobId: string }).jobId;
+    let view = store.get(jobId)!;
+    for (let i = 0; i < 200 && view.status !== 'failed' && view.status !== 'done'; i++) {
+      await new Promise((r) => setTimeout(r, 10));
+      view = store.get(jobId)!;
+    }
+    assert.equal(view.status, 'done', `${total}`);
+    assert.equal(llm.calls.length, 3, 'no extra repair call');
+    const script = view.result!;
+    assert.ok(script.char_count <= 2850 && script.char_count >= 2400);
+    const original = JSON.parse(draft).sections as { kind: string; text: string; refs?: unknown }[];
+    assert.equal(script.sections.length, original.length);
+    assert.equal(script.sections[0].text, original[0].text);
+    assert.equal(script.sections[script.sections.length - 1].text, original[original.length - 1].text);
+    script.sections.forEach((sec, i) => {
+      assert.ok(sec.text.trim() !== '');
+      if (sec.kind === 'segment') {
+        assert.deepEqual(sec.refs, original[i].refs);
+        assert.ok(original[i].text.startsWith(sec.text));
+      }
+    });
+    const fit = lines.filter((l) => l.startsWith('fit removed='));
+    assert.equal(fit.length, 1);
+    assert.match(fit[0], new RegExp(`^fit removed=\\d+ chars_before=${total} chars_after=${script.char_count}$`));
+  }
+});
+
+test('F1: with fixed lines the fit counts them, leaves the framing bodies alone and keeps every segment non-empty', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const profile = profileFor('podcast-zh-tw-10min')!;
+  const lines = fixedLines({ opening_line: OPEN_LINE, closing_line: CLOSE_LINE })!;
+  // the fixture's own framing bodies greet and sign off; use bodies that suit fixed lines
+  const base = JSON.parse(withSentences(3100 - lines.chars)) as { sections: { text: string }[] };
+  const last = base.sections.length - 1;
+  const swing = countChars([base.sections[0].text, base.sections[last].text]) - countChars([MODEL_OPENING, MODEL_CLOSING]);
+  base.sections[0].text = MODEL_OPENING;
+  base.sections[last].text = MODEL_CLOSING;
+  base.sections[2].text += '甲'.repeat(swing - 1) + '。';
+  const draft = JSON.stringify(base);
+  const fitted = fitModelOutput(draft, lines.chars, 2400, 2850)!;
+  assert.equal(fitted.charsBefore, 3100);
+  assert.ok(fitted.charsAfter <= 2850);
+  const checked = checkModelOutput(request, profile, fitted.raw, lines);
+  assert.ok(checked.ok);
+  assert.equal(checked.script.char_count, fitted.charsAfter);
+});
+
+test('F1: a closing quote stays with its sentence, so the whole quoted sentence is removed', () => {
+  const out = JSON.parse(fixture('model-good.json')) as { sections: { kind: string; text: string }[] };
+  const segs = out.sections.filter((x) => x.kind === 'segment');
+  const keep = '甲'.repeat(1170) + '。';
+  segs[0].text = keep + '「' + '乙'.repeat(29) + '。」';
+  segs[1].text = '丙'.repeat(200) + '。';
+  segs[2].text = '丁'.repeat(200) + '。';
+  const before = countChars(out.sections.map((x) => x.text));
+  const fitted = fitModelOutput(JSON.stringify(out), 0, 100, before - 1)!;
+  const after = (JSON.parse(fitted.raw) as { sections: { kind: string; text: string }[] }).sections.filter((x) => x.kind === 'segment');
+  assert.equal(after[0].text, keep);
+  assert.equal(fitted.removed, 1);
+});
+
+test('F1: the fit does nothing when it cannot reach the max under its rules', () => {
+  const out = JSON.parse(fixture('model-good.json'));
+  // one long sentence per segment: nothing can be removed
+  for (const sec of out.sections) if (sec.kind === 'segment') sec.text = '甲'.repeat(1000) + '。';
+  assert.equal(fitModelOutput(JSON.stringify(out), 0, 2400, 2850), undefined);
+  // within the band, or not JSON: untouched
+  assert.equal(fitModelOutput(withSentences(2600), 0, 2400, 2850), undefined);
+  assert.equal(fitModelOutput('not json', 0, 2400, 2850), undefined);
 });
