@@ -712,6 +712,9 @@ test('L2: a job repairs a draft that echoes the fixed lines; each lands once', a
 
 // --- length control: concrete target, per-section budget, richer repair problem ---
 
+// Scope exception (agentfleet-team/fisheraiagent#110, F2): the production draft
+// target moved from 2,625 to 2,500, so the three numeric expectations below
+// (2,625/808 became 2,500/767) are the only N1-N4 lines changed in this PR.
 test('N1: the draft prompt states a concrete character target and a per-section budget', () => {
   const request = parseEpisodeRequest(requestBody)!;
   const profile = profileFor('podcast-zh-tw-10min')!;
@@ -862,7 +865,7 @@ test('F1: a draft still overlong after both repairs is cut to at most 2,850 with
     });
     const fit = lines.filter((l) => l.includes(' fit removed='));
     assert.equal(fit.length, 1);
-    assert.match(fit[0], new RegExp(`^job=${jobId} fit removed=\\d+ chars_before=${total} chars_after=${script.char_count}$`));
+    assert.match(fit[0], new RegExp(`^fit removed=\\d+ chars_before=${total} chars_after=${script.char_count}$`));
   }
 });
 
@@ -884,6 +887,20 @@ test('F1: with fixed lines the fit counts them, leaves the framing bodies alone 
   const checked = checkModelOutput(request, profile, fitted.raw, lines);
   assert.ok(checked.ok);
   assert.equal(checked.script.char_count, fitted.charsAfter);
+});
+
+test('F1: a closing quote stays with its sentence, so the whole quoted sentence is removed', () => {
+  const out = JSON.parse(fixture('model-good.json')) as { sections: { kind: string; text: string }[] };
+  const segs = out.sections.filter((x) => x.kind === 'segment');
+  const keep = '甲'.repeat(1170) + '。';
+  segs[0].text = keep + '「' + '乙'.repeat(29) + '。」';
+  segs[1].text = '丙'.repeat(200) + '。';
+  segs[2].text = '丁'.repeat(200) + '。';
+  const before = countChars(out.sections.map((x) => x.text));
+  const fitted = fitModelOutput(JSON.stringify(out), 0, 100, before - 1)!;
+  const after = (JSON.parse(fitted.raw) as { sections: { kind: string; text: string }[] }).sections.filter((x) => x.kind === 'segment');
+  assert.equal(after[0].text, keep);
+  assert.equal(fitted.removed, 1);
 });
 
 test('F1: the fit does nothing when it cannot reach the max under its rules', () => {

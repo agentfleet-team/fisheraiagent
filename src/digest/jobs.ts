@@ -116,7 +116,7 @@ export class DigestJobStore {
         request,
         fixedLines(tenant?.digest),
         (attempt, problems) => this.logFailedCheck(id, attempt, problems),
-        (line) => (this.deps.logSink ?? consoleSink)(`job=${id} ${line}`),
+        (line) => (this.deps.logSink ?? consoleSink)(line),
       );
       try {
         const saved = await saveScript(this.deps.drive, tenant, request.date, script.markdown);

@@ -8,9 +8,10 @@ export interface FitResult {
   charsAfter: number;
 }
 
-// A sentence ends at 。！？ or at a line end; the terminator stays with it.
+// A sentence ends at 。！？ or at a line end; the terminator stays with it,
+// and so do closing quotes and brackets that follow it (「…。」).
 function pieces(text: string): string[] {
-  return text.split(/(?<=[。！？\n])/u);
+  return text.split(/(?<=[。！？][」』”’）)]*|\n)(?![」』”’）)])/u);
 }
 const spoken = (p: string): boolean => p.trim() !== '';
 
