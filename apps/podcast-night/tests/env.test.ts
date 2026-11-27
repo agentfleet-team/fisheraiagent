@@ -88,9 +88,23 @@ describe("M4: required instance Env vars", () => {
     ["STATE_REPO", "no-slash", "invalid_env:STATE_REPO"],
     ["STATE_REPO", "a/b/c", "invalid_env:STATE_REPO"],
     ["STATE_REPO", "owner/..", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", "owner/.", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", "bad.owner/repo", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", "bad_owner/repo", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", "-owner/repo", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", "owner-/repo", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", "bad--owner/repo", "invalid_env:STATE_REPO"],
+    ["STATE_REPO", `${"a".repeat(40)}/repo`, "invalid_env:STATE_REPO"],
+    ["STATE_REPO", `owner/${"a".repeat(101)}`, "invalid_env:STATE_REPO"],
     ["SUMMARY_REPO", "", "missing_env:SUMMARY_REPO"],
     ["SUMMARY_REPO", "owner/", "invalid_env:SUMMARY_REPO"],
     ["SUMMARY_REPO", "/repo", "invalid_env:SUMMARY_REPO"],
+    ["SUMMARY_REPO", "owner/..", "invalid_env:SUMMARY_REPO"],
+    ["SUMMARY_REPO", "bad.owner/repo", "invalid_env:SUMMARY_REPO"],
+    ["SUMMARY_REPO", "bad_owner/repo", "invalid_env:SUMMARY_REPO"],
+    ["SUMMARY_REPO", "-owner/repo", "invalid_env:SUMMARY_REPO"],
+    ["SUMMARY_REPO", "owner-/repo", "invalid_env:SUMMARY_REPO"],
+    ["SUMMARY_REPO", "bad--owner/repo", "invalid_env:SUMMARY_REPO"],
     ["SUMMARY_ISSUE", "", "missing_env:SUMMARY_ISSUE"],
     ["SUMMARY_ISSUE", "0", "invalid_env:SUMMARY_ISSUE"],
     ["SUMMARY_ISSUE", "-3", "invalid_env:SUMMARY_ISSUE"],
@@ -109,15 +123,48 @@ describe("M4: required instance Env vars", () => {
     expectZeroPortCalls(ports);
   });
 
+  it("reaches the store when instance vars are valid", async () => {
+    const ports = spiedPorts();
+    const outcome = await runTick({
+      ...ports,
+      env: { ...BASE_ENV, STATE_REPO: "example-org/.github" },
+      now: new Date("2026-11-28T00:00:00+08:00"),
+      dryRun: false,
+    });
+    expect(outcome.ok).toBe(true);
+    expect(ports.store.readFile).toHaveBeenCalled();
+  });
+
   it("worker.scheduled makes zero fetch calls when an instance var is missing", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const { SUMMARY_ISSUE: _omit, ...env } = BASE_ENV;
     await worker.scheduled(
       { scheduledTime: Date.parse("2026-11-28T00:00:00+08:00"), cron: "*/5 16-22 * * *", noRetry: () => {} },
-      { ...env, DRY_RUN: "false" },
+      { ...env, DRY_RUN: "false" } as Env,
     );
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(errSpy).toHaveBeenCalledWith(expect.stringContaining("missing_env:SUMMARY_ISSUE"));
+  });
+
+  it("worker.scheduled reaches the store for valid config and makes zero fetch calls for malformed repo owners", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 404 }));
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const controller = {
+      scheduledTime: Date.parse("2026-11-28T00:00:00+08:00"),
+      cron: "*/5 16-22 * * *",
+      noRetry: () => {},
+    };
+
+    await worker.scheduled(controller, { ...BASE_ENV, DRY_RUN: "false" });
+    expect(fetchSpy.mock.calls.length).toBeGreaterThan(0);
+
+    for (const key of ["STATE_REPO", "SUMMARY_REPO"] as const) {
+      fetchSpy.mockClear();
+      errSpy.mockClear();
+      await worker.scheduled(controller, { ...BASE_ENV, [key]: "bad.owner/repo", DRY_RUN: "false" });
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(errSpy).toHaveBeenCalledWith(expect.stringContaining(`invalid_env:${key}`));
+    }
   });
 });

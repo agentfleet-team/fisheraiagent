@@ -30,9 +30,9 @@ export interface Env {
   TOOL1_BASE_URL?: string;
   TOOL2_BASE_URL?: string;
   TOOL3_BASE_URL?: string;
-  STATE_REPO?: string;
-  SUMMARY_REPO?: string;
-  SUMMARY_ISSUE?: string;
+  STATE_REPO: string;
+  SUMMARY_REPO: string;
+  SUMMARY_ISSUE: string;
   DRY_RUN?: string;
 }
 
@@ -42,13 +42,32 @@ export interface InstanceEnv {
   summaryIssue: number;
 }
 
-const REPO_SLUG_RE = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
+const GITHUB_OWNER_RE = /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/;
+const GITHUB_REPO_RE = /^[A-Za-z0-9_.-]+$/;
+const GITHUB_OWNER_MAX_LEN = 39;
+const GITHUB_REPO_MAX_LEN = 100;
 const POSITIVE_INT_RE = /^[1-9]\d*$/;
 
+function isValidGithubOwner(owner: string): boolean {
+  return owner.length > 0 && owner.length <= GITHUB_OWNER_MAX_LEN && GITHUB_OWNER_RE.test(owner);
+}
+
+function isValidGithubRepo(repo: string): boolean {
+  return (
+    repo.length > 0 &&
+    repo.length <= GITHUB_REPO_MAX_LEN &&
+    repo !== "." &&
+    repo !== ".." &&
+    GITHUB_REPO_RE.test(repo)
+  );
+}
+
 function parseRepoSlug(value: unknown): string | null {
-  if (typeof value !== "string" || !REPO_SLUG_RE.test(value)) return null;
-  const [owner, repo] = value.split("/");
-  if (owner === "." || owner === ".." || repo === "." || repo === "..") return null;
+  if (typeof value !== "string") return null;
+  const parts = value.split("/");
+  if (parts.length !== 2) return null;
+  const [owner, repo] = parts;
+  if (!isValidGithubOwner(owner) || !isValidGithubRepo(repo)) return null;
   return value;
 }
 
@@ -685,27 +704,27 @@ export function buildTickDeps(env: Env, now: Date): TickDeps {
   const stateRepo = instance.ok ? instance.config.stateRepo : "";
   const summaryRepo = instance.ok ? instance.config.summaryRepo : "";
   return {
-    store: githubStore(stateRepo, env.GITHUB_TOKEN),
+    store: githubStore(stateRepo, env?.GITHUB_TOKEN),
     tool1: httpTool1(
-      env.TOOL1_BASE_URL ?? "https://transcripts.agentfleet.team",
-      env.PODCAST_CALLER_TOKEN,
+      env?.TOOL1_BASE_URL ?? "https://transcripts.agentfleet.team",
+      env?.PODCAST_CALLER_TOKEN,
     ),
     tool2: httpJobTool<EpisodeRequest, EpisodeScript>(
-      env.TOOL2_BASE_URL ?? "https://digest.agentfleet.team",
-      env.PODCAST_CALLER_TOKEN,
+      env?.TOOL2_BASE_URL ?? "https://digest.agentfleet.team",
+      env?.PODCAST_CALLER_TOKEN,
     ),
     tool3: httpJobTool<VoiceRequest, VoiceResult>(
-      env.TOOL3_BASE_URL ?? "https://voice.agentfleet.team",
-      env.PODCAST_CALLER_TOKEN,
+      env?.TOOL3_BASE_URL ?? "https://voice.agentfleet.team",
+      env?.PODCAST_CALLER_TOKEN,
     ),
-    comments: githubComments(summaryRepo, env.GITHUB_TOKEN),
+    comments: githubComments(summaryRepo, env?.GITHUB_TOKEN),
     env: {
-      STATE_REPO: env.STATE_REPO,
-      SUMMARY_REPO: env.SUMMARY_REPO,
-      SUMMARY_ISSUE: env.SUMMARY_ISSUE,
+      STATE_REPO: env?.STATE_REPO,
+      SUMMARY_REPO: env?.SUMMARY_REPO,
+      SUMMARY_ISSUE: env?.SUMMARY_ISSUE,
     },
     now,
-    dryRun: env.DRY_RUN !== "false",
+    dryRun: env?.DRY_RUN !== "false",
   };
 }
 
