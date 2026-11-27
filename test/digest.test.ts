@@ -276,6 +276,19 @@ test('D3: a ref that points outside the transcript fails the check', () => {
   assert.equal(result.ok, false);
 });
 
+test('C3: a problem about an invalid ref never contains the model-supplied video_id', () => {
+  const request = parseEpisodeRequest(requestBody)!;
+  const out = JSON.parse(fixture('model-good.json'));
+  const canary = 'CANARY-ref-value-xyz';
+  out.sections[1].refs = [{ video_id: canary, start: 12 }];
+  const result = checkModelOutput(request, profileFor('podcast-zh-tw-10min')!, JSON.stringify(out));
+  assert.equal(result.ok, false);
+  if (result.ok) return;
+  const joined = result.problems.join('\n');
+  assert.ok(!joined.includes(canary));
+  assert.match(joined, /slot 1 的 ref（時間 12）不在該來源的逐字稿時間內，因為 video_id 與該來源不符/);
+});
+
 test('D4: the same Idempotency-Key twice makes one LLM call and returns the same result', async () => {
   const llm = stubLlm([fixture('model-good.json')]);
   await withService({ llmFactory: llm.factory }, async (base) => {
