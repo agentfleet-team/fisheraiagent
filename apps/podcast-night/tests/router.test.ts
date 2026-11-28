@@ -150,14 +150,16 @@ interface FakeJob {
 
 class FakeTool implements Tool1 {
   submits: string[] = [];
+  tenants: (string | undefined)[] = [];
   polls = 0;
   private jobs = new Map<string, FakeJob>();
   private seq = 0;
 
   constructor(private plan: (url: string) => FakeJob | SubmitResult) {}
 
-  async submit(url: string): Promise<SubmitResult> {
+  async submit(url: string, tenant?: string): Promise<SubmitResult> {
     this.submits.push(url);
+    this.tenants.push(tenant);
     const planned = this.plan(url);
     if ("kind" in planned) return planned;
     const jobId = `job-${this.seq++}`;
@@ -242,6 +244,22 @@ describe("podcast-night router ticks (fisherivco/allen-ai-os#1900)", () => {
       "pick-1",
       "transcript-1",
     ]);
+  });
+
+  it("A1b: the transcript submit names tenants[mode] when the config has one, and none when it has none", async () => {
+    const withTenant = new FakeStore();
+    withTenant.seed(CONFIG_PATH, configJson({ tenants: { trial: "podcast-trial", live: "podcast" } }));
+    const t1 = new FakeTool(() => running());
+    await runTick(makeDeps(withTenant, t1, T("16:00")));
+    expect(t1.submits).toHaveLength(1);
+    expect(t1.tenants).toEqual(["podcast-trial"]);
+
+    const without = new FakeStore();
+    without.seed(CONFIG_PATH, configJson());
+    const t2 = new FakeTool(() => running());
+    await runTick(makeDeps(without, t2, T("16:00")));
+    expect(t2.submits).toHaveLength(1);
+    expect(t2.tenants).toEqual([undefined]);
   });
 
   it("A2: enabled:false appends only the config receipt and calls no tool", async () => {

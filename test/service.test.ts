@@ -72,7 +72,7 @@ interface HttpResult {
 
 async function postJob(
   base: string,
-  opts: { url?: string; key?: string; token?: string; cfIp?: string; origin?: unknown } = {},
+  opts: { url?: string; key?: string; token?: string; cfIp?: string; origin?: unknown; tenant?: unknown } = {},
 ): Promise<HttpResult> {
   const headers: Record<string, string> = { 'content-type': 'application/json' };
   if (opts.key !== undefined) headers['x-gemini-key'] = opts.key;
@@ -84,6 +84,7 @@ async function postJob(
     body: JSON.stringify({
       url: opts.url ?? `https://youtu.be/${VIDEO_A}`,
       ...(opts.origin !== undefined ? { origin: opts.origin } : {}),
+      ...(opts.tenant !== undefined ? { tenant: opts.tenant } : {}),
     }),
   });
   return { status: res.status, body: await res.json() };
@@ -747,6 +748,53 @@ test('K4: a tenant without the field, or with its variable unset, still needs X-
     });
     assert.equal(unset.status, 400);
     assert.equal(unset.body.error.code, 'missing_key');
+    assert.equal(calls.length, 0);
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+test('K6: a keyless request naming its tenant with the matching bearer spends the tenant key', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  const { base, logs, close } = await startService(calls, { tenantsJson: TENANTS_KEYED });
+  try {
+    const res = await postJob(base, { tenant: 'keyed', token: CALLER_TOKEN });
+    assert.equal(res.status, 202);
+    const job = await pollJob(base, res.body.job_id);
+    assert.equal(job.status, 'done');
+    assert.ok(calls.length > 0);
+    assert.deepEqual([...new Set(calls.map((c) => c.apiKey))], [TENANT_KEY]);
+    const haystack = `${logs.join('\n')}\n${JSON.stringify(res.body)}\n${JSON.stringify(job)}`;
+    assert.ok(!haystack.includes(TENANT_KEY), 'tenant key leaked');
+    // The leak check can fail: a seeded known value is caught.
+    assert.ok(`${haystack} ${TENANT_KEY}`.includes(TENANT_KEY));
+  } finally {
+    delete process.env[TENANT_KEY_ENV];
+    await close();
+  }
+});
+
+test('K7: a named tenant with a wrong or missing bearer, or an unknown id, never spends the tenant key', async () => {
+  const calls: GeminiCall[] = [];
+  process.env[TENANT_KEY_ENV] = TENANT_KEY;
+  const { base, close } = await startService(calls, { tenantsJson: TENANTS_KEYED });
+  try {
+    for (const opts of [
+      { tenant: 'keyed', token: 'wrong-token' },
+      { tenant: 'keyed' },
+      { tenant: 'stranger', token: CALLER_TOKEN },
+      { tenant: 'plain', token: CALLER_TOKEN },
+    ]) {
+      const res = await postJob(base, opts);
+      assert.equal(res.status, 400);
+      assert.equal(res.body.error.code, 'missing_key');
+    }
+    // A malformed tenant is a plain bad request.
+    const bad = await postJob(base, { tenant: 7, token: CALLER_TOKEN });
+    assert.equal(bad.status, 400);
+    assert.equal(bad.body.error.code, 'invalid_request');
     assert.equal(calls.length, 0);
   } finally {
     delete process.env[TENANT_KEY_ENV];

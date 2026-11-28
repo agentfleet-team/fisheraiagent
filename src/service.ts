@@ -455,6 +455,18 @@ export function createService(options: ServiceOptions): Server {
         }
         throw err;
       }
+      // The optional tenant id: a router caller names its tenant directly
+      // (tools 2 and 3 take the same field). Like an origin it is a claim,
+      // honored only when the bearer token passes that tenant's caller check.
+      let claimedTenantId: string | undefined;
+      const rawTenant = typeof body === 'object' && body !== null ? field(body, 'tenant') : undefined;
+      if (rawTenant !== undefined) {
+        if (typeof rawTenant !== 'string' || rawTenant.trim() === '') {
+          sendError(res, 400, 'invalid_request');
+          return;
+        }
+        claimedTenantId = rawTenant.trim();
+      }
       // The Discord channel or thread the caller wants the result posted
       // into. A present-but-malformed value is a plain bad request; a
       // well-formed one is a claim that only a verified tenant caller with
@@ -490,6 +502,23 @@ export function createService(options: ServiceOptions): Server {
         tenant = tenants ? resolveTenant(tenants, { kind: 'web', identity: email }) : undefined;
         if (tenant) origin = { kind: 'web', identity: email };
         else saveBlocked = 'no_tenant';
+      } else if (claimedTenantId !== undefined) {
+        // A named tenant is exclusive: a failed check never falls back to
+        // an origin claim or to the tenant key. An unknown id is dropped
+        // like no claim at all.
+        const named = tenants?.find((t) => t.id === claimedTenantId);
+        if (named) {
+          if (callerAuthorized(named, bearerToken(req))) {
+            tenant = named;
+            callerVerified = true;
+            if (claimed?.kind === 'discord') {
+              const { verdict, tenant: resolved } = verifyClaim(req, claimed, tenants);
+              if (verdict === 'verified' && resolved?.id === named.id) origin = claimed;
+            }
+          } else {
+            saveBlocked = 'unauthorized';
+          }
+        }
       } else if (claimed?.kind === 'discord') {
         const { verdict, tenant: resolved } = verifyClaim(req, claimed, tenants);
         if (verdict === 'verified') {

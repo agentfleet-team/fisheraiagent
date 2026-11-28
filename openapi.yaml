@@ -88,6 +88,17 @@ paths:
                   example: https://youtu.be/hWe-j78vNpc
                 origin:
                   $ref: '#/components/schemas/JobOrigin'
+                tenant:
+                  type: string
+                  description: >
+                    A tenant id. Honored only when the request's bearer token
+                    passes that tenant's caller check; the job then runs as
+                    that tenant, and a keyless request spends the tenant's
+                    `gemini_key_env` key. A failed check or an unknown id
+                    gets the same result as a denied or unmatched origin
+                    claim, never the tenant key. A signed-in web session
+                    ignores it.
+                  example: podcast-trial
                 deliver_to:
                   type: string
                   description: >
@@ -122,8 +133,8 @@ paths:
             Bad request. `missing_key` when X-Gemini-Key is absent or empty
             and no verified tenant key applies, `invalid_url` when the URL
             is not a YouTube URL or video id, `invalid_request` for
-            malformed JSON, a missing `url` field, or a malformed `origin`
-            or `deliver_to`.
+            malformed JSON, a missing `url` field, or a malformed `origin`,
+            `tenant` or `deliver_to`.
           content:
             application/json:
               schema:
