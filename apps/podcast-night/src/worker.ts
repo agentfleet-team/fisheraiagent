@@ -340,11 +340,12 @@ async function runTranscriptJob(
   record: RecordRead,
   path: string,
   by: string,
+  tenant: string | undefined,
 ): Promise<NodeResult> {
   const node = `transcript-${plan.slot}`;
   const url = youtubeUrl(plan.videoId);
   const input = await sha256Hex(`${date}/${node}|${plan.videoId}`);
-  const submit = await deps.tool1.submit(url);
+  const submit = await deps.tool1.submit(url, tenant);
   if (submit.kind === "retry") {
     return { appended: null, proceed: false, log: [`node=${node} wait=submit_retry`] };
   }
@@ -359,7 +360,7 @@ async function runTranscriptJob(
   }
   let poll = await deps.tool1.poll(submit.jobId);
   if (poll.kind === "not_found") {
-    const again = await deps.tool1.submit(url);
+    const again = await deps.tool1.submit(url, tenant);
     if (again.kind !== "job") {
       return { appended: null, proceed: false, log: [`node=${node} wait=resubmit_${again.kind}`] };
     }
@@ -595,7 +596,7 @@ async function runNode(
       log: [`node=pick-${plan.slot} video=${plan.videoId ?? "none"} appended=${appended}${reason ? ` reason=${reason}` : ""}`],
     };
   }
-  return runTranscriptJob(deps, plan, date, record, path, by);
+  return runTranscriptJob(deps, plan, date, record, path, by, config?.tenants?.[config.mode]);
 }
 
 /**

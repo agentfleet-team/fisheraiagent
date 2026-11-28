@@ -36,7 +36,8 @@ export type PollResult =
  * means the tool restarted and the job is submitted again.
  */
 export interface Tool1 {
-  submit(url: string): Promise<SubmitResult>;
+  /** `tenant` is the id the tool resolves to the tenant key its caller token unlocks. */
+  submit(url: string, tenant?: string): Promise<SubmitResult>;
   poll(jobId: string): Promise<PollResult>;
 }
 
@@ -62,13 +63,13 @@ export function httpTool1(baseUrl: string, token: string | undefined): Tool1 {
   }
 
   return {
-    async submit(url: string): Promise<SubmitResult> {
+    async submit(url: string, tenant?: string): Promise<SubmitResult> {
       let res: Response;
       try {
         res = await fetch(`${base}/v1/jobs`, {
           method: "POST",
           headers,
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, ...(tenant === undefined ? {} : { tenant }) }),
         });
       } catch {
         return { kind: "retry" };
